@@ -1,0 +1,11 @@
+{
+    "name": "typus-perp-sdk",
+    "version": "1.0.0",
+    "main": "index.js",
+    "repository": "https://github.com/Typus-Lab/typus-perp-sdk.git",
+    "author": "Wayne Kuo <wayne.k@typuslab.com>",
+    "license": "MIT",
+    "dependencies": {
+        "@mysten/sui": "^1.17.0"
+    }
+}

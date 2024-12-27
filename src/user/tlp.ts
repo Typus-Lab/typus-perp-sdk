@@ -1,10 +1,9 @@
 import { Transaction } from "@mysten/sui/transactions";
-import { CLOCK } from "src/constants";
 import { LiquidityPool } from "../typus_perp/lp-pool/structs";
 import { burnLp, mintLp, updateLiquidityValue, swap as _swap } from "../typus_perp/lp-pool/functions";
 import { harvestPerUserShare, stake, unstake, unsubscribe as _unsubscribe } from "../typus_stake_pool/stake-pool/functions";
-import { PythClient, updatePyth, priceInfoObjectIds, pythStateId, TypusConfig } from "src/utils";
-import { tokenType, typeArgToAsset, TOKEN } from "src/constants";
+import { PythClient, updatePyth, priceInfoObjectIds, pythStateId, TypusConfig } from "@typus/typus-sdk/dist/src/utils";
+import { CLOCK, tokenType, typeArgToAsset, TOKEN } from "@typus/typus-sdk/dist/src/constants";
 import { NETWORK } from "..";
 
 export async function mintStakeLp(

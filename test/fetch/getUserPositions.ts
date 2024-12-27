@@ -1,7 +1,7 @@
-import { TypusConfig } from "src/utils";
+import { TypusConfig } from "@typus/typus-sdk/dist/src/utils";
 import { SuiClient } from "@mysten/sui/client";
 import { getLiquidationPrice, getUserPositions, NETWORK } from "src/typus-perp";
-import { createPythClient } from "src/utils";
+import { createPythClient } from "@typus/typus-sdk/dist/src/utils";
 
 (async () => {
     let config = await TypusConfig.default("TESTNET", null);

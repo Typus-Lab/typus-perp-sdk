@@ -1,4 +1,4 @@
-import { TypusConfig } from "src/utils";
+import { TypusConfig } from "@typus/typus-sdk/dist/src/utils";
 import { SuiClient } from "@mysten/sui/client";
 import { getMarkets, getSymbolMarkets } from "src/typus-perp";
 

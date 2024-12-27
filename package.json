@@ -1,13 +1,23 @@
 {
     "name": "typus-perp-sdk",
     "version": "1.0.0",
-    "main": "index.js",
     "repository": "https://github.com/Typus-Lab/typus-perp-sdk.git",
     "author": "Wayne Kuo <wayne.k@typuslab.com>",
     "license": "MIT",
     "dependencies": {
-        "@mysten/sui": "^1.17.0",
-        "dotenv": "^16.4.7"
+        "@mysten/sui": "1.18.0",
+        "@typus/typus-sdk": "1.5.3"
     },
-    "type": "module"
+    "main": "dist/src/index.js",
+    "types": "dist/src/index.d.ts",
+    "files": [
+        "dist"
+    ],
+    "scripts": {
+        "build": "rm -rf dist && tsc -p tsconfig.build.json && tsc-alias"
+    },
+    "bugs": {
+        "url": "https://github.com/Typus-Lab/typus-perp-sdk/issues"
+    },
+    "homepage": "https://github.com/Typus-Lab/typus-perp-sdk#readme"
 }

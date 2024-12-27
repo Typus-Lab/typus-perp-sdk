@@ -14,9 +14,8 @@ import {
 import { getUserShares } from "./typus_stake_pool/stake-pool/functions";
 import { LpUserShare, StakePool } from "./typus_stake_pool/stake-pool/structs";
 
-import { CLOCK } from "src/constants";
-import { tokenType, typeArgToToken } from "src/constants";
-import { priceInfoObjectIds, pythStateId, PythClient, updatePyth, TypusConfig } from "src/utils";
+import { CLOCK, tokenType, typeArgToToken } from "@typus/typus-sdk/dist/src/constants";
+import { priceInfoObjectIds, pythStateId, PythClient, updatePyth, TypusConfig } from "@typus/typus-sdk/dist/src/utils";
 
 import { NETWORK } from ".";
 import { readVecOrder, readVecPosition, readVecShares } from "./readVec";

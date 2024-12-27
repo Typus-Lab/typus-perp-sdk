@@ -1,11 +1,10 @@
-import "src/utils/load_env";
-import { TypusConfig } from "src/utils";
+import "@typus/typus-sdk/dist/src/utils/load_env";
 import { SuiClient } from "@mysten/sui/client";
 import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519";
 import { Transaction } from "@mysten/sui/transactions";
 import { mintStakeLp, NETWORK, getUserStake } from "src/typus-perp";
 import { LiquidityPool, Registry } from "src/typus-perp";
-import { createPythClient } from "src/utils";
+import { TypusConfig, createPythClient } from "@typus/typus-sdk/dist/src/utils";
 import { TOKEN, tokenType } from "src/constants";
 
 (async () => {

@@ -1,10 +1,10 @@
-import "src/utils/load_env";
-import { TypusConfig } from "src/utils";
+import "@typus/typus-sdk/dist/src/utils/load_env";
+import { TypusConfig } from "@typus/typus-sdk/dist/src/utils";
 import { SuiClient } from "@mysten/sui/client";
 import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519";
 import { Transaction } from "@mysten/sui/transactions";
 import { releaseCollateral, getUserPositions, NETWORK } from "src/typus-perp";
-import { createPythClient } from "src/utils";
+import { createPythClient } from "@typus/typus-sdk/dist/src/utils";
 
 (async () => {
     let keypair = Ed25519Keypair.deriveKeypair(String(process.env.MNEMONIC));

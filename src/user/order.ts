@@ -5,10 +5,9 @@ import {
     releaseCollateral as _releaseCollateral,
 } from "../typus_perp/trading/functions";
 import { Position, TradingOrder } from "../typus_perp/position/structs";
-import { CLOCK } from "src/constants";
 import { NETWORK } from "..";
-import { PythClient, updatePyth, priceInfoObjectIds, pythStateId, TypusConfig } from "src/utils";
-import { tokenType, TOKEN, typeArgToToken } from "src/constants";
+import { PythClient, updatePyth, priceInfoObjectIds, pythStateId, TypusConfig } from "@typus/typus-sdk/dist/src/utils";
+import { CLOCK, tokenType, TOKEN, typeArgToToken } from "@typus/typus-sdk/dist/src/constants";
 import { Transaction } from "@mysten/sui/transactions";
 
 export async function createTradingOrder(

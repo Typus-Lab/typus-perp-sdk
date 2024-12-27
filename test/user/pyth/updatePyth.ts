@@ -1,8 +1,8 @@
 import { Transaction } from "@mysten/sui/transactions";
 import { SuiClient } from "@mysten/sui/client";
 import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519";
-import { TypusConfig } from "src/utils";
-import { createPythClient, updatePyth } from "src/utils";
+import { TypusConfig } from "@typus/typus-sdk/dist/src/utils";
+import { createPythClient, updatePyth } from "@typus/typus-sdk/dist/src/utils";
 
 import mnemonic from "../../../../mnemonic.json";
 

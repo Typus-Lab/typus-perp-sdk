@@ -1,4 +1,4 @@
-import { TypusConfig } from "src/utils";
+import { TypusConfig } from "@typus/typus-sdk/dist/src/utils";
 import { getUserStake } from "src/typus-perp";
 
 (async () => {

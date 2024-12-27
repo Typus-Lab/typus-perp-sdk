@@ -1,5 +1,5 @@
 import { BcsReader } from "@mysten/bcs";
-import { AddressFromBytes } from "src/utils";
+import { AddressFromBytes } from "@typus/typus-sdk/dist/src/utils";
 // import { Position, TradingOrder } from "./position/structs";
 
 export function readVecPosition(bytes: Uint8Array) {

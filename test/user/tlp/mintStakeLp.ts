@@ -2,10 +2,10 @@ import "@typus/typus-sdk/dist/src/utils/load_env";
 import { SuiClient } from "@mysten/sui/client";
 import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519";
 import { Transaction } from "@mysten/sui/transactions";
-import { mintStakeLp, NETWORK, getUserStake } from "src/typus-perp";
-import { LiquidityPool, Registry } from "src/typus-perp";
+import { mintStakeLp, NETWORK, getUserStake } from "src";
+import { LiquidityPool, Registry } from "src";
 import { TypusConfig, createPythClient } from "@typus/typus-sdk/dist/src/utils";
-import { TOKEN, tokenType } from "src/constants";
+import { TOKEN, tokenType } from "@typus/typus-sdk/dist/src/constants";
 
 (async () => {
     let keypair = Ed25519Keypair.deriveKeypair(String(process.env.MNEMONIC));

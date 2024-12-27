@@ -3,9 +3,9 @@ import { TypusConfig } from "@typus/typus-sdk/dist/src/utils";
 import { SuiClient } from "@mysten/sui/client";
 import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519";
 import { Transaction } from "@mysten/sui/transactions";
-import { increaseCollateral, getUserPositions, NETWORK } from "src/typus-perp";
+import { increaseCollateral, getUserPositions, NETWORK } from "src";
 import { createPythClient } from "@typus/typus-sdk/dist/src/utils";
-import { tokenType, typeArgToToken } from "src/constants";
+import { tokenType, typeArgToToken } from "@typus/typus-sdk/dist/src/constants";
 
 (async () => {
     let keypair = Ed25519Keypair.deriveKeypair(String(process.env.MNEMONIC));

@@ -1,5 +1,5 @@
 import { TypusConfig } from "@typus/typus-sdk/dist/src/utils";
-import { getStakePools } from "src/typus-perp";
+import { getStakePools } from "src";
 
 (async () => {
     let config = await TypusConfig.default("TESTNET", null);

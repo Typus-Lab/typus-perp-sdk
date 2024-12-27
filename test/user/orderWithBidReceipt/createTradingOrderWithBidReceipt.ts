@@ -2,10 +2,10 @@ import { TypusConfig } from "@typus/typus-sdk/dist/src/utils";
 import { SuiClient } from "@mysten/sui/client";
 import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519";
 import { Transaction } from "@mysten/sui/transactions";
-import { createTradingOrderWithBidReceipt, NETWORK } from "src/typus-perp";
+import { createTradingOrderWithBidReceipt, NETWORK } from "src";
 import { createPythClient } from "@typus/typus-sdk/dist/src/utils";
 import "@typus/typus-sdk/dist/src/utils/load_env";
-import { TOKEN } from "src/constants";
+import { TOKEN } from "@typus/typus-sdk/dist/src/constants";
 
 (async () => {
     let keypair = Ed25519Keypair.deriveKeypair(String(process.env.MNEMONIC));

@@ -1,6 +1,6 @@
 import { TypusConfig } from "@typus/typus-sdk/dist/src/utils";
 import { SuiClient } from "@mysten/sui/client";
-import { getLiquidationPrice, getUserPositions, NETWORK } from "src/typus-perp";
+import { getLiquidationPrice, getUserPositions, NETWORK } from "src";
 import { createPythClient } from "@typus/typus-sdk/dist/src/utils";
 
 (async () => {

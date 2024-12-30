@@ -137,11 +137,7 @@ export class Extension implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): Extension {
@@ -283,9 +279,7 @@ export class ExtensionKey<Ext extends PhantomTypeArgument> implements StructClas
         typeArg: Ext,
         fields: Record<string, any>
     ): ExtensionKey<ToPhantomTypeArgument<Ext>> {
-        return ExtensionKey.reified(typeArg).new({
-            dummyField: decodeFromFields("bool", fields.dummy_field),
-        });
+        return ExtensionKey.reified(typeArg).new({ dummyField: decodeFromFields("bool", fields.dummy_field) });
     }
 
     static fromFieldsWithTypes<Ext extends PhantomReified<PhantomTypeArgument>>(
@@ -297,9 +291,7 @@ export class ExtensionKey<Ext extends PhantomTypeArgument> implements StructClas
         }
         assertFieldsWithTypesArgsMatch(item, [typeArg]);
 
-        return ExtensionKey.reified(typeArg).new({
-            dummyField: decodeFromFieldsWithTypes("bool", item.fields.dummy_field),
-        });
+        return ExtensionKey.reified(typeArg).new({ dummyField: decodeFromFieldsWithTypes("bool", item.fields.dummy_field) });
     }
 
     static fromBcs<Ext extends PhantomReified<PhantomTypeArgument>>(
@@ -316,20 +308,14 @@ export class ExtensionKey<Ext extends PhantomTypeArgument> implements StructClas
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField<Ext extends PhantomReified<PhantomTypeArgument>>(
         typeArg: Ext,
         field: any
     ): ExtensionKey<ToPhantomTypeArgument<Ext>> {
-        return ExtensionKey.reified(typeArg).new({
-            dummyField: decodeFromJSONField("bool", field.dummyField),
-        });
+        return ExtensionKey.reified(typeArg).new({ dummyField: decodeFromJSONField("bool", field.dummyField) });
     }
 
     static fromJSON<Ext extends PhantomReified<PhantomTypeArgument>>(

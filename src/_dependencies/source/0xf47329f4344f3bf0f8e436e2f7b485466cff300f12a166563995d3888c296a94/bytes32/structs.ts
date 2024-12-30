@@ -93,9 +93,7 @@ export class Bytes32 implements StructClass {
     }
 
     static fromFields(fields: Record<string, any>): Bytes32 {
-        return Bytes32.reified().new({
-            data: decodeFromFields(reified.vector("u8"), fields.data),
-        });
+        return Bytes32.reified().new({ data: decodeFromFields(reified.vector("u8"), fields.data) });
     }
 
     static fromFieldsWithTypes(item: FieldsWithTypes): Bytes32 {
@@ -103,9 +101,7 @@ export class Bytes32 implements StructClass {
             throw new Error("not a Bytes32 type");
         }
 
-        return Bytes32.reified().new({
-            data: decodeFromFieldsWithTypes(reified.vector("u8"), item.fields.data),
-        });
+        return Bytes32.reified().new({ data: decodeFromFieldsWithTypes(reified.vector("u8"), item.fields.data) });
     }
 
     static fromBcs(data: Uint8Array): Bytes32 {
@@ -119,17 +115,11 @@ export class Bytes32 implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): Bytes32 {
-        return Bytes32.reified().new({
-            data: decodeFromJSONField(reified.vector("u8"), field.data),
-        });
+        return Bytes32.reified().new({ data: decodeFromJSONField(reified.vector("u8"), field.data) });
     }
 
     static fromJSON(json: Record<string, any>): Bytes32 {

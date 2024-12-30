@@ -155,11 +155,7 @@ export class Table<K extends PhantomTypeArgument, V extends PhantomTypeArgument>
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField<K extends PhantomReified<PhantomTypeArgument>, V extends PhantomReified<PhantomTypeArgument>>(

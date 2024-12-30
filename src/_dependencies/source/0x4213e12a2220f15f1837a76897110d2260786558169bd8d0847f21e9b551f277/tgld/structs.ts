@@ -98,10 +98,7 @@ export class MintEvent implements StructClass {
 
     static get bcs() {
         return bcs.struct("MintEvent", {
-            recipient: bcs.bytes(32).transform({
-                input: (val: string) => fromHEX(val),
-                output: (val: Uint8Array) => toHEX(val),
-            }),
+            recipient: bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
             log: bcs.vector(bcs.u64()),
             bcs_padding: bcs.vector(bcs.vector(bcs.u8())),
         });
@@ -140,11 +137,7 @@ export class MintEvent implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): MintEvent {
@@ -308,11 +301,7 @@ export class BurnEvent implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): BurnEvent {
@@ -442,9 +431,7 @@ export class TGLD implements StructClass {
     }
 
     static fromFields(fields: Record<string, any>): TGLD {
-        return TGLD.reified().new({
-            dummyField: decodeFromFields("bool", fields.dummy_field),
-        });
+        return TGLD.reified().new({ dummyField: decodeFromFields("bool", fields.dummy_field) });
     }
 
     static fromFieldsWithTypes(item: FieldsWithTypes): TGLD {
@@ -452,9 +439,7 @@ export class TGLD implements StructClass {
             throw new Error("not a TGLD type");
         }
 
-        return TGLD.reified().new({
-            dummyField: decodeFromFieldsWithTypes("bool", item.fields.dummy_field),
-        });
+        return TGLD.reified().new({ dummyField: decodeFromFieldsWithTypes("bool", item.fields.dummy_field) });
     }
 
     static fromBcs(data: Uint8Array): TGLD {
@@ -468,17 +453,11 @@ export class TGLD implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): TGLD {
-        return TGLD.reified().new({
-            dummyField: decodeFromJSONField("bool", field.dummyField),
-        });
+        return TGLD.reified().new({ dummyField: decodeFromJSONField("bool", field.dummyField) });
     }
 
     static fromJSON(json: Record<string, any>): TGLD {
@@ -644,11 +623,7 @@ export class TgldRegistry implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): TgldRegistry {

@@ -95,9 +95,7 @@ export class ManagerCap implements StructClass {
     }
 
     static fromFields(fields: Record<string, any>): ManagerCap {
-        return ManagerCap.reified().new({
-            id: decodeFromFields(UID.reified(), fields.id),
-        });
+        return ManagerCap.reified().new({ id: decodeFromFields(UID.reified(), fields.id) });
     }
 
     static fromFieldsWithTypes(item: FieldsWithTypes): ManagerCap {
@@ -105,9 +103,7 @@ export class ManagerCap implements StructClass {
             throw new Error("not a ManagerCap type");
         }
 
-        return ManagerCap.reified().new({
-            id: decodeFromFieldsWithTypes(UID.reified(), item.fields.id),
-        });
+        return ManagerCap.reified().new({ id: decodeFromFieldsWithTypes(UID.reified(), item.fields.id) });
     }
 
     static fromBcs(data: Uint8Array): ManagerCap {
@@ -121,17 +117,11 @@ export class ManagerCap implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): ManagerCap {
-        return ManagerCap.reified().new({
-            id: decodeFromJSONField(UID.reified(), field.id),
-        });
+        return ManagerCap.reified().new({ id: decodeFromJSONField(UID.reified(), field.id) });
     }
 
     static fromJSON(json: Record<string, any>): ManagerCap {
@@ -259,10 +249,7 @@ export class LevelUpEvent implements StructClass {
     static get bcs() {
         return bcs.struct("LevelUpEvent", {
             nft_id: ID.bcs,
-            sender: bcs.bytes(32).transform({
-                input: (val: string) => fromHEX(val),
-                output: (val: Uint8Array) => toHEX(val),
-            }),
+            sender: bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
             number: bcs.u64(),
             level: bcs.u64(),
         });
@@ -304,11 +291,7 @@ export class LevelUpEvent implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): LevelUpEvent {
@@ -479,11 +462,7 @@ export class NftExtension implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): NftExtension {
@@ -616,9 +595,7 @@ export class Registry implements StructClass {
     }
 
     static fromFields(fields: Record<string, any>): Registry {
-        return Registry.reified().new({
-            id: decodeFromFields(UID.reified(), fields.id),
-        });
+        return Registry.reified().new({ id: decodeFromFields(UID.reified(), fields.id) });
     }
 
     static fromFieldsWithTypes(item: FieldsWithTypes): Registry {
@@ -626,9 +603,7 @@ export class Registry implements StructClass {
             throw new Error("not a Registry type");
         }
 
-        return Registry.reified().new({
-            id: decodeFromFieldsWithTypes(UID.reified(), item.fields.id),
-        });
+        return Registry.reified().new({ id: decodeFromFieldsWithTypes(UID.reified(), item.fields.id) });
     }
 
     static fromBcs(data: Uint8Array): Registry {
@@ -642,17 +617,11 @@ export class Registry implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): Registry {
-        return Registry.reified().new({
-            id: decodeFromJSONField(UID.reified(), field.id),
-        });
+        return Registry.reified().new({ id: decodeFromJSONField(UID.reified(), field.id) });
     }
 
     static fromJSON(json: Record<string, any>): Registry {
@@ -815,11 +784,7 @@ export class StakingTails implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): StakingTails {

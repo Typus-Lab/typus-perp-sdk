@@ -138,11 +138,7 @@ export class PythPrice implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): PythPrice {
@@ -277,9 +273,7 @@ export class PythPriceInfoObject implements StructClass {
     }
 
     static fromFields(fields: Record<string, any>): PythPriceInfoObject {
-        return PythPriceInfoObject.reified().new({
-            id: decodeFromFields(ID.reified(), fields.id),
-        });
+        return PythPriceInfoObject.reified().new({ id: decodeFromFields(ID.reified(), fields.id) });
     }
 
     static fromFieldsWithTypes(item: FieldsWithTypes): PythPriceInfoObject {
@@ -287,9 +281,7 @@ export class PythPriceInfoObject implements StructClass {
             throw new Error("not a PythPriceInfoObject type");
         }
 
-        return PythPriceInfoObject.reified().new({
-            id: decodeFromFieldsWithTypes(ID.reified(), item.fields.id),
-        });
+        return PythPriceInfoObject.reified().new({ id: decodeFromFieldsWithTypes(ID.reified(), item.fields.id) });
     }
 
     static fromBcs(data: Uint8Array): PythPriceInfoObject {
@@ -303,17 +295,11 @@ export class PythPriceInfoObject implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): PythPriceInfoObject {
-        return PythPriceInfoObject.reified().new({
-            id: decodeFromJSONField(ID.reified(), field.id),
-        });
+        return PythPriceInfoObject.reified().new({ id: decodeFromJSONField(ID.reified(), field.id) });
     }
 
     static fromJSON(json: Record<string, any>): PythPriceInfoObject {

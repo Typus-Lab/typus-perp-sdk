@@ -16,10 +16,7 @@ export function getPrice(tx: Transaction, args: GetPriceArgs) {
 }
 
 export function getEmaPrice(tx: Transaction, priceInfoObject: TransactionObjectInput) {
-    return tx.moveCall({
-        target: `${PUBLISHED_AT}::oracle::get_ema_price`,
-        arguments: [obj(tx, priceInfoObject)],
-    });
+    return tx.moveCall({ target: `${PUBLISHED_AT}::oracle::get_ema_price`, arguments: [obj(tx, priceInfoObject)] });
 }
 
 export interface GetPriceInfoObjectIdArgs {

@@ -107,9 +107,7 @@ export class Rule<Proof extends PhantomTypeArgument> implements StructClass {
         typeArg: Proof,
         fields: Record<string, any>
     ): Rule<ToPhantomTypeArgument<Proof>> {
-        return Rule.reified(typeArg).new({
-            dummyField: decodeFromFields("bool", fields.dummy_field),
-        });
+        return Rule.reified(typeArg).new({ dummyField: decodeFromFields("bool", fields.dummy_field) });
     }
 
     static fromFieldsWithTypes<Proof extends PhantomReified<PhantomTypeArgument>>(
@@ -121,9 +119,7 @@ export class Rule<Proof extends PhantomTypeArgument> implements StructClass {
         }
         assertFieldsWithTypesArgsMatch(item, [typeArg]);
 
-        return Rule.reified(typeArg).new({
-            dummyField: decodeFromFieldsWithTypes("bool", item.fields.dummy_field),
-        });
+        return Rule.reified(typeArg).new({ dummyField: decodeFromFieldsWithTypes("bool", item.fields.dummy_field) });
     }
 
     static fromBcs<Proof extends PhantomReified<PhantomTypeArgument>>(
@@ -140,20 +136,14 @@ export class Rule<Proof extends PhantomTypeArgument> implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField<Proof extends PhantomReified<PhantomTypeArgument>>(
         typeArg: Proof,
         field: any
     ): Rule<ToPhantomTypeArgument<Proof>> {
-        return Rule.reified(typeArg).new({
-            dummyField: decodeFromJSONField("bool", field.dummyField),
-        });
+        return Rule.reified(typeArg).new({ dummyField: decodeFromJSONField("bool", field.dummyField) });
     }
 
     static fromJSON<Proof extends PhantomReified<PhantomTypeArgument>>(

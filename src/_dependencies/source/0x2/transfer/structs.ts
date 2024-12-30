@@ -143,11 +143,7 @@ export class Receiving<T extends PhantomTypeArgument> implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField<T extends PhantomReified<PhantomTypeArgument>>(typeArg: T, field: any): Receiving<ToPhantomTypeArgument<T>> {

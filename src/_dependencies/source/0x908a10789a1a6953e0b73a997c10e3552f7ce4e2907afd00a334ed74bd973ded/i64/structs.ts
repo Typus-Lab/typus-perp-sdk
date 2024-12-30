@@ -98,9 +98,7 @@ export class I64 implements StructClass {
             throw new Error("not a I64 type");
         }
 
-        return I64.reified().new({
-            bits: decodeFromFieldsWithTypes("u64", item.fields.bits),
-        });
+        return I64.reified().new({ bits: decodeFromFieldsWithTypes("u64", item.fields.bits) });
     }
 
     static fromBcs(data: Uint8Array): I64 {
@@ -114,11 +112,7 @@ export class I64 implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): I64 {

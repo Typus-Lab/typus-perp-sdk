@@ -100,10 +100,7 @@ export class AddAccumulatedTgldAmount implements StructClass {
 
     static get bcs() {
         return bcs.struct("AddAccumulatedTgldAmount", {
-            user: bcs.bytes(32).transform({
-                input: (val: string) => fromHEX(val),
-                output: (val: Uint8Array) => toHEX(val),
-            }),
+            user: bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
             log: bcs.vector(bcs.u64()),
             bcs_padding: bcs.vector(bcs.vector(bcs.u8())),
         });
@@ -142,11 +139,7 @@ export class AddAccumulatedTgldAmount implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): AddAccumulatedTgldAmount {
@@ -278,10 +271,7 @@ export class AddTailsExpAmount implements StructClass {
 
     static get bcs() {
         return bcs.struct("AddTailsExpAmount", {
-            user: bcs.bytes(32).transform({
-                input: (val: string) => fromHEX(val),
-                output: (val: Uint8Array) => toHEX(val),
-            }),
+            user: bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
             log: bcs.vector(bcs.u64()),
             bcs_padding: bcs.vector(bcs.vector(bcs.u8())),
         });
@@ -320,11 +310,7 @@ export class AddTailsExpAmount implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): AddTailsExpAmount {
@@ -455,9 +441,7 @@ export class Metadata implements StructClass {
     }
 
     static fromFields(fields: Record<string, any>): Metadata {
-        return Metadata.reified().new({
-            content: decodeFromFields(reified.vector("u64"), fields.content),
-        });
+        return Metadata.reified().new({ content: decodeFromFields(reified.vector("u64"), fields.content) });
     }
 
     static fromFieldsWithTypes(item: FieldsWithTypes): Metadata {
@@ -465,9 +449,7 @@ export class Metadata implements StructClass {
             throw new Error("not a Metadata type");
         }
 
-        return Metadata.reified().new({
-            content: decodeFromFieldsWithTypes(reified.vector("u64"), item.fields.content),
-        });
+        return Metadata.reified().new({ content: decodeFromFieldsWithTypes(reified.vector("u64"), item.fields.content) });
     }
 
     static fromBcs(data: Uint8Array): Metadata {
@@ -481,17 +463,11 @@ export class Metadata implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): Metadata {
-        return Metadata.reified().new({
-            content: decodeFromJSONField(reified.vector("u64"), field.content),
-        });
+        return Metadata.reified().new({ content: decodeFromJSONField(reified.vector("u64"), field.content) });
     }
 
     static fromJSON(json: Record<string, any>): Metadata {
@@ -615,10 +591,7 @@ export class RemoveTailsExpAmount implements StructClass {
 
     static get bcs() {
         return bcs.struct("RemoveTailsExpAmount", {
-            user: bcs.bytes(32).transform({
-                input: (val: string) => fromHEX(val),
-                output: (val: Uint8Array) => toHEX(val),
-            }),
+            user: bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
             log: bcs.vector(bcs.u64()),
             bcs_padding: bcs.vector(bcs.vector(bcs.u8())),
         });
@@ -657,11 +630,7 @@ export class RemoveTailsExpAmount implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): RemoveTailsExpAmount {
@@ -792,10 +761,7 @@ export class TypusUserRegistry implements StructClass {
         return bcs.struct("TypusUserRegistry", {
             id: UID.bcs,
             metadata: LinkedTable.bcs(
-                bcs.bytes(32).transform({
-                    input: (val: string) => fromHEX(val),
-                    output: (val: Uint8Array) => toHEX(val),
-                })
+                bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) })
             ),
         });
     }
@@ -830,11 +796,7 @@ export class TypusUserRegistry implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): TypusUserRegistry {

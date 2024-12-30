@@ -156,11 +156,7 @@ export class DecreeReceipt<T extends PhantomTypeArgument> implements StructClass
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField<T extends PhantomReified<PhantomTypeArgument>>(typeArg: T, field: any): DecreeReceipt<ToPhantomTypeArgument<T>> {
@@ -382,11 +378,7 @@ export class DecreeTicket<T extends PhantomTypeArgument> implements StructClass 
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField<T extends PhantomReified<PhantomTypeArgument>>(typeArg: T, field: any): DecreeTicket<ToPhantomTypeArgument<T>> {

@@ -4,6 +4,7 @@ import { TypeName } from "../../_dependencies/source/0x1/type-name/structs";
 import { ObjectTable } from "../../_dependencies/source/0x2/object-table/structs";
 import { UID } from "../../_dependencies/source/0x2/object/structs";
 import { KeyedBigVector } from "../../_dependencies/source/0x4213e12a2220f15f1837a76897110d2260786558169bd8d0847f21e9b551f277/keyed-big-vector/structs";
+import { LinkedObjectTable } from "../../_dependencies/source/0x4213e12a2220f15f1837a76897110d2260786558169bd8d0847f21e9b551f277/linked-object-table/structs";
 import {
     PhantomReified,
     Reified,
@@ -156,11 +157,7 @@ export class AddTradingSymbolEvent implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): AddTradingSymbolEvent {
@@ -312,10 +309,7 @@ export class CancelTradingOrderEvent implements StructClass {
 
     static get bcs() {
         return bcs.struct("CancelTradingOrderEvent", {
-            user: bcs.bytes(32).transform({
-                input: (val: string) => fromHEX(val),
-                output: (val: Uint8Array) => toHEX(val),
-            }),
+            user: bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
             market_index: bcs.u64(),
             order_id: bcs.u64(),
             trigger_price: bcs.u64(),
@@ -374,11 +368,7 @@ export class CancelTradingOrderEvent implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): CancelTradingOrderEvent {
@@ -557,10 +547,7 @@ export class CreateTradingOrderEvent implements StructClass {
 
     static get bcs() {
         return bcs.struct("CreateTradingOrderEvent", {
-            user: bcs.bytes(32).transform({
-                input: (val: string) => fromHEX(val),
-                output: (val: Uint8Array) => toHEX(val),
-            }),
+            user: bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
             market_index: bcs.u64(),
             pool_index: bcs.u64(),
             collateral_token: TypeName.bcs,
@@ -651,11 +638,7 @@ export class CreateTradingOrderEvent implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): CreateTradingOrderEvent {
@@ -836,10 +819,7 @@ export class CreateTradingOrderWithBidReceiptsEvent implements StructClass {
 
     static get bcs() {
         return bcs.struct("CreateTradingOrderWithBidReceiptsEvent", {
-            user: bcs.bytes(32).transform({
-                input: (val: string) => fromHEX(val),
-                output: (val: Uint8Array) => toHEX(val),
-            }),
+            user: bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
             market_index: bcs.u64(),
             pool_index: bcs.u64(),
             collateral_token: TypeName.bcs,
@@ -914,11 +894,7 @@ export class CreateTradingOrderWithBidReceiptsEvent implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): CreateTradingOrderWithBidReceiptsEvent {
@@ -980,6 +956,193 @@ export class CreateTradingOrderWithBidReceiptsEvent implements StructClass {
         }
 
         return CreateTradingOrderWithBidReceiptsEvent.fromSuiObjectData(res.data);
+    }
+}
+
+/* ============================== ExpiredPositionInfo =============================== */
+
+export function isExpiredPositionInfo(type: string): boolean {
+    type = compressSuiType(type);
+    return type === `${PKG_V1}::trading::ExpiredPositionInfo`;
+}
+
+export interface ExpiredPositionInfoFields {
+    positionId: ToField<"u64">;
+    dovIndex: ToField<"u64">;
+    collateralToken: ToField<TypeName>;
+    bidToken: ToField<TypeName>;
+    baseToken: ToField<TypeName>;
+}
+
+export type ExpiredPositionInfoReified = Reified<ExpiredPositionInfo, ExpiredPositionInfoFields>;
+
+export class ExpiredPositionInfo implements StructClass {
+    __StructClass = true as const;
+
+    static readonly $typeName = `${PKG_V1}::trading::ExpiredPositionInfo`;
+    static readonly $numTypeParams = 0;
+    static readonly $isPhantom = [] as const;
+
+    readonly $typeName = ExpiredPositionInfo.$typeName;
+    readonly $fullTypeName: `${typeof PKG_V1}::trading::ExpiredPositionInfo`;
+    readonly $typeArgs: [];
+    readonly $isPhantom = ExpiredPositionInfo.$isPhantom;
+
+    readonly positionId: ToField<"u64">;
+    readonly dovIndex: ToField<"u64">;
+    readonly collateralToken: ToField<TypeName>;
+    readonly bidToken: ToField<TypeName>;
+    readonly baseToken: ToField<TypeName>;
+
+    private constructor(typeArgs: [], fields: ExpiredPositionInfoFields) {
+        this.$fullTypeName = composeSuiType(ExpiredPositionInfo.$typeName, ...typeArgs) as `${typeof PKG_V1}::trading::ExpiredPositionInfo`;
+        this.$typeArgs = typeArgs;
+
+        this.positionId = fields.positionId;
+        this.dovIndex = fields.dovIndex;
+        this.collateralToken = fields.collateralToken;
+        this.bidToken = fields.bidToken;
+        this.baseToken = fields.baseToken;
+    }
+
+    static reified(): ExpiredPositionInfoReified {
+        return {
+            typeName: ExpiredPositionInfo.$typeName,
+            fullTypeName: composeSuiType(ExpiredPositionInfo.$typeName, ...[]) as `${typeof PKG_V1}::trading::ExpiredPositionInfo`,
+            typeArgs: [] as [],
+            isPhantom: ExpiredPositionInfo.$isPhantom,
+            reifiedTypeArgs: [],
+            fromFields: (fields: Record<string, any>) => ExpiredPositionInfo.fromFields(fields),
+            fromFieldsWithTypes: (item: FieldsWithTypes) => ExpiredPositionInfo.fromFieldsWithTypes(item),
+            fromBcs: (data: Uint8Array) => ExpiredPositionInfo.fromBcs(data),
+            bcs: ExpiredPositionInfo.bcs,
+            fromJSONField: (field: any) => ExpiredPositionInfo.fromJSONField(field),
+            fromJSON: (json: Record<string, any>) => ExpiredPositionInfo.fromJSON(json),
+            fromSuiParsedData: (content: SuiParsedData) => ExpiredPositionInfo.fromSuiParsedData(content),
+            fromSuiObjectData: (content: SuiObjectData) => ExpiredPositionInfo.fromSuiObjectData(content),
+            fetch: async (client: SuiClient, id: string) => ExpiredPositionInfo.fetch(client, id),
+            new: (fields: ExpiredPositionInfoFields) => {
+                return new ExpiredPositionInfo([], fields);
+            },
+            kind: "StructClassReified",
+        };
+    }
+
+    static get r() {
+        return ExpiredPositionInfo.reified();
+    }
+
+    static phantom(): PhantomReified<ToTypeStr<ExpiredPositionInfo>> {
+        return phantom(ExpiredPositionInfo.reified());
+    }
+    static get p() {
+        return ExpiredPositionInfo.phantom();
+    }
+
+    static get bcs() {
+        return bcs.struct("ExpiredPositionInfo", {
+            position_id: bcs.u64(),
+            dov_index: bcs.u64(),
+            collateral_token: TypeName.bcs,
+            bid_token: TypeName.bcs,
+            base_token: TypeName.bcs,
+        });
+    }
+
+    static fromFields(fields: Record<string, any>): ExpiredPositionInfo {
+        return ExpiredPositionInfo.reified().new({
+            positionId: decodeFromFields("u64", fields.position_id),
+            dovIndex: decodeFromFields("u64", fields.dov_index),
+            collateralToken: decodeFromFields(TypeName.reified(), fields.collateral_token),
+            bidToken: decodeFromFields(TypeName.reified(), fields.bid_token),
+            baseToken: decodeFromFields(TypeName.reified(), fields.base_token),
+        });
+    }
+
+    static fromFieldsWithTypes(item: FieldsWithTypes): ExpiredPositionInfo {
+        if (!isExpiredPositionInfo(item.type)) {
+            throw new Error("not a ExpiredPositionInfo type");
+        }
+
+        return ExpiredPositionInfo.reified().new({
+            positionId: decodeFromFieldsWithTypes("u64", item.fields.position_id),
+            dovIndex: decodeFromFieldsWithTypes("u64", item.fields.dov_index),
+            collateralToken: decodeFromFieldsWithTypes(TypeName.reified(), item.fields.collateral_token),
+            bidToken: decodeFromFieldsWithTypes(TypeName.reified(), item.fields.bid_token),
+            baseToken: decodeFromFieldsWithTypes(TypeName.reified(), item.fields.base_token),
+        });
+    }
+
+    static fromBcs(data: Uint8Array): ExpiredPositionInfo {
+        return ExpiredPositionInfo.fromFields(ExpiredPositionInfo.bcs.parse(data));
+    }
+
+    toJSONField() {
+        return {
+            positionId: this.positionId.toString(),
+            dovIndex: this.dovIndex.toString(),
+            collateralToken: this.collateralToken.toJSONField(),
+            bidToken: this.bidToken.toJSONField(),
+            baseToken: this.baseToken.toJSONField(),
+        };
+    }
+
+    toJSON() {
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
+    }
+
+    static fromJSONField(field: any): ExpiredPositionInfo {
+        return ExpiredPositionInfo.reified().new({
+            positionId: decodeFromJSONField("u64", field.positionId),
+            dovIndex: decodeFromJSONField("u64", field.dovIndex),
+            collateralToken: decodeFromJSONField(TypeName.reified(), field.collateralToken),
+            bidToken: decodeFromJSONField(TypeName.reified(), field.bidToken),
+            baseToken: decodeFromJSONField(TypeName.reified(), field.baseToken),
+        });
+    }
+
+    static fromJSON(json: Record<string, any>): ExpiredPositionInfo {
+        if (json.$typeName !== ExpiredPositionInfo.$typeName) {
+            throw new Error("not a WithTwoGenerics json object");
+        }
+
+        return ExpiredPositionInfo.fromJSONField(json);
+    }
+
+    static fromSuiParsedData(content: SuiParsedData): ExpiredPositionInfo {
+        if (content.dataType !== "moveObject") {
+            throw new Error("not an object");
+        }
+        if (!isExpiredPositionInfo(content.type)) {
+            throw new Error(`object at ${(content.fields as any).id} is not a ExpiredPositionInfo object`);
+        }
+        return ExpiredPositionInfo.fromFieldsWithTypes(content);
+    }
+
+    static fromSuiObjectData(data: SuiObjectData): ExpiredPositionInfo {
+        if (data.bcs) {
+            if (data.bcs.dataType !== "moveObject" || !isExpiredPositionInfo(data.bcs.type)) {
+                throw new Error(`object at is not a ExpiredPositionInfo object`);
+            }
+
+            return ExpiredPositionInfo.fromBcs(fromB64(data.bcs.bcsBytes));
+        }
+        if (data.content) {
+            return ExpiredPositionInfo.fromSuiParsedData(data.content);
+        }
+        throw new Error("Both `bcs` and `content` fields are missing from the data. Include `showBcs` or `showContent` in the request.");
+    }
+
+    static async fetch(client: SuiClient, id: string): Promise<ExpiredPositionInfo> {
+        const res = await client.getObject({ id, options: { showBcs: true } });
+        if (res.error) {
+            throw new Error(`error fetching ExpiredPositionInfo object at id ${id}: ${res.error.code}`);
+        }
+        if (res.data?.bcs?.dataType !== "moveObject" || !isExpiredPositionInfo(res.data.bcs.type)) {
+            throw new Error(`object at id ${id} is not a ExpiredPositionInfo object`);
+        }
+
+        return ExpiredPositionInfo.fromSuiObjectData(res.data);
     }
 }
 
@@ -1080,10 +1243,7 @@ export class IncreaseCollateralEvent implements StructClass {
 
     static get bcs() {
         return bcs.struct("IncreaseCollateralEvent", {
-            user: bcs.bytes(32).transform({
-                input: (val: string) => fromHEX(val),
-                output: (val: Uint8Array) => toHEX(val),
-            }),
+            user: bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
             market_index: bcs.u64(),
             pool_index: bcs.u64(),
             position_id: bcs.u64(),
@@ -1146,11 +1306,7 @@ export class IncreaseCollateralEvent implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): IncreaseCollateralEvent {
@@ -1291,12 +1447,7 @@ export class LinkedOrdersInfo implements StructClass {
 
     static get bcs() {
         return bcs.struct("LinkedOrdersInfo", {
-            users: bcs.vector(
-                bcs.bytes(32).transform({
-                    input: (val: string) => fromHEX(val),
-                    output: (val: Uint8Array) => toHEX(val),
-                })
-            ),
+            users: bcs.vector(bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) })),
             ids: bcs.vector(bcs.vector(bcs.u64())),
             prices: bcs.vector(bcs.vector(bcs.u64())),
             u64_padding: bcs.vector(bcs.u64()),
@@ -1339,11 +1490,7 @@ export class LinkedOrdersInfo implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): LinkedOrdersInfo {
@@ -1491,10 +1638,7 @@ export class LiquidateEvent implements StructClass {
 
     static get bcs() {
         return bcs.struct("LiquidateEvent", {
-            user: bcs.bytes(32).transform({
-                input: (val: string) => fromHEX(val),
-                output: (val: Uint8Array) => toHEX(val),
-            }),
+            user: bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
             collateral_token: TypeName.bcs,
             base_token: TypeName.bcs,
             position_id: bcs.u64(),
@@ -1553,11 +1697,7 @@ export class LiquidateEvent implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): LiquidateEvent {
@@ -1733,11 +1873,7 @@ export class LiquidationInfo implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): LiquidationInfo {
@@ -1790,6 +1926,231 @@ export class LiquidationInfo implements StructClass {
         }
 
         return LiquidationInfo.fromSuiObjectData(res.data);
+    }
+}
+
+/* ============================== ManagerCloseOptionPosition =============================== */
+
+export function isManagerCloseOptionPosition(type: string): boolean {
+    type = compressSuiType(type);
+    return type === `${PKG_V1}::trading::ManagerCloseOptionPosition`;
+}
+
+export interface ManagerCloseOptionPositionFields {
+    user: ToField<"address">;
+    collateralToken: ToField<TypeName>;
+    baseToken: ToField<TypeName>;
+    positionId: ToField<"u64">;
+    orderSize: ToField<"u64">;
+    collateralPrice: ToField<"u64">;
+    tradingPrice: ToField<"u64">;
+    cancelledOrderIds: ToField<Vector<"u64">>;
+    u64Padding: ToField<Vector<"u64">>;
+}
+
+export type ManagerCloseOptionPositionReified = Reified<ManagerCloseOptionPosition, ManagerCloseOptionPositionFields>;
+
+export class ManagerCloseOptionPosition implements StructClass {
+    __StructClass = true as const;
+
+    static readonly $typeName = `${PKG_V1}::trading::ManagerCloseOptionPosition`;
+    static readonly $numTypeParams = 0;
+    static readonly $isPhantom = [] as const;
+
+    readonly $typeName = ManagerCloseOptionPosition.$typeName;
+    readonly $fullTypeName: `${typeof PKG_V1}::trading::ManagerCloseOptionPosition`;
+    readonly $typeArgs: [];
+    readonly $isPhantom = ManagerCloseOptionPosition.$isPhantom;
+
+    readonly user: ToField<"address">;
+    readonly collateralToken: ToField<TypeName>;
+    readonly baseToken: ToField<TypeName>;
+    readonly positionId: ToField<"u64">;
+    readonly orderSize: ToField<"u64">;
+    readonly collateralPrice: ToField<"u64">;
+    readonly tradingPrice: ToField<"u64">;
+    readonly cancelledOrderIds: ToField<Vector<"u64">>;
+    readonly u64Padding: ToField<Vector<"u64">>;
+
+    private constructor(typeArgs: [], fields: ManagerCloseOptionPositionFields) {
+        this.$fullTypeName = composeSuiType(
+            ManagerCloseOptionPosition.$typeName,
+            ...typeArgs
+        ) as `${typeof PKG_V1}::trading::ManagerCloseOptionPosition`;
+        this.$typeArgs = typeArgs;
+
+        this.user = fields.user;
+        this.collateralToken = fields.collateralToken;
+        this.baseToken = fields.baseToken;
+        this.positionId = fields.positionId;
+        this.orderSize = fields.orderSize;
+        this.collateralPrice = fields.collateralPrice;
+        this.tradingPrice = fields.tradingPrice;
+        this.cancelledOrderIds = fields.cancelledOrderIds;
+        this.u64Padding = fields.u64Padding;
+    }
+
+    static reified(): ManagerCloseOptionPositionReified {
+        return {
+            typeName: ManagerCloseOptionPosition.$typeName,
+            fullTypeName: composeSuiType(
+                ManagerCloseOptionPosition.$typeName,
+                ...[]
+            ) as `${typeof PKG_V1}::trading::ManagerCloseOptionPosition`,
+            typeArgs: [] as [],
+            isPhantom: ManagerCloseOptionPosition.$isPhantom,
+            reifiedTypeArgs: [],
+            fromFields: (fields: Record<string, any>) => ManagerCloseOptionPosition.fromFields(fields),
+            fromFieldsWithTypes: (item: FieldsWithTypes) => ManagerCloseOptionPosition.fromFieldsWithTypes(item),
+            fromBcs: (data: Uint8Array) => ManagerCloseOptionPosition.fromBcs(data),
+            bcs: ManagerCloseOptionPosition.bcs,
+            fromJSONField: (field: any) => ManagerCloseOptionPosition.fromJSONField(field),
+            fromJSON: (json: Record<string, any>) => ManagerCloseOptionPosition.fromJSON(json),
+            fromSuiParsedData: (content: SuiParsedData) => ManagerCloseOptionPosition.fromSuiParsedData(content),
+            fromSuiObjectData: (content: SuiObjectData) => ManagerCloseOptionPosition.fromSuiObjectData(content),
+            fetch: async (client: SuiClient, id: string) => ManagerCloseOptionPosition.fetch(client, id),
+            new: (fields: ManagerCloseOptionPositionFields) => {
+                return new ManagerCloseOptionPosition([], fields);
+            },
+            kind: "StructClassReified",
+        };
+    }
+
+    static get r() {
+        return ManagerCloseOptionPosition.reified();
+    }
+
+    static phantom(): PhantomReified<ToTypeStr<ManagerCloseOptionPosition>> {
+        return phantom(ManagerCloseOptionPosition.reified());
+    }
+    static get p() {
+        return ManagerCloseOptionPosition.phantom();
+    }
+
+    static get bcs() {
+        return bcs.struct("ManagerCloseOptionPosition", {
+            user: bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
+            collateral_token: TypeName.bcs,
+            base_token: TypeName.bcs,
+            position_id: bcs.u64(),
+            order_size: bcs.u64(),
+            collateral_price: bcs.u64(),
+            trading_price: bcs.u64(),
+            cancelled_order_ids: bcs.vector(bcs.u64()),
+            u64_padding: bcs.vector(bcs.u64()),
+        });
+    }
+
+    static fromFields(fields: Record<string, any>): ManagerCloseOptionPosition {
+        return ManagerCloseOptionPosition.reified().new({
+            user: decodeFromFields("address", fields.user),
+            collateralToken: decodeFromFields(TypeName.reified(), fields.collateral_token),
+            baseToken: decodeFromFields(TypeName.reified(), fields.base_token),
+            positionId: decodeFromFields("u64", fields.position_id),
+            orderSize: decodeFromFields("u64", fields.order_size),
+            collateralPrice: decodeFromFields("u64", fields.collateral_price),
+            tradingPrice: decodeFromFields("u64", fields.trading_price),
+            cancelledOrderIds: decodeFromFields(reified.vector("u64"), fields.cancelled_order_ids),
+            u64Padding: decodeFromFields(reified.vector("u64"), fields.u64_padding),
+        });
+    }
+
+    static fromFieldsWithTypes(item: FieldsWithTypes): ManagerCloseOptionPosition {
+        if (!isManagerCloseOptionPosition(item.type)) {
+            throw new Error("not a ManagerCloseOptionPosition type");
+        }
+
+        return ManagerCloseOptionPosition.reified().new({
+            user: decodeFromFieldsWithTypes("address", item.fields.user),
+            collateralToken: decodeFromFieldsWithTypes(TypeName.reified(), item.fields.collateral_token),
+            baseToken: decodeFromFieldsWithTypes(TypeName.reified(), item.fields.base_token),
+            positionId: decodeFromFieldsWithTypes("u64", item.fields.position_id),
+            orderSize: decodeFromFieldsWithTypes("u64", item.fields.order_size),
+            collateralPrice: decodeFromFieldsWithTypes("u64", item.fields.collateral_price),
+            tradingPrice: decodeFromFieldsWithTypes("u64", item.fields.trading_price),
+            cancelledOrderIds: decodeFromFieldsWithTypes(reified.vector("u64"), item.fields.cancelled_order_ids),
+            u64Padding: decodeFromFieldsWithTypes(reified.vector("u64"), item.fields.u64_padding),
+        });
+    }
+
+    static fromBcs(data: Uint8Array): ManagerCloseOptionPosition {
+        return ManagerCloseOptionPosition.fromFields(ManagerCloseOptionPosition.bcs.parse(data));
+    }
+
+    toJSONField() {
+        return {
+            user: this.user,
+            collateralToken: this.collateralToken.toJSONField(),
+            baseToken: this.baseToken.toJSONField(),
+            positionId: this.positionId.toString(),
+            orderSize: this.orderSize.toString(),
+            collateralPrice: this.collateralPrice.toString(),
+            tradingPrice: this.tradingPrice.toString(),
+            cancelledOrderIds: fieldToJSON<Vector<"u64">>(`vector<u64>`, this.cancelledOrderIds),
+            u64Padding: fieldToJSON<Vector<"u64">>(`vector<u64>`, this.u64Padding),
+        };
+    }
+
+    toJSON() {
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
+    }
+
+    static fromJSONField(field: any): ManagerCloseOptionPosition {
+        return ManagerCloseOptionPosition.reified().new({
+            user: decodeFromJSONField("address", field.user),
+            collateralToken: decodeFromJSONField(TypeName.reified(), field.collateralToken),
+            baseToken: decodeFromJSONField(TypeName.reified(), field.baseToken),
+            positionId: decodeFromJSONField("u64", field.positionId),
+            orderSize: decodeFromJSONField("u64", field.orderSize),
+            collateralPrice: decodeFromJSONField("u64", field.collateralPrice),
+            tradingPrice: decodeFromJSONField("u64", field.tradingPrice),
+            cancelledOrderIds: decodeFromJSONField(reified.vector("u64"), field.cancelledOrderIds),
+            u64Padding: decodeFromJSONField(reified.vector("u64"), field.u64Padding),
+        });
+    }
+
+    static fromJSON(json: Record<string, any>): ManagerCloseOptionPosition {
+        if (json.$typeName !== ManagerCloseOptionPosition.$typeName) {
+            throw new Error("not a WithTwoGenerics json object");
+        }
+
+        return ManagerCloseOptionPosition.fromJSONField(json);
+    }
+
+    static fromSuiParsedData(content: SuiParsedData): ManagerCloseOptionPosition {
+        if (content.dataType !== "moveObject") {
+            throw new Error("not an object");
+        }
+        if (!isManagerCloseOptionPosition(content.type)) {
+            throw new Error(`object at ${(content.fields as any).id} is not a ManagerCloseOptionPosition object`);
+        }
+        return ManagerCloseOptionPosition.fromFieldsWithTypes(content);
+    }
+
+    static fromSuiObjectData(data: SuiObjectData): ManagerCloseOptionPosition {
+        if (data.bcs) {
+            if (data.bcs.dataType !== "moveObject" || !isManagerCloseOptionPosition(data.bcs.type)) {
+                throw new Error(`object at is not a ManagerCloseOptionPosition object`);
+            }
+
+            return ManagerCloseOptionPosition.fromBcs(fromB64(data.bcs.bcsBytes));
+        }
+        if (data.content) {
+            return ManagerCloseOptionPosition.fromSuiParsedData(data.content);
+        }
+        throw new Error("Both `bcs` and `content` fields are missing from the data. Include `showBcs` or `showContent` in the request.");
+    }
+
+    static async fetch(client: SuiClient, id: string): Promise<ManagerCloseOptionPosition> {
+        const res = await client.getObject({ id, options: { showBcs: true } });
+        if (res.error) {
+            throw new Error(`error fetching ManagerCloseOptionPosition object at id ${id}: ${res.error.code}`);
+        }
+        if (res.data?.bcs?.dataType !== "moveObject" || !isManagerCloseOptionPosition(res.data.bcs.type)) {
+            throw new Error(`object at id ${id} is not a ManagerCloseOptionPosition object`);
+        }
+
+        return ManagerCloseOptionPosition.fromSuiObjectData(res.data);
     }
 }
 
@@ -1890,10 +2251,7 @@ export class ManagerReducePosition implements StructClass {
 
     static get bcs() {
         return bcs.struct("ManagerReducePosition", {
-            user: bcs.bytes(32).transform({
-                input: (val: string) => fromHEX(val),
-                output: (val: Uint8Array) => toHEX(val),
-            }),
+            user: bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
             collateral_token: TypeName.bcs,
             base_token: TypeName.bcs,
             position_id: bcs.u64(),
@@ -1956,11 +2314,7 @@ export class ManagerReducePosition implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): ManagerReducePosition {
@@ -2153,11 +2507,7 @@ export class ManagerUpdateProcessStatusAfterOrderEvent implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): ManagerUpdateProcessStatusAfterOrderEvent {
@@ -2345,11 +2695,7 @@ export class ManagerUpdateProcessStatusAfterPositionEvent implements StructClass
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): ManagerUpdateProcessStatusAfterPositionEvent {
@@ -2418,10 +2764,10 @@ export interface MarketConfigFields {
     maxLeverageMbp: ToField<"u64">;
     minSize: ToField<"u64">;
     lotSize: ToField<"u64">;
-    tradingFeeRate: ToField<"u64">;
-    tradingFeeDecimal: ToField<"u64">;
+    tradingFeeConfig: ToField<Vector<"u64">>;
     basicFundingRate: ToField<"u64">;
     fundingIntervalTsMs: ToField<"u64">;
+    expMultiplier: ToField<"u64">;
     u64Padding: ToField<Vector<"u64">>;
 }
 
@@ -2443,10 +2789,10 @@ export class MarketConfig implements StructClass {
     readonly maxLeverageMbp: ToField<"u64">;
     readonly minSize: ToField<"u64">;
     readonly lotSize: ToField<"u64">;
-    readonly tradingFeeRate: ToField<"u64">;
-    readonly tradingFeeDecimal: ToField<"u64">;
+    readonly tradingFeeConfig: ToField<Vector<"u64">>;
     readonly basicFundingRate: ToField<"u64">;
     readonly fundingIntervalTsMs: ToField<"u64">;
+    readonly expMultiplier: ToField<"u64">;
     readonly u64Padding: ToField<Vector<"u64">>;
 
     private constructor(typeArgs: [], fields: MarketConfigFields) {
@@ -2457,10 +2803,10 @@ export class MarketConfig implements StructClass {
         this.maxLeverageMbp = fields.maxLeverageMbp;
         this.minSize = fields.minSize;
         this.lotSize = fields.lotSize;
-        this.tradingFeeRate = fields.tradingFeeRate;
-        this.tradingFeeDecimal = fields.tradingFeeDecimal;
+        this.tradingFeeConfig = fields.tradingFeeConfig;
         this.basicFundingRate = fields.basicFundingRate;
         this.fundingIntervalTsMs = fields.fundingIntervalTsMs;
+        this.expMultiplier = fields.expMultiplier;
         this.u64Padding = fields.u64Padding;
     }
 
@@ -2500,17 +2846,14 @@ export class MarketConfig implements StructClass {
 
     static get bcs() {
         return bcs.struct("MarketConfig", {
-            oracle_id: bcs.bytes(32).transform({
-                input: (val: string) => fromHEX(val),
-                output: (val: Uint8Array) => toHEX(val),
-            }),
+            oracle_id: bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
             max_leverage_mbp: bcs.u64(),
             min_size: bcs.u64(),
             lot_size: bcs.u64(),
-            trading_fee_rate: bcs.u64(),
-            trading_fee_decimal: bcs.u64(),
+            trading_fee_config: bcs.vector(bcs.u64()),
             basic_funding_rate: bcs.u64(),
             funding_interval_ts_ms: bcs.u64(),
+            exp_multiplier: bcs.u64(),
             u64_padding: bcs.vector(bcs.u64()),
         });
     }
@@ -2521,10 +2864,10 @@ export class MarketConfig implements StructClass {
             maxLeverageMbp: decodeFromFields("u64", fields.max_leverage_mbp),
             minSize: decodeFromFields("u64", fields.min_size),
             lotSize: decodeFromFields("u64", fields.lot_size),
-            tradingFeeRate: decodeFromFields("u64", fields.trading_fee_rate),
-            tradingFeeDecimal: decodeFromFields("u64", fields.trading_fee_decimal),
+            tradingFeeConfig: decodeFromFields(reified.vector("u64"), fields.trading_fee_config),
             basicFundingRate: decodeFromFields("u64", fields.basic_funding_rate),
             fundingIntervalTsMs: decodeFromFields("u64", fields.funding_interval_ts_ms),
+            expMultiplier: decodeFromFields("u64", fields.exp_multiplier),
             u64Padding: decodeFromFields(reified.vector("u64"), fields.u64_padding),
         });
     }
@@ -2539,10 +2882,10 @@ export class MarketConfig implements StructClass {
             maxLeverageMbp: decodeFromFieldsWithTypes("u64", item.fields.max_leverage_mbp),
             minSize: decodeFromFieldsWithTypes("u64", item.fields.min_size),
             lotSize: decodeFromFieldsWithTypes("u64", item.fields.lot_size),
-            tradingFeeRate: decodeFromFieldsWithTypes("u64", item.fields.trading_fee_rate),
-            tradingFeeDecimal: decodeFromFieldsWithTypes("u64", item.fields.trading_fee_decimal),
+            tradingFeeConfig: decodeFromFieldsWithTypes(reified.vector("u64"), item.fields.trading_fee_config),
             basicFundingRate: decodeFromFieldsWithTypes("u64", item.fields.basic_funding_rate),
             fundingIntervalTsMs: decodeFromFieldsWithTypes("u64", item.fields.funding_interval_ts_ms),
+            expMultiplier: decodeFromFieldsWithTypes("u64", item.fields.exp_multiplier),
             u64Padding: decodeFromFieldsWithTypes(reified.vector("u64"), item.fields.u64_padding),
         });
     }
@@ -2557,20 +2900,16 @@ export class MarketConfig implements StructClass {
             maxLeverageMbp: this.maxLeverageMbp.toString(),
             minSize: this.minSize.toString(),
             lotSize: this.lotSize.toString(),
-            tradingFeeRate: this.tradingFeeRate.toString(),
-            tradingFeeDecimal: this.tradingFeeDecimal.toString(),
+            tradingFeeConfig: fieldToJSON<Vector<"u64">>(`vector<u64>`, this.tradingFeeConfig),
             basicFundingRate: this.basicFundingRate.toString(),
             fundingIntervalTsMs: this.fundingIntervalTsMs.toString(),
+            expMultiplier: this.expMultiplier.toString(),
             u64Padding: fieldToJSON<Vector<"u64">>(`vector<u64>`, this.u64Padding),
         };
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): MarketConfig {
@@ -2579,10 +2918,10 @@ export class MarketConfig implements StructClass {
             maxLeverageMbp: decodeFromJSONField("u64", field.maxLeverageMbp),
             minSize: decodeFromJSONField("u64", field.minSize),
             lotSize: decodeFromJSONField("u64", field.lotSize),
-            tradingFeeRate: decodeFromJSONField("u64", field.tradingFeeRate),
-            tradingFeeDecimal: decodeFromJSONField("u64", field.tradingFeeDecimal),
+            tradingFeeConfig: decodeFromJSONField(reified.vector("u64"), field.tradingFeeConfig),
             basicFundingRate: decodeFromJSONField("u64", field.basicFundingRate),
             fundingIntervalTsMs: decodeFromJSONField("u64", field.fundingIntervalTsMs),
+            expMultiplier: decodeFromJSONField("u64", field.expMultiplier),
             u64Padding: decodeFromJSONField(reified.vector("u64"), field.u64Padding),
         });
     }
@@ -2834,11 +3173,7 @@ export class MarketInfo implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): MarketInfo {
@@ -2916,6 +3251,7 @@ export function isMarketRegistry(type: string): boolean {
 export interface MarketRegistryFields {
     id: ToField<UID>;
     referralRegistry: ToField<UID>;
+    markets: ToField<LinkedObjectTable<"u64", ToPhantom<Markets>>>;
     numMarket: ToField<"u64">;
     u64Padding: ToField<Vector<"u64">>;
 }
@@ -2936,6 +3272,7 @@ export class MarketRegistry implements StructClass {
 
     readonly id: ToField<UID>;
     readonly referralRegistry: ToField<UID>;
+    readonly markets: ToField<LinkedObjectTable<"u64", ToPhantom<Markets>>>;
     readonly numMarket: ToField<"u64">;
     readonly u64Padding: ToField<Vector<"u64">>;
 
@@ -2945,6 +3282,7 @@ export class MarketRegistry implements StructClass {
 
         this.id = fields.id;
         this.referralRegistry = fields.referralRegistry;
+        this.markets = fields.markets;
         this.numMarket = fields.numMarket;
         this.u64Padding = fields.u64Padding;
     }
@@ -2987,6 +3325,7 @@ export class MarketRegistry implements StructClass {
         return bcs.struct("MarketRegistry", {
             id: UID.bcs,
             referral_registry: UID.bcs,
+            markets: LinkedObjectTable.bcs(bcs.u64()),
             num_market: bcs.u64(),
             u64_padding: bcs.vector(bcs.u64()),
         });
@@ -2996,6 +3335,7 @@ export class MarketRegistry implements StructClass {
         return MarketRegistry.reified().new({
             id: decodeFromFields(UID.reified(), fields.id),
             referralRegistry: decodeFromFields(UID.reified(), fields.referral_registry),
+            markets: decodeFromFields(LinkedObjectTable.reified("u64", reified.phantom(Markets.reified())), fields.markets),
             numMarket: decodeFromFields("u64", fields.num_market),
             u64Padding: decodeFromFields(reified.vector("u64"), fields.u64_padding),
         });
@@ -3009,6 +3349,7 @@ export class MarketRegistry implements StructClass {
         return MarketRegistry.reified().new({
             id: decodeFromFieldsWithTypes(UID.reified(), item.fields.id),
             referralRegistry: decodeFromFieldsWithTypes(UID.reified(), item.fields.referral_registry),
+            markets: decodeFromFieldsWithTypes(LinkedObjectTable.reified("u64", reified.phantom(Markets.reified())), item.fields.markets),
             numMarket: decodeFromFieldsWithTypes("u64", item.fields.num_market),
             u64Padding: decodeFromFieldsWithTypes(reified.vector("u64"), item.fields.u64_padding),
         });
@@ -3022,23 +3363,21 @@ export class MarketRegistry implements StructClass {
         return {
             id: this.id,
             referralRegistry: this.referralRegistry,
+            markets: this.markets.toJSONField(),
             numMarket: this.numMarket.toString(),
             u64Padding: fieldToJSON<Vector<"u64">>(`vector<u64>`, this.u64Padding),
         };
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): MarketRegistry {
         return MarketRegistry.reified().new({
             id: decodeFromJSONField(UID.reified(), field.id),
             referralRegistry: decodeFromJSONField(UID.reified(), field.referralRegistry),
+            markets: decodeFromJSONField(LinkedObjectTable.reified("u64", reified.phantom(Markets.reified())), field.markets),
             numMarket: decodeFromJSONField("u64", field.numMarket),
             u64Padding: decodeFromJSONField(reified.vector("u64"), field.u64Padding),
         });
@@ -3252,11 +3591,7 @@ export class Markets implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): Markets {
@@ -3453,11 +3788,7 @@ export class MatchTradingOrderEvent implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): MatchTradingOrderEvent {
@@ -3644,11 +3975,7 @@ export class NewMarketsEvent implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): NewMarketsEvent {
@@ -3803,10 +4130,7 @@ export class ReleaseCollateralEvent implements StructClass {
 
     static get bcs() {
         return bcs.struct("ReleaseCollateralEvent", {
-            user: bcs.bytes(32).transform({
-                input: (val: string) => fromHEX(val),
-                output: (val: Uint8Array) => toHEX(val),
-            }),
+            user: bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
             market_index: bcs.u64(),
             pool_index: bcs.u64(),
             position_id: bcs.u64(),
@@ -3869,11 +4193,7 @@ export class ReleaseCollateralEvent implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): ReleaseCollateralEvent {
@@ -4043,11 +4363,7 @@ export class ResumeMarketEvent implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): ResumeMarketEvent {
@@ -4223,11 +4539,7 @@ export class ResumeTradingSymbolEvent implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): ResumeTradingSymbolEvent {
@@ -4391,11 +4703,7 @@ export class SuspendMarketEvent implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): SuspendMarketEvent {
@@ -4571,11 +4879,7 @@ export class SuspendTradingSymbolEvent implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): SuspendTradingSymbolEvent {
@@ -4767,11 +5071,7 @@ export class SymbolMarket implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): SymbolMarket {
@@ -4905,9 +5205,7 @@ export class USD implements StructClass {
     }
 
     static fromFields(fields: Record<string, any>): USD {
-        return USD.reified().new({
-            dummyField: decodeFromFields("bool", fields.dummy_field),
-        });
+        return USD.reified().new({ dummyField: decodeFromFields("bool", fields.dummy_field) });
     }
 
     static fromFieldsWithTypes(item: FieldsWithTypes): USD {
@@ -4915,9 +5213,7 @@ export class USD implements StructClass {
             throw new Error("not a USD type");
         }
 
-        return USD.reified().new({
-            dummyField: decodeFromFieldsWithTypes("bool", item.fields.dummy_field),
-        });
+        return USD.reified().new({ dummyField: decodeFromFieldsWithTypes("bool", item.fields.dummy_field) });
     }
 
     static fromBcs(data: Uint8Array): USD {
@@ -4931,17 +5227,11 @@ export class USD implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): USD {
-        return USD.reified().new({
-            dummyField: decodeFromJSONField("bool", field.dummyField),
-        });
+        return USD.reified().new({ dummyField: decodeFromJSONField("bool", field.dummyField) });
     }
 
     static fromJSON(json: Record<string, any>): USD {
@@ -5145,11 +5435,7 @@ export class UpdateFundingRateEvent implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): UpdateFundingRateEvent {
@@ -5342,11 +5628,7 @@ export class UpdateMarketConfigEvent implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): UpdateMarketConfigEvent {
@@ -5532,11 +5814,7 @@ export class UpdateProtocolFeeShareBpEvent implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): UpdateProtocolFeeShareBpEvent {

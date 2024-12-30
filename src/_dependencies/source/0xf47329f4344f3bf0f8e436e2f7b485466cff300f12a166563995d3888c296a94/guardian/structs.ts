@@ -91,9 +91,7 @@ export class Guardian implements StructClass {
     }
 
     static fromFields(fields: Record<string, any>): Guardian {
-        return Guardian.reified().new({
-            pubkey: decodeFromFields(Bytes20.reified(), fields.pubkey),
-        });
+        return Guardian.reified().new({ pubkey: decodeFromFields(Bytes20.reified(), fields.pubkey) });
     }
 
     static fromFieldsWithTypes(item: FieldsWithTypes): Guardian {
@@ -101,9 +99,7 @@ export class Guardian implements StructClass {
             throw new Error("not a Guardian type");
         }
 
-        return Guardian.reified().new({
-            pubkey: decodeFromFieldsWithTypes(Bytes20.reified(), item.fields.pubkey),
-        });
+        return Guardian.reified().new({ pubkey: decodeFromFieldsWithTypes(Bytes20.reified(), item.fields.pubkey) });
     }
 
     static fromBcs(data: Uint8Array): Guardian {
@@ -117,17 +113,11 @@ export class Guardian implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): Guardian {
-        return Guardian.reified().new({
-            pubkey: decodeFromJSONField(Bytes20.reified(), field.pubkey),
-        });
+        return Guardian.reified().new({ pubkey: decodeFromJSONField(Bytes20.reified(), field.pubkey) });
     }
 
     static fromJSON(json: Record<string, any>): Guardian {

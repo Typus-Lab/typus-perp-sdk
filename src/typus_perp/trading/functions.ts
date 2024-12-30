@@ -5,10 +5,7 @@ import { obj, pure, vector } from "../../_framework/util";
 import { Transaction, TransactionArgument, TransactionObjectInput } from "@mysten/sui/transactions";
 
 export function init(tx: Transaction) {
-    return tx.moveCall({
-        target: `${PUBLISHED_AT}::trading::init`,
-        arguments: [],
-    });
+    return tx.moveCall({ target: `${PUBLISHED_AT}::trading::init`, arguments: [] });
 }
 
 export interface GetEstimatedLiquidationPriceArgs {
@@ -120,10 +117,10 @@ export interface AddTradingSymbolArgs {
     maxLeverageMbp: bigint | TransactionArgument;
     minSize: bigint | TransactionArgument;
     lotSize: bigint | TransactionArgument;
-    tradingFeeRate: bigint | TransactionArgument;
-    tradingFeeDecimal: bigint | TransactionArgument;
+    tradingFeeConfig: Array<bigint | TransactionArgument> | TransactionArgument;
     basicFundingRate: bigint | TransactionArgument;
     fundingIntervalTsMs: bigint | TransactionArgument;
+    expMultiplier: bigint | TransactionArgument;
     clock: TransactionObjectInput;
 }
 
@@ -140,10 +137,10 @@ export function addTradingSymbol(tx: Transaction, typeArg: string, args: AddTrad
             pure(tx, args.maxLeverageMbp, `u64`),
             pure(tx, args.minSize, `u64`),
             pure(tx, args.lotSize, `u64`),
-            pure(tx, args.tradingFeeRate, `u64`),
-            pure(tx, args.tradingFeeDecimal, `u64`),
+            pure(tx, args.tradingFeeConfig, `vector<u64>`),
             pure(tx, args.basicFundingRate, `u64`),
             pure(tx, args.fundingIntervalTsMs, `u64`),
+            pure(tx, args.expMultiplier, `u64`),
             obj(tx, args.clock),
         ],
     });
@@ -183,6 +180,35 @@ export function adjustMarketInfoUserPositionSize(tx: Transaction, args: AdjustMa
             pure(tx, args.filledOrderIsLong, `bool`),
             pure(tx, args.reducingPosition, `bool`),
             pure(tx, args.size, `u64`),
+        ],
+    });
+}
+
+export interface CalculateTradingFeeRateMbpArgs {
+    userLongPositionSize: bigint | TransactionArgument;
+    userShortPositionSize: bigint | TransactionArgument;
+    tvlUsd: bigint | TransactionArgument;
+    sizeDecimal: bigint | TransactionArgument;
+    tradingPairOraclePrice: bigint | TransactionArgument;
+    tradingPairOraclePriceDecimal: bigint | TransactionArgument;
+    orderSide: boolean | TransactionArgument;
+    orderSize: bigint | TransactionArgument;
+    tradingFeeConfig: Array<bigint | TransactionArgument> | TransactionArgument;
+}
+
+export function calculateTradingFeeRateMbp(tx: Transaction, args: CalculateTradingFeeRateMbpArgs) {
+    return tx.moveCall({
+        target: `${PUBLISHED_AT}::trading::calculate_trading_fee_rate_mbp`,
+        arguments: [
+            pure(tx, args.userLongPositionSize, `u64`),
+            pure(tx, args.userShortPositionSize, `u64`),
+            pure(tx, args.tvlUsd, `u64`),
+            pure(tx, args.sizeDecimal, `u64`),
+            pure(tx, args.tradingPairOraclePrice, `u64`),
+            pure(tx, args.tradingPairOraclePriceDecimal, `u64`),
+            pure(tx, args.orderSide, `bool`),
+            pure(tx, args.orderSize, `u64`),
+            pure(tx, args.tradingFeeConfig, `vector<u64>`),
         ],
     });
 }
@@ -242,8 +268,7 @@ export interface CheckCollateralEnoughArgs {
     collateralOraclePriceDecimal: bigint | TransactionArgument;
     tradingPairOraclePrice: bigint | TransactionArgument;
     tradingPairOraclePriceDecimal: bigint | TransactionArgument;
-    tradingFeeRate: bigint | TransactionArgument;
-    tradingFeeDecimal: bigint | TransactionArgument;
+    tradingFeeMbp: bigint | TransactionArgument;
 }
 
 export function checkCollateralEnough(tx: Transaction, typeArg: string, args: CheckCollateralEnoughArgs) {
@@ -257,8 +282,7 @@ export function checkCollateralEnough(tx: Transaction, typeArg: string, args: Ch
             pure(tx, args.collateralOraclePriceDecimal, `u64`),
             pure(tx, args.tradingPairOraclePrice, `u64`),
             pure(tx, args.tradingPairOraclePriceDecimal, `u64`),
-            pure(tx, args.tradingFeeRate, `u64`),
-            pure(tx, args.tradingFeeDecimal, `u64`),
+            pure(tx, args.tradingFeeMbp, `u64`),
         ],
     });
 }
@@ -272,8 +296,7 @@ export interface CheckOptionCollateralEnoughArgs {
     collateralOraclePriceDecimal: bigint | TransactionArgument;
     tradingPairOraclePrice: bigint | TransactionArgument;
     tradingPairOraclePriceDecimal: bigint | TransactionArgument;
-    tradingFeeRate: bigint | TransactionArgument;
-    tradingFeeDecimal: bigint | TransactionArgument;
+    tradingFeeMbp: bigint | TransactionArgument;
     clock: TransactionObjectInput;
 }
 
@@ -290,8 +313,7 @@ export function checkOptionCollateralEnough(tx: Transaction, typeArg: string, ar
             pure(tx, args.collateralOraclePriceDecimal, `u64`),
             pure(tx, args.tradingPairOraclePrice, `u64`),
             pure(tx, args.tradingPairOraclePriceDecimal, `u64`),
-            pure(tx, args.tradingFeeRate, `u64`),
-            pure(tx, args.tradingFeeDecimal, `u64`),
+            pure(tx, args.tradingFeeMbp, `u64`),
             obj(tx, args.clock),
         ],
     });
@@ -435,6 +457,7 @@ export interface ExecuteOptionCollateralOrder_Args {
     collateralOraclePriceDecimal: bigint | TransactionArgument;
     tradingPairOraclePrice: bigint | TransactionArgument;
     tradingPairOraclePriceDecimal: bigint | TransactionArgument;
+    tradingFeeMbp: bigint | TransactionArgument;
     typusEcosystemVersion: TransactionObjectInput;
     typusUserRegistry: TransactionObjectInput;
     typusLeaderboardRegistry: TransactionObjectInput;
@@ -457,6 +480,7 @@ export function executeOptionCollateralOrder_(tx: Transaction, typeArgs: [string
             pure(tx, args.collateralOraclePriceDecimal, `u64`),
             pure(tx, args.tradingPairOraclePrice, `u64`),
             pure(tx, args.tradingPairOraclePriceDecimal, `u64`),
+            pure(tx, args.tradingFeeMbp, `u64`),
             obj(tx, args.typusEcosystemVersion),
             obj(tx, args.typusUserRegistry),
             obj(tx, args.typusLeaderboardRegistry),
@@ -476,6 +500,7 @@ export interface ExecuteOrder_Args {
     collateralOraclePriceDecimal: bigint | TransactionArgument;
     tradingPairOraclePrice: bigint | TransactionArgument;
     tradingPairOraclePriceDecimal: bigint | TransactionArgument;
+    tradingFeeMbp: bigint | TransactionArgument;
     typusEcosystemVersion: TransactionObjectInput;
     typusUserRegistry: TransactionObjectInput;
     typusLeaderboardRegistry: TransactionObjectInput;
@@ -497,6 +522,7 @@ export function executeOrder_(tx: Transaction, typeArg: string, args: ExecuteOrd
             pure(tx, args.collateralOraclePriceDecimal, `u64`),
             pure(tx, args.tradingPairOraclePrice, `u64`),
             pure(tx, args.tradingPairOraclePriceDecimal, `u64`),
+            pure(tx, args.tradingFeeMbp, `u64`),
             obj(tx, args.typusEcosystemVersion),
             obj(tx, args.typusUserRegistry),
             obj(tx, args.typusLeaderboardRegistry),
@@ -549,6 +575,29 @@ export function getActiveOrdersByOrderTagAndCtoken(
         target: `${PUBLISHED_AT}::trading::get_active_orders_by_order_tag_and_ctoken`,
         typeArguments: typeArgs,
         arguments: [obj(tx, args.version), obj(tx, args.registry), pure(tx, args.marketIndex, `u64`), pure(tx, args.orderTypeTag, `u8`)],
+    });
+}
+
+export interface GetExpiredPositionInfoArgs {
+    version: TransactionObjectInput;
+    registry: TransactionObjectInput;
+    poolRegistry: TransactionObjectInput;
+    dovRegistry: TransactionObjectInput;
+    marketIndex: bigint | TransactionArgument;
+    poolIndex: bigint | TransactionArgument;
+}
+
+export function getExpiredPositionInfo(tx: Transaction, args: GetExpiredPositionInfoArgs) {
+    return tx.moveCall({
+        target: `${PUBLISHED_AT}::trading::get_expired_position_info`,
+        arguments: [
+            obj(tx, args.version),
+            obj(tx, args.registry),
+            obj(tx, args.poolRegistry),
+            obj(tx, args.dovRegistry),
+            pure(tx, args.marketIndex, `u64`),
+            pure(tx, args.poolIndex, `u64`),
+        ],
     });
 }
 
@@ -605,15 +654,15 @@ export function getLiquidationInfo(tx: Transaction, typeArgs: [string, string], 
     });
 }
 
-export interface GetMarketArgs {
-    id: TransactionObjectInput;
-    index: bigint | TransactionArgument;
+export interface GetMarketsBcsArgs {
+    registry: TransactionObjectInput;
+    indexes: Array<bigint | TransactionArgument> | TransactionArgument;
 }
 
-export function getMarket(tx: Transaction, args: GetMarketArgs) {
+export function getMarketsBcs(tx: Transaction, args: GetMarketsBcsArgs) {
     return tx.moveCall({
-        target: `${PUBLISHED_AT}::trading::get_market`,
-        arguments: [obj(tx, args.id), pure(tx, args.index, `u64`)],
+        target: `${PUBLISHED_AT}::trading::get_markets_bcs`,
+        arguments: [obj(tx, args.registry), pure(tx, args.indexes, `vector<u64>`)],
     });
 }
 
@@ -646,18 +695,6 @@ export function getMaxReleasingCollateralAmount(tx: Transaction, typeArgs: [stri
             obj(tx, args.clock),
             pure(tx, args.positionId, `u64`),
         ],
-    });
-}
-
-export interface GetMutMarketArgs {
-    id: TransactionObjectInput;
-    index: bigint | TransactionArgument;
-}
-
-export function getMutMarket(tx: Transaction, args: GetMutMarketArgs) {
-    return tx.moveCall({
-        target: `${PUBLISHED_AT}::trading::get_mut_market`,
-        arguments: [obj(tx, args.id), pure(tx, args.index, `u64`)],
     });
 }
 
@@ -742,6 +779,48 @@ export function liquidate(tx: Transaction, typeArgs: [string, string, string], a
             obj(tx, args.typusOracle),
             pure(tx, args.marketIndex, `u64`),
             pure(tx, args.poolIndex, `u64`),
+            obj(tx, args.pythState),
+            obj(tx, args.oracleCToken),
+            obj(tx, args.oracleTradingSymbol),
+            obj(tx, args.clock),
+            pure(tx, args.positionId, `u64`),
+        ],
+    });
+}
+
+export interface ManagerCloseOptionPositionArgs {
+    version: TransactionObjectInput;
+    registry: TransactionObjectInput;
+    poolRegistry: TransactionObjectInput;
+    dovRegistry: TransactionObjectInput;
+    marketIndex: bigint | TransactionArgument;
+    poolIndex: bigint | TransactionArgument;
+    typusEcosystemVersion: TransactionObjectInput;
+    typusUserRegistry: TransactionObjectInput;
+    typusLeaderboardRegistry: TransactionObjectInput;
+    typusOracle: TransactionObjectInput;
+    pythState: TransactionObjectInput;
+    oracleCToken: TransactionObjectInput;
+    oracleTradingSymbol: TransactionObjectInput;
+    clock: TransactionObjectInput;
+    positionId: bigint | TransactionArgument;
+}
+
+export function managerCloseOptionPosition(tx: Transaction, typeArgs: [string, string, string], args: ManagerCloseOptionPositionArgs) {
+    return tx.moveCall({
+        target: `${PUBLISHED_AT}::trading::manager_close_option_position`,
+        typeArguments: typeArgs,
+        arguments: [
+            obj(tx, args.version),
+            obj(tx, args.registry),
+            obj(tx, args.poolRegistry),
+            obj(tx, args.dovRegistry),
+            pure(tx, args.marketIndex, `u64`),
+            pure(tx, args.poolIndex, `u64`),
+            obj(tx, args.typusEcosystemVersion),
+            obj(tx, args.typusUserRegistry),
+            obj(tx, args.typusLeaderboardRegistry),
+            obj(tx, args.typusOracle),
             obj(tx, args.pythState),
             obj(tx, args.oracleCToken),
             obj(tx, args.oracleTradingSymbol),
@@ -1063,6 +1142,20 @@ export function removeLinkedOrders(tx: Transaction, typeArg: string, args: Remov
     });
 }
 
+export interface RemoveTradingSymbolArgs {
+    version: TransactionObjectInput;
+    registry: TransactionObjectInput;
+    marketIndex: bigint | TransactionArgument;
+}
+
+export function removeTradingSymbol(tx: Transaction, typeArg: string, args: RemoveTradingSymbolArgs) {
+    return tx.moveCall({
+        target: `${PUBLISHED_AT}::trading::remove_trading_symbol`,
+        typeArguments: [typeArg],
+        arguments: [obj(tx, args.version), obj(tx, args.registry), pure(tx, args.marketIndex, `u64`)],
+    });
+}
+
 export interface ResumeMarketArgs {
     version: TransactionObjectInput;
     registry: TransactionObjectInput;
@@ -1178,10 +1271,14 @@ export interface UpdateMarketConfigArgs {
     version: TransactionObjectInput;
     registry: TransactionObjectInput;
     marketIndex: bigint | TransactionArgument;
+    oracleId: string | TransactionArgument | TransactionArgument | null;
+    maxLeverageMbp: bigint | TransactionArgument | TransactionArgument | null;
     minSize: bigint | TransactionArgument | TransactionArgument | null;
     lotSize: bigint | TransactionArgument | TransactionArgument | null;
-    tradingFeeRate: bigint | TransactionArgument | TransactionArgument | null;
-    tradingFeeDecimal: bigint | TransactionArgument | TransactionArgument | null;
+    tradingFeeConfig: Array<bigint | TransactionArgument> | TransactionArgument | TransactionArgument | null;
+    basicFundingRate: bigint | TransactionArgument | TransactionArgument | null;
+    fundingIntervalTsMs: bigint | TransactionArgument | TransactionArgument | null;
+    expMultiplier: bigint | TransactionArgument | TransactionArgument | null;
 }
 
 export function updateMarketConfig(tx: Transaction, typeArg: string, args: UpdateMarketConfigArgs) {
@@ -1192,10 +1289,14 @@ export function updateMarketConfig(tx: Transaction, typeArg: string, args: Updat
             obj(tx, args.version),
             obj(tx, args.registry),
             pure(tx, args.marketIndex, `u64`),
+            pure(tx, args.oracleId, `${Option.$typeName}<address>`),
+            pure(tx, args.maxLeverageMbp, `${Option.$typeName}<u64>`),
             pure(tx, args.minSize, `${Option.$typeName}<u64>`),
             pure(tx, args.lotSize, `${Option.$typeName}<u64>`),
-            pure(tx, args.tradingFeeRate, `${Option.$typeName}<u64>`),
-            pure(tx, args.tradingFeeDecimal, `${Option.$typeName}<u64>`),
+            pure(tx, args.tradingFeeConfig, `${Option.$typeName}<vector<u64>>`),
+            pure(tx, args.basicFundingRate, `${Option.$typeName}<u64>`),
+            pure(tx, args.fundingIntervalTsMs, `${Option.$typeName}<u64>`),
+            pure(tx, args.expMultiplier, `${Option.$typeName}<u64>`),
         ],
     });
 }

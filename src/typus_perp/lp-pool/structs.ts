@@ -102,10 +102,7 @@ export class Config implements StructClass {
 
     static get bcs() {
         return bcs.struct("Config", {
-            oracle_id: bcs.bytes(32).transform({
-                input: (val: string) => fromHEX(val),
-                output: (val: Uint8Array) => toHEX(val),
-            }),
+            oracle_id: bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
             liquidity_token_decimal: bcs.u64(),
             spot_config: SpotConfig.bcs,
             margin_config: MarginConfig.bcs,
@@ -152,11 +149,7 @@ export class Config implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): Config {
@@ -378,11 +371,7 @@ export class State implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): State {
@@ -560,11 +549,7 @@ export class Registry implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): Registry {
@@ -708,10 +693,7 @@ export class AddLiquidityTokenEvent implements StructClass {
 
     static get bcs() {
         return bcs.struct("AddLiquidityTokenEvent", {
-            sender: bcs.bytes(32).transform({
-                input: (val: string) => fromHEX(val),
-                output: (val: Uint8Array) => toHEX(val),
-            }),
+            sender: bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
             index: bcs.u64(),
             token_type: TypeName.bcs,
             config: Config.bcs,
@@ -762,11 +744,7 @@ export class AddLiquidityTokenEvent implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): AddLiquidityTokenEvent {
@@ -919,10 +897,7 @@ export class BurnLpEvent implements StructClass {
 
     static get bcs() {
         return bcs.struct("BurnLpEvent", {
-            sender: bcs.bytes(32).transform({
-                input: (val: string) => fromHEX(val),
-                output: (val: Uint8Array) => toHEX(val),
-            }),
+            sender: bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
             index: bcs.u64(),
             lp_token_type: TypeName.bcs,
             burn_lp_amount: bcs.u64(),
@@ -985,11 +960,7 @@ export class BurnLpEvent implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): BurnLpEvent {
@@ -1189,11 +1160,7 @@ export class CompleteRemoveLiquidityTokenProcessEvent implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): CompleteRemoveLiquidityTokenProcessEvent {
@@ -1401,11 +1368,7 @@ export class LiquidityPool implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): LiquidityPool {
@@ -1588,11 +1551,7 @@ export class LiquidityPoolInfo implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): LiquidityPoolInfo {
@@ -1798,11 +1757,7 @@ export class ManagerFlashRemoveLiquidityEvent implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): ManagerFlashRemoveLiquidityEvent {
@@ -2011,11 +1966,7 @@ export class ManagerFlashRepayLiquidityEvent implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): ManagerFlashRepayLiquidityEvent {
@@ -2225,11 +2176,7 @@ export class MarginConfig implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): MarginConfig {
@@ -2384,10 +2331,7 @@ export class MintLpEvent implements StructClass {
 
     static get bcs() {
         return bcs.struct("MintLpEvent", {
-            sender: bcs.bytes(32).transform({
-                input: (val: string) => fromHEX(val),
-                output: (val: Uint8Array) => toHEX(val),
-            }),
+            sender: bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
             index: bcs.u64(),
             liquidity_token_type: TypeName.bcs,
             deposit_amount: bcs.u64(),
@@ -2450,11 +2394,7 @@ export class MintLpEvent implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): MintLpEvent {
@@ -2601,10 +2541,7 @@ export class NewLiquidityPoolEvent implements StructClass {
 
     static get bcs() {
         return bcs.struct("NewLiquidityPoolEvent", {
-            sender: bcs.bytes(32).transform({
-                input: (val: string) => fromHEX(val),
-                output: (val: Uint8Array) => toHEX(val),
-            }),
+            sender: bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
             index: bcs.u64(),
             lp_token_type: TypeName.bcs,
             lp_token_decimal: bcs.u64(),
@@ -2651,11 +2588,7 @@ export class NewLiquidityPoolEvent implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): NewLiquidityPoolEvent {
@@ -2810,10 +2743,9 @@ export class RemoveLiquidityTokenProcess implements StructClass {
             liquidity_token: TypeName.bcs,
             removed_positions_base_token: bcs.vector(TypeName.bcs),
             removed_orders_base_token: bcs.vector(TypeName.bcs),
-            removed_token_oracle_id: bcs.bytes(32).transform({
-                input: (val: string) => fromHEX(val),
-                output: (val: Uint8Array) => toHEX(val),
-            }),
+            removed_token_oracle_id: bcs
+                .bytes(32)
+                .transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
             removed_usd: bcs.u64(),
             repaid_usd: bcs.u64(),
             status: bcs.u64(),
@@ -2868,11 +2800,7 @@ export class RemoveLiquidityTokenProcess implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): RemoveLiquidityTokenProcess {
@@ -3008,10 +2936,7 @@ export class ResumePoolEvent implements StructClass {
 
     static get bcs() {
         return bcs.struct("ResumePoolEvent", {
-            sender: bcs.bytes(32).transform({
-                input: (val: string) => fromHEX(val),
-                output: (val: Uint8Array) => toHEX(val),
-            }),
+            sender: bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
             index: bcs.u64(),
             u64_padding: bcs.vector(bcs.u64()),
         });
@@ -3050,11 +2975,7 @@ export class ResumePoolEvent implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): ResumePoolEvent {
@@ -3192,10 +3113,7 @@ export class ResumeTokenPoolEvent implements StructClass {
 
     static get bcs() {
         return bcs.struct("ResumeTokenPoolEvent", {
-            sender: bcs.bytes(32).transform({
-                input: (val: string) => fromHEX(val),
-                output: (val: Uint8Array) => toHEX(val),
-            }),
+            sender: bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
             index: bcs.u64(),
             liquidity_token: TypeName.bcs,
             u64_padding: bcs.vector(bcs.u64()),
@@ -3238,11 +3156,7 @@ export class ResumeTokenPoolEvent implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): ResumeTokenPoolEvent {
@@ -3463,11 +3377,7 @@ export class SpotConfig implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): SpotConfig {
@@ -3654,11 +3564,7 @@ export class StartRemoveLiquidityTokenProcessEvent implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): StartRemoveLiquidityTokenProcessEvent {
@@ -3790,10 +3696,7 @@ export class SuspendPoolEvent implements StructClass {
 
     static get bcs() {
         return bcs.struct("SuspendPoolEvent", {
-            sender: bcs.bytes(32).transform({
-                input: (val: string) => fromHEX(val),
-                output: (val: Uint8Array) => toHEX(val),
-            }),
+            sender: bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
             index: bcs.u64(),
             u64_padding: bcs.vector(bcs.u64()),
         });
@@ -3832,11 +3735,7 @@ export class SuspendPoolEvent implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): SuspendPoolEvent {
@@ -3974,10 +3873,7 @@ export class SuspendTokenPoolEvent implements StructClass {
 
     static get bcs() {
         return bcs.struct("SuspendTokenPoolEvent", {
-            sender: bcs.bytes(32).transform({
-                input: (val: string) => fromHEX(val),
-                output: (val: Uint8Array) => toHEX(val),
-            }),
+            sender: bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
             index: bcs.u64(),
             liquidity_token: TypeName.bcs,
             u64_padding: bcs.vector(bcs.u64()),
@@ -4020,11 +3916,7 @@ export class SuspendTokenPoolEvent implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): SuspendTokenPoolEvent {
@@ -4178,10 +4070,7 @@ export class SwapEvent implements StructClass {
 
     static get bcs() {
         return bcs.struct("SwapEvent", {
-            sender: bcs.bytes(32).transform({
-                input: (val: string) => fromHEX(val),
-                output: (val: Uint8Array) => toHEX(val),
-            }),
+            sender: bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
             index: bcs.u64(),
             from_token_type: TypeName.bcs,
             from_amount: bcs.u64(),
@@ -4248,11 +4137,7 @@ export class SwapEvent implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): SwapEvent {
@@ -4430,11 +4315,7 @@ export class TokenPool implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): TokenPool {
@@ -4643,11 +4524,7 @@ export class UpdateBorrowInfoEvent implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): UpdateBorrowInfoEvent {
@@ -4802,10 +4679,7 @@ export class UpdateLiquidityValueEvent implements StructClass {
 
     static get bcs() {
         return bcs.struct("UpdateLiquidityValueEvent", {
-            sender: bcs.bytes(32).transform({
-                input: (val: string) => fromHEX(val),
-                output: (val: Uint8Array) => toHEX(val),
-            }),
+            sender: bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
             index: bcs.u64(),
             liquidity_token: TypeName.bcs,
             price: bcs.u64(),
@@ -4860,11 +4734,7 @@ export class UpdateLiquidityValueEvent implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): UpdateLiquidityValueEvent {
@@ -5012,10 +4882,7 @@ export class UpdateMarginConfigEvent implements StructClass {
 
     static get bcs() {
         return bcs.struct("UpdateMarginConfigEvent", {
-            sender: bcs.bytes(32).transform({
-                input: (val: string) => fromHEX(val),
-                output: (val: Uint8Array) => toHEX(val),
-            }),
+            sender: bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
             index: bcs.u64(),
             liquidity_token_type: TypeName.bcs,
             previous_margin_config: MarginConfig.bcs,
@@ -5066,11 +4933,7 @@ export class UpdateMarginConfigEvent implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): UpdateMarginConfigEvent {
@@ -5217,10 +5080,7 @@ export class UpdateSpotConfigEvent implements StructClass {
 
     static get bcs() {
         return bcs.struct("UpdateSpotConfigEvent", {
-            sender: bcs.bytes(32).transform({
-                input: (val: string) => fromHEX(val),
-                output: (val: Uint8Array) => toHEX(val),
-            }),
+            sender: bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
             index: bcs.u64(),
             liquidity_token_type: TypeName.bcs,
             previous_spot_config: SpotConfig.bcs,
@@ -5271,11 +5131,7 @@ export class UpdateSpotConfigEvent implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): UpdateSpotConfigEvent {

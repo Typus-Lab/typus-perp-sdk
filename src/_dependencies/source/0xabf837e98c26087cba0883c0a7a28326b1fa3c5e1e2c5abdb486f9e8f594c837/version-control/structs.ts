@@ -90,9 +90,7 @@ export class V__0_1_1 implements StructClass {
     }
 
     static fromFields(fields: Record<string, any>): V__0_1_1 {
-        return V__0_1_1.reified().new({
-            dummyField: decodeFromFields("bool", fields.dummy_field),
-        });
+        return V__0_1_1.reified().new({ dummyField: decodeFromFields("bool", fields.dummy_field) });
     }
 
     static fromFieldsWithTypes(item: FieldsWithTypes): V__0_1_1 {
@@ -100,9 +98,7 @@ export class V__0_1_1 implements StructClass {
             throw new Error("not a V__0_1_1 type");
         }
 
-        return V__0_1_1.reified().new({
-            dummyField: decodeFromFieldsWithTypes("bool", item.fields.dummy_field),
-        });
+        return V__0_1_1.reified().new({ dummyField: decodeFromFieldsWithTypes("bool", item.fields.dummy_field) });
     }
 
     static fromBcs(data: Uint8Array): V__0_1_1 {
@@ -116,17 +112,11 @@ export class V__0_1_1 implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): V__0_1_1 {
-        return V__0_1_1.reified().new({
-            dummyField: decodeFromJSONField("bool", field.dummyField),
-        });
+        return V__0_1_1.reified().new({ dummyField: decodeFromJSONField("bool", field.dummyField) });
     }
 
     static fromJSON(json: Record<string, any>): V__0_1_1 {
@@ -249,9 +239,7 @@ export class V__0_1_2 implements StructClass {
     }
 
     static fromFields(fields: Record<string, any>): V__0_1_2 {
-        return V__0_1_2.reified().new({
-            dummyField: decodeFromFields("bool", fields.dummy_field),
-        });
+        return V__0_1_2.reified().new({ dummyField: decodeFromFields("bool", fields.dummy_field) });
     }
 
     static fromFieldsWithTypes(item: FieldsWithTypes): V__0_1_2 {
@@ -259,9 +247,7 @@ export class V__0_1_2 implements StructClass {
             throw new Error("not a V__0_1_2 type");
         }
 
-        return V__0_1_2.reified().new({
-            dummyField: decodeFromFieldsWithTypes("bool", item.fields.dummy_field),
-        });
+        return V__0_1_2.reified().new({ dummyField: decodeFromFieldsWithTypes("bool", item.fields.dummy_field) });
     }
 
     static fromBcs(data: Uint8Array): V__0_1_2 {
@@ -275,17 +261,11 @@ export class V__0_1_2 implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): V__0_1_2 {
-        return V__0_1_2.reified().new({
-            dummyField: decodeFromJSONField("bool", field.dummyField),
-        });
+        return V__0_1_2.reified().new({ dummyField: decodeFromJSONField("bool", field.dummyField) });
     }
 
     static fromJSON(json: Record<string, any>): V__0_1_2 {
@@ -408,9 +388,7 @@ export class V__DUMMY implements StructClass {
     }
 
     static fromFields(fields: Record<string, any>): V__DUMMY {
-        return V__DUMMY.reified().new({
-            dummyField: decodeFromFields("bool", fields.dummy_field),
-        });
+        return V__DUMMY.reified().new({ dummyField: decodeFromFields("bool", fields.dummy_field) });
     }
 
     static fromFieldsWithTypes(item: FieldsWithTypes): V__DUMMY {
@@ -418,9 +396,7 @@ export class V__DUMMY implements StructClass {
             throw new Error("not a V__DUMMY type");
         }
 
-        return V__DUMMY.reified().new({
-            dummyField: decodeFromFieldsWithTypes("bool", item.fields.dummy_field),
-        });
+        return V__DUMMY.reified().new({ dummyField: decodeFromFieldsWithTypes("bool", item.fields.dummy_field) });
     }
 
     static fromBcs(data: Uint8Array): V__DUMMY {
@@ -434,17 +410,11 @@ export class V__DUMMY implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): V__DUMMY {
-        return V__DUMMY.reified().new({
-            dummyField: decodeFromJSONField("bool", field.dummyField),
-        });
+        return V__DUMMY.reified().new({ dummyField: decodeFromJSONField("bool", field.dummyField) });
     }
 
     static fromJSON(json: Record<string, any>): V__DUMMY {

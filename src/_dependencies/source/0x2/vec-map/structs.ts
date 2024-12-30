@@ -155,11 +155,7 @@ export class Entry<K extends TypeArgument, V extends TypeArgument> implements St
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField<K extends Reified<TypeArgument, any>, V extends Reified<TypeArgument, any>>(
@@ -370,11 +366,7 @@ export class VecMap<K extends TypeArgument, V extends TypeArgument> implements S
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField<K extends Reified<TypeArgument, any>, V extends Reified<TypeArgument, any>>(

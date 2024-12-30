@@ -90,9 +90,7 @@ export class PriceData implements StructClass {
     }
 
     static fromFields(fields: Record<string, any>): PriceData {
-        return PriceData.reified().new({
-            dummyField: decodeFromFields("bool", fields.dummy_field),
-        });
+        return PriceData.reified().new({ dummyField: decodeFromFields("bool", fields.dummy_field) });
     }
 
     static fromFieldsWithTypes(item: FieldsWithTypes): PriceData {
@@ -100,9 +98,7 @@ export class PriceData implements StructClass {
             throw new Error("not a PriceData type");
         }
 
-        return PriceData.reified().new({
-            dummyField: decodeFromFieldsWithTypes("bool", item.fields.dummy_field),
-        });
+        return PriceData.reified().new({ dummyField: decodeFromFieldsWithTypes("bool", item.fields.dummy_field) });
     }
 
     static fromBcs(data: Uint8Array): PriceData {
@@ -116,17 +112,11 @@ export class PriceData implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): PriceData {
-        return PriceData.reified().new({
-            dummyField: decodeFromJSONField("bool", field.dummyField),
-        });
+        return PriceData.reified().new({ dummyField: decodeFromJSONField("bool", field.dummyField) });
     }
 
     static fromJSON(json: Record<string, any>): PriceData {

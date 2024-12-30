@@ -141,11 +141,7 @@ export class Set<A extends TypeArgument> implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField<A extends Reified<TypeArgument, any>>(typeArg: A, field: any): Set<ToTypeArgument<A>> {
@@ -286,9 +282,7 @@ export class Unit implements StructClass {
     }
 
     static fromFields(fields: Record<string, any>): Unit {
-        return Unit.reified().new({
-            dummyField: decodeFromFields("bool", fields.dummy_field),
-        });
+        return Unit.reified().new({ dummyField: decodeFromFields("bool", fields.dummy_field) });
     }
 
     static fromFieldsWithTypes(item: FieldsWithTypes): Unit {
@@ -296,9 +290,7 @@ export class Unit implements StructClass {
             throw new Error("not a Unit type");
         }
 
-        return Unit.reified().new({
-            dummyField: decodeFromFieldsWithTypes("bool", item.fields.dummy_field),
-        });
+        return Unit.reified().new({ dummyField: decodeFromFieldsWithTypes("bool", item.fields.dummy_field) });
     }
 
     static fromBcs(data: Uint8Array): Unit {
@@ -312,17 +304,11 @@ export class Unit implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): Unit {
-        return Unit.reified().new({
-            dummyField: decodeFromJSONField("bool", field.dummyField),
-        });
+        return Unit.reified().new({ dummyField: decodeFromJSONField("bool", field.dummyField) });
     }
 
     static fromJSON(json: Record<string, any>): Unit {

@@ -92,9 +92,7 @@ export class CurrentVersion implements StructClass {
     }
 
     static fromFields(fields: Record<string, any>): CurrentVersion {
-        return CurrentVersion.reified().new({
-            dummyField: decodeFromFields("bool", fields.dummy_field),
-        });
+        return CurrentVersion.reified().new({ dummyField: decodeFromFields("bool", fields.dummy_field) });
     }
 
     static fromFieldsWithTypes(item: FieldsWithTypes): CurrentVersion {
@@ -102,9 +100,7 @@ export class CurrentVersion implements StructClass {
             throw new Error("not a CurrentVersion type");
         }
 
-        return CurrentVersion.reified().new({
-            dummyField: decodeFromFieldsWithTypes("bool", item.fields.dummy_field),
-        });
+        return CurrentVersion.reified().new({ dummyField: decodeFromFieldsWithTypes("bool", item.fields.dummy_field) });
     }
 
     static fromBcs(data: Uint8Array): CurrentVersion {
@@ -118,17 +114,11 @@ export class CurrentVersion implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): CurrentVersion {
-        return CurrentVersion.reified().new({
-            dummyField: decodeFromJSONField("bool", field.dummyField),
-        });
+        return CurrentVersion.reified().new({ dummyField: decodeFromJSONField("bool", field.dummyField) });
     }
 
     static fromJSON(json: Record<string, any>): CurrentVersion {
@@ -251,9 +241,7 @@ export class CurrentPackage implements StructClass {
     }
 
     static fromFields(fields: Record<string, any>): CurrentPackage {
-        return CurrentPackage.reified().new({
-            dummyField: decodeFromFields("bool", fields.dummy_field),
-        });
+        return CurrentPackage.reified().new({ dummyField: decodeFromFields("bool", fields.dummy_field) });
     }
 
     static fromFieldsWithTypes(item: FieldsWithTypes): CurrentPackage {
@@ -261,9 +249,7 @@ export class CurrentPackage implements StructClass {
             throw new Error("not a CurrentPackage type");
         }
 
-        return CurrentPackage.reified().new({
-            dummyField: decodeFromFieldsWithTypes("bool", item.fields.dummy_field),
-        });
+        return CurrentPackage.reified().new({ dummyField: decodeFromFieldsWithTypes("bool", item.fields.dummy_field) });
     }
 
     static fromBcs(data: Uint8Array): CurrentPackage {
@@ -277,17 +263,11 @@ export class CurrentPackage implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): CurrentPackage {
-        return CurrentPackage.reified().new({
-            dummyField: decodeFromJSONField("bool", field.dummyField),
-        });
+        return CurrentPackage.reified().new({ dummyField: decodeFromJSONField("bool", field.dummyField) });
     }
 
     static fromJSON(json: Record<string, any>): CurrentPackage {
@@ -443,11 +423,7 @@ export class PackageInfo implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): PackageInfo {
@@ -577,9 +553,7 @@ export class PendingPackage implements StructClass {
     }
 
     static fromFields(fields: Record<string, any>): PendingPackage {
-        return PendingPackage.reified().new({
-            dummyField: decodeFromFields("bool", fields.dummy_field),
-        });
+        return PendingPackage.reified().new({ dummyField: decodeFromFields("bool", fields.dummy_field) });
     }
 
     static fromFieldsWithTypes(item: FieldsWithTypes): PendingPackage {
@@ -587,9 +561,7 @@ export class PendingPackage implements StructClass {
             throw new Error("not a PendingPackage type");
         }
 
-        return PendingPackage.reified().new({
-            dummyField: decodeFromFieldsWithTypes("bool", item.fields.dummy_field),
-        });
+        return PendingPackage.reified().new({ dummyField: decodeFromFieldsWithTypes("bool", item.fields.dummy_field) });
     }
 
     static fromBcs(data: Uint8Array): PendingPackage {
@@ -603,17 +575,11 @@ export class PendingPackage implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): PendingPackage {
-        return PendingPackage.reified().new({
-            dummyField: decodeFromJSONField("bool", field.dummyField),
-        });
+        return PendingPackage.reified().new({ dummyField: decodeFromJSONField("bool", field.dummyField) });
     }
 
     static fromJSON(json: Record<string, any>): PendingPackage {

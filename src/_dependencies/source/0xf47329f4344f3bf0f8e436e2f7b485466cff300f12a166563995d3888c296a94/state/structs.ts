@@ -99,9 +99,7 @@ export class LatestOnly implements StructClass {
     }
 
     static fromFields(fields: Record<string, any>): LatestOnly {
-        return LatestOnly.reified().new({
-            dummyField: decodeFromFields("bool", fields.dummy_field),
-        });
+        return LatestOnly.reified().new({ dummyField: decodeFromFields("bool", fields.dummy_field) });
     }
 
     static fromFieldsWithTypes(item: FieldsWithTypes): LatestOnly {
@@ -109,9 +107,7 @@ export class LatestOnly implements StructClass {
             throw new Error("not a LatestOnly type");
         }
 
-        return LatestOnly.reified().new({
-            dummyField: decodeFromFieldsWithTypes("bool", item.fields.dummy_field),
-        });
+        return LatestOnly.reified().new({ dummyField: decodeFromFieldsWithTypes("bool", item.fields.dummy_field) });
     }
 
     static fromBcs(data: Uint8Array): LatestOnly {
@@ -125,17 +121,11 @@ export class LatestOnly implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): LatestOnly {
-        return LatestOnly.reified().new({
-            dummyField: decodeFromJSONField("bool", field.dummyField),
-        });
+        return LatestOnly.reified().new({ dummyField: decodeFromJSONField("bool", field.dummyField) });
     }
 
     static fromJSON(json: Record<string, any>): LatestOnly {
@@ -346,11 +336,7 @@ export class State implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): State {

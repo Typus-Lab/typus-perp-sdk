@@ -85,17 +85,12 @@ export class ID implements StructClass {
 
     static get bcs() {
         return bcs.struct("ID", {
-            bytes: bcs.bytes(32).transform({
-                input: (val: string) => fromHEX(val),
-                output: (val: Uint8Array) => toHEX(val),
-            }),
+            bytes: bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
         });
     }
 
     static fromFields(fields: Record<string, any>): ID {
-        return ID.reified().new({
-            bytes: decodeFromFields("address", fields.bytes),
-        });
+        return ID.reified().new({ bytes: decodeFromFields("address", fields.bytes) });
     }
 
     static fromFieldsWithTypes(item: FieldsWithTypes): ID {
@@ -103,9 +98,7 @@ export class ID implements StructClass {
             throw new Error("not a ID type");
         }
 
-        return ID.reified().new({
-            bytes: decodeFromFieldsWithTypes("address", item.fields.bytes),
-        });
+        return ID.reified().new({ bytes: decodeFromFieldsWithTypes("address", item.fields.bytes) });
     }
 
     static fromBcs(data: Uint8Array): ID {
@@ -119,17 +112,11 @@ export class ID implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): ID {
-        return ID.reified().new({
-            bytes: decodeFromJSONField("address", field.bytes),
-        });
+        return ID.reified().new({ bytes: decodeFromJSONField("address", field.bytes) });
     }
 
     static fromJSON(json: Record<string, any>): ID {
@@ -260,9 +247,7 @@ export class UID implements StructClass {
             throw new Error("not a UID type");
         }
 
-        return UID.reified().new({
-            id: decodeFromFieldsWithTypes(ID.reified(), item.fields.id),
-        });
+        return UID.reified().new({ id: decodeFromFieldsWithTypes(ID.reified(), item.fields.id) });
     }
 
     static fromBcs(data: Uint8Array): UID {
@@ -276,17 +261,11 @@ export class UID implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): UID {
-        return UID.reified().new({
-            id: decodeFromJSONField(ID.reified(), field.id),
-        });
+        return UID.reified().new({ id: decodeFromJSONField(ID.reified(), field.id) });
     }
 
     static fromJSON(json: Record<string, any>): UID {

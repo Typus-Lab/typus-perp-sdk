@@ -91,9 +91,7 @@ export class DeployerCap implements StructClass {
     }
 
     static fromFields(fields: Record<string, any>): DeployerCap {
-        return DeployerCap.reified().new({
-            id: decodeFromFields(UID.reified(), fields.id),
-        });
+        return DeployerCap.reified().new({ id: decodeFromFields(UID.reified(), fields.id) });
     }
 
     static fromFieldsWithTypes(item: FieldsWithTypes): DeployerCap {
@@ -101,9 +99,7 @@ export class DeployerCap implements StructClass {
             throw new Error("not a DeployerCap type");
         }
 
-        return DeployerCap.reified().new({
-            id: decodeFromFieldsWithTypes(UID.reified(), item.fields.id),
-        });
+        return DeployerCap.reified().new({ id: decodeFromFieldsWithTypes(UID.reified(), item.fields.id) });
     }
 
     static fromBcs(data: Uint8Array): DeployerCap {
@@ -117,17 +113,11 @@ export class DeployerCap implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): DeployerCap {
-        return DeployerCap.reified().new({
-            id: decodeFromJSONField(UID.reified(), field.id),
-        });
+        return DeployerCap.reified().new({ id: decodeFromJSONField(UID.reified(), field.id) });
     }
 
     static fromJSON(json: Record<string, any>): DeployerCap {

@@ -102,10 +102,7 @@ export class ExpDownEvent implements StructClass {
 
     static get bcs() {
         return bcs.struct("ExpDownEvent", {
-            tails: bcs.bytes(32).transform({
-                input: (val: string) => fromHEX(val),
-                output: (val: Uint8Array) => toHEX(val),
-            }),
+            tails: bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
             log: bcs.vector(bcs.u64()),
             bcs_padding: bcs.vector(bcs.vector(bcs.u8())),
         });
@@ -144,11 +141,7 @@ export class ExpDownEvent implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): ExpDownEvent {
@@ -280,10 +273,7 @@ export class ExpUpEvent implements StructClass {
 
     static get bcs() {
         return bcs.struct("ExpUpEvent", {
-            tails: bcs.bytes(32).transform({
-                input: (val: string) => fromHEX(val),
-                output: (val: Uint8Array) => toHEX(val),
-            }),
+            tails: bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
             log: bcs.vector(bcs.u64()),
             bcs_padding: bcs.vector(bcs.vector(bcs.u8())),
         });
@@ -322,11 +312,7 @@ export class ExpUpEvent implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): ExpUpEvent {
@@ -458,10 +444,7 @@ export class LevelUpEvent implements StructClass {
 
     static get bcs() {
         return bcs.struct("LevelUpEvent", {
-            tails: bcs.bytes(32).transform({
-                input: (val: string) => fromHEX(val),
-                output: (val: Uint8Array) => toHEX(val),
-            }),
+            tails: bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
             log: bcs.vector(bcs.u64()),
             bcs_padding: bcs.vector(bcs.vector(bcs.u8())),
         });
@@ -500,11 +483,7 @@ export class LevelUpEvent implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): LevelUpEvent {
@@ -688,11 +667,7 @@ export class ClaimProfitSharingEvent implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): ClaimProfitSharingEvent {
@@ -864,11 +839,7 @@ export class DailySignUpEvent implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): DailySignUpEvent {
@@ -1045,11 +1016,7 @@ export class RemoveProfitSharingEvent implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): RemoveProfitSharingEvent {
@@ -1240,11 +1207,7 @@ export class SetProfitSharingEvent implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): SetProfitSharingEvent {
@@ -1378,10 +1341,7 @@ export class StakeTailsEvent implements StructClass {
 
     static get bcs() {
         return bcs.struct("StakeTailsEvent", {
-            tails: bcs.bytes(32).transform({
-                input: (val: string) => fromHEX(val),
-                output: (val: Uint8Array) => toHEX(val),
-            }),
+            tails: bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
             log: bcs.vector(bcs.u64()),
             bcs_padding: bcs.vector(bcs.vector(bcs.u8())),
         });
@@ -1420,11 +1380,7 @@ export class StakeTailsEvent implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): StakeTailsEvent {
@@ -1559,10 +1515,7 @@ export class StakingInfo implements StructClass {
 
     static get bcs() {
         return bcs.struct("StakingInfo", {
-            user: bcs.bytes(32).transform({
-                input: (val: string) => fromHEX(val),
-                output: (val: Uint8Array) => toHEX(val),
-            }),
+            user: bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
             tails: bcs.vector(bcs.u64()),
             profits: bcs.vector(bcs.u64()),
             u64_padding: bcs.vector(bcs.u64()),
@@ -1605,11 +1558,7 @@ export class StakingInfo implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): StakingInfo {
@@ -1825,11 +1774,7 @@ export class TailsStakingRegistry implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): TailsStakingRegistry {
@@ -1972,14 +1917,8 @@ export class TransferTailsEvent implements StructClass {
 
     static get bcs() {
         return bcs.struct("TransferTailsEvent", {
-            tails: bcs.bytes(32).transform({
-                input: (val: string) => fromHEX(val),
-                output: (val: Uint8Array) => toHEX(val),
-            }),
-            recipient: bcs.bytes(32).transform({
-                input: (val: string) => fromHEX(val),
-                output: (val: Uint8Array) => toHEX(val),
-            }),
+            tails: bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
+            recipient: bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
             log: bcs.vector(bcs.u64()),
             bcs_padding: bcs.vector(bcs.vector(bcs.u8())),
         });
@@ -2021,11 +1960,7 @@ export class TransferTailsEvent implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): TransferTailsEvent {
@@ -2161,10 +2096,7 @@ export class UnstakeTailsEvent implements StructClass {
 
     static get bcs() {
         return bcs.struct("UnstakeTailsEvent", {
-            tails: bcs.bytes(32).transform({
-                input: (val: string) => fromHEX(val),
-                output: (val: Uint8Array) => toHEX(val),
-            }),
+            tails: bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
             log: bcs.vector(bcs.u64()),
             bcs_padding: bcs.vector(bcs.vector(bcs.u8())),
         });
@@ -2203,11 +2135,7 @@ export class UnstakeTailsEvent implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): UnstakeTailsEvent {
@@ -2387,11 +2315,7 @@ export class UpdateTailsStakingRegistryConfigEvent implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): UpdateTailsStakingRegistryConfigEvent {

@@ -5,17 +5,11 @@ import { LpUserShare } from "./structs";
 import { Transaction, TransactionArgument, TransactionObjectInput } from "@mysten/sui/transactions";
 
 export function multiplier(tx: Transaction, decimal: bigint | TransactionArgument) {
-    return tx.moveCall({
-        target: `${PUBLISHED_AT}::stake_pool::multiplier`,
-        arguments: [pure(tx, decimal, `u64`)],
-    });
+    return tx.moveCall({ target: `${PUBLISHED_AT}::stake_pool::multiplier`, arguments: [pure(tx, decimal, `u64`)] });
 }
 
 export function init(tx: Transaction) {
-    return tx.moveCall({
-        target: `${PUBLISHED_AT}::stake_pool::init`,
-        arguments: [],
-    });
+    return tx.moveCall({ target: `${PUBLISHED_AT}::stake_pool::init`, arguments: [] });
 }
 
 export interface UnsubscribeArgs {
@@ -181,17 +175,11 @@ export function getIncentive(tx: Transaction, args: GetIncentiveArgs) {
 }
 
 export function getIncentiveTokens(tx: Transaction, stakePool: TransactionObjectInput) {
-    return tx.moveCall({
-        target: `${PUBLISHED_AT}::stake_pool::get_incentive_tokens`,
-        arguments: [obj(tx, stakePool)],
-    });
+    return tx.moveCall({ target: `${PUBLISHED_AT}::stake_pool::get_incentive_tokens`, arguments: [obj(tx, stakePool)] });
 }
 
 export function getLastIncentivePriceIndex(tx: Transaction, stakePool: TransactionObjectInput) {
-    return tx.moveCall({
-        target: `${PUBLISHED_AT}::stake_pool::get_last_incentive_price_index`,
-        arguments: [obj(tx, stakePool)],
-    });
+    return tx.moveCall({ target: `${PUBLISHED_AT}::stake_pool::get_last_incentive_price_index`, arguments: [obj(tx, stakePool)] });
 }
 
 export interface GetMutIncentiveArgs {

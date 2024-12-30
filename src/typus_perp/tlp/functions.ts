@@ -29,17 +29,11 @@ export function mint(tx: Transaction, typeArg: string, args: MintArgs) {
 }
 
 export function totalSupply(tx: Transaction, treasuryCap: TransactionObjectInput) {
-    return tx.moveCall({
-        target: `${PUBLISHED_AT}::tlp::total_supply`,
-        arguments: [obj(tx, treasuryCap)],
-    });
+    return tx.moveCall({ target: `${PUBLISHED_AT}::tlp::total_supply`, arguments: [obj(tx, treasuryCap)] });
 }
 
 export function init(tx: Transaction, witness: TransactionObjectInput) {
-    return tx.moveCall({
-        target: `${PUBLISHED_AT}::tlp::init`,
-        arguments: [obj(tx, witness)],
-    });
+    return tx.moveCall({ target: `${PUBLISHED_AT}::tlp::init`, arguments: [obj(tx, witness)] });
 }
 
 export interface TransferTreasuryCapArgs {

@@ -104,9 +104,7 @@ export class Wrapper<Name extends TypeArgument> implements StructClass {
     }
 
     static fromFields<Name extends Reified<TypeArgument, any>>(typeArg: Name, fields: Record<string, any>): Wrapper<ToTypeArgument<Name>> {
-        return Wrapper.reified(typeArg).new({
-            name: decodeFromFields(typeArg, fields.name),
-        });
+        return Wrapper.reified(typeArg).new({ name: decodeFromFields(typeArg, fields.name) });
     }
 
     static fromFieldsWithTypes<Name extends Reified<TypeArgument, any>>(
@@ -118,9 +116,7 @@ export class Wrapper<Name extends TypeArgument> implements StructClass {
         }
         assertFieldsWithTypesArgsMatch(item, [typeArg]);
 
-        return Wrapper.reified(typeArg).new({
-            name: decodeFromFieldsWithTypes(typeArg, item.fields.name),
-        });
+        return Wrapper.reified(typeArg).new({ name: decodeFromFieldsWithTypes(typeArg, item.fields.name) });
     }
 
     static fromBcs<Name extends Reified<TypeArgument, any>>(typeArg: Name, data: Uint8Array): Wrapper<ToTypeArgument<Name>> {
@@ -136,17 +132,11 @@ export class Wrapper<Name extends TypeArgument> implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField<Name extends Reified<TypeArgument, any>>(typeArg: Name, field: any): Wrapper<ToTypeArgument<Name>> {
-        return Wrapper.reified(typeArg).new({
-            name: decodeFromJSONField(typeArg, field.name),
-        });
+        return Wrapper.reified(typeArg).new({ name: decodeFromJSONField(typeArg, field.name) });
     }
 
     static fromJSON<Name extends Reified<TypeArgument, any>>(typeArg: Name, json: Record<string, any>): Wrapper<ToTypeArgument<Name>> {

@@ -98,9 +98,7 @@ export class ManagerCap implements StructClass {
     }
 
     static fromFields(fields: Record<string, any>): ManagerCap {
-        return ManagerCap.reified().new({
-            id: decodeFromFields(UID.reified(), fields.id),
-        });
+        return ManagerCap.reified().new({ id: decodeFromFields(UID.reified(), fields.id) });
     }
 
     static fromFieldsWithTypes(item: FieldsWithTypes): ManagerCap {
@@ -108,9 +106,7 @@ export class ManagerCap implements StructClass {
             throw new Error("not a ManagerCap type");
         }
 
-        return ManagerCap.reified().new({
-            id: decodeFromFieldsWithTypes(UID.reified(), item.fields.id),
-        });
+        return ManagerCap.reified().new({ id: decodeFromFieldsWithTypes(UID.reified(), item.fields.id) });
     }
 
     static fromBcs(data: Uint8Array): ManagerCap {
@@ -124,17 +120,11 @@ export class ManagerCap implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): ManagerCap {
-        return ManagerCap.reified().new({
-            id: decodeFromJSONField(UID.reified(), field.id),
-        });
+        return ManagerCap.reified().new({ id: decodeFromJSONField(UID.reified(), field.id) });
     }
 
     static fromJSON(json: Record<string, any>): ManagerCap {
@@ -297,11 +287,7 @@ export class ExpDownEvent implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): ExpDownEvent {
@@ -472,11 +458,7 @@ export class ExpUpEvent implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): ExpUpEvent {
@@ -647,11 +629,7 @@ export class FirstBidEvent implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): FirstBidEvent {
@@ -822,11 +800,7 @@ export class FirstDepositEvent implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): FirstDepositEvent {
@@ -990,11 +964,7 @@ export class LevelUpEvent implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): LevelUpEvent {
@@ -1143,10 +1113,7 @@ export class MintEvent implements StructClass {
             number: bcs.u64(),
             url: Url.bcs,
             attributes: VecMap.bcs(String.bcs, String.bcs),
-            sender: bcs.bytes(32).transform({
-                input: (val: string) => fromHEX(val),
-                output: (val: Uint8Array) => toHEX(val),
-            }),
+            sender: bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
         });
     }
 
@@ -1195,11 +1162,7 @@ export class MintEvent implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): MintEvent {
@@ -1333,10 +1296,7 @@ export class NewManagerCapEvent implements StructClass {
     static get bcs() {
         return bcs.struct("NewManagerCapEvent", {
             id: ID.bcs,
-            sender: bcs.bytes(32).transform({
-                input: (val: string) => fromHEX(val),
-                output: (val: Uint8Array) => toHEX(val),
-            }),
+            sender: bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
         });
     }
 
@@ -1370,11 +1330,7 @@ export class NewManagerCapEvent implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): NewManagerCapEvent {
@@ -1558,11 +1514,7 @@ export class Pool implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): Pool {
@@ -1698,10 +1650,7 @@ export class Royalty implements StructClass {
         return bcs.struct("Royalty", {
             id: UID.bcs,
             recipients: VecMap.bcs(
-                bcs.bytes(32).transform({
-                    input: (val: string) => fromHEX(val),
-                    output: (val: Uint8Array) => toHEX(val),
-                }),
+                bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
                 bcs.u64()
             ),
             policy_cap: TransferPolicyCap.bcs,
@@ -1741,11 +1690,7 @@ export class Royalty implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): Royalty {
@@ -1874,15 +1819,9 @@ export class RoyaltyUpdateEvent implements StructClass {
 
     static get bcs() {
         return bcs.struct("RoyaltyUpdateEvent", {
-            sender: bcs.bytes(32).transform({
-                input: (val: string) => fromHEX(val),
-                output: (val: Uint8Array) => toHEX(val),
-            }),
+            sender: bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
             recipients: VecMap.bcs(
-                bcs.bytes(32).transform({
-                    input: (val: string) => fromHEX(val),
-                    output: (val: Uint8Array) => toHEX(val),
-                }),
+                bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
                 bcs.u64()
             ),
         });
@@ -1918,11 +1857,7 @@ export class RoyaltyUpdateEvent implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): RoyaltyUpdateEvent {
@@ -2052,9 +1987,7 @@ export class TYPUS_NFT implements StructClass {
     }
 
     static fromFields(fields: Record<string, any>): TYPUS_NFT {
-        return TYPUS_NFT.reified().new({
-            dummyField: decodeFromFields("bool", fields.dummy_field),
-        });
+        return TYPUS_NFT.reified().new({ dummyField: decodeFromFields("bool", fields.dummy_field) });
     }
 
     static fromFieldsWithTypes(item: FieldsWithTypes): TYPUS_NFT {
@@ -2062,9 +1995,7 @@ export class TYPUS_NFT implements StructClass {
             throw new Error("not a TYPUS_NFT type");
         }
 
-        return TYPUS_NFT.reified().new({
-            dummyField: decodeFromFieldsWithTypes("bool", item.fields.dummy_field),
-        });
+        return TYPUS_NFT.reified().new({ dummyField: decodeFromFieldsWithTypes("bool", item.fields.dummy_field) });
     }
 
     static fromBcs(data: Uint8Array): TYPUS_NFT {
@@ -2078,17 +2009,11 @@ export class TYPUS_NFT implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): TYPUS_NFT {
-        return TYPUS_NFT.reified().new({
-            dummyField: decodeFromJSONField("bool", field.dummyField),
-        });
+        return TYPUS_NFT.reified().new({ dummyField: decodeFromJSONField("bool", field.dummyField) });
     }
 
     static fromJSON(json: Record<string, any>): TYPUS_NFT {
@@ -2314,11 +2239,7 @@ export class Tails implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): Tails {
@@ -2462,10 +2383,7 @@ export class Whitelist implements StructClass {
     }
 
     static fromFields(fields: Record<string, any>): Whitelist {
-        return Whitelist.reified().new({
-            id: decodeFromFields(UID.reified(), fields.id),
-            for: decodeFromFields(ID.reified(), fields.for),
-        });
+        return Whitelist.reified().new({ id: decodeFromFields(UID.reified(), fields.id), for: decodeFromFields(ID.reified(), fields.for) });
     }
 
     static fromFieldsWithTypes(item: FieldsWithTypes): Whitelist {
@@ -2491,11 +2409,7 @@ export class Whitelist implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): Whitelist {

@@ -90,9 +90,7 @@ export class SUI implements StructClass {
     }
 
     static fromFields(fields: Record<string, any>): SUI {
-        return SUI.reified().new({
-            dummyField: decodeFromFields("bool", fields.dummy_field),
-        });
+        return SUI.reified().new({ dummyField: decodeFromFields("bool", fields.dummy_field) });
     }
 
     static fromFieldsWithTypes(item: FieldsWithTypes): SUI {
@@ -100,9 +98,7 @@ export class SUI implements StructClass {
             throw new Error("not a SUI type");
         }
 
-        return SUI.reified().new({
-            dummyField: decodeFromFieldsWithTypes("bool", item.fields.dummy_field),
-        });
+        return SUI.reified().new({ dummyField: decodeFromFieldsWithTypes("bool", item.fields.dummy_field) });
     }
 
     static fromBcs(data: Uint8Array): SUI {
@@ -116,17 +112,11 @@ export class SUI implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): SUI {
-        return SUI.reified().new({
-            dummyField: decodeFromJSONField("bool", field.dummyField),
-        });
+        return SUI.reified().new({ dummyField: decodeFromJSONField("bool", field.dummyField) });
     }
 
     static fromJSON(json: Record<string, any>): SUI {

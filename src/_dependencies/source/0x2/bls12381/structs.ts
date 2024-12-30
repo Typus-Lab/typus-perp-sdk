@@ -90,9 +90,7 @@ export class G1 implements StructClass {
     }
 
     static fromFields(fields: Record<string, any>): G1 {
-        return G1.reified().new({
-            dummyField: decodeFromFields("bool", fields.dummy_field),
-        });
+        return G1.reified().new({ dummyField: decodeFromFields("bool", fields.dummy_field) });
     }
 
     static fromFieldsWithTypes(item: FieldsWithTypes): G1 {
@@ -100,9 +98,7 @@ export class G1 implements StructClass {
             throw new Error("not a G1 type");
         }
 
-        return G1.reified().new({
-            dummyField: decodeFromFieldsWithTypes("bool", item.fields.dummy_field),
-        });
+        return G1.reified().new({ dummyField: decodeFromFieldsWithTypes("bool", item.fields.dummy_field) });
     }
 
     static fromBcs(data: Uint8Array): G1 {
@@ -116,17 +112,11 @@ export class G1 implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): G1 {
-        return G1.reified().new({
-            dummyField: decodeFromJSONField("bool", field.dummyField),
-        });
+        return G1.reified().new({ dummyField: decodeFromJSONField("bool", field.dummyField) });
     }
 
     static fromJSON(json: Record<string, any>): G1 {
@@ -249,9 +239,7 @@ export class G2 implements StructClass {
     }
 
     static fromFields(fields: Record<string, any>): G2 {
-        return G2.reified().new({
-            dummyField: decodeFromFields("bool", fields.dummy_field),
-        });
+        return G2.reified().new({ dummyField: decodeFromFields("bool", fields.dummy_field) });
     }
 
     static fromFieldsWithTypes(item: FieldsWithTypes): G2 {
@@ -259,9 +247,7 @@ export class G2 implements StructClass {
             throw new Error("not a G2 type");
         }
 
-        return G2.reified().new({
-            dummyField: decodeFromFieldsWithTypes("bool", item.fields.dummy_field),
-        });
+        return G2.reified().new({ dummyField: decodeFromFieldsWithTypes("bool", item.fields.dummy_field) });
     }
 
     static fromBcs(data: Uint8Array): G2 {
@@ -275,17 +261,11 @@ export class G2 implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): G2 {
-        return G2.reified().new({
-            dummyField: decodeFromJSONField("bool", field.dummyField),
-        });
+        return G2.reified().new({ dummyField: decodeFromJSONField("bool", field.dummyField) });
     }
 
     static fromJSON(json: Record<string, any>): G2 {
@@ -408,9 +388,7 @@ export class GT implements StructClass {
     }
 
     static fromFields(fields: Record<string, any>): GT {
-        return GT.reified().new({
-            dummyField: decodeFromFields("bool", fields.dummy_field),
-        });
+        return GT.reified().new({ dummyField: decodeFromFields("bool", fields.dummy_field) });
     }
 
     static fromFieldsWithTypes(item: FieldsWithTypes): GT {
@@ -418,9 +396,7 @@ export class GT implements StructClass {
             throw new Error("not a GT type");
         }
 
-        return GT.reified().new({
-            dummyField: decodeFromFieldsWithTypes("bool", item.fields.dummy_field),
-        });
+        return GT.reified().new({ dummyField: decodeFromFieldsWithTypes("bool", item.fields.dummy_field) });
     }
 
     static fromBcs(data: Uint8Array): GT {
@@ -434,17 +410,11 @@ export class GT implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): GT {
-        return GT.reified().new({
-            dummyField: decodeFromJSONField("bool", field.dummyField),
-        });
+        return GT.reified().new({ dummyField: decodeFromJSONField("bool", field.dummyField) });
     }
 
     static fromJSON(json: Record<string, any>): GT {
@@ -567,9 +537,7 @@ export class Scalar implements StructClass {
     }
 
     static fromFields(fields: Record<string, any>): Scalar {
-        return Scalar.reified().new({
-            dummyField: decodeFromFields("bool", fields.dummy_field),
-        });
+        return Scalar.reified().new({ dummyField: decodeFromFields("bool", fields.dummy_field) });
     }
 
     static fromFieldsWithTypes(item: FieldsWithTypes): Scalar {
@@ -577,9 +545,7 @@ export class Scalar implements StructClass {
             throw new Error("not a Scalar type");
         }
 
-        return Scalar.reified().new({
-            dummyField: decodeFromFieldsWithTypes("bool", item.fields.dummy_field),
-        });
+        return Scalar.reified().new({ dummyField: decodeFromFieldsWithTypes("bool", item.fields.dummy_field) });
     }
 
     static fromBcs(data: Uint8Array): Scalar {
@@ -593,17 +559,11 @@ export class Scalar implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): Scalar {
-        return Scalar.reified().new({
-            dummyField: decodeFromJSONField("bool", field.dummyField),
-        });
+        return Scalar.reified().new({ dummyField: decodeFromJSONField("bool", field.dummyField) });
     }
 
     static fromJSON(json: Record<string, any>): Scalar {
@@ -726,9 +686,7 @@ export class UncompressedG1 implements StructClass {
     }
 
     static fromFields(fields: Record<string, any>): UncompressedG1 {
-        return UncompressedG1.reified().new({
-            dummyField: decodeFromFields("bool", fields.dummy_field),
-        });
+        return UncompressedG1.reified().new({ dummyField: decodeFromFields("bool", fields.dummy_field) });
     }
 
     static fromFieldsWithTypes(item: FieldsWithTypes): UncompressedG1 {
@@ -736,9 +694,7 @@ export class UncompressedG1 implements StructClass {
             throw new Error("not a UncompressedG1 type");
         }
 
-        return UncompressedG1.reified().new({
-            dummyField: decodeFromFieldsWithTypes("bool", item.fields.dummy_field),
-        });
+        return UncompressedG1.reified().new({ dummyField: decodeFromFieldsWithTypes("bool", item.fields.dummy_field) });
     }
 
     static fromBcs(data: Uint8Array): UncompressedG1 {
@@ -752,17 +708,11 @@ export class UncompressedG1 implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): UncompressedG1 {
-        return UncompressedG1.reified().new({
-            dummyField: decodeFromJSONField("bool", field.dummyField),
-        });
+        return UncompressedG1.reified().new({ dummyField: decodeFromJSONField("bool", field.dummyField) });
     }
 
     static fromJSON(json: Record<string, any>): UncompressedG1 {

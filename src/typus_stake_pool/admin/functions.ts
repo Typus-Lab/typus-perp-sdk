@@ -3,10 +3,7 @@ import { obj, pure } from "../../_framework/util";
 import { Transaction, TransactionArgument, TransactionObjectInput } from "@mysten/sui/transactions";
 
 export function upgrade(tx: Transaction, version: TransactionObjectInput) {
-    return tx.moveCall({
-        target: `${PUBLISHED_AT}::admin::upgrade`,
-        arguments: [obj(tx, version)],
-    });
+    return tx.moveCall({ target: `${PUBLISHED_AT}::admin::upgrade`, arguments: [obj(tx, version)] });
 }
 
 export function init(tx: Transaction) {
@@ -14,10 +11,7 @@ export function init(tx: Transaction) {
 }
 
 export function verify(tx: Transaction, version: TransactionObjectInput) {
-    return tx.moveCall({
-        target: `${PUBLISHED_AT}::admin::verify`,
-        arguments: [obj(tx, version)],
-    });
+    return tx.moveCall({ target: `${PUBLISHED_AT}::admin::verify`, arguments: [obj(tx, version)] });
 }
 
 export interface AddAuthorizedUserArgs {
@@ -45,13 +39,6 @@ export function chargeFee(tx: Transaction, typeArg: string, args: ChargeFeeArgs)
     });
 }
 
-export function issueManagerCap(tx: Transaction, version: TransactionObjectInput) {
-    return tx.moveCall({
-        target: `${PUBLISHED_AT}::admin::issue_manager_cap`,
-        arguments: [obj(tx, version)],
-    });
-}
-
 export interface RemoveAuthorizedUserArgs {
     version: TransactionObjectInput;
     userAddress: string | TransactionArgument;
@@ -65,18 +52,11 @@ export function removeAuthorizedUser(tx: Transaction, args: RemoveAuthorizedUser
 }
 
 export function sendFee(tx: Transaction, typeArg: string, version: TransactionObjectInput) {
-    return tx.moveCall({
-        target: `${PUBLISHED_AT}::admin::send_fee`,
-        typeArguments: [typeArg],
-        arguments: [obj(tx, version)],
-    });
+    return tx.moveCall({ target: `${PUBLISHED_AT}::admin::send_fee`, typeArguments: [typeArg], arguments: [obj(tx, version)] });
 }
 
 export function versionCheck(tx: Transaction, version: TransactionObjectInput) {
-    return tx.moveCall({
-        target: `${PUBLISHED_AT}::admin::version_check`,
-        arguments: [obj(tx, version)],
-    });
+    return tx.moveCall({ target: `${PUBLISHED_AT}::admin::version_check`, arguments: [obj(tx, version)] });
 }
 
 export interface AddTailsExpAmountArgs {
@@ -149,9 +129,5 @@ export function installEcosystemManagerCapEntry(tx: Transaction, args: InstallEc
 }
 
 export function sendLiquidatorFee(tx: Transaction, typeArg: string, version: TransactionObjectInput) {
-    return tx.moveCall({
-        target: `${PUBLISHED_AT}::admin::send_liquidator_fee`,
-        typeArguments: [typeArg],
-        arguments: [obj(tx, version)],
-    });
+    return tx.moveCall({ target: `${PUBLISHED_AT}::admin::send_liquidator_fee`, typeArguments: [typeArg], arguments: [obj(tx, version)] });
 }

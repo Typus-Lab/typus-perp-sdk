@@ -124,11 +124,7 @@ export class EmitterCap implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): EmitterCap {
@@ -258,9 +254,7 @@ export class EmitterCreated implements StructClass {
     }
 
     static fromFields(fields: Record<string, any>): EmitterCreated {
-        return EmitterCreated.reified().new({
-            emitterCap: decodeFromFields(ID.reified(), fields.emitter_cap),
-        });
+        return EmitterCreated.reified().new({ emitterCap: decodeFromFields(ID.reified(), fields.emitter_cap) });
     }
 
     static fromFieldsWithTypes(item: FieldsWithTypes): EmitterCreated {
@@ -268,9 +262,7 @@ export class EmitterCreated implements StructClass {
             throw new Error("not a EmitterCreated type");
         }
 
-        return EmitterCreated.reified().new({
-            emitterCap: decodeFromFieldsWithTypes(ID.reified(), item.fields.emitter_cap),
-        });
+        return EmitterCreated.reified().new({ emitterCap: decodeFromFieldsWithTypes(ID.reified(), item.fields.emitter_cap) });
     }
 
     static fromBcs(data: Uint8Array): EmitterCreated {
@@ -284,17 +276,11 @@ export class EmitterCreated implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): EmitterCreated {
-        return EmitterCreated.reified().new({
-            emitterCap: decodeFromJSONField(ID.reified(), field.emitterCap),
-        });
+        return EmitterCreated.reified().new({ emitterCap: decodeFromJSONField(ID.reified(), field.emitterCap) });
     }
 
     static fromJSON(json: Record<string, any>): EmitterCreated {
@@ -417,9 +403,7 @@ export class EmitterDestroyed implements StructClass {
     }
 
     static fromFields(fields: Record<string, any>): EmitterDestroyed {
-        return EmitterDestroyed.reified().new({
-            emitterCap: decodeFromFields(ID.reified(), fields.emitter_cap),
-        });
+        return EmitterDestroyed.reified().new({ emitterCap: decodeFromFields(ID.reified(), fields.emitter_cap) });
     }
 
     static fromFieldsWithTypes(item: FieldsWithTypes): EmitterDestroyed {
@@ -427,9 +411,7 @@ export class EmitterDestroyed implements StructClass {
             throw new Error("not a EmitterDestroyed type");
         }
 
-        return EmitterDestroyed.reified().new({
-            emitterCap: decodeFromFieldsWithTypes(ID.reified(), item.fields.emitter_cap),
-        });
+        return EmitterDestroyed.reified().new({ emitterCap: decodeFromFieldsWithTypes(ID.reified(), item.fields.emitter_cap) });
     }
 
     static fromBcs(data: Uint8Array): EmitterDestroyed {
@@ -443,17 +425,11 @@ export class EmitterDestroyed implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): EmitterDestroyed {
-        return EmitterDestroyed.reified().new({
-            emitterCap: decodeFromJSONField(ID.reified(), field.emitterCap),
-        });
+        return EmitterDestroyed.reified().new({ emitterCap: decodeFromJSONField(ID.reified(), field.emitterCap) });
     }
 
     static fromJSON(json: Record<string, any>): EmitterDestroyed {

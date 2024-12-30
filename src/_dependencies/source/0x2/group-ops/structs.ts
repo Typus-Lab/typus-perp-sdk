@@ -108,9 +108,7 @@ export class Element<T extends PhantomTypeArgument> implements StructClass {
         typeArg: T,
         fields: Record<string, any>
     ): Element<ToPhantomTypeArgument<T>> {
-        return Element.reified(typeArg).new({
-            bytes: decodeFromFields(reified.vector("u8"), fields.bytes),
-        });
+        return Element.reified(typeArg).new({ bytes: decodeFromFields(reified.vector("u8"), fields.bytes) });
     }
 
     static fromFieldsWithTypes<T extends PhantomReified<PhantomTypeArgument>>(
@@ -122,9 +120,7 @@ export class Element<T extends PhantomTypeArgument> implements StructClass {
         }
         assertFieldsWithTypesArgsMatch(item, [typeArg]);
 
-        return Element.reified(typeArg).new({
-            bytes: decodeFromFieldsWithTypes(reified.vector("u8"), item.fields.bytes),
-        });
+        return Element.reified(typeArg).new({ bytes: decodeFromFieldsWithTypes(reified.vector("u8"), item.fields.bytes) });
     }
 
     static fromBcs<T extends PhantomReified<PhantomTypeArgument>>(typeArg: T, data: Uint8Array): Element<ToPhantomTypeArgument<T>> {
@@ -138,17 +134,11 @@ export class Element<T extends PhantomTypeArgument> implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField<T extends PhantomReified<PhantomTypeArgument>>(typeArg: T, field: any): Element<ToPhantomTypeArgument<T>> {
-        return Element.reified(typeArg).new({
-            bytes: decodeFromJSONField(reified.vector("u8"), field.bytes),
-        });
+        return Element.reified(typeArg).new({ bytes: decodeFromJSONField(reified.vector("u8"), field.bytes) });
     }
 
     static fromJSON<T extends PhantomReified<PhantomTypeArgument>>(

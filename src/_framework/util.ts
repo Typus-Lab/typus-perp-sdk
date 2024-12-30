@@ -38,10 +38,7 @@ export function splitGenericParameters(str: string, genericSeparators: [string, 
     return tok;
 }
 
-export function parseTypeName(name: string): {
-    typeName: string;
-    typeArgs: string[];
-} {
+export function parseTypeName(name: string): { typeName: string; typeArgs: string[] } {
     if (typeof name !== "string") {
         throw new Error(`Illegal type passed as a name of the type: ${name}`);
     }

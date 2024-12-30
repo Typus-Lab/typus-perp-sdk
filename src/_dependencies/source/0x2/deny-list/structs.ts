@@ -93,17 +93,12 @@ export class AddressKey implements StructClass {
 
     static get bcs() {
         return bcs.struct("AddressKey", {
-            pos0: bcs.bytes(32).transform({
-                input: (val: string) => fromHEX(val),
-                output: (val: Uint8Array) => toHEX(val),
-            }),
+            pos0: bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
         });
     }
 
     static fromFields(fields: Record<string, any>): AddressKey {
-        return AddressKey.reified().new({
-            pos0: decodeFromFields("address", fields.pos0),
-        });
+        return AddressKey.reified().new({ pos0: decodeFromFields("address", fields.pos0) });
     }
 
     static fromFieldsWithTypes(item: FieldsWithTypes): AddressKey {
@@ -111,9 +106,7 @@ export class AddressKey implements StructClass {
             throw new Error("not a AddressKey type");
         }
 
-        return AddressKey.reified().new({
-            pos0: decodeFromFieldsWithTypes("address", item.fields.pos0),
-        });
+        return AddressKey.reified().new({ pos0: decodeFromFieldsWithTypes("address", item.fields.pos0) });
     }
 
     static fromBcs(data: Uint8Array): AddressKey {
@@ -127,17 +120,11 @@ export class AddressKey implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): AddressKey {
-        return AddressKey.reified().new({
-            pos0: decodeFromJSONField("address", field.pos0),
-        });
+        return AddressKey.reified().new({ pos0: decodeFromJSONField("address", field.pos0) });
     }
 
     static fromJSON(json: Record<string, any>): AddressKey {
@@ -293,11 +280,7 @@ export class ConfigKey implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): ConfigKey {
@@ -427,9 +410,7 @@ export class ConfigWriteCap implements StructClass {
     }
 
     static fromFields(fields: Record<string, any>): ConfigWriteCap {
-        return ConfigWriteCap.reified().new({
-            dummyField: decodeFromFields("bool", fields.dummy_field),
-        });
+        return ConfigWriteCap.reified().new({ dummyField: decodeFromFields("bool", fields.dummy_field) });
     }
 
     static fromFieldsWithTypes(item: FieldsWithTypes): ConfigWriteCap {
@@ -437,9 +418,7 @@ export class ConfigWriteCap implements StructClass {
             throw new Error("not a ConfigWriteCap type");
         }
 
-        return ConfigWriteCap.reified().new({
-            dummyField: decodeFromFieldsWithTypes("bool", item.fields.dummy_field),
-        });
+        return ConfigWriteCap.reified().new({ dummyField: decodeFromFieldsWithTypes("bool", item.fields.dummy_field) });
     }
 
     static fromBcs(data: Uint8Array): ConfigWriteCap {
@@ -453,17 +432,11 @@ export class ConfigWriteCap implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): ConfigWriteCap {
-        return ConfigWriteCap.reified().new({
-            dummyField: decodeFromJSONField("bool", field.dummyField),
-        });
+        return ConfigWriteCap.reified().new({ dummyField: decodeFromJSONField("bool", field.dummyField) });
     }
 
     static fromJSON(json: Record<string, any>): ConfigWriteCap {
@@ -619,11 +592,7 @@ export class DenyList implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): DenyList {
@@ -753,9 +722,7 @@ export class GlobalPauseKey implements StructClass {
     }
 
     static fromFields(fields: Record<string, any>): GlobalPauseKey {
-        return GlobalPauseKey.reified().new({
-            dummyField: decodeFromFields("bool", fields.dummy_field),
-        });
+        return GlobalPauseKey.reified().new({ dummyField: decodeFromFields("bool", fields.dummy_field) });
     }
 
     static fromFieldsWithTypes(item: FieldsWithTypes): GlobalPauseKey {
@@ -763,9 +730,7 @@ export class GlobalPauseKey implements StructClass {
             throw new Error("not a GlobalPauseKey type");
         }
 
-        return GlobalPauseKey.reified().new({
-            dummyField: decodeFromFieldsWithTypes("bool", item.fields.dummy_field),
-        });
+        return GlobalPauseKey.reified().new({ dummyField: decodeFromFieldsWithTypes("bool", item.fields.dummy_field) });
     }
 
     static fromBcs(data: Uint8Array): GlobalPauseKey {
@@ -779,17 +744,11 @@ export class GlobalPauseKey implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): GlobalPauseKey {
-        return GlobalPauseKey.reified().new({
-            dummyField: decodeFromJSONField("bool", field.dummyField),
-        });
+        return GlobalPauseKey.reified().new({ dummyField: decodeFromJSONField("bool", field.dummyField) });
     }
 
     static fromJSON(json: Record<string, any>): GlobalPauseKey {
@@ -948,11 +907,7 @@ export class PerTypeConfigCreated implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): PerTypeConfigCreated {
@@ -1131,11 +1086,7 @@ export class PerTypeList implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): PerTypeList {

@@ -99,9 +99,7 @@ export class Empty implements StructClass {
     }
 
     static fromFields(fields: Record<string, any>): Empty {
-        return Empty.reified().new({
-            dummyField: decodeFromFields("bool", fields.dummy_field),
-        });
+        return Empty.reified().new({ dummyField: decodeFromFields("bool", fields.dummy_field) });
     }
 
     static fromFieldsWithTypes(item: FieldsWithTypes): Empty {
@@ -109,9 +107,7 @@ export class Empty implements StructClass {
             throw new Error("not a Empty type");
         }
 
-        return Empty.reified().new({
-            dummyField: decodeFromFieldsWithTypes("bool", item.fields.dummy_field),
-        });
+        return Empty.reified().new({ dummyField: decodeFromFieldsWithTypes("bool", item.fields.dummy_field) });
     }
 
     static fromBcs(data: Uint8Array): Empty {
@@ -125,17 +121,11 @@ export class Empty implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): Empty {
-        return Empty.reified().new({
-            dummyField: decodeFromJSONField("bool", field.dummyField),
-        });
+        return Empty.reified().new({ dummyField: decodeFromJSONField("bool", field.dummyField) });
     }
 
     static fromJSON(json: Record<string, any>): Empty {
@@ -294,11 +284,7 @@ export class Set<T extends PhantomTypeArgument> implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField<T extends PhantomReified<PhantomTypeArgument>>(typeArg: T, field: any): Set<ToPhantomTypeArgument<T>> {

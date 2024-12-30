@@ -41,7 +41,6 @@ export function registerClasses(loader: StructClassLoader) {
     loader.register(vault.UpdateFeeShareConfig);
     loader.register(vault.VAULT);
     loader.register(vault.Withdraw);
-    loader.register(i64.I64);
     loader.register(dutch.Delivery);
     loader.register(dutch.Terminate);
     loader.register(dutch.Auction);
@@ -50,6 +49,7 @@ export function registerClasses(loader: StructClassLoader) {
     loader.register(dutch.NewBid);
     loader.register(dutch.RemoveBid);
     loader.register(dutch.UpdateAuctionConfig);
+    loader.register(i64.I64);
     loader.register(linkedList.Node);
     loader.register(linkedList.LinkedList);
 }

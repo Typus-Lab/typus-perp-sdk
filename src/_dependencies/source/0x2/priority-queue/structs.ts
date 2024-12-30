@@ -139,11 +139,7 @@ export class Entry<T extends TypeArgument> implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField<T extends Reified<TypeArgument, any>>(typeArg: T, field: any): Entry<ToTypeArgument<T>> {
@@ -291,9 +287,7 @@ export class PriorityQueue<T extends TypeArgument> implements StructClass {
     }
 
     static fromFields<T extends Reified<TypeArgument, any>>(typeArg: T, fields: Record<string, any>): PriorityQueue<ToTypeArgument<T>> {
-        return PriorityQueue.reified(typeArg).new({
-            entries: decodeFromFields(reified.vector(Entry.reified(typeArg)), fields.entries),
-        });
+        return PriorityQueue.reified(typeArg).new({ entries: decodeFromFields(reified.vector(Entry.reified(typeArg)), fields.entries) });
     }
 
     static fromFieldsWithTypes<T extends Reified<TypeArgument, any>>(typeArg: T, item: FieldsWithTypes): PriorityQueue<ToTypeArgument<T>> {
@@ -320,17 +314,11 @@ export class PriorityQueue<T extends TypeArgument> implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField<T extends Reified<TypeArgument, any>>(typeArg: T, field: any): PriorityQueue<ToTypeArgument<T>> {
-        return PriorityQueue.reified(typeArg).new({
-            entries: decodeFromJSONField(reified.vector(Entry.reified(typeArg)), field.entries),
-        });
+        return PriorityQueue.reified(typeArg).new({ entries: decodeFromJSONField(reified.vector(Entry.reified(typeArg)), field.entries) });
     }
 
     static fromJSON<T extends Reified<TypeArgument, any>>(typeArg: T, json: Record<string, any>): PriorityQueue<ToTypeArgument<T>> {

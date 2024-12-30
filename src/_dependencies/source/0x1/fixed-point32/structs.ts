@@ -90,9 +90,7 @@ export class FixedPoint32 implements StructClass {
     }
 
     static fromFields(fields: Record<string, any>): FixedPoint32 {
-        return FixedPoint32.reified().new({
-            value: decodeFromFields("u64", fields.value),
-        });
+        return FixedPoint32.reified().new({ value: decodeFromFields("u64", fields.value) });
     }
 
     static fromFieldsWithTypes(item: FieldsWithTypes): FixedPoint32 {
@@ -100,9 +98,7 @@ export class FixedPoint32 implements StructClass {
             throw new Error("not a FixedPoint32 type");
         }
 
-        return FixedPoint32.reified().new({
-            value: decodeFromFieldsWithTypes("u64", item.fields.value),
-        });
+        return FixedPoint32.reified().new({ value: decodeFromFieldsWithTypes("u64", item.fields.value) });
     }
 
     static fromBcs(data: Uint8Array): FixedPoint32 {
@@ -116,17 +112,11 @@ export class FixedPoint32 implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): FixedPoint32 {
-        return FixedPoint32.reified().new({
-            value: decodeFromJSONField("u64", field.value),
-        });
+        return FixedPoint32.reified().new({ value: decodeFromJSONField("u64", field.value) });
     }
 
     static fromJSON(json: Record<string, any>): FixedPoint32 {

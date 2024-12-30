@@ -97,9 +97,7 @@ export class ManagerCap implements StructClass {
     }
 
     static fromFields(fields: Record<string, any>): ManagerCap {
-        return ManagerCap.reified().new({
-            id: decodeFromFields(UID.reified(), fields.id),
-        });
+        return ManagerCap.reified().new({ id: decodeFromFields(UID.reified(), fields.id) });
     }
 
     static fromFieldsWithTypes(item: FieldsWithTypes): ManagerCap {
@@ -107,9 +105,7 @@ export class ManagerCap implements StructClass {
             throw new Error("not a ManagerCap type");
         }
 
-        return ManagerCap.reified().new({
-            id: decodeFromFieldsWithTypes(UID.reified(), item.fields.id),
-        });
+        return ManagerCap.reified().new({ id: decodeFromFieldsWithTypes(UID.reified(), item.fields.id) });
     }
 
     static fromBcs(data: Uint8Array): ManagerCap {
@@ -123,17 +119,11 @@ export class ManagerCap implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): ManagerCap {
-        return ManagerCap.reified().new({
-            id: decodeFromJSONField(UID.reified(), field.id),
-        });
+        return ManagerCap.reified().new({ id: decodeFromJSONField(UID.reified(), field.id) });
     }
 
     static fromJSON(json: Record<string, any>): ManagerCap {
@@ -366,11 +356,7 @@ export class Oracle implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): Oracle {
@@ -551,11 +537,7 @@ export class PriceEvent implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): PriceEvent {
@@ -686,10 +668,7 @@ export class UpdateAuthority implements StructClass {
         return bcs.struct("UpdateAuthority", {
             id: UID.bcs,
             authority: bcs.vector(
-                bcs.bytes(32).transform({
-                    input: (val: string) => fromHEX(val),
-                    output: (val: Uint8Array) => toHEX(val),
-                })
+                bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) })
             ),
         });
     }
@@ -724,11 +703,7 @@ export class UpdateAuthority implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): UpdateAuthority {

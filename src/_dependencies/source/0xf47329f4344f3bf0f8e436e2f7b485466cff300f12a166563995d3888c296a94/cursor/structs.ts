@@ -103,9 +103,7 @@ export class Cursor<T extends TypeArgument> implements StructClass {
     }
 
     static fromFields<T extends Reified<TypeArgument, any>>(typeArg: T, fields: Record<string, any>): Cursor<ToTypeArgument<T>> {
-        return Cursor.reified(typeArg).new({
-            data: decodeFromFields(reified.vector(typeArg), fields.data),
-        });
+        return Cursor.reified(typeArg).new({ data: decodeFromFields(reified.vector(typeArg), fields.data) });
     }
 
     static fromFieldsWithTypes<T extends Reified<TypeArgument, any>>(typeArg: T, item: FieldsWithTypes): Cursor<ToTypeArgument<T>> {
@@ -114,9 +112,7 @@ export class Cursor<T extends TypeArgument> implements StructClass {
         }
         assertFieldsWithTypesArgsMatch(item, [typeArg]);
 
-        return Cursor.reified(typeArg).new({
-            data: decodeFromFieldsWithTypes(reified.vector(typeArg), item.fields.data),
-        });
+        return Cursor.reified(typeArg).new({ data: decodeFromFieldsWithTypes(reified.vector(typeArg), item.fields.data) });
     }
 
     static fromBcs<T extends Reified<TypeArgument, any>>(typeArg: T, data: Uint8Array): Cursor<ToTypeArgument<T>> {
@@ -132,17 +128,11 @@ export class Cursor<T extends TypeArgument> implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField<T extends Reified<TypeArgument, any>>(typeArg: T, field: any): Cursor<ToTypeArgument<T>> {
-        return Cursor.reified(typeArg).new({
-            data: decodeFromJSONField(reified.vector(typeArg), field.data),
-        });
+        return Cursor.reified(typeArg).new({ data: decodeFromJSONField(reified.vector(typeArg), field.data) });
     }
 
     static fromJSON<T extends Reified<TypeArgument, any>>(typeArg: T, json: Record<string, any>): Cursor<ToTypeArgument<T>> {

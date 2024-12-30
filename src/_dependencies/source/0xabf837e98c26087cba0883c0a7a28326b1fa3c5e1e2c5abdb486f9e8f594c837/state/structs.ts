@@ -94,9 +94,7 @@ export class CurrentDigest implements StructClass {
     }
 
     static fromFields(fields: Record<string, any>): CurrentDigest {
-        return CurrentDigest.reified().new({
-            dummyField: decodeFromFields("bool", fields.dummy_field),
-        });
+        return CurrentDigest.reified().new({ dummyField: decodeFromFields("bool", fields.dummy_field) });
     }
 
     static fromFieldsWithTypes(item: FieldsWithTypes): CurrentDigest {
@@ -104,9 +102,7 @@ export class CurrentDigest implements StructClass {
             throw new Error("not a CurrentDigest type");
         }
 
-        return CurrentDigest.reified().new({
-            dummyField: decodeFromFieldsWithTypes("bool", item.fields.dummy_field),
-        });
+        return CurrentDigest.reified().new({ dummyField: decodeFromFieldsWithTypes("bool", item.fields.dummy_field) });
     }
 
     static fromBcs(data: Uint8Array): CurrentDigest {
@@ -120,17 +116,11 @@ export class CurrentDigest implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): CurrentDigest {
-        return CurrentDigest.reified().new({
-            dummyField: decodeFromJSONField("bool", field.dummyField),
-        });
+        return CurrentDigest.reified().new({ dummyField: decodeFromJSONField("bool", field.dummyField) });
     }
 
     static fromJSON(json: Record<string, any>): CurrentDigest {
@@ -253,9 +243,7 @@ export class LatestOnly implements StructClass {
     }
 
     static fromFields(fields: Record<string, any>): LatestOnly {
-        return LatestOnly.reified().new({
-            dummyField: decodeFromFields("bool", fields.dummy_field),
-        });
+        return LatestOnly.reified().new({ dummyField: decodeFromFields("bool", fields.dummy_field) });
     }
 
     static fromFieldsWithTypes(item: FieldsWithTypes): LatestOnly {
@@ -263,9 +251,7 @@ export class LatestOnly implements StructClass {
             throw new Error("not a LatestOnly type");
         }
 
-        return LatestOnly.reified().new({
-            dummyField: decodeFromFieldsWithTypes("bool", item.fields.dummy_field),
-        });
+        return LatestOnly.reified().new({ dummyField: decodeFromFieldsWithTypes("bool", item.fields.dummy_field) });
     }
 
     static fromBcs(data: Uint8Array): LatestOnly {
@@ -279,17 +265,11 @@ export class LatestOnly implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): LatestOnly {
-        return LatestOnly.reified().new({
-            dummyField: decodeFromJSONField("bool", field.dummyField),
-        });
+        return LatestOnly.reified().new({ dummyField: decodeFromJSONField("bool", field.dummyField) });
     }
 
     static fromJSON(json: Record<string, any>): LatestOnly {
@@ -432,10 +412,9 @@ export class State implements StructClass {
             governance_data_source: DataSource.bcs,
             stale_price_threshold: bcs.u64(),
             base_update_fee: bcs.u64(),
-            fee_recipient_address: bcs.bytes(32).transform({
-                input: (val: string) => fromHEX(val),
-                output: (val: Uint8Array) => toHEX(val),
-            }),
+            fee_recipient_address: bcs
+                .bytes(32)
+                .transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
             last_executed_governance_sequence: bcs.u64(),
             consumed_vaas: ConsumedVAAs.bcs,
             upgrade_cap: UpgradeCap.bcs,
@@ -490,11 +469,7 @@ export class State implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): State {

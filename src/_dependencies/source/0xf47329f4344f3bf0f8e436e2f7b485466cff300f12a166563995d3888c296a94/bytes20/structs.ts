@@ -93,9 +93,7 @@ export class Bytes20 implements StructClass {
     }
 
     static fromFields(fields: Record<string, any>): Bytes20 {
-        return Bytes20.reified().new({
-            data: decodeFromFields(reified.vector("u8"), fields.data),
-        });
+        return Bytes20.reified().new({ data: decodeFromFields(reified.vector("u8"), fields.data) });
     }
 
     static fromFieldsWithTypes(item: FieldsWithTypes): Bytes20 {
@@ -103,9 +101,7 @@ export class Bytes20 implements StructClass {
             throw new Error("not a Bytes20 type");
         }
 
-        return Bytes20.reified().new({
-            data: decodeFromFieldsWithTypes(reified.vector("u8"), item.fields.data),
-        });
+        return Bytes20.reified().new({ data: decodeFromFieldsWithTypes(reified.vector("u8"), item.fields.data) });
     }
 
     static fromBcs(data: Uint8Array): Bytes20 {
@@ -119,17 +115,11 @@ export class Bytes20 implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): Bytes20 {
-        return Bytes20.reified().new({
-            data: decodeFromJSONField(reified.vector("u8"), field.data),
-        });
+        return Bytes20.reified().new({ data: decodeFromJSONField(reified.vector("u8"), field.data) });
     }
 
     static fromJSON(json: Record<string, any>): Bytes20 {

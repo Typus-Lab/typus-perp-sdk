@@ -134,11 +134,7 @@ export class Borrow implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): Borrow {
@@ -268,9 +264,7 @@ export class Item implements StructClass {
     }
 
     static fromFields(fields: Record<string, any>): Item {
-        return Item.reified().new({
-            id: decodeFromFields(ID.reified(), fields.id),
-        });
+        return Item.reified().new({ id: decodeFromFields(ID.reified(), fields.id) });
     }
 
     static fromFieldsWithTypes(item: FieldsWithTypes): Item {
@@ -278,9 +272,7 @@ export class Item implements StructClass {
             throw new Error("not a Item type");
         }
 
-        return Item.reified().new({
-            id: decodeFromFieldsWithTypes(ID.reified(), item.fields.id),
-        });
+        return Item.reified().new({ id: decodeFromFieldsWithTypes(ID.reified(), item.fields.id) });
     }
 
     static fromBcs(data: Uint8Array): Item {
@@ -294,17 +286,11 @@ export class Item implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): Item {
-        return Item.reified().new({
-            id: decodeFromJSONField(ID.reified(), field.id),
-        });
+        return Item.reified().new({ id: decodeFromJSONField(ID.reified(), field.id) });
     }
 
     static fromJSON(json: Record<string, any>): Item {
@@ -473,11 +459,7 @@ export class ItemDelisted<T extends PhantomTypeArgument> implements StructClass 
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField<T extends PhantomReified<PhantomTypeArgument>>(typeArg: T, field: any): ItemDelisted<ToPhantomTypeArgument<T>> {
@@ -684,11 +666,7 @@ export class ItemListed<T extends PhantomTypeArgument> implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField<T extends PhantomReified<PhantomTypeArgument>>(typeArg: T, field: any): ItemListed<ToPhantomTypeArgument<T>> {
@@ -898,11 +876,7 @@ export class ItemPurchased<T extends PhantomTypeArgument> implements StructClass
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField<T extends PhantomReified<PhantomTypeArgument>>(typeArg: T, field: any): ItemPurchased<ToPhantomTypeArgument<T>> {
@@ -1066,10 +1040,7 @@ export class Kiosk implements StructClass {
         return bcs.struct("Kiosk", {
             id: UID.bcs,
             profits: Balance.bcs,
-            owner: bcs.bytes(32).transform({
-                input: (val: string) => fromHEX(val),
-                output: (val: Uint8Array) => toHEX(val),
-            }),
+            owner: bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
             item_count: bcs.u32(),
             allow_extensions: bcs.bool(),
         });
@@ -1114,11 +1085,7 @@ export class Kiosk implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): Kiosk {
@@ -1284,11 +1251,7 @@ export class KioskOwnerCap implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): KioskOwnerCap {
@@ -1451,11 +1414,7 @@ export class Listing implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): Listing {
@@ -1585,9 +1544,7 @@ export class Lock implements StructClass {
     }
 
     static fromFields(fields: Record<string, any>): Lock {
-        return Lock.reified().new({
-            id: decodeFromFields(ID.reified(), fields.id),
-        });
+        return Lock.reified().new({ id: decodeFromFields(ID.reified(), fields.id) });
     }
 
     static fromFieldsWithTypes(item: FieldsWithTypes): Lock {
@@ -1595,9 +1552,7 @@ export class Lock implements StructClass {
             throw new Error("not a Lock type");
         }
 
-        return Lock.reified().new({
-            id: decodeFromFieldsWithTypes(ID.reified(), item.fields.id),
-        });
+        return Lock.reified().new({ id: decodeFromFieldsWithTypes(ID.reified(), item.fields.id) });
     }
 
     static fromBcs(data: Uint8Array): Lock {
@@ -1611,17 +1566,11 @@ export class Lock implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): Lock {
-        return Lock.reified().new({
-            id: decodeFromJSONField(ID.reified(), field.id),
-        });
+        return Lock.reified().new({ id: decodeFromJSONField(ID.reified(), field.id) });
     }
 
     static fromJSON(json: Record<string, any>): Lock {
@@ -1804,11 +1753,7 @@ export class PurchaseCap<T extends PhantomTypeArgument> implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField<T extends PhantomReified<PhantomTypeArgument>>(typeArg: T, field: any): PurchaseCap<ToPhantomTypeArgument<T>> {

@@ -112,9 +112,7 @@ export class RuleKey<T extends PhantomTypeArgument> implements StructClass {
         typeArg: T,
         fields: Record<string, any>
     ): RuleKey<ToPhantomTypeArgument<T>> {
-        return RuleKey.reified(typeArg).new({
-            dummyField: decodeFromFields("bool", fields.dummy_field),
-        });
+        return RuleKey.reified(typeArg).new({ dummyField: decodeFromFields("bool", fields.dummy_field) });
     }
 
     static fromFieldsWithTypes<T extends PhantomReified<PhantomTypeArgument>>(
@@ -126,9 +124,7 @@ export class RuleKey<T extends PhantomTypeArgument> implements StructClass {
         }
         assertFieldsWithTypesArgsMatch(item, [typeArg]);
 
-        return RuleKey.reified(typeArg).new({
-            dummyField: decodeFromFieldsWithTypes("bool", item.fields.dummy_field),
-        });
+        return RuleKey.reified(typeArg).new({ dummyField: decodeFromFieldsWithTypes("bool", item.fields.dummy_field) });
     }
 
     static fromBcs<T extends PhantomReified<PhantomTypeArgument>>(typeArg: T, data: Uint8Array): RuleKey<ToPhantomTypeArgument<T>> {
@@ -142,17 +138,11 @@ export class RuleKey<T extends PhantomTypeArgument> implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField<T extends PhantomReified<PhantomTypeArgument>>(typeArg: T, field: any): RuleKey<ToPhantomTypeArgument<T>> {
-        return RuleKey.reified(typeArg).new({
-            dummyField: decodeFromJSONField("bool", field.dummyField),
-        });
+        return RuleKey.reified(typeArg).new({ dummyField: decodeFromJSONField("bool", field.dummyField) });
     }
 
     static fromJSON<T extends PhantomReified<PhantomTypeArgument>>(
@@ -354,11 +344,7 @@ export class TransferPolicy<T extends PhantomTypeArgument> implements StructClas
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField<T extends PhantomReified<PhantomTypeArgument>>(typeArg: T, field: any): TransferPolicy<ToPhantomTypeArgument<T>> {
@@ -564,11 +550,7 @@ export class TransferPolicyCap<T extends PhantomTypeArgument> implements StructC
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField<T extends PhantomReified<PhantomTypeArgument>>(
@@ -736,9 +718,7 @@ export class TransferPolicyCreated<T extends PhantomTypeArgument> implements Str
         typeArg: T,
         fields: Record<string, any>
     ): TransferPolicyCreated<ToPhantomTypeArgument<T>> {
-        return TransferPolicyCreated.reified(typeArg).new({
-            id: decodeFromFields(ID.reified(), fields.id),
-        });
+        return TransferPolicyCreated.reified(typeArg).new({ id: decodeFromFields(ID.reified(), fields.id) });
     }
 
     static fromFieldsWithTypes<T extends PhantomReified<PhantomTypeArgument>>(
@@ -750,9 +730,7 @@ export class TransferPolicyCreated<T extends PhantomTypeArgument> implements Str
         }
         assertFieldsWithTypesArgsMatch(item, [typeArg]);
 
-        return TransferPolicyCreated.reified(typeArg).new({
-            id: decodeFromFieldsWithTypes(ID.reified(), item.fields.id),
-        });
+        return TransferPolicyCreated.reified(typeArg).new({ id: decodeFromFieldsWithTypes(ID.reified(), item.fields.id) });
     }
 
     static fromBcs<T extends PhantomReified<PhantomTypeArgument>>(
@@ -769,20 +747,14 @@ export class TransferPolicyCreated<T extends PhantomTypeArgument> implements Str
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField<T extends PhantomReified<PhantomTypeArgument>>(
         typeArg: T,
         field: any
     ): TransferPolicyCreated<ToPhantomTypeArgument<T>> {
-        return TransferPolicyCreated.reified(typeArg).new({
-            id: decodeFromJSONField(ID.reified(), field.id),
-        });
+        return TransferPolicyCreated.reified(typeArg).new({ id: decodeFromJSONField(ID.reified(), field.id) });
     }
 
     static fromJSON<T extends PhantomReified<PhantomTypeArgument>>(
@@ -943,9 +915,7 @@ export class TransferPolicyDestroyed<T extends PhantomTypeArgument> implements S
         typeArg: T,
         fields: Record<string, any>
     ): TransferPolicyDestroyed<ToPhantomTypeArgument<T>> {
-        return TransferPolicyDestroyed.reified(typeArg).new({
-            id: decodeFromFields(ID.reified(), fields.id),
-        });
+        return TransferPolicyDestroyed.reified(typeArg).new({ id: decodeFromFields(ID.reified(), fields.id) });
     }
 
     static fromFieldsWithTypes<T extends PhantomReified<PhantomTypeArgument>>(
@@ -957,9 +927,7 @@ export class TransferPolicyDestroyed<T extends PhantomTypeArgument> implements S
         }
         assertFieldsWithTypesArgsMatch(item, [typeArg]);
 
-        return TransferPolicyDestroyed.reified(typeArg).new({
-            id: decodeFromFieldsWithTypes(ID.reified(), item.fields.id),
-        });
+        return TransferPolicyDestroyed.reified(typeArg).new({ id: decodeFromFieldsWithTypes(ID.reified(), item.fields.id) });
     }
 
     static fromBcs<T extends PhantomReified<PhantomTypeArgument>>(
@@ -976,20 +944,14 @@ export class TransferPolicyDestroyed<T extends PhantomTypeArgument> implements S
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField<T extends PhantomReified<PhantomTypeArgument>>(
         typeArg: T,
         field: any
     ): TransferPolicyDestroyed<ToPhantomTypeArgument<T>> {
-        return TransferPolicyDestroyed.reified(typeArg).new({
-            id: decodeFromJSONField(ID.reified(), field.id),
-        });
+        return TransferPolicyDestroyed.reified(typeArg).new({ id: decodeFromJSONField(ID.reified(), field.id) });
     }
 
     static fromJSON<T extends PhantomReified<PhantomTypeArgument>>(
@@ -1198,11 +1160,7 @@ export class TransferRequest<T extends PhantomTypeArgument> implements StructCla
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField<T extends PhantomReified<PhantomTypeArgument>>(typeArg: T, field: any): TransferRequest<ToPhantomTypeArgument<T>> {

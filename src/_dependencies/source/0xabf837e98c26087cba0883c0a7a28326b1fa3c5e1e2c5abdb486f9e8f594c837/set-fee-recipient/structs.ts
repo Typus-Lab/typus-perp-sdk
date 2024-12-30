@@ -88,17 +88,12 @@ export class PythFeeRecipient implements StructClass {
 
     static get bcs() {
         return bcs.struct("PythFeeRecipient", {
-            recipient: bcs.bytes(32).transform({
-                input: (val: string) => fromHEX(val),
-                output: (val: Uint8Array) => toHEX(val),
-            }),
+            recipient: bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
         });
     }
 
     static fromFields(fields: Record<string, any>): PythFeeRecipient {
-        return PythFeeRecipient.reified().new({
-            recipient: decodeFromFields("address", fields.recipient),
-        });
+        return PythFeeRecipient.reified().new({ recipient: decodeFromFields("address", fields.recipient) });
     }
 
     static fromFieldsWithTypes(item: FieldsWithTypes): PythFeeRecipient {
@@ -106,9 +101,7 @@ export class PythFeeRecipient implements StructClass {
             throw new Error("not a PythFeeRecipient type");
         }
 
-        return PythFeeRecipient.reified().new({
-            recipient: decodeFromFieldsWithTypes("address", item.fields.recipient),
-        });
+        return PythFeeRecipient.reified().new({ recipient: decodeFromFieldsWithTypes("address", item.fields.recipient) });
     }
 
     static fromBcs(data: Uint8Array): PythFeeRecipient {
@@ -122,17 +115,11 @@ export class PythFeeRecipient implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): PythFeeRecipient {
-        return PythFeeRecipient.reified().new({
-            recipient: decodeFromJSONField("address", field.recipient),
-        });
+        return PythFeeRecipient.reified().new({ recipient: decodeFromJSONField("address", field.recipient) });
     }
 
     static fromJSON(json: Record<string, any>): PythFeeRecipient {

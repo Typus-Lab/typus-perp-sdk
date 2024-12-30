@@ -91,9 +91,7 @@ export class DkgState implements StructClass {
     }
 
     static fromFields(fields: Record<string, any>): DkgState {
-        return DkgState.reified().new({
-            id: decodeFromFields(UID.reified(), fields.id),
-        });
+        return DkgState.reified().new({ id: decodeFromFields(UID.reified(), fields.id) });
     }
 
     static fromFieldsWithTypes(item: FieldsWithTypes): DkgState {
@@ -101,9 +99,7 @@ export class DkgState implements StructClass {
             throw new Error("not a DkgState type");
         }
 
-        return DkgState.reified().new({
-            id: decodeFromFieldsWithTypes(UID.reified(), item.fields.id),
-        });
+        return DkgState.reified().new({ id: decodeFromFieldsWithTypes(UID.reified(), item.fields.id) });
     }
 
     static fromBcs(data: Uint8Array): DkgState {
@@ -117,17 +113,11 @@ export class DkgState implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): DkgState {
-        return DkgState.reified().new({
-            id: decodeFromJSONField(UID.reified(), field.id),
-        });
+        return DkgState.reified().new({ id: decodeFromJSONField(UID.reified(), field.id) });
     }
 
     static fromJSON(json: Record<string, any>): DkgState {

@@ -90,9 +90,7 @@ export class GovernanceWitness implements StructClass {
     }
 
     static fromFields(fields: Record<string, any>): GovernanceWitness {
-        return GovernanceWitness.reified().new({
-            dummyField: decodeFromFields("bool", fields.dummy_field),
-        });
+        return GovernanceWitness.reified().new({ dummyField: decodeFromFields("bool", fields.dummy_field) });
     }
 
     static fromFieldsWithTypes(item: FieldsWithTypes): GovernanceWitness {
@@ -100,9 +98,7 @@ export class GovernanceWitness implements StructClass {
             throw new Error("not a GovernanceWitness type");
         }
 
-        return GovernanceWitness.reified().new({
-            dummyField: decodeFromFieldsWithTypes("bool", item.fields.dummy_field),
-        });
+        return GovernanceWitness.reified().new({ dummyField: decodeFromFieldsWithTypes("bool", item.fields.dummy_field) });
     }
 
     static fromBcs(data: Uint8Array): GovernanceWitness {
@@ -116,17 +112,11 @@ export class GovernanceWitness implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): GovernanceWitness {
-        return GovernanceWitness.reified().new({
-            dummyField: decodeFromJSONField("bool", field.dummyField),
-        });
+        return GovernanceWitness.reified().new({ dummyField: decodeFromJSONField("bool", field.dummyField) });
     }
 
     static fromJSON(json: Record<string, any>): GovernanceWitness {
@@ -249,9 +239,7 @@ export class SetFee implements StructClass {
     }
 
     static fromFields(fields: Record<string, any>): SetFee {
-        return SetFee.reified().new({
-            amount: decodeFromFields("u64", fields.amount),
-        });
+        return SetFee.reified().new({ amount: decodeFromFields("u64", fields.amount) });
     }
 
     static fromFieldsWithTypes(item: FieldsWithTypes): SetFee {
@@ -259,9 +247,7 @@ export class SetFee implements StructClass {
             throw new Error("not a SetFee type");
         }
 
-        return SetFee.reified().new({
-            amount: decodeFromFieldsWithTypes("u64", item.fields.amount),
-        });
+        return SetFee.reified().new({ amount: decodeFromFieldsWithTypes("u64", item.fields.amount) });
     }
 
     static fromBcs(data: Uint8Array): SetFee {
@@ -275,17 +261,11 @@ export class SetFee implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): SetFee {
-        return SetFee.reified().new({
-            amount: decodeFromJSONField("u64", field.amount),
-        });
+        return SetFee.reified().new({ amount: decodeFromJSONField("u64", field.amount) });
     }
 
     static fromJSON(json: Record<string, any>): SetFee {

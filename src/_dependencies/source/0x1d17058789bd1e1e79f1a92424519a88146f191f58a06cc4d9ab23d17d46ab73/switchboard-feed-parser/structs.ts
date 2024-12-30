@@ -100,10 +100,7 @@ export class AggregatorInfo implements StructClass {
 
     static get bcs() {
         return bcs.struct("AggregatorInfo", {
-            aggregator_addr: bcs.bytes(32).transform({
-                input: (val: string) => fromHEX(val),
-                output: (val: Uint8Array) => toHEX(val),
-            }),
+            aggregator_addr: bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
             latest_result: bcs.u128(),
             latest_result_scaling_factor: bcs.u8(),
             latest_timestamp: bcs.u64(),
@@ -150,11 +147,7 @@ export class AggregatorInfo implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): AggregatorInfo {

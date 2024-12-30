@@ -164,11 +164,7 @@ export class BigVector<Element extends PhantomTypeArgument> implements StructCla
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField<Element extends PhantomReified<PhantomTypeArgument>>(

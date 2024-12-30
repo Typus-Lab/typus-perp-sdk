@@ -34,10 +34,11 @@ export function swap(tx: Transaction, typeArgs: [string, string], args: SwapArgs
 }
 
 export function init(tx: Transaction) {
-    return tx.moveCall({
-        target: `${PUBLISHED_AT}::lp_pool::init`,
-        arguments: [],
-    });
+    return tx.moveCall({ target: `${PUBLISHED_AT}::lp_pool::init`, arguments: [] });
+}
+
+export function safetyCheck(tx: Transaction, liquidityPool: TransactionObjectInput) {
+    return tx.moveCall({ target: `${PUBLISHED_AT}::lp_pool::safety_check`, arguments: [obj(tx, liquidityPool)] });
 }
 
 export interface AddLiquidityTokenArgs {
@@ -224,16 +225,17 @@ export function checkRemoveLiquidityTokenProcessStatus(tx: Transaction, args: Ch
     });
 }
 
-export interface CheckTokenPoolInactiveArgs {
+export interface CheckTokenPoolStatusArgs {
     registry: TransactionObjectInput;
     index: bigint | TransactionArgument;
+    assertActive: boolean | TransactionArgument;
 }
 
-export function checkTokenPoolInactive(tx: Transaction, typeArg: string, args: CheckTokenPoolInactiveArgs) {
+export function checkTokenPoolStatus(tx: Transaction, typeArg: string, args: CheckTokenPoolStatusArgs) {
     return tx.moveCall({
-        target: `${PUBLISHED_AT}::lp_pool::check_token_pool_inactive`,
+        target: `${PUBLISHED_AT}::lp_pool::check_token_pool_status`,
         typeArguments: [typeArg],
-        arguments: [obj(tx, args.registry), pure(tx, args.index, `u64`)],
+        arguments: [obj(tx, args.registry), pure(tx, args.index, `u64`), pure(tx, args.assertActive, `bool`)],
     });
 }
 
@@ -278,10 +280,7 @@ export function completeRemoveLiquidityTokenProcess(tx: Transaction, typeArg: st
 }
 
 export function getBorrowRateDecimal(tx: Transaction) {
-    return tx.moveCall({
-        target: `${PUBLISHED_AT}::lp_pool::get_borrow_rate_decimal`,
-        arguments: [],
-    });
+    return tx.moveCall({ target: `${PUBLISHED_AT}::lp_pool::get_borrow_rate_decimal`, arguments: [] });
 }
 
 export interface GetCumulativeBorrowRateArgs {
@@ -407,10 +406,7 @@ export function getTokenPoolState(tx: Transaction, args: GetTokenPoolStateArgs) 
 }
 
 export function getTvlUsd(tx: Transaction, liquidityPool: TransactionObjectInput) {
-    return tx.moveCall({
-        target: `${PUBLISHED_AT}::lp_pool::get_tvl_usd`,
-        arguments: [obj(tx, liquidityPool)],
-    });
+    return tx.moveCall({ target: `${PUBLISHED_AT}::lp_pool::get_tvl_usd`, arguments: [obj(tx, liquidityPool)] });
 }
 
 export interface ManagerFlashRemoveLiquidityArgs {
@@ -621,13 +617,6 @@ export function resumeTokenPool(tx: Transaction, typeArg: string, args: ResumeTo
     });
 }
 
-export function safetyCheck(tx: Transaction, liquidityPool: TransactionObjectInput) {
-    return tx.moveCall({
-        target: `${PUBLISHED_AT}::lp_pool::safety_check`,
-        arguments: [obj(tx, liquidityPool)],
-    });
-}
-
 export interface StartRemoveLiquidityTokenProcessArgs {
     version: TransactionObjectInput;
     registry: TransactionObjectInput;
@@ -668,6 +657,10 @@ export function suspendTokenPool(tx: Transaction, typeArg: string, args: Suspend
         typeArguments: [typeArg],
         arguments: [obj(tx, args.version), obj(tx, args.registry), pure(tx, args.index, `u64`)],
     });
+}
+
+export function tokenPoolIsActive(tx: Transaction, tokenPool: TransactionObjectInput) {
+    return tx.moveCall({ target: `${PUBLISHED_AT}::lp_pool::token_pool_is_active`, arguments: [obj(tx, tokenPool)] });
 }
 
 export interface UpdateBorrowInfoArgs {

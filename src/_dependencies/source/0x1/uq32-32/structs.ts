@@ -90,9 +90,7 @@ export class UQ32_32 implements StructClass {
     }
 
     static fromFields(fields: Record<string, any>): UQ32_32 {
-        return UQ32_32.reified().new({
-            pos0: decodeFromFields("u64", fields.pos0),
-        });
+        return UQ32_32.reified().new({ pos0: decodeFromFields("u64", fields.pos0) });
     }
 
     static fromFieldsWithTypes(item: FieldsWithTypes): UQ32_32 {
@@ -100,9 +98,7 @@ export class UQ32_32 implements StructClass {
             throw new Error("not a UQ32_32 type");
         }
 
-        return UQ32_32.reified().new({
-            pos0: decodeFromFieldsWithTypes("u64", item.fields.pos0),
-        });
+        return UQ32_32.reified().new({ pos0: decodeFromFieldsWithTypes("u64", item.fields.pos0) });
     }
 
     static fromBcs(data: Uint8Array): UQ32_32 {
@@ -116,17 +112,11 @@ export class UQ32_32 implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): UQ32_32 {
-        return UQ32_32.reified().new({
-            pos0: decodeFromJSONField("u64", field.pos0),
-        });
+        return UQ32_32.reified().new({ pos0: decodeFromJSONField("u64", field.pos0) });
     }
 
     static fromJSON(json: Record<string, any>): UQ32_32 {

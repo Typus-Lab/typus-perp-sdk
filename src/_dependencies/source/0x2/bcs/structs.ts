@@ -93,9 +93,7 @@ export class BCS implements StructClass {
     }
 
     static fromFields(fields: Record<string, any>): BCS {
-        return BCS.reified().new({
-            bytes: decodeFromFields(reified.vector("u8"), fields.bytes),
-        });
+        return BCS.reified().new({ bytes: decodeFromFields(reified.vector("u8"), fields.bytes) });
     }
 
     static fromFieldsWithTypes(item: FieldsWithTypes): BCS {
@@ -103,9 +101,7 @@ export class BCS implements StructClass {
             throw new Error("not a BCS type");
         }
 
-        return BCS.reified().new({
-            bytes: decodeFromFieldsWithTypes(reified.vector("u8"), item.fields.bytes),
-        });
+        return BCS.reified().new({ bytes: decodeFromFieldsWithTypes(reified.vector("u8"), item.fields.bytes) });
     }
 
     static fromBcs(data: Uint8Array): BCS {
@@ -119,17 +115,11 @@ export class BCS implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): BCS {
-        return BCS.reified().new({
-            bytes: decodeFromJSONField(reified.vector("u8"), field.bytes),
-        });
+        return BCS.reified().new({ bytes: decodeFromJSONField(reified.vector("u8"), field.bytes) });
     }
 
     static fromJSON(json: Record<string, any>): BCS {

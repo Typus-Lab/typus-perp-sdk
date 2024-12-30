@@ -102,19 +102,13 @@ export class Airdrop implements StructClass {
 
     static get bcs() {
         return bcs.struct("Airdrop", {
-            user: bcs.bytes(32).transform({
-                input: (val: string) => fromHEX(val),
-                output: (val: Uint8Array) => toHEX(val),
-            }),
+            user: bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
             value: bcs.u64(),
         });
     }
 
     static fromFields(fields: Record<string, any>): Airdrop {
-        return Airdrop.reified().new({
-            user: decodeFromFields("address", fields.user),
-            value: decodeFromFields("u64", fields.value),
-        });
+        return Airdrop.reified().new({ user: decodeFromFields("address", fields.user), value: decodeFromFields("u64", fields.value) });
     }
 
     static fromFieldsWithTypes(item: FieldsWithTypes): Airdrop {
@@ -140,18 +134,11 @@ export class Airdrop implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): Airdrop {
-        return Airdrop.reified().new({
-            user: decodeFromJSONField("address", field.user),
-            value: decodeFromJSONField("u64", field.value),
-        });
+        return Airdrop.reified().new({ user: decodeFromJSONField("address", field.user), value: decodeFromJSONField("u64", field.value) });
     }
 
     static fromJSON(json: Record<string, any>): Airdrop {
@@ -332,11 +319,7 @@ export class AirdropInfo<TOKEN extends PhantomTypeArgument> implements StructCla
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField<TOKEN extends PhantomReified<PhantomTypeArgument>>(
@@ -503,10 +486,7 @@ export class ClaimAirdropEvent implements StructClass {
         return bcs.struct("ClaimAirdropEvent", {
             token: TypeName.bcs,
             key: String.bcs,
-            user: bcs.bytes(32).transform({
-                input: (val: string) => fromHEX(val),
-                output: (val: Uint8Array) => toHEX(val),
-            }),
+            user: bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
             log: bcs.vector(bcs.u64()),
             bcs_padding: bcs.vector(bcs.vector(bcs.u8())),
         });
@@ -551,11 +531,7 @@ export class ClaimAirdropEvent implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): ClaimAirdropEvent {
@@ -735,11 +711,7 @@ export class RemoveAirdropEvent implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): RemoveAirdropEvent {
@@ -918,11 +890,7 @@ export class SetAirdropEvent implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): SetAirdropEvent {
@@ -1057,9 +1025,7 @@ export class TypusAirdropRegistry implements StructClass {
     }
 
     static fromFields(fields: Record<string, any>): TypusAirdropRegistry {
-        return TypusAirdropRegistry.reified().new({
-            id: decodeFromFields(UID.reified(), fields.id),
-        });
+        return TypusAirdropRegistry.reified().new({ id: decodeFromFields(UID.reified(), fields.id) });
     }
 
     static fromFieldsWithTypes(item: FieldsWithTypes): TypusAirdropRegistry {
@@ -1067,9 +1033,7 @@ export class TypusAirdropRegistry implements StructClass {
             throw new Error("not a TypusAirdropRegistry type");
         }
 
-        return TypusAirdropRegistry.reified().new({
-            id: decodeFromFieldsWithTypes(UID.reified(), item.fields.id),
-        });
+        return TypusAirdropRegistry.reified().new({ id: decodeFromFieldsWithTypes(UID.reified(), item.fields.id) });
     }
 
     static fromBcs(data: Uint8Array): TypusAirdropRegistry {
@@ -1083,17 +1047,11 @@ export class TypusAirdropRegistry implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): TypusAirdropRegistry {
-        return TypusAirdropRegistry.reified().new({
-            id: decodeFromJSONField(UID.reified(), field.id),
-        });
+        return TypusAirdropRegistry.reified().new({ id: decodeFromJSONField(UID.reified(), field.id) });
     }
 
     static fromJSON(json: Record<string, any>): TypusAirdropRegistry {

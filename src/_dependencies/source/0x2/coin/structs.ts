@@ -146,11 +146,7 @@ export class Coin<T extends PhantomTypeArgument> implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField<T extends PhantomReified<PhantomTypeArgument>>(typeArg: T, field: any): Coin<ToPhantomTypeArgument<T>> {
@@ -375,11 +371,7 @@ export class CoinMetadata<T extends PhantomTypeArgument> implements StructClass 
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField<T extends PhantomReified<PhantomTypeArgument>>(typeArg: T, field: any): CoinMetadata<ToPhantomTypeArgument<T>> {
@@ -548,9 +540,7 @@ export class CurrencyCreated<T extends PhantomTypeArgument> implements StructCla
         typeArg: T,
         fields: Record<string, any>
     ): CurrencyCreated<ToPhantomTypeArgument<T>> {
-        return CurrencyCreated.reified(typeArg).new({
-            decimals: decodeFromFields("u8", fields.decimals),
-        });
+        return CurrencyCreated.reified(typeArg).new({ decimals: decodeFromFields("u8", fields.decimals) });
     }
 
     static fromFieldsWithTypes<T extends PhantomReified<PhantomTypeArgument>>(
@@ -562,9 +552,7 @@ export class CurrencyCreated<T extends PhantomTypeArgument> implements StructCla
         }
         assertFieldsWithTypesArgsMatch(item, [typeArg]);
 
-        return CurrencyCreated.reified(typeArg).new({
-            decimals: decodeFromFieldsWithTypes("u8", item.fields.decimals),
-        });
+        return CurrencyCreated.reified(typeArg).new({ decimals: decodeFromFieldsWithTypes("u8", item.fields.decimals) });
     }
 
     static fromBcs<T extends PhantomReified<PhantomTypeArgument>>(typeArg: T, data: Uint8Array): CurrencyCreated<ToPhantomTypeArgument<T>> {
@@ -578,17 +566,11 @@ export class CurrencyCreated<T extends PhantomTypeArgument> implements StructCla
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField<T extends PhantomReified<PhantomTypeArgument>>(typeArg: T, field: any): CurrencyCreated<ToPhantomTypeArgument<T>> {
-        return CurrencyCreated.reified(typeArg).new({
-            decimals: decodeFromJSONField("u8", field.decimals),
-        });
+        return CurrencyCreated.reified(typeArg).new({ decimals: decodeFromJSONField("u8", field.decimals) });
     }
 
     static fromJSON<T extends PhantomReified<PhantomTypeArgument>>(
@@ -741,9 +723,7 @@ export class DenyCap<T extends PhantomTypeArgument> implements StructClass {
         typeArg: T,
         fields: Record<string, any>
     ): DenyCap<ToPhantomTypeArgument<T>> {
-        return DenyCap.reified(typeArg).new({
-            id: decodeFromFields(UID.reified(), fields.id),
-        });
+        return DenyCap.reified(typeArg).new({ id: decodeFromFields(UID.reified(), fields.id) });
     }
 
     static fromFieldsWithTypes<T extends PhantomReified<PhantomTypeArgument>>(
@@ -755,9 +735,7 @@ export class DenyCap<T extends PhantomTypeArgument> implements StructClass {
         }
         assertFieldsWithTypesArgsMatch(item, [typeArg]);
 
-        return DenyCap.reified(typeArg).new({
-            id: decodeFromFieldsWithTypes(UID.reified(), item.fields.id),
-        });
+        return DenyCap.reified(typeArg).new({ id: decodeFromFieldsWithTypes(UID.reified(), item.fields.id) });
     }
 
     static fromBcs<T extends PhantomReified<PhantomTypeArgument>>(typeArg: T, data: Uint8Array): DenyCap<ToPhantomTypeArgument<T>> {
@@ -771,17 +749,11 @@ export class DenyCap<T extends PhantomTypeArgument> implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField<T extends PhantomReified<PhantomTypeArgument>>(typeArg: T, field: any): DenyCap<ToPhantomTypeArgument<T>> {
-        return DenyCap.reified(typeArg).new({
-            id: decodeFromJSONField(UID.reified(), field.id),
-        });
+        return DenyCap.reified(typeArg).new({ id: decodeFromJSONField(UID.reified(), field.id) });
     }
 
     static fromJSON<T extends PhantomReified<PhantomTypeArgument>>(
@@ -974,11 +946,7 @@ export class DenyCapV2<T extends PhantomTypeArgument> implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField<T extends PhantomReified<PhantomTypeArgument>>(typeArg: T, field: any): DenyCapV2<ToPhantomTypeArgument<T>> {
@@ -1190,11 +1158,7 @@ export class RegulatedCoinMetadata<T extends PhantomTypeArgument> implements Str
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField<T extends PhantomReified<PhantomTypeArgument>>(
@@ -1398,11 +1362,7 @@ export class TreasuryCap<T extends PhantomTypeArgument> implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField<T extends PhantomReified<PhantomTypeArgument>>(typeArg: T, field: any): TreasuryCap<ToPhantomTypeArgument<T>> {

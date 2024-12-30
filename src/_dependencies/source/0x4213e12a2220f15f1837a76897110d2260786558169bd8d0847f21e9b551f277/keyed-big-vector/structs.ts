@@ -157,11 +157,7 @@ export class Element<K extends TypeArgument, V extends TypeArgument> implements 
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField<K extends Reified<TypeArgument, any>, V extends Reified<TypeArgument, any>>(
@@ -379,11 +375,7 @@ export class Slice<K extends TypeArgument, V extends TypeArgument> implements St
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField<K extends Reified<TypeArgument, any>, V extends Reified<TypeArgument, any>>(
@@ -603,11 +595,7 @@ export class KeyedBigVector implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): KeyedBigVector {

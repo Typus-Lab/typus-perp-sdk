@@ -124,11 +124,7 @@ export class PriceFeedUpdateEvent implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): PriceFeedUpdateEvent {
@@ -261,9 +257,7 @@ export class PythInitializationEvent implements StructClass {
     }
 
     static fromFields(fields: Record<string, any>): PythInitializationEvent {
-        return PythInitializationEvent.reified().new({
-            dummyField: decodeFromFields("bool", fields.dummy_field),
-        });
+        return PythInitializationEvent.reified().new({ dummyField: decodeFromFields("bool", fields.dummy_field) });
     }
 
     static fromFieldsWithTypes(item: FieldsWithTypes): PythInitializationEvent {
@@ -271,9 +265,7 @@ export class PythInitializationEvent implements StructClass {
             throw new Error("not a PythInitializationEvent type");
         }
 
-        return PythInitializationEvent.reified().new({
-            dummyField: decodeFromFieldsWithTypes("bool", item.fields.dummy_field),
-        });
+        return PythInitializationEvent.reified().new({ dummyField: decodeFromFieldsWithTypes("bool", item.fields.dummy_field) });
     }
 
     static fromBcs(data: Uint8Array): PythInitializationEvent {
@@ -287,17 +279,11 @@ export class PythInitializationEvent implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): PythInitializationEvent {
-        return PythInitializationEvent.reified().new({
-            dummyField: decodeFromJSONField("bool", field.dummyField),
-        });
+        return PythInitializationEvent.reified().new({ dummyField: decodeFromJSONField("bool", field.dummyField) });
     }
 
     static fromJSON(json: Record<string, any>): PythInitializationEvent {

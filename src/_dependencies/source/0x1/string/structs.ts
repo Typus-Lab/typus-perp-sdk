@@ -93,9 +93,7 @@ export class String implements StructClass {
     }
 
     static fromFields(fields: Record<string, any>): String {
-        return String.reified().new({
-            bytes: decodeFromFields(reified.vector("u8"), fields.bytes),
-        });
+        return String.reified().new({ bytes: decodeFromFields(reified.vector("u8"), fields.bytes) });
     }
 
     static fromFieldsWithTypes(item: FieldsWithTypes): String {
@@ -103,9 +101,7 @@ export class String implements StructClass {
             throw new Error("not a String type");
         }
 
-        return String.reified().new({
-            bytes: decodeFromFieldsWithTypes(reified.vector("u8"), item.fields.bytes),
-        });
+        return String.reified().new({ bytes: decodeFromFieldsWithTypes(reified.vector("u8"), item.fields.bytes) });
     }
 
     static fromBcs(data: Uint8Array): String {
@@ -119,17 +115,11 @@ export class String implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): String {
-        return String.reified().new({
-            bytes: decodeFromJSONField(reified.vector("u8"), field.bytes),
-        });
+        return String.reified().new({ bytes: decodeFromJSONField(reified.vector("u8"), field.bytes) });
     }
 
     static fromJSON(json: Record<string, any>): String {

@@ -96,9 +96,7 @@ export class PriceIdentifier implements StructClass {
     }
 
     static fromFields(fields: Record<string, any>): PriceIdentifier {
-        return PriceIdentifier.reified().new({
-            bytes: decodeFromFields(reified.vector("u8"), fields.bytes),
-        });
+        return PriceIdentifier.reified().new({ bytes: decodeFromFields(reified.vector("u8"), fields.bytes) });
     }
 
     static fromFieldsWithTypes(item: FieldsWithTypes): PriceIdentifier {
@@ -106,9 +104,7 @@ export class PriceIdentifier implements StructClass {
             throw new Error("not a PriceIdentifier type");
         }
 
-        return PriceIdentifier.reified().new({
-            bytes: decodeFromFieldsWithTypes(reified.vector("u8"), item.fields.bytes),
-        });
+        return PriceIdentifier.reified().new({ bytes: decodeFromFieldsWithTypes(reified.vector("u8"), item.fields.bytes) });
     }
 
     static fromBcs(data: Uint8Array): PriceIdentifier {
@@ -122,17 +118,11 @@ export class PriceIdentifier implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): PriceIdentifier {
-        return PriceIdentifier.reified().new({
-            bytes: decodeFromJSONField(reified.vector("u8"), field.bytes),
-        });
+        return PriceIdentifier.reified().new({ bytes: decodeFromJSONField(reified.vector("u8"), field.bytes) });
     }
 
     static fromJSON(json: Record<string, any>): PriceIdentifier {

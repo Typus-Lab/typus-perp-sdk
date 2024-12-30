@@ -161,11 +161,7 @@ export class Field<Name extends TypeArgument, Value extends TypeArgument> implem
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField<Name extends Reified<TypeArgument, any>, Value extends Reified<TypeArgument, any>>(

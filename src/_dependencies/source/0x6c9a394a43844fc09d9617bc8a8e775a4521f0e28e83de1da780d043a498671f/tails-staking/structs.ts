@@ -115,10 +115,7 @@ export class LevelUpEvent implements StructClass {
         return bcs.struct("LevelUpEvent", {
             nft_id: ID.bcs,
             number: bcs.u64(),
-            sender: bcs.bytes(32).transform({
-                input: (val: string) => fromHEX(val),
-                output: (val: Uint8Array) => toHEX(val),
-            }),
+            sender: bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
             level: bcs.u64(),
         });
     }
@@ -159,11 +156,7 @@ export class LevelUpEvent implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): LevelUpEvent {
@@ -313,10 +306,7 @@ export class ClaimProfitSharingEvent implements StructClass {
         return bcs.struct("ClaimProfitSharingEvent", {
             value: bcs.u64(),
             token: TypeName.bcs,
-            sender: bcs.bytes(32).transform({
-                input: (val: string) => fromHEX(val),
-                output: (val: Uint8Array) => toHEX(val),
-            }),
+            sender: bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
             nft_id: ID.bcs,
             number: bcs.u64(),
             level: bcs.u64(),
@@ -365,11 +355,7 @@ export class ClaimProfitSharingEvent implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): ClaimProfitSharingEvent {
@@ -560,11 +546,7 @@ export class NftExtension implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): NftExtension {
@@ -701,14 +683,8 @@ export class WithdrawEvent implements StructClass {
 
     static get bcs() {
         return bcs.struct("WithdrawEvent", {
-            sender: bcs.bytes(32).transform({
-                input: (val: string) => fromHEX(val),
-                output: (val: Uint8Array) => toHEX(val),
-            }),
-            receiver: bcs.bytes(32).transform({
-                input: (val: string) => fromHEX(val),
-                output: (val: Uint8Array) => toHEX(val),
-            }),
+            sender: bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
+            receiver: bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
             amount: bcs.u64(),
         });
     }
@@ -746,11 +722,7 @@ export class WithdrawEvent implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): WithdrawEvent {
@@ -902,10 +874,7 @@ export class ClaimProfitSharingEventV2 implements StructClass {
         return bcs.struct("ClaimProfitSharingEventV2", {
             value: bcs.u64(),
             token: TypeName.bcs,
-            sender: bcs.bytes(32).transform({
-                input: (val: string) => fromHEX(val),
-                output: (val: Uint8Array) => toHEX(val),
-            }),
+            sender: bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
             nft_id: ID.bcs,
             number: bcs.u64(),
             level: bcs.u64(),
@@ -958,11 +927,7 @@ export class ClaimProfitSharingEventV2 implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): ClaimProfitSharingEventV2 {
@@ -1104,10 +1069,7 @@ export class DailyAttendEvent implements StructClass {
 
     static get bcs() {
         return bcs.struct("DailyAttendEvent", {
-            sender: bcs.bytes(32).transform({
-                input: (val: string) => fromHEX(val),
-                output: (val: Uint8Array) => toHEX(val),
-            }),
+            sender: bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
             nft_id: ID.bcs,
             number: bcs.u64(),
             ts_ms: bcs.u64(),
@@ -1154,11 +1116,7 @@ export class DailyAttendEvent implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): DailyAttendEvent {
@@ -1331,11 +1289,7 @@ export class Partner implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): Partner {
@@ -1506,11 +1460,7 @@ export class PartnerKey implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): PartnerKey {
@@ -1713,11 +1663,7 @@ export class ProfitSharing<TOKEN extends PhantomTypeArgument> implements StructC
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField<TOKEN extends PhantomReified<PhantomTypeArgument>>(
@@ -1920,11 +1866,7 @@ export class ProfitSharingEvent implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): ProfitSharingEvent {
@@ -2062,10 +2004,7 @@ export class SnapshotNftEvent implements StructClass {
 
     static get bcs() {
         return bcs.struct("SnapshotNftEvent", {
-            sender: bcs.bytes(32).transform({
-                input: (val: string) => fromHEX(val),
-                output: (val: Uint8Array) => toHEX(val),
-            }),
+            sender: bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
             nft_id: ID.bcs,
             number: bcs.u64(),
             ts_ms: bcs.u64(),
@@ -2112,11 +2051,7 @@ export class SnapshotNftEvent implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): SnapshotNftEvent {
@@ -2253,10 +2188,7 @@ export class StakeNftEvent implements StructClass {
 
     static get bcs() {
         return bcs.struct("StakeNftEvent", {
-            sender: bcs.bytes(32).transform({
-                input: (val: string) => fromHEX(val),
-                output: (val: Uint8Array) => toHEX(val),
-            }),
+            sender: bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
             nft_id: ID.bcs,
             number: bcs.u64(),
             ts_ms: bcs.u64(),
@@ -2299,11 +2231,7 @@ export class StakeNftEvent implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): StakeNftEvent {
@@ -2439,14 +2367,8 @@ export class TransferNftEvent implements StructClass {
 
     static get bcs() {
         return bcs.struct("TransferNftEvent", {
-            sender: bcs.bytes(32).transform({
-                input: (val: string) => fromHEX(val),
-                output: (val: Uint8Array) => toHEX(val),
-            }),
-            receiver: bcs.bytes(32).transform({
-                input: (val: string) => fromHEX(val),
-                output: (val: Uint8Array) => toHEX(val),
-            }),
+            sender: bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
+            receiver: bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
             nft_id: ID.bcs,
             number: bcs.u64(),
         });
@@ -2488,11 +2410,7 @@ export class TransferNftEvent implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): TransferNftEvent {
@@ -2625,10 +2543,7 @@ export class UnstakeNftEvent implements StructClass {
 
     static get bcs() {
         return bcs.struct("UnstakeNftEvent", {
-            sender: bcs.bytes(32).transform({
-                input: (val: string) => fromHEX(val),
-                output: (val: Uint8Array) => toHEX(val),
-            }),
+            sender: bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
             nft_id: ID.bcs,
             number: bcs.u64(),
         });
@@ -2667,11 +2582,7 @@ export class UnstakeNftEvent implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): UnstakeNftEvent {
@@ -2812,10 +2723,7 @@ export class UpdateDepositEvent implements StructClass {
 
     static get bcs() {
         return bcs.struct("UpdateDepositEvent", {
-            sender: bcs.bytes(32).transform({
-                input: (val: string) => fromHEX(val),
-                output: (val: Uint8Array) => toHEX(val),
-            }),
+            sender: bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
             nft_id: ID.bcs,
             number: bcs.u64(),
             before: bcs.u64(),
@@ -2862,11 +2770,7 @@ export class UpdateDepositEvent implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): UpdateDepositEvent {
@@ -3046,11 +2950,7 @@ export class UpdateUrlEvent implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): UpdateUrlEvent {

@@ -94,9 +94,7 @@ export class DataSources implements StructClass {
     }
 
     static fromFields(fields: Record<string, any>): DataSources {
-        return DataSources.reified().new({
-            sources: decodeFromFields(reified.vector(DataSource.reified()), fields.sources),
-        });
+        return DataSources.reified().new({ sources: decodeFromFields(reified.vector(DataSource.reified()), fields.sources) });
     }
 
     static fromFieldsWithTypes(item: FieldsWithTypes): DataSources {
@@ -104,9 +102,7 @@ export class DataSources implements StructClass {
             throw new Error("not a DataSources type");
         }
 
-        return DataSources.reified().new({
-            sources: decodeFromFieldsWithTypes(reified.vector(DataSource.reified()), item.fields.sources),
-        });
+        return DataSources.reified().new({ sources: decodeFromFieldsWithTypes(reified.vector(DataSource.reified()), item.fields.sources) });
     }
 
     static fromBcs(data: Uint8Array): DataSources {
@@ -120,17 +116,11 @@ export class DataSources implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): DataSources {
-        return DataSources.reified().new({
-            sources: decodeFromJSONField(reified.vector(DataSource.reified()), field.sources),
-        });
+        return DataSources.reified().new({ sources: decodeFromJSONField(reified.vector(DataSource.reified()), field.sources) });
     }
 
     static fromJSON(json: Record<string, any>): DataSources {

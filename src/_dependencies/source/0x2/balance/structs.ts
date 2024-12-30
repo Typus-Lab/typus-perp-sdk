@@ -105,9 +105,7 @@ export class Balance<T extends PhantomTypeArgument> implements StructClass {
         typeArg: T,
         fields: Record<string, any>
     ): Balance<ToPhantomTypeArgument<T>> {
-        return Balance.reified(typeArg).new({
-            value: decodeFromFields("u64", fields.value),
-        });
+        return Balance.reified(typeArg).new({ value: decodeFromFields("u64", fields.value) });
     }
 
     static fromFieldsWithTypes<T extends PhantomReified<PhantomTypeArgument>>(
@@ -119,9 +117,7 @@ export class Balance<T extends PhantomTypeArgument> implements StructClass {
         }
         assertFieldsWithTypesArgsMatch(item, [typeArg]);
 
-        return Balance.reified(typeArg).new({
-            value: decodeFromFieldsWithTypes("u64", item.fields.value),
-        });
+        return Balance.reified(typeArg).new({ value: decodeFromFieldsWithTypes("u64", item.fields.value) });
     }
 
     static fromBcs<T extends PhantomReified<PhantomTypeArgument>>(typeArg: T, data: Uint8Array): Balance<ToPhantomTypeArgument<T>> {
@@ -135,17 +131,11 @@ export class Balance<T extends PhantomTypeArgument> implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField<T extends PhantomReified<PhantomTypeArgument>>(typeArg: T, field: any): Balance<ToPhantomTypeArgument<T>> {
-        return Balance.reified(typeArg).new({
-            value: decodeFromJSONField("u64", field.value),
-        });
+        return Balance.reified(typeArg).new({ value: decodeFromJSONField("u64", field.value) });
     }
 
     static fromJSON<T extends PhantomReified<PhantomTypeArgument>>(
@@ -298,9 +288,7 @@ export class Supply<T extends PhantomTypeArgument> implements StructClass {
         typeArg: T,
         fields: Record<string, any>
     ): Supply<ToPhantomTypeArgument<T>> {
-        return Supply.reified(typeArg).new({
-            value: decodeFromFields("u64", fields.value),
-        });
+        return Supply.reified(typeArg).new({ value: decodeFromFields("u64", fields.value) });
     }
 
     static fromFieldsWithTypes<T extends PhantomReified<PhantomTypeArgument>>(
@@ -312,9 +300,7 @@ export class Supply<T extends PhantomTypeArgument> implements StructClass {
         }
         assertFieldsWithTypesArgsMatch(item, [typeArg]);
 
-        return Supply.reified(typeArg).new({
-            value: decodeFromFieldsWithTypes("u64", item.fields.value),
-        });
+        return Supply.reified(typeArg).new({ value: decodeFromFieldsWithTypes("u64", item.fields.value) });
     }
 
     static fromBcs<T extends PhantomReified<PhantomTypeArgument>>(typeArg: T, data: Uint8Array): Supply<ToPhantomTypeArgument<T>> {
@@ -328,17 +314,11 @@ export class Supply<T extends PhantomTypeArgument> implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField<T extends PhantomReified<PhantomTypeArgument>>(typeArg: T, field: any): Supply<ToPhantomTypeArgument<T>> {
-        return Supply.reified(typeArg).new({
-            value: decodeFromJSONField("u64", field.value),
-        });
+        return Supply.reified(typeArg).new({ value: decodeFromJSONField("u64", field.value) });
     }
 
     static fromJSON<T extends PhantomReified<PhantomTypeArgument>>(

@@ -115,9 +115,7 @@ export class Config<WriteCap extends PhantomTypeArgument> implements StructClass
         typeArg: WriteCap,
         fields: Record<string, any>
     ): Config<ToPhantomTypeArgument<WriteCap>> {
-        return Config.reified(typeArg).new({
-            id: decodeFromFields(UID.reified(), fields.id),
-        });
+        return Config.reified(typeArg).new({ id: decodeFromFields(UID.reified(), fields.id) });
     }
 
     static fromFieldsWithTypes<WriteCap extends PhantomReified<PhantomTypeArgument>>(
@@ -129,9 +127,7 @@ export class Config<WriteCap extends PhantomTypeArgument> implements StructClass
         }
         assertFieldsWithTypesArgsMatch(item, [typeArg]);
 
-        return Config.reified(typeArg).new({
-            id: decodeFromFieldsWithTypes(UID.reified(), item.fields.id),
-        });
+        return Config.reified(typeArg).new({ id: decodeFromFieldsWithTypes(UID.reified(), item.fields.id) });
     }
 
     static fromBcs<WriteCap extends PhantomReified<PhantomTypeArgument>>(
@@ -148,20 +144,14 @@ export class Config<WriteCap extends PhantomTypeArgument> implements StructClass
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField<WriteCap extends PhantomReified<PhantomTypeArgument>>(
         typeArg: WriteCap,
         field: any
     ): Config<ToPhantomTypeArgument<WriteCap>> {
-        return Config.reified(typeArg).new({
-            id: decodeFromJSONField(UID.reified(), field.id),
-        });
+        return Config.reified(typeArg).new({ id: decodeFromJSONField(UID.reified(), field.id) });
     }
 
     static fromJSON<WriteCap extends PhantomReified<PhantomTypeArgument>>(
@@ -315,9 +305,7 @@ export class Setting<Value extends TypeArgument> implements StructClass {
         typeArg: Value,
         fields: Record<string, any>
     ): Setting<ToTypeArgument<Value>> {
-        return Setting.reified(typeArg).new({
-            data: decodeFromFields(Option.reified(SettingData.reified(typeArg)), fields.data),
-        });
+        return Setting.reified(typeArg).new({ data: decodeFromFields(Option.reified(SettingData.reified(typeArg)), fields.data) });
     }
 
     static fromFieldsWithTypes<Value extends Reified<TypeArgument, any>>(
@@ -347,17 +335,11 @@ export class Setting<Value extends TypeArgument> implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField<Value extends Reified<TypeArgument, any>>(typeArg: Value, field: any): Setting<ToTypeArgument<Value>> {
-        return Setting.reified(typeArg).new({
-            data: decodeFromJSONField(Option.reified(SettingData.reified(typeArg)), field.data),
-        });
+        return Setting.reified(typeArg).new({ data: decodeFromJSONField(Option.reified(SettingData.reified(typeArg)), field.data) });
     }
 
     static fromJSON<Value extends Reified<TypeArgument, any>>(typeArg: Value, json: Record<string, any>): Setting<ToTypeArgument<Value>> {
@@ -557,11 +539,7 @@ export class SettingData<Value extends TypeArgument> implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField<Value extends Reified<TypeArgument, any>>(typeArg: Value, field: any): SettingData<ToTypeArgument<Value>> {

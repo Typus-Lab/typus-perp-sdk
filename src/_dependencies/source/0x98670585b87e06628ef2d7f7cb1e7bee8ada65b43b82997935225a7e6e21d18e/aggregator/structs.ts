@@ -170,18 +170,9 @@ export class Aggregator implements StructClass {
     static get bcs() {
         return bcs.struct("Aggregator", {
             id: UID.bcs,
-            authority: bcs.bytes(32).transform({
-                input: (val: string) => fromHEX(val),
-                output: (val: Uint8Array) => toHEX(val),
-            }),
-            queue_addr: bcs.bytes(32).transform({
-                input: (val: string) => fromHEX(val),
-                output: (val: Uint8Array) => toHEX(val),
-            }),
-            token_addr: bcs.bytes(32).transform({
-                input: (val: string) => fromHEX(val),
-                output: (val: Uint8Array) => toHEX(val),
-            }),
+            authority: bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
+            queue_addr: bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
+            token_addr: bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
             batch_size: bcs.u64(),
             min_oracle_results: bcs.u64(),
             min_update_delay_seconds: bcs.u64(),
@@ -195,10 +186,7 @@ export class Aggregator implements StructClass {
             next_allowed_update_time: bcs.u64(),
             created_at: bcs.u64(),
             read_charge: bcs.u64(),
-            reward_escrow: bcs.bytes(32).transform({
-                input: (val: string) => fromHEX(val),
-                output: (val: Uint8Array) => toHEX(val),
-            }),
+            reward_escrow: bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
             read_whitelist: Bag.bcs,
             limit_reads_to_whitelist: bcs.bool(),
             update_data: SlidingWindow.bcs,
@@ -316,11 +304,7 @@ export class Aggregator implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): Aggregator {
@@ -518,11 +502,7 @@ export class AggregatorHistoryData implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): AggregatorHistoryData {
@@ -689,11 +669,7 @@ export class AggregatorHistoryRow implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): AggregatorHistoryRow {
@@ -829,10 +805,7 @@ export class AggregatorJobData implements StructClass {
         return bcs.struct("AggregatorJobData", {
             id: UID.bcs,
             job_keys: bcs.vector(
-                bcs.bytes(32).transform({
-                    input: (val: string) => fromHEX(val),
-                    output: (val: Uint8Array) => toHEX(val),
-                })
+                bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) })
             ),
             job_weights: bcs.vector(bcs.u8()),
             jobs_checksum: bcs.vector(bcs.u8()),
@@ -875,11 +848,7 @@ export class AggregatorJobData implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): AggregatorJobData {
@@ -1051,11 +1020,7 @@ export class SlidingWindow implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): SlidingWindow {
@@ -1190,10 +1155,7 @@ export class SlidingWindowElement implements StructClass {
 
     static get bcs() {
         return bcs.struct("SlidingWindowElement", {
-            oracle_addr: bcs.bytes(32).transform({
-                input: (val: string) => fromHEX(val),
-                output: (val: Uint8Array) => toHEX(val),
-            }),
+            oracle_addr: bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
             value: SwitchboardDecimal.bcs,
             timestamp: bcs.u64(),
         });
@@ -1232,11 +1194,7 @@ export class SlidingWindowElement implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): SlidingWindowElement {

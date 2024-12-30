@@ -94,9 +94,7 @@ export class ExternalAddress implements StructClass {
     }
 
     static fromFields(fields: Record<string, any>): ExternalAddress {
-        return ExternalAddress.reified().new({
-            value: decodeFromFields(Bytes32.reified(), fields.value),
-        });
+        return ExternalAddress.reified().new({ value: decodeFromFields(Bytes32.reified(), fields.value) });
     }
 
     static fromFieldsWithTypes(item: FieldsWithTypes): ExternalAddress {
@@ -104,9 +102,7 @@ export class ExternalAddress implements StructClass {
             throw new Error("not a ExternalAddress type");
         }
 
-        return ExternalAddress.reified().new({
-            value: decodeFromFieldsWithTypes(Bytes32.reified(), item.fields.value),
-        });
+        return ExternalAddress.reified().new({ value: decodeFromFieldsWithTypes(Bytes32.reified(), item.fields.value) });
     }
 
     static fromBcs(data: Uint8Array): ExternalAddress {
@@ -120,17 +116,11 @@ export class ExternalAddress implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): ExternalAddress {
-        return ExternalAddress.reified().new({
-            value: decodeFromJSONField(Bytes32.reified(), field.value),
-        });
+        return ExternalAddress.reified().new({ value: decodeFromJSONField(Bytes32.reified(), field.value) });
     }
 
     static fromJSON(json: Record<string, any>): ExternalAddress {

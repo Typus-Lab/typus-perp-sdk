@@ -139,11 +139,7 @@ export class Node<K extends TypeArgument> implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField<K extends Reified<TypeArgument, any>>(typeArg: K, field: any): Node<ToTypeArgument<K>> {
@@ -338,11 +334,7 @@ export class LinkedSet<K extends TypeArgument> implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField<K extends Reified<TypeArgument, any>>(typeArg: K, field: any): LinkedSet<ToTypeArgument<K>> {

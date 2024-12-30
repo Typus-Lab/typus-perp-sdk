@@ -152,11 +152,7 @@ export class Display<T extends PhantomTypeArgument> implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField<T extends PhantomReified<PhantomTypeArgument>>(typeArg: T, field: any): Display<ToPhantomTypeArgument<T>> {
@@ -322,9 +318,7 @@ export class DisplayCreated<T extends PhantomTypeArgument> implements StructClas
         typeArg: T,
         fields: Record<string, any>
     ): DisplayCreated<ToPhantomTypeArgument<T>> {
-        return DisplayCreated.reified(typeArg).new({
-            id: decodeFromFields(ID.reified(), fields.id),
-        });
+        return DisplayCreated.reified(typeArg).new({ id: decodeFromFields(ID.reified(), fields.id) });
     }
 
     static fromFieldsWithTypes<T extends PhantomReified<PhantomTypeArgument>>(
@@ -336,9 +330,7 @@ export class DisplayCreated<T extends PhantomTypeArgument> implements StructClas
         }
         assertFieldsWithTypesArgsMatch(item, [typeArg]);
 
-        return DisplayCreated.reified(typeArg).new({
-            id: decodeFromFieldsWithTypes(ID.reified(), item.fields.id),
-        });
+        return DisplayCreated.reified(typeArg).new({ id: decodeFromFieldsWithTypes(ID.reified(), item.fields.id) });
     }
 
     static fromBcs<T extends PhantomReified<PhantomTypeArgument>>(typeArg: T, data: Uint8Array): DisplayCreated<ToPhantomTypeArgument<T>> {
@@ -352,17 +344,11 @@ export class DisplayCreated<T extends PhantomTypeArgument> implements StructClas
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField<T extends PhantomReified<PhantomTypeArgument>>(typeArg: T, field: any): DisplayCreated<ToPhantomTypeArgument<T>> {
-        return DisplayCreated.reified(typeArg).new({
-            id: decodeFromJSONField(ID.reified(), field.id),
-        });
+        return DisplayCreated.reified(typeArg).new({ id: decodeFromJSONField(ID.reified(), field.id) });
     }
 
     static fromJSON<T extends PhantomReified<PhantomTypeArgument>>(
@@ -564,11 +550,7 @@ export class VersionUpdated<T extends PhantomTypeArgument> implements StructClas
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField<T extends PhantomReified<PhantomTypeArgument>>(typeArg: T, field: any): VersionUpdated<ToPhantomTypeArgument<T>> {

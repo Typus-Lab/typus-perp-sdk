@@ -96,9 +96,7 @@ export class StalePriceThreshold implements StructClass {
     }
 
     static fromFields(fields: Record<string, any>): StalePriceThreshold {
-        return StalePriceThreshold.reified().new({
-            threshold: decodeFromFields("u64", fields.threshold),
-        });
+        return StalePriceThreshold.reified().new({ threshold: decodeFromFields("u64", fields.threshold) });
     }
 
     static fromFieldsWithTypes(item: FieldsWithTypes): StalePriceThreshold {
@@ -106,9 +104,7 @@ export class StalePriceThreshold implements StructClass {
             throw new Error("not a StalePriceThreshold type");
         }
 
-        return StalePriceThreshold.reified().new({
-            threshold: decodeFromFieldsWithTypes("u64", item.fields.threshold),
-        });
+        return StalePriceThreshold.reified().new({ threshold: decodeFromFieldsWithTypes("u64", item.fields.threshold) });
     }
 
     static fromBcs(data: Uint8Array): StalePriceThreshold {
@@ -122,17 +118,11 @@ export class StalePriceThreshold implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): StalePriceThreshold {
-        return StalePriceThreshold.reified().new({
-            threshold: decodeFromJSONField("u64", field.threshold),
-        });
+        return StalePriceThreshold.reified().new({ threshold: decodeFromJSONField("u64", field.threshold) });
     }
 
     static fromJSON(json: Record<string, any>): StalePriceThreshold {

@@ -133,11 +133,7 @@ export class OptionCollateralInfo implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): OptionCollateralInfo {
@@ -301,10 +297,7 @@ export class OrderFilledEvent implements StructClass {
 
     static get bcs() {
         return bcs.struct("OrderFilledEvent", {
-            user: bcs.bytes(32).transform({
-                input: (val: string) => fromHEX(val),
-                output: (val: Uint8Array) => toHEX(val),
-            }),
+            user: bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
             collateral_token: TypeName.bcs,
             symbol: Symbol.bcs,
             order_id: bcs.u64(),
@@ -387,11 +380,7 @@ export class OrderFilledEvent implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): OrderFilledEvent {
@@ -487,6 +476,7 @@ export interface PositionFields {
     unrealizedLoss: ToField<"u64">;
     unrealizedFundingSign: ToField<"bool">;
     unrealizedFundingFee: ToField<"u64">;
+    unrealizedTradingFee: ToField<"u64">;
     unrealizedBorrowFee: ToField<"u64">;
     unrealizedRebate: ToField<"u64">;
     optionCollateralInfo: ToField<Option<OptionCollateralInfo>>;
@@ -528,6 +518,7 @@ export class Position implements StructClass {
     readonly unrealizedLoss: ToField<"u64">;
     readonly unrealizedFundingSign: ToField<"bool">;
     readonly unrealizedFundingFee: ToField<"u64">;
+    readonly unrealizedTradingFee: ToField<"u64">;
     readonly unrealizedBorrowFee: ToField<"u64">;
     readonly unrealizedRebate: ToField<"u64">;
     readonly optionCollateralInfo: ToField<Option<OptionCollateralInfo>>;
@@ -558,6 +549,7 @@ export class Position implements StructClass {
         this.unrealizedLoss = fields.unrealizedLoss;
         this.unrealizedFundingSign = fields.unrealizedFundingSign;
         this.unrealizedFundingFee = fields.unrealizedFundingFee;
+        this.unrealizedTradingFee = fields.unrealizedTradingFee;
         this.unrealizedBorrowFee = fields.unrealizedBorrowFee;
         this.unrealizedRebate = fields.unrealizedRebate;
         this.optionCollateralInfo = fields.optionCollateralInfo;
@@ -605,10 +597,7 @@ export class Position implements StructClass {
             position_id: bcs.u64(),
             linked_order_ids: bcs.vector(bcs.u64()),
             linked_order_prices: bcs.vector(bcs.u64()),
-            user: bcs.bytes(32).transform({
-                input: (val: string) => fromHEX(val),
-                output: (val: Uint8Array) => toHEX(val),
-            }),
+            user: bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
             is_long: bcs.bool(),
             size: bcs.u64(),
             size_decimal: bcs.u64(),
@@ -624,6 +613,7 @@ export class Position implements StructClass {
             unrealized_loss: bcs.u64(),
             unrealized_funding_sign: bcs.bool(),
             unrealized_funding_fee: bcs.u64(),
+            unrealized_trading_fee: bcs.u64(),
             unrealized_borrow_fee: bcs.u64(),
             unrealized_rebate: bcs.u64(),
             option_collateral_info: Option.bcs(OptionCollateralInfo.bcs),
@@ -654,6 +644,7 @@ export class Position implements StructClass {
             unrealizedLoss: decodeFromFields("u64", fields.unrealized_loss),
             unrealizedFundingSign: decodeFromFields("bool", fields.unrealized_funding_sign),
             unrealizedFundingFee: decodeFromFields("u64", fields.unrealized_funding_fee),
+            unrealizedTradingFee: decodeFromFields("u64", fields.unrealized_trading_fee),
             unrealizedBorrowFee: decodeFromFields("u64", fields.unrealized_borrow_fee),
             unrealizedRebate: decodeFromFields("u64", fields.unrealized_rebate),
             optionCollateralInfo: decodeFromFields(Option.reified(OptionCollateralInfo.reified()), fields.option_collateral_info),
@@ -688,6 +679,7 @@ export class Position implements StructClass {
             unrealizedLoss: decodeFromFieldsWithTypes("u64", item.fields.unrealized_loss),
             unrealizedFundingSign: decodeFromFieldsWithTypes("bool", item.fields.unrealized_funding_sign),
             unrealizedFundingFee: decodeFromFieldsWithTypes("u64", item.fields.unrealized_funding_fee),
+            unrealizedTradingFee: decodeFromFieldsWithTypes("u64", item.fields.unrealized_trading_fee),
             unrealizedBorrowFee: decodeFromFieldsWithTypes("u64", item.fields.unrealized_borrow_fee),
             unrealizedRebate: decodeFromFieldsWithTypes("u64", item.fields.unrealized_rebate),
             optionCollateralInfo: decodeFromFieldsWithTypes(
@@ -725,6 +717,7 @@ export class Position implements StructClass {
             unrealizedLoss: this.unrealizedLoss.toString(),
             unrealizedFundingSign: this.unrealizedFundingSign,
             unrealizedFundingFee: this.unrealizedFundingFee.toString(),
+            unrealizedTradingFee: this.unrealizedTradingFee.toString(),
             unrealizedBorrowFee: this.unrealizedBorrowFee.toString(),
             unrealizedRebate: this.unrealizedRebate.toString(),
             optionCollateralInfo: fieldToJSON<Option<OptionCollateralInfo>>(
@@ -736,11 +729,7 @@ export class Position implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): Position {
@@ -766,6 +755,7 @@ export class Position implements StructClass {
             unrealizedLoss: decodeFromJSONField("u64", field.unrealizedLoss),
             unrealizedFundingSign: decodeFromJSONField("bool", field.unrealizedFundingSign),
             unrealizedFundingFee: decodeFromJSONField("u64", field.unrealizedFundingFee),
+            unrealizedTradingFee: decodeFromJSONField("u64", field.unrealizedTradingFee),
             unrealizedBorrowFee: decodeFromJSONField("u64", field.unrealizedBorrowFee),
             unrealizedRebate: decodeFromJSONField("u64", field.unrealizedRebate),
             optionCollateralInfo: decodeFromJSONField(Option.reified(OptionCollateralInfo.reified()), field.optionCollateralInfo),
@@ -909,10 +899,7 @@ export class RealizeFundingEvent implements StructClass {
 
     static get bcs() {
         return bcs.struct("RealizeFundingEvent", {
-            user: bcs.bytes(32).transform({
-                input: (val: string) => fromHEX(val),
-                output: (val: Uint8Array) => toHEX(val),
-            }),
+            user: bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
             collateral_token: TypeName.bcs,
             symbol: Symbol.bcs,
             position_id: bcs.u64(),
@@ -967,11 +954,7 @@ export class RealizeFundingEvent implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): RealizeFundingEvent {
@@ -1131,10 +1114,7 @@ export class RealizedPnlEvent implements StructClass {
 
     static get bcs() {
         return bcs.struct("RealizedPnlEvent", {
-            user: bcs.bytes(32).transform({
-                input: (val: string) => fromHEX(val),
-                output: (val: Uint8Array) => toHEX(val),
-            }),
+            user: bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
             collateral_token: TypeName.bcs,
             symbol: Symbol.bcs,
             position_id: bcs.u64(),
@@ -1205,11 +1185,7 @@ export class RealizedPnlEvent implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): RealizedPnlEvent {
@@ -1287,6 +1263,7 @@ export interface RemovePositionEventFields {
     linkedOrderIds: ToField<Vector<"u64">>;
     linkedOrderPrices: ToField<Vector<"u64">>;
     remainingCollateralAmount: ToField<"u64">;
+    realizedTradingFeeAmount: ToField<"u64">;
     realizedBorrowFeeAmount: ToField<"u64">;
     u64Padding: ToField<Vector<"u64">>;
 }
@@ -1311,6 +1288,7 @@ export class RemovePositionEvent implements StructClass {
     readonly linkedOrderIds: ToField<Vector<"u64">>;
     readonly linkedOrderPrices: ToField<Vector<"u64">>;
     readonly remainingCollateralAmount: ToField<"u64">;
+    readonly realizedTradingFeeAmount: ToField<"u64">;
     readonly realizedBorrowFeeAmount: ToField<"u64">;
     readonly u64Padding: ToField<Vector<"u64">>;
 
@@ -1327,6 +1305,7 @@ export class RemovePositionEvent implements StructClass {
         this.linkedOrderIds = fields.linkedOrderIds;
         this.linkedOrderPrices = fields.linkedOrderPrices;
         this.remainingCollateralAmount = fields.remainingCollateralAmount;
+        this.realizedTradingFeeAmount = fields.realizedTradingFeeAmount;
         this.realizedBorrowFeeAmount = fields.realizedBorrowFeeAmount;
         this.u64Padding = fields.u64Padding;
     }
@@ -1367,15 +1346,13 @@ export class RemovePositionEvent implements StructClass {
 
     static get bcs() {
         return bcs.struct("RemovePositionEvent", {
-            user: bcs.bytes(32).transform({
-                input: (val: string) => fromHEX(val),
-                output: (val: Uint8Array) => toHEX(val),
-            }),
+            user: bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
             collateral_token: TypeName.bcs,
             symbol: Symbol.bcs,
             linked_order_ids: bcs.vector(bcs.u64()),
             linked_order_prices: bcs.vector(bcs.u64()),
             remaining_collateral_amount: bcs.u64(),
+            realized_trading_fee_amount: bcs.u64(),
             realized_borrow_fee_amount: bcs.u64(),
             u64_padding: bcs.vector(bcs.u64()),
         });
@@ -1389,6 +1366,7 @@ export class RemovePositionEvent implements StructClass {
             linkedOrderIds: decodeFromFields(reified.vector("u64"), fields.linked_order_ids),
             linkedOrderPrices: decodeFromFields(reified.vector("u64"), fields.linked_order_prices),
             remainingCollateralAmount: decodeFromFields("u64", fields.remaining_collateral_amount),
+            realizedTradingFeeAmount: decodeFromFields("u64", fields.realized_trading_fee_amount),
             realizedBorrowFeeAmount: decodeFromFields("u64", fields.realized_borrow_fee_amount),
             u64Padding: decodeFromFields(reified.vector("u64"), fields.u64_padding),
         });
@@ -1406,6 +1384,7 @@ export class RemovePositionEvent implements StructClass {
             linkedOrderIds: decodeFromFieldsWithTypes(reified.vector("u64"), item.fields.linked_order_ids),
             linkedOrderPrices: decodeFromFieldsWithTypes(reified.vector("u64"), item.fields.linked_order_prices),
             remainingCollateralAmount: decodeFromFieldsWithTypes("u64", item.fields.remaining_collateral_amount),
+            realizedTradingFeeAmount: decodeFromFieldsWithTypes("u64", item.fields.realized_trading_fee_amount),
             realizedBorrowFeeAmount: decodeFromFieldsWithTypes("u64", item.fields.realized_borrow_fee_amount),
             u64Padding: decodeFromFieldsWithTypes(reified.vector("u64"), item.fields.u64_padding),
         });
@@ -1423,17 +1402,14 @@ export class RemovePositionEvent implements StructClass {
             linkedOrderIds: fieldToJSON<Vector<"u64">>(`vector<u64>`, this.linkedOrderIds),
             linkedOrderPrices: fieldToJSON<Vector<"u64">>(`vector<u64>`, this.linkedOrderPrices),
             remainingCollateralAmount: this.remainingCollateralAmount.toString(),
+            realizedTradingFeeAmount: this.realizedTradingFeeAmount.toString(),
             realizedBorrowFeeAmount: this.realizedBorrowFeeAmount.toString(),
             u64Padding: fieldToJSON<Vector<"u64">>(`vector<u64>`, this.u64Padding),
         };
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): RemovePositionEvent {
@@ -1444,6 +1420,7 @@ export class RemovePositionEvent implements StructClass {
             linkedOrderIds: decodeFromJSONField(reified.vector("u64"), field.linkedOrderIds),
             linkedOrderPrices: decodeFromJSONField(reified.vector("u64"), field.linkedOrderPrices),
             remainingCollateralAmount: decodeFromJSONField("u64", field.remainingCollateralAmount),
+            realizedTradingFeeAmount: decodeFromJSONField("u64", field.realizedTradingFeeAmount),
             realizedBorrowFeeAmount: decodeFromJSONField("u64", field.realizedBorrowFeeAmount),
             u64Padding: decodeFromJSONField(reified.vector("u64"), field.u64Padding),
         });
@@ -1616,10 +1593,7 @@ export class TradingOrder implements StructClass {
             create_ts_ms: bcs.u64(),
             order_id: bcs.u64(),
             linked_position_id: Option.bcs(bcs.u64()),
-            user: bcs.bytes(32).transform({
-                input: (val: string) => fromHEX(val),
-                output: (val: Uint8Array) => toHEX(val),
-            }),
+            user: bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
             collateral_token: TypeName.bcs,
             collateral_token_decimal: bcs.u64(),
             symbol: Symbol.bcs,
@@ -1710,11 +1684,7 @@ export class TradingOrder implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): TradingOrder {

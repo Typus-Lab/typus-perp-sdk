@@ -4,7 +4,6 @@ import { StructClassLoader } from "../_framework/loader";
 
 export function registerClasses(loader: StructClassLoader) {
     loader.register(admin.Version);
-    loader.register(admin.ManagerCap);
     loader.register(admin.FeeInfo);
     loader.register(admin.FeePool);
     loader.register(admin.SendFeeEvent);

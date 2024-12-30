@@ -109,10 +109,7 @@ export class ActivateLeaderboardEvent implements StructClass {
     static get bcs() {
         return bcs.struct("ActivateLeaderboardEvent", {
             key: String.bcs,
-            id: bcs.bytes(32).transform({
-                input: (val: string) => fromHEX(val),
-                output: (val: Uint8Array) => toHEX(val),
-            }),
+            id: bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
             log: bcs.vector(bcs.u64()),
             bcs_padding: bcs.vector(bcs.vector(bcs.u8())),
         });
@@ -154,11 +151,7 @@ export class ActivateLeaderboardEvent implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): ActivateLeaderboardEvent {
@@ -301,10 +294,7 @@ export class DeactivateLeaderboardEvent implements StructClass {
     static get bcs() {
         return bcs.struct("DeactivateLeaderboardEvent", {
             key: String.bcs,
-            id: bcs.bytes(32).transform({
-                input: (val: string) => fromHEX(val),
-                output: (val: Uint8Array) => toHEX(val),
-            }),
+            id: bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
             log: bcs.vector(bcs.u64()),
             bcs_padding: bcs.vector(bcs.vector(bcs.u8())),
         });
@@ -346,11 +336,7 @@ export class DeactivateLeaderboardEvent implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): DeactivateLeaderboardEvent {
@@ -490,14 +476,8 @@ export class DeductEvent implements StructClass {
     static get bcs() {
         return bcs.struct("DeductEvent", {
             key: String.bcs,
-            id: bcs.bytes(32).transform({
-                input: (val: string) => fromHEX(val),
-                output: (val: Uint8Array) => toHEX(val),
-            }),
-            user: bcs.bytes(32).transform({
-                input: (val: string) => fromHEX(val),
-                output: (val: Uint8Array) => toHEX(val),
-            }),
+            id: bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
+            user: bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
             log: bcs.vector(bcs.u64()),
             bcs_padding: bcs.vector(bcs.vector(bcs.u8())),
         });
@@ -542,11 +522,7 @@ export class DeductEvent implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): DeductEvent {
@@ -690,10 +666,7 @@ export class ExtendLeaderboardEvent implements StructClass {
     static get bcs() {
         return bcs.struct("ExtendLeaderboardEvent", {
             key: String.bcs,
-            id: bcs.bytes(32).transform({
-                input: (val: string) => fromHEX(val),
-                output: (val: Uint8Array) => toHEX(val),
-            }),
+            id: bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
             log: bcs.vector(bcs.u64()),
             bcs_padding: bcs.vector(bcs.vector(bcs.u8())),
         });
@@ -735,11 +708,7 @@ export class ExtendLeaderboardEvent implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): ExtendLeaderboardEvent {
@@ -883,12 +852,7 @@ export class Leaderboard implements StructClass {
             end_ts_ms: bcs.u64(),
             score: Table.bcs,
             ranking: CritbitTree.bcs(
-                LinkedSet.bcs(
-                    bcs.bytes(32).transform({
-                        input: (val: string) => fromHEX(val),
-                        output: (val: Uint8Array) => toHEX(val),
-                    })
-                )
+                LinkedSet.bcs(bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }))
             ),
         });
     }
@@ -932,11 +896,7 @@ export class Leaderboard implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): Leaderboard {
@@ -1080,10 +1040,7 @@ export class RemoveLeaderboardEvent implements StructClass {
     static get bcs() {
         return bcs.struct("RemoveLeaderboardEvent", {
             key: String.bcs,
-            id: bcs.bytes(32).transform({
-                input: (val: string) => fromHEX(val),
-                output: (val: Uint8Array) => toHEX(val),
-            }),
+            id: bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
             log: bcs.vector(bcs.u64()),
             bcs_padding: bcs.vector(bcs.vector(bcs.u8())),
         });
@@ -1125,11 +1082,7 @@ export class RemoveLeaderboardEvent implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): RemoveLeaderboardEvent {
@@ -1269,14 +1222,8 @@ export class ScoreEvent implements StructClass {
     static get bcs() {
         return bcs.struct("ScoreEvent", {
             key: String.bcs,
-            id: bcs.bytes(32).transform({
-                input: (val: string) => fromHEX(val),
-                output: (val: Uint8Array) => toHEX(val),
-            }),
-            user: bcs.bytes(32).transform({
-                input: (val: string) => fromHEX(val),
-                output: (val: Uint8Array) => toHEX(val),
-            }),
+            id: bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
+            user: bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
             log: bcs.vector(bcs.u64()),
             bcs_padding: bcs.vector(bcs.vector(bcs.u8())),
         });
@@ -1321,11 +1268,7 @@ export class ScoreEvent implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): ScoreEvent {
@@ -1504,11 +1447,7 @@ export class TypusLeaderboardRegistry implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): TypusLeaderboardRegistry {

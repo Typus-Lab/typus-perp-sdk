@@ -97,9 +97,7 @@ export class GovernanceWitness implements StructClass {
     }
 
     static fromFields(fields: Record<string, any>): GovernanceWitness {
-        return GovernanceWitness.reified().new({
-            dummyField: decodeFromFields("bool", fields.dummy_field),
-        });
+        return GovernanceWitness.reified().new({ dummyField: decodeFromFields("bool", fields.dummy_field) });
     }
 
     static fromFieldsWithTypes(item: FieldsWithTypes): GovernanceWitness {
@@ -107,9 +105,7 @@ export class GovernanceWitness implements StructClass {
             throw new Error("not a GovernanceWitness type");
         }
 
-        return GovernanceWitness.reified().new({
-            dummyField: decodeFromFieldsWithTypes("bool", item.fields.dummy_field),
-        });
+        return GovernanceWitness.reified().new({ dummyField: decodeFromFieldsWithTypes("bool", item.fields.dummy_field) });
     }
 
     static fromBcs(data: Uint8Array): GovernanceWitness {
@@ -123,17 +119,11 @@ export class GovernanceWitness implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): GovernanceWitness {
-        return GovernanceWitness.reified().new({
-            dummyField: decodeFromJSONField("bool", field.dummyField),
-        });
+        return GovernanceWitness.reified().new({ dummyField: decodeFromJSONField("bool", field.dummyField) });
     }
 
     static fromJSON(json: Record<string, any>): GovernanceWitness {
@@ -259,9 +249,7 @@ export class GuardianSetAdded implements StructClass {
     }
 
     static fromFields(fields: Record<string, any>): GuardianSetAdded {
-        return GuardianSetAdded.reified().new({
-            newIndex: decodeFromFields("u32", fields.new_index),
-        });
+        return GuardianSetAdded.reified().new({ newIndex: decodeFromFields("u32", fields.new_index) });
     }
 
     static fromFieldsWithTypes(item: FieldsWithTypes): GuardianSetAdded {
@@ -269,9 +257,7 @@ export class GuardianSetAdded implements StructClass {
             throw new Error("not a GuardianSetAdded type");
         }
 
-        return GuardianSetAdded.reified().new({
-            newIndex: decodeFromFieldsWithTypes("u32", item.fields.new_index),
-        });
+        return GuardianSetAdded.reified().new({ newIndex: decodeFromFieldsWithTypes("u32", item.fields.new_index) });
     }
 
     static fromBcs(data: Uint8Array): GuardianSetAdded {
@@ -285,17 +271,11 @@ export class GuardianSetAdded implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): GuardianSetAdded {
-        return GuardianSetAdded.reified().new({
-            newIndex: decodeFromJSONField("u32", field.newIndex),
-        });
+        return GuardianSetAdded.reified().new({ newIndex: decodeFromJSONField("u32", field.newIndex) });
     }
 
     static fromJSON(json: Record<string, any>): GuardianSetAdded {
@@ -454,11 +434,7 @@ export class UpdateGuardianSet implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): UpdateGuardianSet {

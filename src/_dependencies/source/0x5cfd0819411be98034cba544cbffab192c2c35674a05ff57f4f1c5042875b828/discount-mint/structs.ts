@@ -100,9 +100,7 @@ export class ManagerCap implements StructClass {
     }
 
     static fromFields(fields: Record<string, any>): ManagerCap {
-        return ManagerCap.reified().new({
-            id: decodeFromFields(UID.reified(), fields.id),
-        });
+        return ManagerCap.reified().new({ id: decodeFromFields(UID.reified(), fields.id) });
     }
 
     static fromFieldsWithTypes(item: FieldsWithTypes): ManagerCap {
@@ -110,9 +108,7 @@ export class ManagerCap implements StructClass {
             throw new Error("not a ManagerCap type");
         }
 
-        return ManagerCap.reified().new({
-            id: decodeFromFieldsWithTypes(UID.reified(), item.fields.id),
-        });
+        return ManagerCap.reified().new({ id: decodeFromFieldsWithTypes(UID.reified(), item.fields.id) });
     }
 
     static fromBcs(data: Uint8Array): ManagerCap {
@@ -126,17 +122,11 @@ export class ManagerCap implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): ManagerCap {
-        return ManagerCap.reified().new({
-            id: decodeFromJSONField(UID.reified(), field.id),
-        });
+        return ManagerCap.reified().new({ id: decodeFromJSONField(UID.reified(), field.id) });
     }
 
     static fromJSON(json: Record<string, any>): ManagerCap {
@@ -292,10 +282,7 @@ export class Pool implements StructClass {
             price: bcs.u64(),
             start_ms: bcs.u64(),
             end_ms: bcs.u64(),
-            authority: bcs.bytes(32).transform({
-                input: (val: string) => fromHEX(val),
-                output: (val: Uint8Array) => toHEX(val),
-            }),
+            authority: bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
             public_key: bcs.vector(bcs.u8()),
             discount_pcts: bcs.vector(bcs.u64()),
             is_live: bcs.bool(),
@@ -365,11 +352,7 @@ export class Pool implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): Pool {
@@ -549,11 +532,7 @@ export class DiscountEvent implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): DiscountEvent {
@@ -698,10 +677,7 @@ export class DiscountEventV2 implements StructClass {
             price: bcs.u64(),
             discount_pct: bcs.u64(),
             discount_price: bcs.u64(),
-            user: bcs.bytes(32).transform({
-                input: (val: string) => fromHEX(val),
-                output: (val: Uint8Array) => toHEX(val),
-            }),
+            user: bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
             vrf_input: bcs.vector(bcs.u8()),
         });
     }
@@ -748,11 +724,7 @@ export class DiscountEventV2 implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): DiscountEventV2 {
@@ -903,10 +875,7 @@ export class DiscountEventV3 implements StructClass {
             price: bcs.u64(),
             discount_pct: bcs.u64(),
             discount_price: bcs.u64(),
-            user: bcs.bytes(32).transform({
-                input: (val: string) => fromHEX(val),
-                output: (val: Uint8Array) => toHEX(val),
-            }),
+            user: bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
             vrf_input: bcs.vector(bcs.u8()),
             level: bcs.u64(),
         });
@@ -957,11 +926,7 @@ export class DiscountEventV3 implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): DiscountEventV3 {
@@ -1097,10 +1062,7 @@ export class MintRequest implements StructClass {
 
     static get bcs() {
         return bcs.struct("MintRequest", {
-            user: bcs.bytes(32).transform({
-                input: (val: string) => fromHEX(val),
-                output: (val: Uint8Array) => toHEX(val),
-            }),
+            user: bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
             coin: Coin.bcs,
             vrf_input: bcs.vector(bcs.u8()),
         });
@@ -1139,11 +1101,7 @@ export class MintRequest implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): MintRequest {
@@ -1278,10 +1236,7 @@ export class MintRequestEvent implements StructClass {
 
     static get bcs() {
         return bcs.struct("MintRequestEvent", {
-            user: bcs.bytes(32).transform({
-                input: (val: string) => fromHEX(val),
-                output: (val: Uint8Array) => toHEX(val),
-            }),
+            user: bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
             vrf_input: bcs.vector(bcs.u8()),
             remaining: bcs.u64(),
             seed: bcs.u64(),
@@ -1324,11 +1279,7 @@ export class MintRequestEvent implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): MintRequestEvent {

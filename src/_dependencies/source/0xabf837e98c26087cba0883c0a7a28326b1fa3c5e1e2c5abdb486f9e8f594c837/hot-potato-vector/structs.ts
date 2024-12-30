@@ -106,9 +106,7 @@ export class HotPotatoVector<T extends TypeArgument> implements StructClass {
     }
 
     static fromFields<T extends Reified<TypeArgument, any>>(typeArg: T, fields: Record<string, any>): HotPotatoVector<ToTypeArgument<T>> {
-        return HotPotatoVector.reified(typeArg).new({
-            contents: decodeFromFields(reified.vector(typeArg), fields.contents),
-        });
+        return HotPotatoVector.reified(typeArg).new({ contents: decodeFromFields(reified.vector(typeArg), fields.contents) });
     }
 
     static fromFieldsWithTypes<T extends Reified<TypeArgument, any>>(
@@ -120,9 +118,7 @@ export class HotPotatoVector<T extends TypeArgument> implements StructClass {
         }
         assertFieldsWithTypesArgsMatch(item, [typeArg]);
 
-        return HotPotatoVector.reified(typeArg).new({
-            contents: decodeFromFieldsWithTypes(reified.vector(typeArg), item.fields.contents),
-        });
+        return HotPotatoVector.reified(typeArg).new({ contents: decodeFromFieldsWithTypes(reified.vector(typeArg), item.fields.contents) });
     }
 
     static fromBcs<T extends Reified<TypeArgument, any>>(typeArg: T, data: Uint8Array): HotPotatoVector<ToTypeArgument<T>> {
@@ -138,17 +134,11 @@ export class HotPotatoVector<T extends TypeArgument> implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField<T extends Reified<TypeArgument, any>>(typeArg: T, field: any): HotPotatoVector<ToTypeArgument<T>> {
-        return HotPotatoVector.reified(typeArg).new({
-            contents: decodeFromJSONField(reified.vector(typeArg), field.contents),
-        });
+        return HotPotatoVector.reified(typeArg).new({ contents: decodeFromJSONField(reified.vector(typeArg), field.contents) });
     }
 
     static fromJSON<T extends Reified<TypeArgument, any>>(typeArg: T, json: Record<string, any>): HotPotatoVector<ToTypeArgument<T>> {

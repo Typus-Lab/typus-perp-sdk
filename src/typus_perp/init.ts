@@ -10,7 +10,6 @@ import { StructClassLoader } from "../_framework/loader";
 
 export function registerClasses(loader: StructClassLoader) {
     loader.register(admin.Version);
-    loader.register(admin.ManagerCap);
     loader.register(admin.FeeInfo);
     loader.register(admin.FeePool);
     loader.register(admin.SendFeeEvent);
@@ -57,10 +56,12 @@ export function registerClasses(loader: StructClassLoader) {
     loader.register(trading.CancelTradingOrderEvent);
     loader.register(trading.CreateTradingOrderEvent);
     loader.register(trading.CreateTradingOrderWithBidReceiptsEvent);
+    loader.register(trading.ExpiredPositionInfo);
     loader.register(trading.IncreaseCollateralEvent);
     loader.register(trading.LinkedOrdersInfo);
     loader.register(trading.LiquidateEvent);
     loader.register(trading.LiquidationInfo);
+    loader.register(trading.ManagerCloseOptionPosition);
     loader.register(trading.ManagerReducePosition);
     loader.register(trading.ManagerUpdateProcessStatusAfterOrderEvent);
     loader.register(trading.ManagerUpdateProcessStatusAfterPositionEvent);

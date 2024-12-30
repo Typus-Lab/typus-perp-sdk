@@ -95,10 +95,7 @@ export class Bag implements StructClass {
     }
 
     static fromFields(fields: Record<string, any>): Bag {
-        return Bag.reified().new({
-            id: decodeFromFields(UID.reified(), fields.id),
-            size: decodeFromFields("u64", fields.size),
-        });
+        return Bag.reified().new({ id: decodeFromFields(UID.reified(), fields.id), size: decodeFromFields("u64", fields.size) });
     }
 
     static fromFieldsWithTypes(item: FieldsWithTypes): Bag {
@@ -124,18 +121,11 @@ export class Bag implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): Bag {
-        return Bag.reified().new({
-            id: decodeFromJSONField(UID.reified(), field.id),
-            size: decodeFromJSONField("u64", field.size),
-        });
+        return Bag.reified().new({ id: decodeFromJSONField(UID.reified(), field.id), size: decodeFromJSONField("u64", field.size) });
     }
 
     static fromJSON(json: Record<string, any>): Bag {

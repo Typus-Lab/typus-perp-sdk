@@ -101,9 +101,7 @@ export class Curve implements StructClass {
             throw new Error("not a Curve type");
         }
 
-        return Curve.reified().new({
-            id: decodeFromFieldsWithTypes("u8", item.fields.id),
-        });
+        return Curve.reified().new({ id: decodeFromFieldsWithTypes("u8", item.fields.id) });
     }
 
     static fromBcs(data: Uint8Array): Curve {
@@ -117,11 +115,7 @@ export class Curve implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): Curve {
@@ -298,11 +292,7 @@ export class PreparedVerifyingKey implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): PreparedVerifyingKey {
@@ -434,9 +424,7 @@ export class ProofPoints implements StructClass {
     }
 
     static fromFields(fields: Record<string, any>): ProofPoints {
-        return ProofPoints.reified().new({
-            bytes: decodeFromFields(reified.vector("u8"), fields.bytes),
-        });
+        return ProofPoints.reified().new({ bytes: decodeFromFields(reified.vector("u8"), fields.bytes) });
     }
 
     static fromFieldsWithTypes(item: FieldsWithTypes): ProofPoints {
@@ -444,9 +432,7 @@ export class ProofPoints implements StructClass {
             throw new Error("not a ProofPoints type");
         }
 
-        return ProofPoints.reified().new({
-            bytes: decodeFromFieldsWithTypes(reified.vector("u8"), item.fields.bytes),
-        });
+        return ProofPoints.reified().new({ bytes: decodeFromFieldsWithTypes(reified.vector("u8"), item.fields.bytes) });
     }
 
     static fromBcs(data: Uint8Array): ProofPoints {
@@ -460,17 +446,11 @@ export class ProofPoints implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): ProofPoints {
-        return ProofPoints.reified().new({
-            bytes: decodeFromJSONField(reified.vector("u8"), field.bytes),
-        });
+        return ProofPoints.reified().new({ bytes: decodeFromJSONField(reified.vector("u8"), field.bytes) });
     }
 
     static fromJSON(json: Record<string, any>): ProofPoints {
@@ -593,9 +573,7 @@ export class PublicProofInputs implements StructClass {
     }
 
     static fromFields(fields: Record<string, any>): PublicProofInputs {
-        return PublicProofInputs.reified().new({
-            bytes: decodeFromFields(reified.vector("u8"), fields.bytes),
-        });
+        return PublicProofInputs.reified().new({ bytes: decodeFromFields(reified.vector("u8"), fields.bytes) });
     }
 
     static fromFieldsWithTypes(item: FieldsWithTypes): PublicProofInputs {
@@ -603,9 +581,7 @@ export class PublicProofInputs implements StructClass {
             throw new Error("not a PublicProofInputs type");
         }
 
-        return PublicProofInputs.reified().new({
-            bytes: decodeFromFieldsWithTypes(reified.vector("u8"), item.fields.bytes),
-        });
+        return PublicProofInputs.reified().new({ bytes: decodeFromFieldsWithTypes(reified.vector("u8"), item.fields.bytes) });
     }
 
     static fromBcs(data: Uint8Array): PublicProofInputs {
@@ -619,17 +595,11 @@ export class PublicProofInputs implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): PublicProofInputs {
-        return PublicProofInputs.reified().new({
-            bytes: decodeFromJSONField(reified.vector("u8"), field.bytes),
-        });
+        return PublicProofInputs.reified().new({ bytes: decodeFromJSONField(reified.vector("u8"), field.bytes) });
     }
 
     static fromJSON(json: Record<string, any>): PublicProofInputs {

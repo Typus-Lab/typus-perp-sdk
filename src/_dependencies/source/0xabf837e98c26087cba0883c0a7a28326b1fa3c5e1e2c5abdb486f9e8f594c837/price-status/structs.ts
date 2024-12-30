@@ -90,9 +90,7 @@ export class PriceStatus implements StructClass {
     }
 
     static fromFields(fields: Record<string, any>): PriceStatus {
-        return PriceStatus.reified().new({
-            status: decodeFromFields("u64", fields.status),
-        });
+        return PriceStatus.reified().new({ status: decodeFromFields("u64", fields.status) });
     }
 
     static fromFieldsWithTypes(item: FieldsWithTypes): PriceStatus {
@@ -100,9 +98,7 @@ export class PriceStatus implements StructClass {
             throw new Error("not a PriceStatus type");
         }
 
-        return PriceStatus.reified().new({
-            status: decodeFromFieldsWithTypes("u64", item.fields.status),
-        });
+        return PriceStatus.reified().new({ status: decodeFromFieldsWithTypes("u64", item.fields.status) });
     }
 
     static fromBcs(data: Uint8Array): PriceStatus {
@@ -116,17 +112,11 @@ export class PriceStatus implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): PriceStatus {
-        return PriceStatus.reified().new({
-            status: decodeFromJSONField("u64", field.status),
-        });
+        return PriceStatus.reified().new({ status: decodeFromJSONField("u64", field.status) });
     }
 
     static fromJSON(json: Record<string, any>): PriceStatus {

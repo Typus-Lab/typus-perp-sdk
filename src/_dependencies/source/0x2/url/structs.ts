@@ -91,9 +91,7 @@ export class Url implements StructClass {
     }
 
     static fromFields(fields: Record<string, any>): Url {
-        return Url.reified().new({
-            url: decodeFromFields(String.reified(), fields.url),
-        });
+        return Url.reified().new({ url: decodeFromFields(String.reified(), fields.url) });
     }
 
     static fromFieldsWithTypes(item: FieldsWithTypes): Url {
@@ -101,9 +99,7 @@ export class Url implements StructClass {
             throw new Error("not a Url type");
         }
 
-        return Url.reified().new({
-            url: decodeFromFieldsWithTypes(String.reified(), item.fields.url),
-        });
+        return Url.reified().new({ url: decodeFromFieldsWithTypes(String.reified(), item.fields.url) });
     }
 
     static fromBcs(data: Uint8Array): Url {
@@ -117,17 +113,11 @@ export class Url implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): Url {
-        return Url.reified().new({
-            url: decodeFromJSONField(String.reified(), field.url),
-        });
+        return Url.reified().new({ url: decodeFromJSONField(String.reified(), field.url) });
     }
 
     static fromJSON(json: Record<string, any>): Url {

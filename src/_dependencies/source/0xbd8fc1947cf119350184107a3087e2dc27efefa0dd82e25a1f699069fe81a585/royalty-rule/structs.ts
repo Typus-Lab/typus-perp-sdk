@@ -123,11 +123,7 @@ export class Config implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): Config {
@@ -257,9 +253,7 @@ export class Rule implements StructClass {
     }
 
     static fromFields(fields: Record<string, any>): Rule {
-        return Rule.reified().new({
-            dummyField: decodeFromFields("bool", fields.dummy_field),
-        });
+        return Rule.reified().new({ dummyField: decodeFromFields("bool", fields.dummy_field) });
     }
 
     static fromFieldsWithTypes(item: FieldsWithTypes): Rule {
@@ -267,9 +261,7 @@ export class Rule implements StructClass {
             throw new Error("not a Rule type");
         }
 
-        return Rule.reified().new({
-            dummyField: decodeFromFieldsWithTypes("bool", item.fields.dummy_field),
-        });
+        return Rule.reified().new({ dummyField: decodeFromFieldsWithTypes("bool", item.fields.dummy_field) });
     }
 
     static fromBcs(data: Uint8Array): Rule {
@@ -283,17 +275,11 @@ export class Rule implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): Rule {
-        return Rule.reified().new({
-            dummyField: decodeFromJSONField("bool", field.dummyField),
-        });
+        return Rule.reified().new({ dummyField: decodeFromJSONField("bool", field.dummyField) });
     }
 
     static fromJSON(json: Record<string, any>): Rule {

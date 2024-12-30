@@ -100,10 +100,7 @@ export class TxContext implements StructClass {
 
     static get bcs() {
         return bcs.struct("TxContext", {
-            sender: bcs.bytes(32).transform({
-                input: (val: string) => fromHEX(val),
-                output: (val: Uint8Array) => toHEX(val),
-            }),
+            sender: bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
             tx_hash: bcs.vector(bcs.u8()),
             epoch: bcs.u64(),
             epoch_timestamp_ms: bcs.u64(),
@@ -150,11 +147,7 @@ export class TxContext implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): TxContext {

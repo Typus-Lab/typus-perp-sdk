@@ -114,10 +114,7 @@ export class Delivery implements StructClass {
 
     static get bcs() {
         return bcs.struct("Delivery", {
-            signer: bcs.bytes(32).transform({
-                input: (val: string) => fromHEX(val),
-                output: (val: Uint8Array) => toHEX(val),
-            }),
+            signer: bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
             index: bcs.u64(),
             token: TypeName.bcs,
             price: bcs.u64(),
@@ -180,11 +177,7 @@ export class Delivery implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): Delivery {
@@ -322,10 +315,7 @@ export class Terminate implements StructClass {
 
     static get bcs() {
         return bcs.struct("Terminate", {
-            signer: bcs.bytes(32).transform({
-                input: (val: string) => fromHEX(val),
-                output: (val: Uint8Array) => toHEX(val),
-            }),
+            signer: bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
             index: bcs.u64(),
             token: TypeName.bcs,
         });
@@ -364,11 +354,7 @@ export class Terminate implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): Terminate {
@@ -637,11 +623,7 @@ export class Auction implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): Auction {
@@ -803,10 +785,7 @@ export class Bid implements StructClass {
     static get bcs() {
         return bcs.struct("Bid", {
             index: bcs.u64(),
-            bidder: bcs.bytes(32).transform({
-                input: (val: string) => fromHEX(val),
-                output: (val: Uint8Array) => toHEX(val),
-            }),
+            bidder: bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
             price: bcs.u64(),
             size: bcs.u64(),
             bidder_balance: bcs.u64(),
@@ -864,11 +843,7 @@ export class Bid implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): Bid {
@@ -1004,9 +979,7 @@ export class DUTCH implements StructClass {
     }
 
     static fromFields(fields: Record<string, any>): DUTCH {
-        return DUTCH.reified().new({
-            dummyField: decodeFromFields("bool", fields.dummy_field),
-        });
+        return DUTCH.reified().new({ dummyField: decodeFromFields("bool", fields.dummy_field) });
     }
 
     static fromFieldsWithTypes(item: FieldsWithTypes): DUTCH {
@@ -1014,9 +987,7 @@ export class DUTCH implements StructClass {
             throw new Error("not a DUTCH type");
         }
 
-        return DUTCH.reified().new({
-            dummyField: decodeFromFieldsWithTypes("bool", item.fields.dummy_field),
-        });
+        return DUTCH.reified().new({ dummyField: decodeFromFieldsWithTypes("bool", item.fields.dummy_field) });
     }
 
     static fromBcs(data: Uint8Array): DUTCH {
@@ -1030,17 +1001,11 @@ export class DUTCH implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): DUTCH {
-        return DUTCH.reified().new({
-            dummyField: decodeFromJSONField("bool", field.dummyField),
-        });
+        return DUTCH.reified().new({ dummyField: decodeFromJSONField("bool", field.dummyField) });
     }
 
     static fromJSON(json: Record<string, any>): DUTCH {
@@ -1182,10 +1147,7 @@ export class NewBid implements StructClass {
 
     static get bcs() {
         return bcs.struct("NewBid", {
-            signer: bcs.bytes(32).transform({
-                input: (val: string) => fromHEX(val),
-                output: (val: Uint8Array) => toHEX(val),
-            }),
+            signer: bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
             index: bcs.u64(),
             token: TypeName.bcs,
             bid_index: bcs.u64(),
@@ -1248,11 +1210,7 @@ export class NewBid implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): NewBid {
@@ -1411,10 +1369,7 @@ export class RemoveBid implements StructClass {
 
     static get bcs() {
         return bcs.struct("RemoveBid", {
-            signer: bcs.bytes(32).transform({
-                input: (val: string) => fromHEX(val),
-                output: (val: Uint8Array) => toHEX(val),
-            }),
+            signer: bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
             index: bcs.u64(),
             token: TypeName.bcs,
             bid_index: bcs.u64(),
@@ -1481,11 +1436,7 @@ export class RemoveBid implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): RemoveBid {
@@ -1681,10 +1632,7 @@ export class UpdateAuctionConfig implements StructClass {
 
     static get bcs() {
         return bcs.struct("UpdateAuctionConfig", {
-            signer: bcs.bytes(32).transform({
-                input: (val: string) => fromHEX(val),
-                output: (val: Uint8Array) => toHEX(val),
-            }),
+            signer: bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
             index: bcs.u64(),
             prev_start_ts_ms: bcs.u64(),
             prev_end_ts_ms: bcs.u64(),
@@ -1799,11 +1747,7 @@ export class UpdateAuctionConfig implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): UpdateAuctionConfig {

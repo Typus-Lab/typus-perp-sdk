@@ -94,9 +94,7 @@ export class ConsumedVAAs implements StructClass {
     }
 
     static fromFields(fields: Record<string, any>): ConsumedVAAs {
-        return ConsumedVAAs.reified().new({
-            hashes: decodeFromFields(Set.reified(reified.phantom(Bytes32.reified())), fields.hashes),
-        });
+        return ConsumedVAAs.reified().new({ hashes: decodeFromFields(Set.reified(reified.phantom(Bytes32.reified())), fields.hashes) });
     }
 
     static fromFieldsWithTypes(item: FieldsWithTypes): ConsumedVAAs {
@@ -120,17 +118,11 @@ export class ConsumedVAAs implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): ConsumedVAAs {
-        return ConsumedVAAs.reified().new({
-            hashes: decodeFromJSONField(Set.reified(reified.phantom(Bytes32.reified())), field.hashes),
-        });
+        return ConsumedVAAs.reified().new({ hashes: decodeFromJSONField(Set.reified(reified.phantom(Bytes32.reified())), field.hashes) });
     }
 
     static fromJSON(json: Record<string, any>): ConsumedVAAs {

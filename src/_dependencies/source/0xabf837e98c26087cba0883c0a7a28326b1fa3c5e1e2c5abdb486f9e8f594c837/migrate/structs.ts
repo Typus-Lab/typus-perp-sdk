@@ -91,9 +91,7 @@ export class MigrateComplete implements StructClass {
     }
 
     static fromFields(fields: Record<string, any>): MigrateComplete {
-        return MigrateComplete.reified().new({
-            package: decodeFromFields(ID.reified(), fields.package),
-        });
+        return MigrateComplete.reified().new({ package: decodeFromFields(ID.reified(), fields.package) });
     }
 
     static fromFieldsWithTypes(item: FieldsWithTypes): MigrateComplete {
@@ -101,9 +99,7 @@ export class MigrateComplete implements StructClass {
             throw new Error("not a MigrateComplete type");
         }
 
-        return MigrateComplete.reified().new({
-            package: decodeFromFieldsWithTypes(ID.reified(), item.fields.package),
-        });
+        return MigrateComplete.reified().new({ package: decodeFromFieldsWithTypes(ID.reified(), item.fields.package) });
     }
 
     static fromBcs(data: Uint8Array): MigrateComplete {
@@ -117,17 +113,11 @@ export class MigrateComplete implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): MigrateComplete {
-        return MigrateComplete.reified().new({
-            package: decodeFromJSONField(ID.reified(), field.package),
-        });
+        return MigrateComplete.reified().new({ package: decodeFromJSONField(ID.reified(), field.package) });
     }
 
     static fromJSON(json: Record<string, any>): MigrateComplete {

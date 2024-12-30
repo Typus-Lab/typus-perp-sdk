@@ -97,19 +97,13 @@ export class Borrow implements StructClass {
 
     static get bcs() {
         return bcs.struct("Borrow", {
-            ref: bcs.bytes(32).transform({
-                input: (val: string) => fromHEX(val),
-                output: (val: Uint8Array) => toHEX(val),
-            }),
+            ref: bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
             obj: ID.bcs,
         });
     }
 
     static fromFields(fields: Record<string, any>): Borrow {
-        return Borrow.reified().new({
-            ref: decodeFromFields("address", fields.ref),
-            obj: decodeFromFields(ID.reified(), fields.obj),
-        });
+        return Borrow.reified().new({ ref: decodeFromFields("address", fields.ref), obj: decodeFromFields(ID.reified(), fields.obj) });
     }
 
     static fromFieldsWithTypes(item: FieldsWithTypes): Borrow {
@@ -135,18 +129,11 @@ export class Borrow implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): Borrow {
-        return Borrow.reified().new({
-            ref: decodeFromJSONField("address", field.ref),
-            obj: decodeFromJSONField(ID.reified(), field.obj),
-        });
+        return Borrow.reified().new({ ref: decodeFromJSONField("address", field.ref), obj: decodeFromJSONField(ID.reified(), field.obj) });
     }
 
     static fromJSON(json: Record<string, any>): Borrow {
@@ -271,10 +258,7 @@ export class Referent<T extends TypeArgument> implements StructClass {
     static get bcs() {
         return <T extends BcsType<any>>(T: T) =>
             bcs.struct(`Referent<${T.name}>`, {
-                id: bcs.bytes(32).transform({
-                    input: (val: string) => fromHEX(val),
-                    output: (val: Uint8Array) => toHEX(val),
-                }),
+                id: bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
                 value: Option.bcs(T),
             });
     }
@@ -312,11 +296,7 @@ export class Referent<T extends TypeArgument> implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField<T extends Reified<TypeArgument, any>>(typeArg: T, field: any): Referent<ToTypeArgument<T>> {

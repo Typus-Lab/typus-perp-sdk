@@ -91,9 +91,7 @@ export class TypeName implements StructClass {
     }
 
     static fromFields(fields: Record<string, any>): TypeName {
-        return TypeName.reified().new({
-            name: decodeFromFields(String.reified(), fields.name),
-        });
+        return TypeName.reified().new({ name: decodeFromFields(String.reified(), fields.name) });
     }
 
     static fromFieldsWithTypes(item: FieldsWithTypes): TypeName {
@@ -101,9 +99,7 @@ export class TypeName implements StructClass {
             throw new Error("not a TypeName type");
         }
 
-        return TypeName.reified().new({
-            name: decodeFromFieldsWithTypes(String.reified(), item.fields.name),
-        });
+        return TypeName.reified().new({ name: decodeFromFieldsWithTypes(String.reified(), item.fields.name) });
     }
 
     static fromBcs(data: Uint8Array): TypeName {
@@ -117,17 +113,11 @@ export class TypeName implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): TypeName {
-        return TypeName.reified().new({
-            name: decodeFromJSONField(String.reified(), field.name),
-        });
+        return TypeName.reified().new({ name: decodeFromJSONField(String.reified(), field.name) });
     }
 
     static fromJSON(json: Record<string, any>): TypeName {

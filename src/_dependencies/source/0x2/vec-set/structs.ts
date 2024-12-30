@@ -103,9 +103,7 @@ export class VecSet<K extends TypeArgument> implements StructClass {
     }
 
     static fromFields<K extends Reified<TypeArgument, any>>(typeArg: K, fields: Record<string, any>): VecSet<ToTypeArgument<K>> {
-        return VecSet.reified(typeArg).new({
-            contents: decodeFromFields(reified.vector(typeArg), fields.contents),
-        });
+        return VecSet.reified(typeArg).new({ contents: decodeFromFields(reified.vector(typeArg), fields.contents) });
     }
 
     static fromFieldsWithTypes<K extends Reified<TypeArgument, any>>(typeArg: K, item: FieldsWithTypes): VecSet<ToTypeArgument<K>> {
@@ -114,9 +112,7 @@ export class VecSet<K extends TypeArgument> implements StructClass {
         }
         assertFieldsWithTypesArgsMatch(item, [typeArg]);
 
-        return VecSet.reified(typeArg).new({
-            contents: decodeFromFieldsWithTypes(reified.vector(typeArg), item.fields.contents),
-        });
+        return VecSet.reified(typeArg).new({ contents: decodeFromFieldsWithTypes(reified.vector(typeArg), item.fields.contents) });
     }
 
     static fromBcs<K extends Reified<TypeArgument, any>>(typeArg: K, data: Uint8Array): VecSet<ToTypeArgument<K>> {
@@ -132,17 +128,11 @@ export class VecSet<K extends TypeArgument> implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField<K extends Reified<TypeArgument, any>>(typeArg: K, field: any): VecSet<ToTypeArgument<K>> {
-        return VecSet.reified(typeArg).new({
-            contents: decodeFromJSONField(reified.vector(typeArg), field.contents),
-        });
+        return VecSet.reified(typeArg).new({ contents: decodeFromJSONField(reified.vector(typeArg), field.contents) });
     }
 
     static fromJSON<K extends Reified<TypeArgument, any>>(typeArg: K, json: Record<string, any>): VecSet<ToTypeArgument<K>> {

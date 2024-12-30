@@ -128,11 +128,7 @@ export class ContractUpgraded implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): ContractUpgraded {
@@ -265,9 +261,7 @@ export class UpgradeContract implements StructClass {
     }
 
     static fromFields(fields: Record<string, any>): UpgradeContract {
-        return UpgradeContract.reified().new({
-            digest: decodeFromFields(Bytes32.reified(), fields.digest),
-        });
+        return UpgradeContract.reified().new({ digest: decodeFromFields(Bytes32.reified(), fields.digest) });
     }
 
     static fromFieldsWithTypes(item: FieldsWithTypes): UpgradeContract {
@@ -275,9 +269,7 @@ export class UpgradeContract implements StructClass {
             throw new Error("not a UpgradeContract type");
         }
 
-        return UpgradeContract.reified().new({
-            digest: decodeFromFieldsWithTypes(Bytes32.reified(), item.fields.digest),
-        });
+        return UpgradeContract.reified().new({ digest: decodeFromFieldsWithTypes(Bytes32.reified(), item.fields.digest) });
     }
 
     static fromBcs(data: Uint8Array): UpgradeContract {
@@ -291,17 +283,11 @@ export class UpgradeContract implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): UpgradeContract {
-        return UpgradeContract.reified().new({
-            digest: decodeFromJSONField(Bytes32.reified(), field.digest),
-        });
+        return UpgradeContract.reified().new({ digest: decodeFromJSONField(Bytes32.reified(), field.digest) });
     }
 
     static fromJSON(json: Record<string, any>): UpgradeContract {
@@ -427,9 +413,7 @@ export class GovernanceWitness implements StructClass {
     }
 
     static fromFields(fields: Record<string, any>): GovernanceWitness {
-        return GovernanceWitness.reified().new({
-            dummyField: decodeFromFields("bool", fields.dummy_field),
-        });
+        return GovernanceWitness.reified().new({ dummyField: decodeFromFields("bool", fields.dummy_field) });
     }
 
     static fromFieldsWithTypes(item: FieldsWithTypes): GovernanceWitness {
@@ -437,9 +421,7 @@ export class GovernanceWitness implements StructClass {
             throw new Error("not a GovernanceWitness type");
         }
 
-        return GovernanceWitness.reified().new({
-            dummyField: decodeFromFieldsWithTypes("bool", item.fields.dummy_field),
-        });
+        return GovernanceWitness.reified().new({ dummyField: decodeFromFieldsWithTypes("bool", item.fields.dummy_field) });
     }
 
     static fromBcs(data: Uint8Array): GovernanceWitness {
@@ -453,17 +435,11 @@ export class GovernanceWitness implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): GovernanceWitness {
-        return GovernanceWitness.reified().new({
-            dummyField: decodeFromJSONField("bool", field.dummyField),
-        });
+        return GovernanceWitness.reified().new({ dummyField: decodeFromJSONField("bool", field.dummyField) });
     }
 
     static fromJSON(json: Record<string, any>): GovernanceWitness {

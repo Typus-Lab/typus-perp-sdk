@@ -111,10 +111,7 @@ export class Version implements StructClass {
             fee_pool: FeePool.bcs,
             liquidator_fee_pool: FeePool.bcs,
             authority: VecSet.bcs(
-                bcs.bytes(32).transform({
-                    input: (val: string) => fromHEX(val),
-                    output: (val: Uint8Array) => toHEX(val),
-                })
+                bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) })
             ),
             u64_padding: bcs.vector(bcs.u64()),
         });
@@ -162,11 +159,7 @@ export class Version implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): Version {
@@ -222,165 +215,6 @@ export class Version implements StructClass {
         }
 
         return Version.fromSuiObjectData(res.data);
-    }
-}
-
-/* ============================== ManagerCap =============================== */
-
-export function isManagerCap(type: string): boolean {
-    type = compressSuiType(type);
-    return type === `${PKG_V1}::admin::ManagerCap`;
-}
-
-export interface ManagerCapFields {
-    dummyField: ToField<"bool">;
-}
-
-export type ManagerCapReified = Reified<ManagerCap, ManagerCapFields>;
-
-export class ManagerCap implements StructClass {
-    __StructClass = true as const;
-
-    static readonly $typeName = `${PKG_V1}::admin::ManagerCap`;
-    static readonly $numTypeParams = 0;
-    static readonly $isPhantom = [] as const;
-
-    readonly $typeName = ManagerCap.$typeName;
-    readonly $fullTypeName: `${typeof PKG_V1}::admin::ManagerCap`;
-    readonly $typeArgs: [];
-    readonly $isPhantom = ManagerCap.$isPhantom;
-
-    readonly dummyField: ToField<"bool">;
-
-    private constructor(typeArgs: [], fields: ManagerCapFields) {
-        this.$fullTypeName = composeSuiType(ManagerCap.$typeName, ...typeArgs) as `${typeof PKG_V1}::admin::ManagerCap`;
-        this.$typeArgs = typeArgs;
-
-        this.dummyField = fields.dummyField;
-    }
-
-    static reified(): ManagerCapReified {
-        return {
-            typeName: ManagerCap.$typeName,
-            fullTypeName: composeSuiType(ManagerCap.$typeName, ...[]) as `${typeof PKG_V1}::admin::ManagerCap`,
-            typeArgs: [] as [],
-            isPhantom: ManagerCap.$isPhantom,
-            reifiedTypeArgs: [],
-            fromFields: (fields: Record<string, any>) => ManagerCap.fromFields(fields),
-            fromFieldsWithTypes: (item: FieldsWithTypes) => ManagerCap.fromFieldsWithTypes(item),
-            fromBcs: (data: Uint8Array) => ManagerCap.fromBcs(data),
-            bcs: ManagerCap.bcs,
-            fromJSONField: (field: any) => ManagerCap.fromJSONField(field),
-            fromJSON: (json: Record<string, any>) => ManagerCap.fromJSON(json),
-            fromSuiParsedData: (content: SuiParsedData) => ManagerCap.fromSuiParsedData(content),
-            fromSuiObjectData: (content: SuiObjectData) => ManagerCap.fromSuiObjectData(content),
-            fetch: async (client: SuiClient, id: string) => ManagerCap.fetch(client, id),
-            new: (fields: ManagerCapFields) => {
-                return new ManagerCap([], fields);
-            },
-            kind: "StructClassReified",
-        };
-    }
-
-    static get r() {
-        return ManagerCap.reified();
-    }
-
-    static phantom(): PhantomReified<ToTypeStr<ManagerCap>> {
-        return phantom(ManagerCap.reified());
-    }
-    static get p() {
-        return ManagerCap.phantom();
-    }
-
-    static get bcs() {
-        return bcs.struct("ManagerCap", {
-            dummy_field: bcs.bool(),
-        });
-    }
-
-    static fromFields(fields: Record<string, any>): ManagerCap {
-        return ManagerCap.reified().new({
-            dummyField: decodeFromFields("bool", fields.dummy_field),
-        });
-    }
-
-    static fromFieldsWithTypes(item: FieldsWithTypes): ManagerCap {
-        if (!isManagerCap(item.type)) {
-            throw new Error("not a ManagerCap type");
-        }
-
-        return ManagerCap.reified().new({
-            dummyField: decodeFromFieldsWithTypes("bool", item.fields.dummy_field),
-        });
-    }
-
-    static fromBcs(data: Uint8Array): ManagerCap {
-        return ManagerCap.fromFields(ManagerCap.bcs.parse(data));
-    }
-
-    toJSONField() {
-        return {
-            dummyField: this.dummyField,
-        };
-    }
-
-    toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
-    }
-
-    static fromJSONField(field: any): ManagerCap {
-        return ManagerCap.reified().new({
-            dummyField: decodeFromJSONField("bool", field.dummyField),
-        });
-    }
-
-    static fromJSON(json: Record<string, any>): ManagerCap {
-        if (json.$typeName !== ManagerCap.$typeName) {
-            throw new Error("not a WithTwoGenerics json object");
-        }
-
-        return ManagerCap.fromJSONField(json);
-    }
-
-    static fromSuiParsedData(content: SuiParsedData): ManagerCap {
-        if (content.dataType !== "moveObject") {
-            throw new Error("not an object");
-        }
-        if (!isManagerCap(content.type)) {
-            throw new Error(`object at ${(content.fields as any).id} is not a ManagerCap object`);
-        }
-        return ManagerCap.fromFieldsWithTypes(content);
-    }
-
-    static fromSuiObjectData(data: SuiObjectData): ManagerCap {
-        if (data.bcs) {
-            if (data.bcs.dataType !== "moveObject" || !isManagerCap(data.bcs.type)) {
-                throw new Error(`object at is not a ManagerCap object`);
-            }
-
-            return ManagerCap.fromBcs(fromB64(data.bcs.bcsBytes));
-        }
-        if (data.content) {
-            return ManagerCap.fromSuiParsedData(data.content);
-        }
-        throw new Error("Both `bcs` and `content` fields are missing from the data. Include `showBcs` or `showContent` in the request.");
-    }
-
-    static async fetch(client: SuiClient, id: string): Promise<ManagerCap> {
-        const res = await client.getObject({ id, options: { showBcs: true } });
-        if (res.error) {
-            throw new Error(`error fetching ManagerCap object at id ${id}: ${res.error.code}`);
-        }
-        if (res.data?.bcs?.dataType !== "moveObject" || !isManagerCap(res.data.bcs.type)) {
-            throw new Error(`object at id ${id} is not a ManagerCap object`);
-        }
-
-        return ManagerCap.fromSuiObjectData(res.data);
     }
 }
 
@@ -492,11 +326,7 @@ export class FeeInfo implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): FeeInfo {
@@ -659,11 +489,7 @@ export class FeePool implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): FeePool {
@@ -826,11 +652,7 @@ export class SendFeeEvent implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): SendFeeEvent {

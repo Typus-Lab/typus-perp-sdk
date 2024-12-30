@@ -93,9 +93,7 @@ export class GovernanceAction implements StructClass {
     }
 
     static fromFields(fields: Record<string, any>): GovernanceAction {
-        return GovernanceAction.reified().new({
-            value: decodeFromFields("u8", fields.value),
-        });
+        return GovernanceAction.reified().new({ value: decodeFromFields("u8", fields.value) });
     }
 
     static fromFieldsWithTypes(item: FieldsWithTypes): GovernanceAction {
@@ -103,9 +101,7 @@ export class GovernanceAction implements StructClass {
             throw new Error("not a GovernanceAction type");
         }
 
-        return GovernanceAction.reified().new({
-            value: decodeFromFieldsWithTypes("u8", item.fields.value),
-        });
+        return GovernanceAction.reified().new({ value: decodeFromFieldsWithTypes("u8", item.fields.value) });
     }
 
     static fromBcs(data: Uint8Array): GovernanceAction {
@@ -119,17 +115,11 @@ export class GovernanceAction implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): GovernanceAction {
-        return GovernanceAction.reified().new({
-            value: decodeFromJSONField("u8", field.value),
-        });
+        return GovernanceAction.reified().new({ value: decodeFromJSONField("u8", field.value) });
     }
 
     static fromJSON(json: Record<string, any>): GovernanceAction {

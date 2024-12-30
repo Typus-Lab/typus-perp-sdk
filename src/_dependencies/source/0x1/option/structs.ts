@@ -110,9 +110,7 @@ export class Option<Element extends TypeArgument> implements StructClass {
         typeArg: Element,
         fields: Record<string, any>
     ): Option<ToTypeArgument<Element>> {
-        return Option.reified(typeArg).new({
-            vec: decodeFromFields(reified.vector(typeArg), fields.vec),
-        });
+        return Option.reified(typeArg).new({ vec: decodeFromFields(reified.vector(typeArg), fields.vec) });
     }
 
     static fromFieldsWithTypes<Element extends Reified<TypeArgument, any>>(
@@ -124,9 +122,7 @@ export class Option<Element extends TypeArgument> implements StructClass {
         }
         assertFieldsWithTypesArgsMatch(item, [typeArg]);
 
-        return Option.reified(typeArg).new({
-            vec: decodeFromFieldsWithTypes(reified.vector(typeArg), item.fields.vec),
-        });
+        return Option.reified(typeArg).new({ vec: decodeFromFieldsWithTypes(reified.vector(typeArg), item.fields.vec) });
     }
 
     static fromBcs<Element extends Reified<TypeArgument, any>>(typeArg: Element, data: Uint8Array): Option<ToTypeArgument<Element>> {
@@ -142,17 +138,11 @@ export class Option<Element extends TypeArgument> implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField<Element extends Reified<TypeArgument, any>>(typeArg: Element, field: any): Option<ToTypeArgument<Element>> {
-        return Option.reified(typeArg).new({
-            vec: decodeFromJSONField(reified.vector(typeArg), field.vec),
-        });
+        return Option.reified(typeArg).new({ vec: decodeFromJSONField(reified.vector(typeArg), field.vec) });
     }
 
     static fromJSON<Element extends Reified<TypeArgument, any>>(

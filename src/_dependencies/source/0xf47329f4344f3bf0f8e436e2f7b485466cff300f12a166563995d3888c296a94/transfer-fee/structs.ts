@@ -93,9 +93,7 @@ export class GovernanceWitness implements StructClass {
     }
 
     static fromFields(fields: Record<string, any>): GovernanceWitness {
-        return GovernanceWitness.reified().new({
-            dummyField: decodeFromFields("bool", fields.dummy_field),
-        });
+        return GovernanceWitness.reified().new({ dummyField: decodeFromFields("bool", fields.dummy_field) });
     }
 
     static fromFieldsWithTypes(item: FieldsWithTypes): GovernanceWitness {
@@ -103,9 +101,7 @@ export class GovernanceWitness implements StructClass {
             throw new Error("not a GovernanceWitness type");
         }
 
-        return GovernanceWitness.reified().new({
-            dummyField: decodeFromFieldsWithTypes("bool", item.fields.dummy_field),
-        });
+        return GovernanceWitness.reified().new({ dummyField: decodeFromFieldsWithTypes("bool", item.fields.dummy_field) });
     }
 
     static fromBcs(data: Uint8Array): GovernanceWitness {
@@ -119,17 +115,11 @@ export class GovernanceWitness implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): GovernanceWitness {
-        return GovernanceWitness.reified().new({
-            dummyField: decodeFromJSONField("bool", field.dummyField),
-        });
+        return GovernanceWitness.reified().new({ dummyField: decodeFromJSONField("bool", field.dummyField) });
     }
 
     static fromJSON(json: Record<string, any>): GovernanceWitness {
@@ -251,10 +241,7 @@ export class TransferFee implements StructClass {
     static get bcs() {
         return bcs.struct("TransferFee", {
             amount: bcs.u64(),
-            recipient: bcs.bytes(32).transform({
-                input: (val: string) => fromHEX(val),
-                output: (val: Uint8Array) => toHEX(val),
-            }),
+            recipient: bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
         });
     }
 
@@ -288,11 +275,7 @@ export class TransferFee implements StructClass {
     }
 
     toJSON() {
-        return {
-            $typeName: this.$typeName,
-            $typeArgs: this.$typeArgs,
-            ...this.toJSONField(),
-        };
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
     static fromJSONField(field: any): TransferFee {

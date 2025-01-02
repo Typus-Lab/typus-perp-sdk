@@ -10,12 +10,12 @@ export function registerClasses(loader: StructClassLoader) {
     loader.register(royaltyRule.Config);
     loader.register(royaltyRule.Rule);
     loader.register(typusNft.ManagerCap);
+    loader.register(typusNft.MintEvent);
     loader.register(typusNft.ExpDownEvent);
     loader.register(typusNft.ExpUpEvent);
     loader.register(typusNft.FirstBidEvent);
     loader.register(typusNft.FirstDepositEvent);
     loader.register(typusNft.LevelUpEvent);
-    loader.register(typusNft.MintEvent);
     loader.register(typusNft.NewManagerCapEvent);
     loader.register(typusNft.Pool);
     loader.register(typusNft.Royalty);

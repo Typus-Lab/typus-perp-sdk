@@ -20,6 +20,183 @@ import { bcs } from "@mysten/sui/bcs";
 import { SuiClient, SuiObjectData, SuiParsedData } from "@mysten/sui/client";
 import { fromB64, fromHEX, toHEX } from "@mysten/sui/utils";
 
+/* ============================== WithdrawIncentiveEvent =============================== */
+
+export function isWithdrawIncentiveEvent(type: string): boolean {
+    type = compressSuiType(type);
+    return type === `${PKG_V1}::tds_registry_authorized_entry::WithdrawIncentiveEvent`;
+}
+
+export interface WithdrawIncentiveEventFields {
+    signer: ToField<"address">;
+    token: ToField<TypeName>;
+    amount: ToField<"u64">;
+}
+
+export type WithdrawIncentiveEventReified = Reified<WithdrawIncentiveEvent, WithdrawIncentiveEventFields>;
+
+export class WithdrawIncentiveEvent implements StructClass {
+    __StructClass = true as const;
+
+    static readonly $typeName = `${PKG_V1}::tds_registry_authorized_entry::WithdrawIncentiveEvent`;
+    static readonly $numTypeParams = 0;
+    static readonly $isPhantom = [] as const;
+
+    readonly $typeName = WithdrawIncentiveEvent.$typeName;
+    readonly $fullTypeName: `${typeof PKG_V1}::tds_registry_authorized_entry::WithdrawIncentiveEvent`;
+    readonly $typeArgs: [];
+    readonly $isPhantom = WithdrawIncentiveEvent.$isPhantom;
+
+    readonly signer: ToField<"address">;
+    readonly token: ToField<TypeName>;
+    readonly amount: ToField<"u64">;
+
+    private constructor(typeArgs: [], fields: WithdrawIncentiveEventFields) {
+        this.$fullTypeName = composeSuiType(
+            WithdrawIncentiveEvent.$typeName,
+            ...typeArgs
+        ) as `${typeof PKG_V1}::tds_registry_authorized_entry::WithdrawIncentiveEvent`;
+        this.$typeArgs = typeArgs;
+
+        this.signer = fields.signer;
+        this.token = fields.token;
+        this.amount = fields.amount;
+    }
+
+    static reified(): WithdrawIncentiveEventReified {
+        return {
+            typeName: WithdrawIncentiveEvent.$typeName,
+            fullTypeName: composeSuiType(
+                WithdrawIncentiveEvent.$typeName,
+                ...[]
+            ) as `${typeof PKG_V1}::tds_registry_authorized_entry::WithdrawIncentiveEvent`,
+            typeArgs: [] as [],
+            isPhantom: WithdrawIncentiveEvent.$isPhantom,
+            reifiedTypeArgs: [],
+            fromFields: (fields: Record<string, any>) => WithdrawIncentiveEvent.fromFields(fields),
+            fromFieldsWithTypes: (item: FieldsWithTypes) => WithdrawIncentiveEvent.fromFieldsWithTypes(item),
+            fromBcs: (data: Uint8Array) => WithdrawIncentiveEvent.fromBcs(data),
+            bcs: WithdrawIncentiveEvent.bcs,
+            fromJSONField: (field: any) => WithdrawIncentiveEvent.fromJSONField(field),
+            fromJSON: (json: Record<string, any>) => WithdrawIncentiveEvent.fromJSON(json),
+            fromSuiParsedData: (content: SuiParsedData) => WithdrawIncentiveEvent.fromSuiParsedData(content),
+            fromSuiObjectData: (content: SuiObjectData) => WithdrawIncentiveEvent.fromSuiObjectData(content),
+            fetch: async (client: SuiClient, id: string) => WithdrawIncentiveEvent.fetch(client, id),
+            new: (fields: WithdrawIncentiveEventFields) => {
+                return new WithdrawIncentiveEvent([], fields);
+            },
+            kind: "StructClassReified",
+        };
+    }
+
+    static get r() {
+        return WithdrawIncentiveEvent.reified();
+    }
+
+    static phantom(): PhantomReified<ToTypeStr<WithdrawIncentiveEvent>> {
+        return phantom(WithdrawIncentiveEvent.reified());
+    }
+    static get p() {
+        return WithdrawIncentiveEvent.phantom();
+    }
+
+    static get bcs() {
+        return bcs.struct("WithdrawIncentiveEvent", {
+            signer: bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
+            token: TypeName.bcs,
+            amount: bcs.u64(),
+        });
+    }
+
+    static fromFields(fields: Record<string, any>): WithdrawIncentiveEvent {
+        return WithdrawIncentiveEvent.reified().new({
+            signer: decodeFromFields("address", fields.signer),
+            token: decodeFromFields(TypeName.reified(), fields.token),
+            amount: decodeFromFields("u64", fields.amount),
+        });
+    }
+
+    static fromFieldsWithTypes(item: FieldsWithTypes): WithdrawIncentiveEvent {
+        if (!isWithdrawIncentiveEvent(item.type)) {
+            throw new Error("not a WithdrawIncentiveEvent type");
+        }
+
+        return WithdrawIncentiveEvent.reified().new({
+            signer: decodeFromFieldsWithTypes("address", item.fields.signer),
+            token: decodeFromFieldsWithTypes(TypeName.reified(), item.fields.token),
+            amount: decodeFromFieldsWithTypes("u64", item.fields.amount),
+        });
+    }
+
+    static fromBcs(data: Uint8Array): WithdrawIncentiveEvent {
+        return WithdrawIncentiveEvent.fromFields(WithdrawIncentiveEvent.bcs.parse(data));
+    }
+
+    toJSONField() {
+        return {
+            signer: this.signer,
+            token: this.token.toJSONField(),
+            amount: this.amount.toString(),
+        };
+    }
+
+    toJSON() {
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
+    }
+
+    static fromJSONField(field: any): WithdrawIncentiveEvent {
+        return WithdrawIncentiveEvent.reified().new({
+            signer: decodeFromJSONField("address", field.signer),
+            token: decodeFromJSONField(TypeName.reified(), field.token),
+            amount: decodeFromJSONField("u64", field.amount),
+        });
+    }
+
+    static fromJSON(json: Record<string, any>): WithdrawIncentiveEvent {
+        if (json.$typeName !== WithdrawIncentiveEvent.$typeName) {
+            throw new Error("not a WithTwoGenerics json object");
+        }
+
+        return WithdrawIncentiveEvent.fromJSONField(json);
+    }
+
+    static fromSuiParsedData(content: SuiParsedData): WithdrawIncentiveEvent {
+        if (content.dataType !== "moveObject") {
+            throw new Error("not an object");
+        }
+        if (!isWithdrawIncentiveEvent(content.type)) {
+            throw new Error(`object at ${(content.fields as any).id} is not a WithdrawIncentiveEvent object`);
+        }
+        return WithdrawIncentiveEvent.fromFieldsWithTypes(content);
+    }
+
+    static fromSuiObjectData(data: SuiObjectData): WithdrawIncentiveEvent {
+        if (data.bcs) {
+            if (data.bcs.dataType !== "moveObject" || !isWithdrawIncentiveEvent(data.bcs.type)) {
+                throw new Error(`object at is not a WithdrawIncentiveEvent object`);
+            }
+
+            return WithdrawIncentiveEvent.fromBcs(fromB64(data.bcs.bcsBytes));
+        }
+        if (data.content) {
+            return WithdrawIncentiveEvent.fromSuiParsedData(data.content);
+        }
+        throw new Error("Both `bcs` and `content` fields are missing from the data. Include `showBcs` or `showContent` in the request.");
+    }
+
+    static async fetch(client: SuiClient, id: string): Promise<WithdrawIncentiveEvent> {
+        const res = await client.getObject({ id, options: { showBcs: true } });
+        if (res.error) {
+            throw new Error(`error fetching WithdrawIncentiveEvent object at id ${id}: ${res.error.code}`);
+        }
+        if (res.data?.bcs?.dataType !== "moveObject" || !isWithdrawIncentiveEvent(res.data.bcs.type)) {
+            throw new Error(`object at id ${id} is not a WithdrawIncentiveEvent object`);
+        }
+
+        return WithdrawIncentiveEvent.fromSuiObjectData(res.data);
+    }
+}
+
 /* ============================== AddAuthorizedUserEvent =============================== */
 
 export function isAddAuthorizedUserEvent(type: string): boolean {
@@ -1727,182 +1904,5 @@ export class UpgradeRegistryEvent implements StructClass {
         }
 
         return UpgradeRegistryEvent.fromSuiObjectData(res.data);
-    }
-}
-
-/* ============================== WithdrawIncentiveEvent =============================== */
-
-export function isWithdrawIncentiveEvent(type: string): boolean {
-    type = compressSuiType(type);
-    return type === `${PKG_V1}::tds_registry_authorized_entry::WithdrawIncentiveEvent`;
-}
-
-export interface WithdrawIncentiveEventFields {
-    signer: ToField<"address">;
-    token: ToField<TypeName>;
-    amount: ToField<"u64">;
-}
-
-export type WithdrawIncentiveEventReified = Reified<WithdrawIncentiveEvent, WithdrawIncentiveEventFields>;
-
-export class WithdrawIncentiveEvent implements StructClass {
-    __StructClass = true as const;
-
-    static readonly $typeName = `${PKG_V1}::tds_registry_authorized_entry::WithdrawIncentiveEvent`;
-    static readonly $numTypeParams = 0;
-    static readonly $isPhantom = [] as const;
-
-    readonly $typeName = WithdrawIncentiveEvent.$typeName;
-    readonly $fullTypeName: `${typeof PKG_V1}::tds_registry_authorized_entry::WithdrawIncentiveEvent`;
-    readonly $typeArgs: [];
-    readonly $isPhantom = WithdrawIncentiveEvent.$isPhantom;
-
-    readonly signer: ToField<"address">;
-    readonly token: ToField<TypeName>;
-    readonly amount: ToField<"u64">;
-
-    private constructor(typeArgs: [], fields: WithdrawIncentiveEventFields) {
-        this.$fullTypeName = composeSuiType(
-            WithdrawIncentiveEvent.$typeName,
-            ...typeArgs
-        ) as `${typeof PKG_V1}::tds_registry_authorized_entry::WithdrawIncentiveEvent`;
-        this.$typeArgs = typeArgs;
-
-        this.signer = fields.signer;
-        this.token = fields.token;
-        this.amount = fields.amount;
-    }
-
-    static reified(): WithdrawIncentiveEventReified {
-        return {
-            typeName: WithdrawIncentiveEvent.$typeName,
-            fullTypeName: composeSuiType(
-                WithdrawIncentiveEvent.$typeName,
-                ...[]
-            ) as `${typeof PKG_V1}::tds_registry_authorized_entry::WithdrawIncentiveEvent`,
-            typeArgs: [] as [],
-            isPhantom: WithdrawIncentiveEvent.$isPhantom,
-            reifiedTypeArgs: [],
-            fromFields: (fields: Record<string, any>) => WithdrawIncentiveEvent.fromFields(fields),
-            fromFieldsWithTypes: (item: FieldsWithTypes) => WithdrawIncentiveEvent.fromFieldsWithTypes(item),
-            fromBcs: (data: Uint8Array) => WithdrawIncentiveEvent.fromBcs(data),
-            bcs: WithdrawIncentiveEvent.bcs,
-            fromJSONField: (field: any) => WithdrawIncentiveEvent.fromJSONField(field),
-            fromJSON: (json: Record<string, any>) => WithdrawIncentiveEvent.fromJSON(json),
-            fromSuiParsedData: (content: SuiParsedData) => WithdrawIncentiveEvent.fromSuiParsedData(content),
-            fromSuiObjectData: (content: SuiObjectData) => WithdrawIncentiveEvent.fromSuiObjectData(content),
-            fetch: async (client: SuiClient, id: string) => WithdrawIncentiveEvent.fetch(client, id),
-            new: (fields: WithdrawIncentiveEventFields) => {
-                return new WithdrawIncentiveEvent([], fields);
-            },
-            kind: "StructClassReified",
-        };
-    }
-
-    static get r() {
-        return WithdrawIncentiveEvent.reified();
-    }
-
-    static phantom(): PhantomReified<ToTypeStr<WithdrawIncentiveEvent>> {
-        return phantom(WithdrawIncentiveEvent.reified());
-    }
-    static get p() {
-        return WithdrawIncentiveEvent.phantom();
-    }
-
-    static get bcs() {
-        return bcs.struct("WithdrawIncentiveEvent", {
-            signer: bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
-            token: TypeName.bcs,
-            amount: bcs.u64(),
-        });
-    }
-
-    static fromFields(fields: Record<string, any>): WithdrawIncentiveEvent {
-        return WithdrawIncentiveEvent.reified().new({
-            signer: decodeFromFields("address", fields.signer),
-            token: decodeFromFields(TypeName.reified(), fields.token),
-            amount: decodeFromFields("u64", fields.amount),
-        });
-    }
-
-    static fromFieldsWithTypes(item: FieldsWithTypes): WithdrawIncentiveEvent {
-        if (!isWithdrawIncentiveEvent(item.type)) {
-            throw new Error("not a WithdrawIncentiveEvent type");
-        }
-
-        return WithdrawIncentiveEvent.reified().new({
-            signer: decodeFromFieldsWithTypes("address", item.fields.signer),
-            token: decodeFromFieldsWithTypes(TypeName.reified(), item.fields.token),
-            amount: decodeFromFieldsWithTypes("u64", item.fields.amount),
-        });
-    }
-
-    static fromBcs(data: Uint8Array): WithdrawIncentiveEvent {
-        return WithdrawIncentiveEvent.fromFields(WithdrawIncentiveEvent.bcs.parse(data));
-    }
-
-    toJSONField() {
-        return {
-            signer: this.signer,
-            token: this.token.toJSONField(),
-            amount: this.amount.toString(),
-        };
-    }
-
-    toJSON() {
-        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
-    }
-
-    static fromJSONField(field: any): WithdrawIncentiveEvent {
-        return WithdrawIncentiveEvent.reified().new({
-            signer: decodeFromJSONField("address", field.signer),
-            token: decodeFromJSONField(TypeName.reified(), field.token),
-            amount: decodeFromJSONField("u64", field.amount),
-        });
-    }
-
-    static fromJSON(json: Record<string, any>): WithdrawIncentiveEvent {
-        if (json.$typeName !== WithdrawIncentiveEvent.$typeName) {
-            throw new Error("not a WithTwoGenerics json object");
-        }
-
-        return WithdrawIncentiveEvent.fromJSONField(json);
-    }
-
-    static fromSuiParsedData(content: SuiParsedData): WithdrawIncentiveEvent {
-        if (content.dataType !== "moveObject") {
-            throw new Error("not an object");
-        }
-        if (!isWithdrawIncentiveEvent(content.type)) {
-            throw new Error(`object at ${(content.fields as any).id} is not a WithdrawIncentiveEvent object`);
-        }
-        return WithdrawIncentiveEvent.fromFieldsWithTypes(content);
-    }
-
-    static fromSuiObjectData(data: SuiObjectData): WithdrawIncentiveEvent {
-        if (data.bcs) {
-            if (data.bcs.dataType !== "moveObject" || !isWithdrawIncentiveEvent(data.bcs.type)) {
-                throw new Error(`object at is not a WithdrawIncentiveEvent object`);
-            }
-
-            return WithdrawIncentiveEvent.fromBcs(fromB64(data.bcs.bcsBytes));
-        }
-        if (data.content) {
-            return WithdrawIncentiveEvent.fromSuiParsedData(data.content);
-        }
-        throw new Error("Both `bcs` and `content` fields are missing from the data. Include `showBcs` or `showContent` in the request.");
-    }
-
-    static async fetch(client: SuiClient, id: string): Promise<WithdrawIncentiveEvent> {
-        const res = await client.getObject({ id, options: { showBcs: true } });
-        if (res.error) {
-            throw new Error(`error fetching WithdrawIncentiveEvent object at id ${id}: ${res.error.code}`);
-        }
-        if (res.data?.bcs?.dataType !== "moveObject" || !isWithdrawIncentiveEvent(res.data.bcs.type)) {
-            throw new Error(`object at id ${id} is not a WithdrawIncentiveEvent object`);
-        }
-
-        return WithdrawIncentiveEvent.fromSuiObjectData(res.data);
     }
 }

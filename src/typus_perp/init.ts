@@ -1,4 +1,5 @@
 import * as admin from "./admin/structs";
+import * as escrow from "./escrow/structs";
 import * as lpPool from "./lp-pool/structs";
 import * as oracle from "./oracle/structs";
 import * as position from "./position/structs";
@@ -13,6 +14,7 @@ export function registerClasses(loader: StructClassLoader) {
     loader.register(admin.FeeInfo);
     loader.register(admin.FeePool);
     loader.register(admin.SendFeeEvent);
+    loader.register(escrow.UnsettledBidReceipt);
     loader.register(treasuryCaps.TreasuryCaps);
     loader.register(tlp.LpRegistry);
     loader.register(tlp.TLP);
@@ -61,8 +63,8 @@ export function registerClasses(loader: StructClassLoader) {
     loader.register(trading.LinkedOrdersInfo);
     loader.register(trading.LiquidateEvent);
     loader.register(trading.LiquidationInfo);
-    loader.register(trading.ManagerCloseOptionPosition);
-    loader.register(trading.ManagerReducePosition);
+    loader.register(trading.ManagerCloseOptionPositionEvent);
+    loader.register(trading.ManagerReducePositionEvent);
     loader.register(trading.ManagerUpdateProcessStatusAfterOrderEvent);
     loader.register(trading.ManagerUpdateProcessStatusAfterPositionEvent);
     loader.register(trading.MarketConfig);
@@ -74,6 +76,7 @@ export function registerClasses(loader: StructClassLoader) {
     loader.register(trading.ReleaseCollateralEvent);
     loader.register(trading.ResumeMarketEvent);
     loader.register(trading.ResumeTradingSymbolEvent);
+    loader.register(trading.SettleReceiptCollateralEvent);
     loader.register(trading.SuspendMarketEvent);
     loader.register(trading.SuspendTradingSymbolEvent);
     loader.register(trading.SymbolMarket);

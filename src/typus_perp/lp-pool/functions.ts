@@ -1,6 +1,7 @@
 import { PUBLISHED_AT } from "..";
 import { Option } from "../../_dependencies/source/0x1/option/structs";
-import { obj, pure } from "../../_framework/util";
+import { obj, pure, vector } from "../../_framework/util";
+import { UnsettledBidReceipt } from "../escrow/structs";
 import { Transaction, TransactionArgument, TransactionObjectInput } from "@mysten/sui/transactions";
 
 export interface SwapArgs {
@@ -295,6 +296,19 @@ export function getCumulativeBorrowRate(tx: Transaction, args: GetCumulativeBorr
     });
 }
 
+export interface GetExpiredReceiptCollateralBcsArgs {
+    registry: TransactionObjectInput;
+    dovRegistry: TransactionObjectInput;
+    index: bigint | TransactionArgument;
+}
+
+export function getExpiredReceiptCollateralBcs(tx: Transaction, args: GetExpiredReceiptCollateralBcsArgs) {
+    return tx.moveCall({
+        target: `${PUBLISHED_AT}::lp_pool::get_expired_receipt_collateral_bcs`,
+        arguments: [obj(tx, args.registry), obj(tx, args.dovRegistry), pure(tx, args.index, `u64`)],
+    });
+}
+
 export interface GetLiquidityAmountArgs {
     registry: TransactionObjectInput;
     index: bigint | TransactionArgument;
@@ -366,6 +380,22 @@ export function getMutTokenPool(tx: Transaction, args: GetMutTokenPoolArgs) {
     return tx.moveCall({
         target: `${PUBLISHED_AT}::lp_pool::get_mut_token_pool`,
         arguments: [obj(tx, args.liquidityPool), obj(tx, args.tokenType)],
+    });
+}
+
+export function getReceiptCollateral(tx: Transaction, liquidityPool: TransactionObjectInput) {
+    return tx.moveCall({ target: `${PUBLISHED_AT}::lp_pool::get_receipt_collateral`, arguments: [obj(tx, liquidityPool)] });
+}
+
+export interface GetReceiptCollateralBcsArgs {
+    registry: TransactionObjectInput;
+    index: bigint | TransactionArgument;
+}
+
+export function getReceiptCollateralBcs(tx: Transaction, args: GetReceiptCollateralBcsArgs) {
+    return tx.moveCall({
+        target: `${PUBLISHED_AT}::lp_pool::get_receipt_collateral_bcs`,
+        arguments: [obj(tx, args.registry), pure(tx, args.index, `u64`)],
     });
 }
 
@@ -558,15 +588,15 @@ export function putCollateral(tx: Transaction, typeArg: string, args: PutCollate
     });
 }
 
-export interface PutReceiptCollateralArgs {
+export interface PutReceiptCollateralsArgs {
     liquidityPool: TransactionObjectInput;
-    bidReceipt: TransactionObjectInput;
+    unsettledBidReceipts: Array<TransactionObjectInput> | TransactionArgument;
 }
 
-export function putReceiptCollateral(tx: Transaction, args: PutReceiptCollateralArgs) {
+export function putReceiptCollaterals(tx: Transaction, args: PutReceiptCollateralsArgs) {
     return tx.moveCall({
-        target: `${PUBLISHED_AT}::lp_pool::put_receipt_collateral`,
-        arguments: [obj(tx, args.liquidityPool), obj(tx, args.bidReceipt)],
+        target: `${PUBLISHED_AT}::lp_pool::put_receipt_collaterals`,
+        arguments: [obj(tx, args.liquidityPool), vector(tx, `${UnsettledBidReceipt.$typeName}`, args.unsettledBidReceipts)],
     });
 }
 

@@ -12,8 +12,8 @@ import * as package_source_98670585b87e06628ef2d7f7cb1e7bee8ada65b43b82997935225
 import * as package_source_abf837e98c26087cba0883c0a7a28326b1fa3c5e1e2c5abdb486f9e8f594c837 from "../_dependencies/source/0xabf837e98c26087cba0883c0a7a28326b1fa3c5e1e2c5abdb486f9e8f594c837/init";
 import * as package_source_bd8fc1947cf119350184107a3087e2dc27efefa0dd82e25a1f699069fe81a585 from "../_dependencies/source/0xbd8fc1947cf119350184107a3087e2dc27efefa0dd82e25a1f699069fe81a585/init";
 import * as package_source_f47329f4344f3bf0f8e436e2f7b485466cff300f12a166563995d3888c296a94 from "../_dependencies/source/0xf47329f4344f3bf0f8e436e2f7b485466cff300f12a166563995d3888c296a94/init";
-import * as package_source_7543918a86fd34dcc2d85f7fdfb71760745753384c8cab45ad2e99255d11f570 from "../typus_perp/init";
-import * as package_source_85a0c6432debd016b8734589417754263caff6cf67d9c7b4d5699a23b00fc721 from "../typus_stake_pool/init";
+import * as package_source_89c20927846e2b4b41249d4400d31362e925a2f327acf83f535e51134f611617 from "../typus_perp/init";
+import * as package_source_2861ec51c70e3bd8ff2372e210acb7151ece286d17f43447308d5f0ebbe8603b from "../typus_stake_pool/init";
 import { StructClassLoader } from "./loader";
 
 function registerClassesSource(loader: StructClassLoader) {
@@ -21,13 +21,13 @@ function registerClassesSource(loader: StructClassLoader) {
     package_source_2.registerClasses(loader);
     package_source_1d17058789bd1e1e79f1a92424519a88146f191f58a06cc4d9ab23d17d46ab73.registerClasses(loader);
     package_source_277f90d256d1015a78cad646db091bec451c5bbab834b9fb70bace7885b5c698.registerClasses(loader);
+    package_source_2861ec51c70e3bd8ff2372e210acb7151ece286d17f43447308d5f0ebbe8603b.registerClasses(loader);
     package_source_2fdff17b86e34ab722c8ba5e63f0da070d9a4163705b3fdc6a95802cab40a72a.registerClasses(loader);
     package_source_4213e12a2220f15f1837a76897110d2260786558169bd8d0847f21e9b551f277.registerClasses(loader);
     package_source_5cfd0819411be98034cba544cbffab192c2c35674a05ff57f4f1c5042875b828.registerClasses(loader);
     package_source_6c9a394a43844fc09d9617bc8a8e775a4521f0e28e83de1da780d043a498671f.registerClasses(loader);
     package_source_7237ec8436ef7e927c45470db6db3a834dd84cf903aedee3844e847fe4805399.registerClasses(loader);
-    package_source_7543918a86fd34dcc2d85f7fdfb71760745753384c8cab45ad2e99255d11f570.registerClasses(loader);
-    package_source_85a0c6432debd016b8734589417754263caff6cf67d9c7b4d5699a23b00fc721.registerClasses(loader);
+    package_source_89c20927846e2b4b41249d4400d31362e925a2f327acf83f535e51134f611617.registerClasses(loader);
     package_source_908a10789a1a6953e0b73a997c10e3552f7ce4e2907afd00a334ed74bd973ded.registerClasses(loader);
     package_source_98670585b87e06628ef2d7f7cb1e7bee8ada65b43b82997935225a7e6e21d18e.registerClasses(loader);
     package_source_abf837e98c26087cba0883c0a7a28326b1fa3c5e1e2c5abdb486f9e8f594c837.registerClasses(loader);

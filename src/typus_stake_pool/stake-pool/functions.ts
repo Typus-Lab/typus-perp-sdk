@@ -12,50 +12,6 @@ export function init(tx: Transaction) {
     return tx.moveCall({ target: `${PUBLISHED_AT}::stake_pool::init`, arguments: [] });
 }
 
-export interface UnsubscribeArgs {
-    version: TransactionObjectInput;
-    registry: TransactionObjectInput;
-    index: bigint | TransactionArgument;
-    userShareId: bigint | TransactionArgument;
-    unsubscribedShares: bigint | TransactionArgument | TransactionArgument | null;
-    clock: TransactionObjectInput;
-}
-
-export function unsubscribe(tx: Transaction, typeArg: string, args: UnsubscribeArgs) {
-    return tx.moveCall({
-        target: `${PUBLISHED_AT}::stake_pool::unsubscribe`,
-        typeArguments: [typeArg],
-        arguments: [
-            obj(tx, args.version),
-            obj(tx, args.registry),
-            pure(tx, args.index, `u64`),
-            pure(tx, args.userShareId, `u64`),
-            pure(tx, args.unsubscribedShares, `${Option.$typeName}<u64>`),
-            obj(tx, args.clock),
-        ],
-    });
-}
-
-export interface WithdrawIncentiveArgs {
-    version: TransactionObjectInput;
-    registry: TransactionObjectInput;
-    index: bigint | TransactionArgument;
-    amount: bigint | TransactionArgument | TransactionArgument | null;
-}
-
-export function withdrawIncentive(tx: Transaction, typeArg: string, args: WithdrawIncentiveArgs) {
-    return tx.moveCall({
-        target: `${PUBLISHED_AT}::stake_pool::withdraw_incentive`,
-        typeArguments: [typeArg],
-        arguments: [
-            obj(tx, args.version),
-            obj(tx, args.registry),
-            pure(tx, args.index, `u64`),
-            pure(tx, args.amount, `${Option.$typeName}<u64>`),
-        ],
-    });
-}
-
 export interface ActivateIncentiveTokenArgs {
     version: TransactionObjectInput;
     registry: TransactionObjectInput;
@@ -391,6 +347,30 @@ export function unstake(tx: Transaction, typeArg: string, args: UnstakeArgs) {
     });
 }
 
+export interface UnsubscribeArgs {
+    version: TransactionObjectInput;
+    registry: TransactionObjectInput;
+    index: bigint | TransactionArgument;
+    userShareId: bigint | TransactionArgument;
+    unsubscribedShares: bigint | TransactionArgument | TransactionArgument | null;
+    clock: TransactionObjectInput;
+}
+
+export function unsubscribe(tx: Transaction, typeArg: string, args: UnsubscribeArgs) {
+    return tx.moveCall({
+        target: `${PUBLISHED_AT}::stake_pool::unsubscribe`,
+        typeArguments: [typeArg],
+        arguments: [
+            obj(tx, args.version),
+            obj(tx, args.registry),
+            pure(tx, args.index, `u64`),
+            pure(tx, args.userShareId, `u64`),
+            pure(tx, args.unsubscribedShares, `${Option.$typeName}<u64>`),
+            obj(tx, args.clock),
+        ],
+    });
+}
+
 export interface UpdateIncentiveConfigArgs {
     version: TransactionObjectInput;
     registry: TransactionObjectInput;
@@ -428,5 +408,25 @@ export function updateUnlockCountdownTsMs(tx: Transaction, args: UpdateUnlockCou
     return tx.moveCall({
         target: `${PUBLISHED_AT}::stake_pool::update_unlock_countdown_ts_ms`,
         arguments: [obj(tx, args.version), obj(tx, args.registry), pure(tx, args.index, `u64`), pure(tx, args.unlockCountdownTsMs, `u64`)],
+    });
+}
+
+export interface WithdrawIncentiveArgs {
+    version: TransactionObjectInput;
+    registry: TransactionObjectInput;
+    index: bigint | TransactionArgument;
+    amount: bigint | TransactionArgument | TransactionArgument | null;
+}
+
+export function withdrawIncentive(tx: Transaction, typeArg: string, args: WithdrawIncentiveArgs) {
+    return tx.moveCall({
+        target: `${PUBLISHED_AT}::stake_pool::withdraw_incentive`,
+        typeArguments: [typeArg],
+        arguments: [
+            obj(tx, args.version),
+            obj(tx, args.registry),
+            pure(tx, args.index, `u64`),
+            pure(tx, args.amount, `${Option.$typeName}<u64>`),
+        ],
     });
 }

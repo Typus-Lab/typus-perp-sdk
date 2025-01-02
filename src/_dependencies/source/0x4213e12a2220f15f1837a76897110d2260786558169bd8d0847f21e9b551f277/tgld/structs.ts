@@ -22,6 +22,169 @@ import { bcs } from "@mysten/sui/bcs";
 import { SuiClient, SuiObjectData, SuiParsedData } from "@mysten/sui/client";
 import { fromB64, fromHEX, toHEX } from "@mysten/sui/utils";
 
+/* ============================== BurnEvent =============================== */
+
+export function isBurnEvent(type: string): boolean {
+    type = compressSuiType(type);
+    return type === `${PKG_V1}::tgld::BurnEvent`;
+}
+
+export interface BurnEventFields {
+    log: ToField<Vector<"u64">>;
+    bcsPadding: ToField<Vector<Vector<"u8">>>;
+}
+
+export type BurnEventReified = Reified<BurnEvent, BurnEventFields>;
+
+export class BurnEvent implements StructClass {
+    __StructClass = true as const;
+
+    static readonly $typeName = `${PKG_V1}::tgld::BurnEvent`;
+    static readonly $numTypeParams = 0;
+    static readonly $isPhantom = [] as const;
+
+    readonly $typeName = BurnEvent.$typeName;
+    readonly $fullTypeName: `${typeof PKG_V1}::tgld::BurnEvent`;
+    readonly $typeArgs: [];
+    readonly $isPhantom = BurnEvent.$isPhantom;
+
+    readonly log: ToField<Vector<"u64">>;
+    readonly bcsPadding: ToField<Vector<Vector<"u8">>>;
+
+    private constructor(typeArgs: [], fields: BurnEventFields) {
+        this.$fullTypeName = composeSuiType(BurnEvent.$typeName, ...typeArgs) as `${typeof PKG_V1}::tgld::BurnEvent`;
+        this.$typeArgs = typeArgs;
+
+        this.log = fields.log;
+        this.bcsPadding = fields.bcsPadding;
+    }
+
+    static reified(): BurnEventReified {
+        return {
+            typeName: BurnEvent.$typeName,
+            fullTypeName: composeSuiType(BurnEvent.$typeName, ...[]) as `${typeof PKG_V1}::tgld::BurnEvent`,
+            typeArgs: [] as [],
+            isPhantom: BurnEvent.$isPhantom,
+            reifiedTypeArgs: [],
+            fromFields: (fields: Record<string, any>) => BurnEvent.fromFields(fields),
+            fromFieldsWithTypes: (item: FieldsWithTypes) => BurnEvent.fromFieldsWithTypes(item),
+            fromBcs: (data: Uint8Array) => BurnEvent.fromBcs(data),
+            bcs: BurnEvent.bcs,
+            fromJSONField: (field: any) => BurnEvent.fromJSONField(field),
+            fromJSON: (json: Record<string, any>) => BurnEvent.fromJSON(json),
+            fromSuiParsedData: (content: SuiParsedData) => BurnEvent.fromSuiParsedData(content),
+            fromSuiObjectData: (content: SuiObjectData) => BurnEvent.fromSuiObjectData(content),
+            fetch: async (client: SuiClient, id: string) => BurnEvent.fetch(client, id),
+            new: (fields: BurnEventFields) => {
+                return new BurnEvent([], fields);
+            },
+            kind: "StructClassReified",
+        };
+    }
+
+    static get r() {
+        return BurnEvent.reified();
+    }
+
+    static phantom(): PhantomReified<ToTypeStr<BurnEvent>> {
+        return phantom(BurnEvent.reified());
+    }
+    static get p() {
+        return BurnEvent.phantom();
+    }
+
+    static get bcs() {
+        return bcs.struct("BurnEvent", {
+            log: bcs.vector(bcs.u64()),
+            bcs_padding: bcs.vector(bcs.vector(bcs.u8())),
+        });
+    }
+
+    static fromFields(fields: Record<string, any>): BurnEvent {
+        return BurnEvent.reified().new({
+            log: decodeFromFields(reified.vector("u64"), fields.log),
+            bcsPadding: decodeFromFields(reified.vector(reified.vector("u8")), fields.bcs_padding),
+        });
+    }
+
+    static fromFieldsWithTypes(item: FieldsWithTypes): BurnEvent {
+        if (!isBurnEvent(item.type)) {
+            throw new Error("not a BurnEvent type");
+        }
+
+        return BurnEvent.reified().new({
+            log: decodeFromFieldsWithTypes(reified.vector("u64"), item.fields.log),
+            bcsPadding: decodeFromFieldsWithTypes(reified.vector(reified.vector("u8")), item.fields.bcs_padding),
+        });
+    }
+
+    static fromBcs(data: Uint8Array): BurnEvent {
+        return BurnEvent.fromFields(BurnEvent.bcs.parse(data));
+    }
+
+    toJSONField() {
+        return {
+            log: fieldToJSON<Vector<"u64">>(`vector<u64>`, this.log),
+            bcsPadding: fieldToJSON<Vector<Vector<"u8">>>(`vector<vector<u8>>`, this.bcsPadding),
+        };
+    }
+
+    toJSON() {
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
+    }
+
+    static fromJSONField(field: any): BurnEvent {
+        return BurnEvent.reified().new({
+            log: decodeFromJSONField(reified.vector("u64"), field.log),
+            bcsPadding: decodeFromJSONField(reified.vector(reified.vector("u8")), field.bcsPadding),
+        });
+    }
+
+    static fromJSON(json: Record<string, any>): BurnEvent {
+        if (json.$typeName !== BurnEvent.$typeName) {
+            throw new Error("not a WithTwoGenerics json object");
+        }
+
+        return BurnEvent.fromJSONField(json);
+    }
+
+    static fromSuiParsedData(content: SuiParsedData): BurnEvent {
+        if (content.dataType !== "moveObject") {
+            throw new Error("not an object");
+        }
+        if (!isBurnEvent(content.type)) {
+            throw new Error(`object at ${(content.fields as any).id} is not a BurnEvent object`);
+        }
+        return BurnEvent.fromFieldsWithTypes(content);
+    }
+
+    static fromSuiObjectData(data: SuiObjectData): BurnEvent {
+        if (data.bcs) {
+            if (data.bcs.dataType !== "moveObject" || !isBurnEvent(data.bcs.type)) {
+                throw new Error(`object at is not a BurnEvent object`);
+            }
+
+            return BurnEvent.fromBcs(fromB64(data.bcs.bcsBytes));
+        }
+        if (data.content) {
+            return BurnEvent.fromSuiParsedData(data.content);
+        }
+        throw new Error("Both `bcs` and `content` fields are missing from the data. Include `showBcs` or `showContent` in the request.");
+    }
+
+    static async fetch(client: SuiClient, id: string): Promise<BurnEvent> {
+        const res = await client.getObject({ id, options: { showBcs: true } });
+        if (res.error) {
+            throw new Error(`error fetching BurnEvent object at id ${id}: ${res.error.code}`);
+        }
+        if (res.data?.bcs?.dataType !== "moveObject" || !isBurnEvent(res.data.bcs.type)) {
+            throw new Error(`object at id ${id} is not a BurnEvent object`);
+        }
+
+        return BurnEvent.fromSuiObjectData(res.data);
+    }
+}
+
 /* ============================== MintEvent =============================== */
 
 export function isMintEvent(type: string): boolean {
@@ -190,169 +353,6 @@ export class MintEvent implements StructClass {
         }
 
         return MintEvent.fromSuiObjectData(res.data);
-    }
-}
-
-/* ============================== BurnEvent =============================== */
-
-export function isBurnEvent(type: string): boolean {
-    type = compressSuiType(type);
-    return type === `${PKG_V1}::tgld::BurnEvent`;
-}
-
-export interface BurnEventFields {
-    log: ToField<Vector<"u64">>;
-    bcsPadding: ToField<Vector<Vector<"u8">>>;
-}
-
-export type BurnEventReified = Reified<BurnEvent, BurnEventFields>;
-
-export class BurnEvent implements StructClass {
-    __StructClass = true as const;
-
-    static readonly $typeName = `${PKG_V1}::tgld::BurnEvent`;
-    static readonly $numTypeParams = 0;
-    static readonly $isPhantom = [] as const;
-
-    readonly $typeName = BurnEvent.$typeName;
-    readonly $fullTypeName: `${typeof PKG_V1}::tgld::BurnEvent`;
-    readonly $typeArgs: [];
-    readonly $isPhantom = BurnEvent.$isPhantom;
-
-    readonly log: ToField<Vector<"u64">>;
-    readonly bcsPadding: ToField<Vector<Vector<"u8">>>;
-
-    private constructor(typeArgs: [], fields: BurnEventFields) {
-        this.$fullTypeName = composeSuiType(BurnEvent.$typeName, ...typeArgs) as `${typeof PKG_V1}::tgld::BurnEvent`;
-        this.$typeArgs = typeArgs;
-
-        this.log = fields.log;
-        this.bcsPadding = fields.bcsPadding;
-    }
-
-    static reified(): BurnEventReified {
-        return {
-            typeName: BurnEvent.$typeName,
-            fullTypeName: composeSuiType(BurnEvent.$typeName, ...[]) as `${typeof PKG_V1}::tgld::BurnEvent`,
-            typeArgs: [] as [],
-            isPhantom: BurnEvent.$isPhantom,
-            reifiedTypeArgs: [],
-            fromFields: (fields: Record<string, any>) => BurnEvent.fromFields(fields),
-            fromFieldsWithTypes: (item: FieldsWithTypes) => BurnEvent.fromFieldsWithTypes(item),
-            fromBcs: (data: Uint8Array) => BurnEvent.fromBcs(data),
-            bcs: BurnEvent.bcs,
-            fromJSONField: (field: any) => BurnEvent.fromJSONField(field),
-            fromJSON: (json: Record<string, any>) => BurnEvent.fromJSON(json),
-            fromSuiParsedData: (content: SuiParsedData) => BurnEvent.fromSuiParsedData(content),
-            fromSuiObjectData: (content: SuiObjectData) => BurnEvent.fromSuiObjectData(content),
-            fetch: async (client: SuiClient, id: string) => BurnEvent.fetch(client, id),
-            new: (fields: BurnEventFields) => {
-                return new BurnEvent([], fields);
-            },
-            kind: "StructClassReified",
-        };
-    }
-
-    static get r() {
-        return BurnEvent.reified();
-    }
-
-    static phantom(): PhantomReified<ToTypeStr<BurnEvent>> {
-        return phantom(BurnEvent.reified());
-    }
-    static get p() {
-        return BurnEvent.phantom();
-    }
-
-    static get bcs() {
-        return bcs.struct("BurnEvent", {
-            log: bcs.vector(bcs.u64()),
-            bcs_padding: bcs.vector(bcs.vector(bcs.u8())),
-        });
-    }
-
-    static fromFields(fields: Record<string, any>): BurnEvent {
-        return BurnEvent.reified().new({
-            log: decodeFromFields(reified.vector("u64"), fields.log),
-            bcsPadding: decodeFromFields(reified.vector(reified.vector("u8")), fields.bcs_padding),
-        });
-    }
-
-    static fromFieldsWithTypes(item: FieldsWithTypes): BurnEvent {
-        if (!isBurnEvent(item.type)) {
-            throw new Error("not a BurnEvent type");
-        }
-
-        return BurnEvent.reified().new({
-            log: decodeFromFieldsWithTypes(reified.vector("u64"), item.fields.log),
-            bcsPadding: decodeFromFieldsWithTypes(reified.vector(reified.vector("u8")), item.fields.bcs_padding),
-        });
-    }
-
-    static fromBcs(data: Uint8Array): BurnEvent {
-        return BurnEvent.fromFields(BurnEvent.bcs.parse(data));
-    }
-
-    toJSONField() {
-        return {
-            log: fieldToJSON<Vector<"u64">>(`vector<u64>`, this.log),
-            bcsPadding: fieldToJSON<Vector<Vector<"u8">>>(`vector<vector<u8>>`, this.bcsPadding),
-        };
-    }
-
-    toJSON() {
-        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
-    }
-
-    static fromJSONField(field: any): BurnEvent {
-        return BurnEvent.reified().new({
-            log: decodeFromJSONField(reified.vector("u64"), field.log),
-            bcsPadding: decodeFromJSONField(reified.vector(reified.vector("u8")), field.bcsPadding),
-        });
-    }
-
-    static fromJSON(json: Record<string, any>): BurnEvent {
-        if (json.$typeName !== BurnEvent.$typeName) {
-            throw new Error("not a WithTwoGenerics json object");
-        }
-
-        return BurnEvent.fromJSONField(json);
-    }
-
-    static fromSuiParsedData(content: SuiParsedData): BurnEvent {
-        if (content.dataType !== "moveObject") {
-            throw new Error("not an object");
-        }
-        if (!isBurnEvent(content.type)) {
-            throw new Error(`object at ${(content.fields as any).id} is not a BurnEvent object`);
-        }
-        return BurnEvent.fromFieldsWithTypes(content);
-    }
-
-    static fromSuiObjectData(data: SuiObjectData): BurnEvent {
-        if (data.bcs) {
-            if (data.bcs.dataType !== "moveObject" || !isBurnEvent(data.bcs.type)) {
-                throw new Error(`object at is not a BurnEvent object`);
-            }
-
-            return BurnEvent.fromBcs(fromB64(data.bcs.bcsBytes));
-        }
-        if (data.content) {
-            return BurnEvent.fromSuiParsedData(data.content);
-        }
-        throw new Error("Both `bcs` and `content` fields are missing from the data. Include `showBcs` or `showContent` in the request.");
-    }
-
-    static async fetch(client: SuiClient, id: string): Promise<BurnEvent> {
-        const res = await client.getObject({ id, options: { showBcs: true } });
-        if (res.error) {
-            throw new Error(`error fetching BurnEvent object at id ${id}: ${res.error.code}`);
-        }
-        if (res.data?.bcs?.dataType !== "moveObject" || !isBurnEvent(res.data.bcs.type)) {
-            throw new Error(`object at id ${id} is not a BurnEvent object`);
-        }
-
-        return BurnEvent.fromSuiObjectData(res.data);
     }
 }
 

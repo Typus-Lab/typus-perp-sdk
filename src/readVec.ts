@@ -86,7 +86,7 @@ export function readVecOrder(bytes: Uint8Array) {
 export function readVecShares(bytes: Uint8Array) {
     let reader = new BcsReader(bytes);
     return reader.readVec((reader) => {
-        reader.read16();
+        reader.readULEB();
         let share = {
             user: AddressFromBytes(reader.readBytes(32)),
             userShareId: reader.read64(),

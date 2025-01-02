@@ -15,6 +15,7 @@ import {
 } from "../../_framework/reified";
 import { FieldsWithTypes, composeSuiType, compressSuiType } from "../../_framework/util";
 import { Vector } from "../../_framework/vector";
+import { UnsettledBidReceipt } from "../escrow/structs";
 import { PKG_V1 } from "../index";
 import { bcs } from "@mysten/sui/bcs";
 import { SuiClient, SuiObjectData, SuiParsedData } from "@mysten/sui/client";
@@ -1232,6 +1233,7 @@ export interface LiquidityPoolFields {
     liquidityTokens: ToField<Vector<TypeName>>;
     tokenPools: ToField<Vector<TokenPool>>;
     poolInfo: ToField<LiquidityPoolInfo>;
+    liquidatedUnsettledReceipts: ToField<Vector<UnsettledBidReceipt>>;
     u64Padding: ToField<Vector<"u64">>;
     bcsPadding: ToField<Vector<"u8">>;
 }
@@ -1256,6 +1258,7 @@ export class LiquidityPool implements StructClass {
     readonly liquidityTokens: ToField<Vector<TypeName>>;
     readonly tokenPools: ToField<Vector<TokenPool>>;
     readonly poolInfo: ToField<LiquidityPoolInfo>;
+    readonly liquidatedUnsettledReceipts: ToField<Vector<UnsettledBidReceipt>>;
     readonly u64Padding: ToField<Vector<"u64">>;
     readonly bcsPadding: ToField<Vector<"u8">>;
 
@@ -1269,6 +1272,7 @@ export class LiquidityPool implements StructClass {
         this.liquidityTokens = fields.liquidityTokens;
         this.tokenPools = fields.tokenPools;
         this.poolInfo = fields.poolInfo;
+        this.liquidatedUnsettledReceipts = fields.liquidatedUnsettledReceipts;
         this.u64Padding = fields.u64Padding;
         this.bcsPadding = fields.bcsPadding;
     }
@@ -1315,6 +1319,7 @@ export class LiquidityPool implements StructClass {
             liquidity_tokens: bcs.vector(TypeName.bcs),
             token_pools: bcs.vector(TokenPool.bcs),
             pool_info: LiquidityPoolInfo.bcs,
+            liquidated_unsettled_receipts: bcs.vector(UnsettledBidReceipt.bcs),
             u64_padding: bcs.vector(bcs.u64()),
             bcs_padding: bcs.vector(bcs.u8()),
         });
@@ -1328,6 +1333,10 @@ export class LiquidityPool implements StructClass {
             liquidityTokens: decodeFromFields(reified.vector(TypeName.reified()), fields.liquidity_tokens),
             tokenPools: decodeFromFields(reified.vector(TokenPool.reified()), fields.token_pools),
             poolInfo: decodeFromFields(LiquidityPoolInfo.reified(), fields.pool_info),
+            liquidatedUnsettledReceipts: decodeFromFields(
+                reified.vector(UnsettledBidReceipt.reified()),
+                fields.liquidated_unsettled_receipts
+            ),
             u64Padding: decodeFromFields(reified.vector("u64"), fields.u64_padding),
             bcsPadding: decodeFromFields(reified.vector("u8"), fields.bcs_padding),
         });
@@ -1345,6 +1354,10 @@ export class LiquidityPool implements StructClass {
             liquidityTokens: decodeFromFieldsWithTypes(reified.vector(TypeName.reified()), item.fields.liquidity_tokens),
             tokenPools: decodeFromFieldsWithTypes(reified.vector(TokenPool.reified()), item.fields.token_pools),
             poolInfo: decodeFromFieldsWithTypes(LiquidityPoolInfo.reified(), item.fields.pool_info),
+            liquidatedUnsettledReceipts: decodeFromFieldsWithTypes(
+                reified.vector(UnsettledBidReceipt.reified()),
+                item.fields.liquidated_unsettled_receipts
+            ),
             u64Padding: decodeFromFieldsWithTypes(reified.vector("u64"), item.fields.u64_padding),
             bcsPadding: decodeFromFieldsWithTypes(reified.vector("u8"), item.fields.bcs_padding),
         });
@@ -1362,6 +1375,10 @@ export class LiquidityPool implements StructClass {
             liquidityTokens: fieldToJSON<Vector<TypeName>>(`vector<${TypeName.$typeName}>`, this.liquidityTokens),
             tokenPools: fieldToJSON<Vector<TokenPool>>(`vector<${TokenPool.$typeName}>`, this.tokenPools),
             poolInfo: this.poolInfo.toJSONField(),
+            liquidatedUnsettledReceipts: fieldToJSON<Vector<UnsettledBidReceipt>>(
+                `vector<${UnsettledBidReceipt.$typeName}>`,
+                this.liquidatedUnsettledReceipts
+            ),
             u64Padding: fieldToJSON<Vector<"u64">>(`vector<u64>`, this.u64Padding),
             bcsPadding: fieldToJSON<Vector<"u8">>(`vector<u8>`, this.bcsPadding),
         };
@@ -1379,6 +1396,10 @@ export class LiquidityPool implements StructClass {
             liquidityTokens: decodeFromJSONField(reified.vector(TypeName.reified()), field.liquidityTokens),
             tokenPools: decodeFromJSONField(reified.vector(TokenPool.reified()), field.tokenPools),
             poolInfo: decodeFromJSONField(LiquidityPoolInfo.reified(), field.poolInfo),
+            liquidatedUnsettledReceipts: decodeFromJSONField(
+                reified.vector(UnsettledBidReceipt.reified()),
+                field.liquidatedUnsettledReceipts
+            ),
             u64Padding: decodeFromJSONField(reified.vector("u64"), field.u64Padding),
             bcsPadding: decodeFromJSONField(reified.vector("u8"), field.bcsPadding),
         });
@@ -3990,6 +4011,8 @@ export interface SwapEventFields {
     actualToAmount: ToField<"u64">;
     feeAmount: ToField<"u64">;
     feeAmountUsd: ToField<"u64">;
+    oraclePriceFromToken: ToField<"u64">;
+    oraclePriceToToken: ToField<"u64">;
     u64Padding: ToField<Vector<"u64">>;
 }
 
@@ -4016,6 +4039,8 @@ export class SwapEvent implements StructClass {
     readonly actualToAmount: ToField<"u64">;
     readonly feeAmount: ToField<"u64">;
     readonly feeAmountUsd: ToField<"u64">;
+    readonly oraclePriceFromToken: ToField<"u64">;
+    readonly oraclePriceToToken: ToField<"u64">;
     readonly u64Padding: ToField<Vector<"u64">>;
 
     private constructor(typeArgs: [], fields: SwapEventFields) {
@@ -4031,6 +4056,8 @@ export class SwapEvent implements StructClass {
         this.actualToAmount = fields.actualToAmount;
         this.feeAmount = fields.feeAmount;
         this.feeAmountUsd = fields.feeAmountUsd;
+        this.oraclePriceFromToken = fields.oraclePriceFromToken;
+        this.oraclePriceToToken = fields.oraclePriceToToken;
         this.u64Padding = fields.u64Padding;
     }
 
@@ -4079,6 +4106,8 @@ export class SwapEvent implements StructClass {
             actual_to_amount: bcs.u64(),
             fee_amount: bcs.u64(),
             fee_amount_usd: bcs.u64(),
+            oracle_price_from_token: bcs.u64(),
+            oracle_price_to_token: bcs.u64(),
             u64_padding: bcs.vector(bcs.u64()),
         });
     }
@@ -4094,6 +4123,8 @@ export class SwapEvent implements StructClass {
             actualToAmount: decodeFromFields("u64", fields.actual_to_amount),
             feeAmount: decodeFromFields("u64", fields.fee_amount),
             feeAmountUsd: decodeFromFields("u64", fields.fee_amount_usd),
+            oraclePriceFromToken: decodeFromFields("u64", fields.oracle_price_from_token),
+            oraclePriceToToken: decodeFromFields("u64", fields.oracle_price_to_token),
             u64Padding: decodeFromFields(reified.vector("u64"), fields.u64_padding),
         });
     }
@@ -4113,6 +4144,8 @@ export class SwapEvent implements StructClass {
             actualToAmount: decodeFromFieldsWithTypes("u64", item.fields.actual_to_amount),
             feeAmount: decodeFromFieldsWithTypes("u64", item.fields.fee_amount),
             feeAmountUsd: decodeFromFieldsWithTypes("u64", item.fields.fee_amount_usd),
+            oraclePriceFromToken: decodeFromFieldsWithTypes("u64", item.fields.oracle_price_from_token),
+            oraclePriceToToken: decodeFromFieldsWithTypes("u64", item.fields.oracle_price_to_token),
             u64Padding: decodeFromFieldsWithTypes(reified.vector("u64"), item.fields.u64_padding),
         });
     }
@@ -4132,6 +4165,8 @@ export class SwapEvent implements StructClass {
             actualToAmount: this.actualToAmount.toString(),
             feeAmount: this.feeAmount.toString(),
             feeAmountUsd: this.feeAmountUsd.toString(),
+            oraclePriceFromToken: this.oraclePriceFromToken.toString(),
+            oraclePriceToToken: this.oraclePriceToToken.toString(),
             u64Padding: fieldToJSON<Vector<"u64">>(`vector<u64>`, this.u64Padding),
         };
     }
@@ -4151,6 +4186,8 @@ export class SwapEvent implements StructClass {
             actualToAmount: decodeFromJSONField("u64", field.actualToAmount),
             feeAmount: decodeFromJSONField("u64", field.feeAmount),
             feeAmountUsd: decodeFromJSONField("u64", field.feeAmountUsd),
+            oraclePriceFromToken: decodeFromJSONField("u64", field.oraclePriceFromToken),
+            oraclePriceToToken: decodeFromJSONField("u64", field.oraclePriceToToken),
             u64Padding: decodeFromJSONField(reified.vector("u64"), field.u64Padding),
         });
     }

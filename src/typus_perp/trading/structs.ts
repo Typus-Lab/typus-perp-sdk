@@ -1561,7 +1561,8 @@ export interface LiquidateEventFields {
     positionId: ToField<"u64">;
     collateralPrice: ToField<"u64">;
     tradingPrice: ToField<"u64">;
-    liquidatorFeeValue: ToField<"u64">;
+    realizedLiquidatorFee: ToField<"u64">;
+    realizedValueForLpPool: ToField<"u64">;
     u64Padding: ToField<Vector<"u64">>;
 }
 
@@ -1585,7 +1586,8 @@ export class LiquidateEvent implements StructClass {
     readonly positionId: ToField<"u64">;
     readonly collateralPrice: ToField<"u64">;
     readonly tradingPrice: ToField<"u64">;
-    readonly liquidatorFeeValue: ToField<"u64">;
+    readonly realizedLiquidatorFee: ToField<"u64">;
+    readonly realizedValueForLpPool: ToField<"u64">;
     readonly u64Padding: ToField<Vector<"u64">>;
 
     private constructor(typeArgs: [], fields: LiquidateEventFields) {
@@ -1598,7 +1600,8 @@ export class LiquidateEvent implements StructClass {
         this.positionId = fields.positionId;
         this.collateralPrice = fields.collateralPrice;
         this.tradingPrice = fields.tradingPrice;
-        this.liquidatorFeeValue = fields.liquidatorFeeValue;
+        this.realizedLiquidatorFee = fields.realizedLiquidatorFee;
+        this.realizedValueForLpPool = fields.realizedValueForLpPool;
         this.u64Padding = fields.u64Padding;
     }
 
@@ -1644,7 +1647,8 @@ export class LiquidateEvent implements StructClass {
             position_id: bcs.u64(),
             collateral_price: bcs.u64(),
             trading_price: bcs.u64(),
-            liquidator_fee_value: bcs.u64(),
+            realized_liquidator_fee: bcs.u64(),
+            realized_value_for_lp_pool: bcs.u64(),
             u64_padding: bcs.vector(bcs.u64()),
         });
     }
@@ -1657,7 +1661,8 @@ export class LiquidateEvent implements StructClass {
             positionId: decodeFromFields("u64", fields.position_id),
             collateralPrice: decodeFromFields("u64", fields.collateral_price),
             tradingPrice: decodeFromFields("u64", fields.trading_price),
-            liquidatorFeeValue: decodeFromFields("u64", fields.liquidator_fee_value),
+            realizedLiquidatorFee: decodeFromFields("u64", fields.realized_liquidator_fee),
+            realizedValueForLpPool: decodeFromFields("u64", fields.realized_value_for_lp_pool),
             u64Padding: decodeFromFields(reified.vector("u64"), fields.u64_padding),
         });
     }
@@ -1674,7 +1679,8 @@ export class LiquidateEvent implements StructClass {
             positionId: decodeFromFieldsWithTypes("u64", item.fields.position_id),
             collateralPrice: decodeFromFieldsWithTypes("u64", item.fields.collateral_price),
             tradingPrice: decodeFromFieldsWithTypes("u64", item.fields.trading_price),
-            liquidatorFeeValue: decodeFromFieldsWithTypes("u64", item.fields.liquidator_fee_value),
+            realizedLiquidatorFee: decodeFromFieldsWithTypes("u64", item.fields.realized_liquidator_fee),
+            realizedValueForLpPool: decodeFromFieldsWithTypes("u64", item.fields.realized_value_for_lp_pool),
             u64Padding: decodeFromFieldsWithTypes(reified.vector("u64"), item.fields.u64_padding),
         });
     }
@@ -1691,7 +1697,8 @@ export class LiquidateEvent implements StructClass {
             positionId: this.positionId.toString(),
             collateralPrice: this.collateralPrice.toString(),
             tradingPrice: this.tradingPrice.toString(),
-            liquidatorFeeValue: this.liquidatorFeeValue.toString(),
+            realizedLiquidatorFee: this.realizedLiquidatorFee.toString(),
+            realizedValueForLpPool: this.realizedValueForLpPool.toString(),
             u64Padding: fieldToJSON<Vector<"u64">>(`vector<u64>`, this.u64Padding),
         };
     }
@@ -1708,7 +1715,8 @@ export class LiquidateEvent implements StructClass {
             positionId: decodeFromJSONField("u64", field.positionId),
             collateralPrice: decodeFromJSONField("u64", field.collateralPrice),
             tradingPrice: decodeFromJSONField("u64", field.tradingPrice),
-            liquidatorFeeValue: decodeFromJSONField("u64", field.liquidatorFeeValue),
+            realizedLiquidatorFee: decodeFromJSONField("u64", field.realizedLiquidatorFee),
+            realizedValueForLpPool: decodeFromJSONField("u64", field.realizedValueForLpPool),
             u64Padding: decodeFromJSONField(reified.vector("u64"), field.u64Padding),
         });
     }
@@ -1929,14 +1937,14 @@ export class LiquidationInfo implements StructClass {
     }
 }
 
-/* ============================== ManagerCloseOptionPosition =============================== */
+/* ============================== ManagerCloseOptionPositionEvent =============================== */
 
-export function isManagerCloseOptionPosition(type: string): boolean {
+export function isManagerCloseOptionPositionEvent(type: string): boolean {
     type = compressSuiType(type);
-    return type === `${PKG_V1}::trading::ManagerCloseOptionPosition`;
+    return type === `${PKG_V1}::trading::ManagerCloseOptionPositionEvent`;
 }
 
-export interface ManagerCloseOptionPositionFields {
+export interface ManagerCloseOptionPositionEventFields {
     user: ToField<"address">;
     collateralToken: ToField<TypeName>;
     baseToken: ToField<TypeName>;
@@ -1948,19 +1956,19 @@ export interface ManagerCloseOptionPositionFields {
     u64Padding: ToField<Vector<"u64">>;
 }
 
-export type ManagerCloseOptionPositionReified = Reified<ManagerCloseOptionPosition, ManagerCloseOptionPositionFields>;
+export type ManagerCloseOptionPositionEventReified = Reified<ManagerCloseOptionPositionEvent, ManagerCloseOptionPositionEventFields>;
 
-export class ManagerCloseOptionPosition implements StructClass {
+export class ManagerCloseOptionPositionEvent implements StructClass {
     __StructClass = true as const;
 
-    static readonly $typeName = `${PKG_V1}::trading::ManagerCloseOptionPosition`;
+    static readonly $typeName = `${PKG_V1}::trading::ManagerCloseOptionPositionEvent`;
     static readonly $numTypeParams = 0;
     static readonly $isPhantom = [] as const;
 
-    readonly $typeName = ManagerCloseOptionPosition.$typeName;
-    readonly $fullTypeName: `${typeof PKG_V1}::trading::ManagerCloseOptionPosition`;
+    readonly $typeName = ManagerCloseOptionPositionEvent.$typeName;
+    readonly $fullTypeName: `${typeof PKG_V1}::trading::ManagerCloseOptionPositionEvent`;
     readonly $typeArgs: [];
-    readonly $isPhantom = ManagerCloseOptionPosition.$isPhantom;
+    readonly $isPhantom = ManagerCloseOptionPositionEvent.$isPhantom;
 
     readonly user: ToField<"address">;
     readonly collateralToken: ToField<TypeName>;
@@ -1972,11 +1980,11 @@ export class ManagerCloseOptionPosition implements StructClass {
     readonly cancelledOrderIds: ToField<Vector<"u64">>;
     readonly u64Padding: ToField<Vector<"u64">>;
 
-    private constructor(typeArgs: [], fields: ManagerCloseOptionPositionFields) {
+    private constructor(typeArgs: [], fields: ManagerCloseOptionPositionEventFields) {
         this.$fullTypeName = composeSuiType(
-            ManagerCloseOptionPosition.$typeName,
+            ManagerCloseOptionPositionEvent.$typeName,
             ...typeArgs
-        ) as `${typeof PKG_V1}::trading::ManagerCloseOptionPosition`;
+        ) as `${typeof PKG_V1}::trading::ManagerCloseOptionPositionEvent`;
         this.$typeArgs = typeArgs;
 
         this.user = fields.user;
@@ -1990,45 +1998,45 @@ export class ManagerCloseOptionPosition implements StructClass {
         this.u64Padding = fields.u64Padding;
     }
 
-    static reified(): ManagerCloseOptionPositionReified {
+    static reified(): ManagerCloseOptionPositionEventReified {
         return {
-            typeName: ManagerCloseOptionPosition.$typeName,
+            typeName: ManagerCloseOptionPositionEvent.$typeName,
             fullTypeName: composeSuiType(
-                ManagerCloseOptionPosition.$typeName,
+                ManagerCloseOptionPositionEvent.$typeName,
                 ...[]
-            ) as `${typeof PKG_V1}::trading::ManagerCloseOptionPosition`,
+            ) as `${typeof PKG_V1}::trading::ManagerCloseOptionPositionEvent`,
             typeArgs: [] as [],
-            isPhantom: ManagerCloseOptionPosition.$isPhantom,
+            isPhantom: ManagerCloseOptionPositionEvent.$isPhantom,
             reifiedTypeArgs: [],
-            fromFields: (fields: Record<string, any>) => ManagerCloseOptionPosition.fromFields(fields),
-            fromFieldsWithTypes: (item: FieldsWithTypes) => ManagerCloseOptionPosition.fromFieldsWithTypes(item),
-            fromBcs: (data: Uint8Array) => ManagerCloseOptionPosition.fromBcs(data),
-            bcs: ManagerCloseOptionPosition.bcs,
-            fromJSONField: (field: any) => ManagerCloseOptionPosition.fromJSONField(field),
-            fromJSON: (json: Record<string, any>) => ManagerCloseOptionPosition.fromJSON(json),
-            fromSuiParsedData: (content: SuiParsedData) => ManagerCloseOptionPosition.fromSuiParsedData(content),
-            fromSuiObjectData: (content: SuiObjectData) => ManagerCloseOptionPosition.fromSuiObjectData(content),
-            fetch: async (client: SuiClient, id: string) => ManagerCloseOptionPosition.fetch(client, id),
-            new: (fields: ManagerCloseOptionPositionFields) => {
-                return new ManagerCloseOptionPosition([], fields);
+            fromFields: (fields: Record<string, any>) => ManagerCloseOptionPositionEvent.fromFields(fields),
+            fromFieldsWithTypes: (item: FieldsWithTypes) => ManagerCloseOptionPositionEvent.fromFieldsWithTypes(item),
+            fromBcs: (data: Uint8Array) => ManagerCloseOptionPositionEvent.fromBcs(data),
+            bcs: ManagerCloseOptionPositionEvent.bcs,
+            fromJSONField: (field: any) => ManagerCloseOptionPositionEvent.fromJSONField(field),
+            fromJSON: (json: Record<string, any>) => ManagerCloseOptionPositionEvent.fromJSON(json),
+            fromSuiParsedData: (content: SuiParsedData) => ManagerCloseOptionPositionEvent.fromSuiParsedData(content),
+            fromSuiObjectData: (content: SuiObjectData) => ManagerCloseOptionPositionEvent.fromSuiObjectData(content),
+            fetch: async (client: SuiClient, id: string) => ManagerCloseOptionPositionEvent.fetch(client, id),
+            new: (fields: ManagerCloseOptionPositionEventFields) => {
+                return new ManagerCloseOptionPositionEvent([], fields);
             },
             kind: "StructClassReified",
         };
     }
 
     static get r() {
-        return ManagerCloseOptionPosition.reified();
+        return ManagerCloseOptionPositionEvent.reified();
     }
 
-    static phantom(): PhantomReified<ToTypeStr<ManagerCloseOptionPosition>> {
-        return phantom(ManagerCloseOptionPosition.reified());
+    static phantom(): PhantomReified<ToTypeStr<ManagerCloseOptionPositionEvent>> {
+        return phantom(ManagerCloseOptionPositionEvent.reified());
     }
     static get p() {
-        return ManagerCloseOptionPosition.phantom();
+        return ManagerCloseOptionPositionEvent.phantom();
     }
 
     static get bcs() {
-        return bcs.struct("ManagerCloseOptionPosition", {
+        return bcs.struct("ManagerCloseOptionPositionEvent", {
             user: bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
             collateral_token: TypeName.bcs,
             base_token: TypeName.bcs,
@@ -2041,8 +2049,8 @@ export class ManagerCloseOptionPosition implements StructClass {
         });
     }
 
-    static fromFields(fields: Record<string, any>): ManagerCloseOptionPosition {
-        return ManagerCloseOptionPosition.reified().new({
+    static fromFields(fields: Record<string, any>): ManagerCloseOptionPositionEvent {
+        return ManagerCloseOptionPositionEvent.reified().new({
             user: decodeFromFields("address", fields.user),
             collateralToken: decodeFromFields(TypeName.reified(), fields.collateral_token),
             baseToken: decodeFromFields(TypeName.reified(), fields.base_token),
@@ -2055,12 +2063,12 @@ export class ManagerCloseOptionPosition implements StructClass {
         });
     }
 
-    static fromFieldsWithTypes(item: FieldsWithTypes): ManagerCloseOptionPosition {
-        if (!isManagerCloseOptionPosition(item.type)) {
-            throw new Error("not a ManagerCloseOptionPosition type");
+    static fromFieldsWithTypes(item: FieldsWithTypes): ManagerCloseOptionPositionEvent {
+        if (!isManagerCloseOptionPositionEvent(item.type)) {
+            throw new Error("not a ManagerCloseOptionPositionEvent type");
         }
 
-        return ManagerCloseOptionPosition.reified().new({
+        return ManagerCloseOptionPositionEvent.reified().new({
             user: decodeFromFieldsWithTypes("address", item.fields.user),
             collateralToken: decodeFromFieldsWithTypes(TypeName.reified(), item.fields.collateral_token),
             baseToken: decodeFromFieldsWithTypes(TypeName.reified(), item.fields.base_token),
@@ -2073,8 +2081,8 @@ export class ManagerCloseOptionPosition implements StructClass {
         });
     }
 
-    static fromBcs(data: Uint8Array): ManagerCloseOptionPosition {
-        return ManagerCloseOptionPosition.fromFields(ManagerCloseOptionPosition.bcs.parse(data));
+    static fromBcs(data: Uint8Array): ManagerCloseOptionPositionEvent {
+        return ManagerCloseOptionPositionEvent.fromFields(ManagerCloseOptionPositionEvent.bcs.parse(data));
     }
 
     toJSONField() {
@@ -2095,8 +2103,8 @@ export class ManagerCloseOptionPosition implements StructClass {
         return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
-    static fromJSONField(field: any): ManagerCloseOptionPosition {
-        return ManagerCloseOptionPosition.reified().new({
+    static fromJSONField(field: any): ManagerCloseOptionPositionEvent {
+        return ManagerCloseOptionPositionEvent.reified().new({
             user: decodeFromJSONField("address", field.user),
             collateralToken: decodeFromJSONField(TypeName.reified(), field.collateralToken),
             baseToken: decodeFromJSONField(TypeName.reified(), field.baseToken),
@@ -2109,59 +2117,59 @@ export class ManagerCloseOptionPosition implements StructClass {
         });
     }
 
-    static fromJSON(json: Record<string, any>): ManagerCloseOptionPosition {
-        if (json.$typeName !== ManagerCloseOptionPosition.$typeName) {
+    static fromJSON(json: Record<string, any>): ManagerCloseOptionPositionEvent {
+        if (json.$typeName !== ManagerCloseOptionPositionEvent.$typeName) {
             throw new Error("not a WithTwoGenerics json object");
         }
 
-        return ManagerCloseOptionPosition.fromJSONField(json);
+        return ManagerCloseOptionPositionEvent.fromJSONField(json);
     }
 
-    static fromSuiParsedData(content: SuiParsedData): ManagerCloseOptionPosition {
+    static fromSuiParsedData(content: SuiParsedData): ManagerCloseOptionPositionEvent {
         if (content.dataType !== "moveObject") {
             throw new Error("not an object");
         }
-        if (!isManagerCloseOptionPosition(content.type)) {
-            throw new Error(`object at ${(content.fields as any).id} is not a ManagerCloseOptionPosition object`);
+        if (!isManagerCloseOptionPositionEvent(content.type)) {
+            throw new Error(`object at ${(content.fields as any).id} is not a ManagerCloseOptionPositionEvent object`);
         }
-        return ManagerCloseOptionPosition.fromFieldsWithTypes(content);
+        return ManagerCloseOptionPositionEvent.fromFieldsWithTypes(content);
     }
 
-    static fromSuiObjectData(data: SuiObjectData): ManagerCloseOptionPosition {
+    static fromSuiObjectData(data: SuiObjectData): ManagerCloseOptionPositionEvent {
         if (data.bcs) {
-            if (data.bcs.dataType !== "moveObject" || !isManagerCloseOptionPosition(data.bcs.type)) {
-                throw new Error(`object at is not a ManagerCloseOptionPosition object`);
+            if (data.bcs.dataType !== "moveObject" || !isManagerCloseOptionPositionEvent(data.bcs.type)) {
+                throw new Error(`object at is not a ManagerCloseOptionPositionEvent object`);
             }
 
-            return ManagerCloseOptionPosition.fromBcs(fromB64(data.bcs.bcsBytes));
+            return ManagerCloseOptionPositionEvent.fromBcs(fromB64(data.bcs.bcsBytes));
         }
         if (data.content) {
-            return ManagerCloseOptionPosition.fromSuiParsedData(data.content);
+            return ManagerCloseOptionPositionEvent.fromSuiParsedData(data.content);
         }
         throw new Error("Both `bcs` and `content` fields are missing from the data. Include `showBcs` or `showContent` in the request.");
     }
 
-    static async fetch(client: SuiClient, id: string): Promise<ManagerCloseOptionPosition> {
+    static async fetch(client: SuiClient, id: string): Promise<ManagerCloseOptionPositionEvent> {
         const res = await client.getObject({ id, options: { showBcs: true } });
         if (res.error) {
-            throw new Error(`error fetching ManagerCloseOptionPosition object at id ${id}: ${res.error.code}`);
+            throw new Error(`error fetching ManagerCloseOptionPositionEvent object at id ${id}: ${res.error.code}`);
         }
-        if (res.data?.bcs?.dataType !== "moveObject" || !isManagerCloseOptionPosition(res.data.bcs.type)) {
-            throw new Error(`object at id ${id} is not a ManagerCloseOptionPosition object`);
+        if (res.data?.bcs?.dataType !== "moveObject" || !isManagerCloseOptionPositionEvent(res.data.bcs.type)) {
+            throw new Error(`object at id ${id} is not a ManagerCloseOptionPositionEvent object`);
         }
 
-        return ManagerCloseOptionPosition.fromSuiObjectData(res.data);
+        return ManagerCloseOptionPositionEvent.fromSuiObjectData(res.data);
     }
 }
 
-/* ============================== ManagerReducePosition =============================== */
+/* ============================== ManagerReducePositionEvent =============================== */
 
-export function isManagerReducePosition(type: string): boolean {
+export function isManagerReducePositionEvent(type: string): boolean {
     type = compressSuiType(type);
-    return type === `${PKG_V1}::trading::ManagerReducePosition`;
+    return type === `${PKG_V1}::trading::ManagerReducePositionEvent`;
 }
 
-export interface ManagerReducePositionFields {
+export interface ManagerReducePositionEventFields {
     user: ToField<"address">;
     collateralToken: ToField<TypeName>;
     baseToken: ToField<TypeName>;
@@ -2173,19 +2181,19 @@ export interface ManagerReducePositionFields {
     u64Padding: ToField<Vector<"u64">>;
 }
 
-export type ManagerReducePositionReified = Reified<ManagerReducePosition, ManagerReducePositionFields>;
+export type ManagerReducePositionEventReified = Reified<ManagerReducePositionEvent, ManagerReducePositionEventFields>;
 
-export class ManagerReducePosition implements StructClass {
+export class ManagerReducePositionEvent implements StructClass {
     __StructClass = true as const;
 
-    static readonly $typeName = `${PKG_V1}::trading::ManagerReducePosition`;
+    static readonly $typeName = `${PKG_V1}::trading::ManagerReducePositionEvent`;
     static readonly $numTypeParams = 0;
     static readonly $isPhantom = [] as const;
 
-    readonly $typeName = ManagerReducePosition.$typeName;
-    readonly $fullTypeName: `${typeof PKG_V1}::trading::ManagerReducePosition`;
+    readonly $typeName = ManagerReducePositionEvent.$typeName;
+    readonly $fullTypeName: `${typeof PKG_V1}::trading::ManagerReducePositionEvent`;
     readonly $typeArgs: [];
-    readonly $isPhantom = ManagerReducePosition.$isPhantom;
+    readonly $isPhantom = ManagerReducePositionEvent.$isPhantom;
 
     readonly user: ToField<"address">;
     readonly collateralToken: ToField<TypeName>;
@@ -2197,11 +2205,11 @@ export class ManagerReducePosition implements StructClass {
     readonly cancelledOrderIds: ToField<Vector<"u64">>;
     readonly u64Padding: ToField<Vector<"u64">>;
 
-    private constructor(typeArgs: [], fields: ManagerReducePositionFields) {
+    private constructor(typeArgs: [], fields: ManagerReducePositionEventFields) {
         this.$fullTypeName = composeSuiType(
-            ManagerReducePosition.$typeName,
+            ManagerReducePositionEvent.$typeName,
             ...typeArgs
-        ) as `${typeof PKG_V1}::trading::ManagerReducePosition`;
+        ) as `${typeof PKG_V1}::trading::ManagerReducePositionEvent`;
         this.$typeArgs = typeArgs;
 
         this.user = fields.user;
@@ -2215,42 +2223,45 @@ export class ManagerReducePosition implements StructClass {
         this.u64Padding = fields.u64Padding;
     }
 
-    static reified(): ManagerReducePositionReified {
+    static reified(): ManagerReducePositionEventReified {
         return {
-            typeName: ManagerReducePosition.$typeName,
-            fullTypeName: composeSuiType(ManagerReducePosition.$typeName, ...[]) as `${typeof PKG_V1}::trading::ManagerReducePosition`,
+            typeName: ManagerReducePositionEvent.$typeName,
+            fullTypeName: composeSuiType(
+                ManagerReducePositionEvent.$typeName,
+                ...[]
+            ) as `${typeof PKG_V1}::trading::ManagerReducePositionEvent`,
             typeArgs: [] as [],
-            isPhantom: ManagerReducePosition.$isPhantom,
+            isPhantom: ManagerReducePositionEvent.$isPhantom,
             reifiedTypeArgs: [],
-            fromFields: (fields: Record<string, any>) => ManagerReducePosition.fromFields(fields),
-            fromFieldsWithTypes: (item: FieldsWithTypes) => ManagerReducePosition.fromFieldsWithTypes(item),
-            fromBcs: (data: Uint8Array) => ManagerReducePosition.fromBcs(data),
-            bcs: ManagerReducePosition.bcs,
-            fromJSONField: (field: any) => ManagerReducePosition.fromJSONField(field),
-            fromJSON: (json: Record<string, any>) => ManagerReducePosition.fromJSON(json),
-            fromSuiParsedData: (content: SuiParsedData) => ManagerReducePosition.fromSuiParsedData(content),
-            fromSuiObjectData: (content: SuiObjectData) => ManagerReducePosition.fromSuiObjectData(content),
-            fetch: async (client: SuiClient, id: string) => ManagerReducePosition.fetch(client, id),
-            new: (fields: ManagerReducePositionFields) => {
-                return new ManagerReducePosition([], fields);
+            fromFields: (fields: Record<string, any>) => ManagerReducePositionEvent.fromFields(fields),
+            fromFieldsWithTypes: (item: FieldsWithTypes) => ManagerReducePositionEvent.fromFieldsWithTypes(item),
+            fromBcs: (data: Uint8Array) => ManagerReducePositionEvent.fromBcs(data),
+            bcs: ManagerReducePositionEvent.bcs,
+            fromJSONField: (field: any) => ManagerReducePositionEvent.fromJSONField(field),
+            fromJSON: (json: Record<string, any>) => ManagerReducePositionEvent.fromJSON(json),
+            fromSuiParsedData: (content: SuiParsedData) => ManagerReducePositionEvent.fromSuiParsedData(content),
+            fromSuiObjectData: (content: SuiObjectData) => ManagerReducePositionEvent.fromSuiObjectData(content),
+            fetch: async (client: SuiClient, id: string) => ManagerReducePositionEvent.fetch(client, id),
+            new: (fields: ManagerReducePositionEventFields) => {
+                return new ManagerReducePositionEvent([], fields);
             },
             kind: "StructClassReified",
         };
     }
 
     static get r() {
-        return ManagerReducePosition.reified();
+        return ManagerReducePositionEvent.reified();
     }
 
-    static phantom(): PhantomReified<ToTypeStr<ManagerReducePosition>> {
-        return phantom(ManagerReducePosition.reified());
+    static phantom(): PhantomReified<ToTypeStr<ManagerReducePositionEvent>> {
+        return phantom(ManagerReducePositionEvent.reified());
     }
     static get p() {
-        return ManagerReducePosition.phantom();
+        return ManagerReducePositionEvent.phantom();
     }
 
     static get bcs() {
-        return bcs.struct("ManagerReducePosition", {
+        return bcs.struct("ManagerReducePositionEvent", {
             user: bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
             collateral_token: TypeName.bcs,
             base_token: TypeName.bcs,
@@ -2263,8 +2274,8 @@ export class ManagerReducePosition implements StructClass {
         });
     }
 
-    static fromFields(fields: Record<string, any>): ManagerReducePosition {
-        return ManagerReducePosition.reified().new({
+    static fromFields(fields: Record<string, any>): ManagerReducePositionEvent {
+        return ManagerReducePositionEvent.reified().new({
             user: decodeFromFields("address", fields.user),
             collateralToken: decodeFromFields(TypeName.reified(), fields.collateral_token),
             baseToken: decodeFromFields(TypeName.reified(), fields.base_token),
@@ -2277,12 +2288,12 @@ export class ManagerReducePosition implements StructClass {
         });
     }
 
-    static fromFieldsWithTypes(item: FieldsWithTypes): ManagerReducePosition {
-        if (!isManagerReducePosition(item.type)) {
-            throw new Error("not a ManagerReducePosition type");
+    static fromFieldsWithTypes(item: FieldsWithTypes): ManagerReducePositionEvent {
+        if (!isManagerReducePositionEvent(item.type)) {
+            throw new Error("not a ManagerReducePositionEvent type");
         }
 
-        return ManagerReducePosition.reified().new({
+        return ManagerReducePositionEvent.reified().new({
             user: decodeFromFieldsWithTypes("address", item.fields.user),
             collateralToken: decodeFromFieldsWithTypes(TypeName.reified(), item.fields.collateral_token),
             baseToken: decodeFromFieldsWithTypes(TypeName.reified(), item.fields.base_token),
@@ -2295,8 +2306,8 @@ export class ManagerReducePosition implements StructClass {
         });
     }
 
-    static fromBcs(data: Uint8Array): ManagerReducePosition {
-        return ManagerReducePosition.fromFields(ManagerReducePosition.bcs.parse(data));
+    static fromBcs(data: Uint8Array): ManagerReducePositionEvent {
+        return ManagerReducePositionEvent.fromFields(ManagerReducePositionEvent.bcs.parse(data));
     }
 
     toJSONField() {
@@ -2317,8 +2328,8 @@ export class ManagerReducePosition implements StructClass {
         return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
-    static fromJSONField(field: any): ManagerReducePosition {
-        return ManagerReducePosition.reified().new({
+    static fromJSONField(field: any): ManagerReducePositionEvent {
+        return ManagerReducePositionEvent.reified().new({
             user: decodeFromJSONField("address", field.user),
             collateralToken: decodeFromJSONField(TypeName.reified(), field.collateralToken),
             baseToken: decodeFromJSONField(TypeName.reified(), field.baseToken),
@@ -2331,48 +2342,48 @@ export class ManagerReducePosition implements StructClass {
         });
     }
 
-    static fromJSON(json: Record<string, any>): ManagerReducePosition {
-        if (json.$typeName !== ManagerReducePosition.$typeName) {
+    static fromJSON(json: Record<string, any>): ManagerReducePositionEvent {
+        if (json.$typeName !== ManagerReducePositionEvent.$typeName) {
             throw new Error("not a WithTwoGenerics json object");
         }
 
-        return ManagerReducePosition.fromJSONField(json);
+        return ManagerReducePositionEvent.fromJSONField(json);
     }
 
-    static fromSuiParsedData(content: SuiParsedData): ManagerReducePosition {
+    static fromSuiParsedData(content: SuiParsedData): ManagerReducePositionEvent {
         if (content.dataType !== "moveObject") {
             throw new Error("not an object");
         }
-        if (!isManagerReducePosition(content.type)) {
-            throw new Error(`object at ${(content.fields as any).id} is not a ManagerReducePosition object`);
+        if (!isManagerReducePositionEvent(content.type)) {
+            throw new Error(`object at ${(content.fields as any).id} is not a ManagerReducePositionEvent object`);
         }
-        return ManagerReducePosition.fromFieldsWithTypes(content);
+        return ManagerReducePositionEvent.fromFieldsWithTypes(content);
     }
 
-    static fromSuiObjectData(data: SuiObjectData): ManagerReducePosition {
+    static fromSuiObjectData(data: SuiObjectData): ManagerReducePositionEvent {
         if (data.bcs) {
-            if (data.bcs.dataType !== "moveObject" || !isManagerReducePosition(data.bcs.type)) {
-                throw new Error(`object at is not a ManagerReducePosition object`);
+            if (data.bcs.dataType !== "moveObject" || !isManagerReducePositionEvent(data.bcs.type)) {
+                throw new Error(`object at is not a ManagerReducePositionEvent object`);
             }
 
-            return ManagerReducePosition.fromBcs(fromB64(data.bcs.bcsBytes));
+            return ManagerReducePositionEvent.fromBcs(fromB64(data.bcs.bcsBytes));
         }
         if (data.content) {
-            return ManagerReducePosition.fromSuiParsedData(data.content);
+            return ManagerReducePositionEvent.fromSuiParsedData(data.content);
         }
         throw new Error("Both `bcs` and `content` fields are missing from the data. Include `showBcs` or `showContent` in the request.");
     }
 
-    static async fetch(client: SuiClient, id: string): Promise<ManagerReducePosition> {
+    static async fetch(client: SuiClient, id: string): Promise<ManagerReducePositionEvent> {
         const res = await client.getObject({ id, options: { showBcs: true } });
         if (res.error) {
-            throw new Error(`error fetching ManagerReducePosition object at id ${id}: ${res.error.code}`);
+            throw new Error(`error fetching ManagerReducePositionEvent object at id ${id}: ${res.error.code}`);
         }
-        if (res.data?.bcs?.dataType !== "moveObject" || !isManagerReducePosition(res.data.bcs.type)) {
-            throw new Error(`object at id ${id} is not a ManagerReducePosition object`);
+        if (res.data?.bcs?.dataType !== "moveObject" || !isManagerReducePositionEvent(res.data.bcs.type)) {
+            throw new Error(`object at id ${id} is not a ManagerReducePositionEvent object`);
         }
 
-        return ManagerReducePosition.fromSuiObjectData(res.data);
+        return ManagerReducePositionEvent.fromSuiObjectData(res.data);
     }
 }
 
@@ -4592,6 +4603,231 @@ export class ResumeTradingSymbolEvent implements StructClass {
         }
 
         return ResumeTradingSymbolEvent.fromSuiObjectData(res.data);
+    }
+}
+
+/* ============================== SettleReceiptCollateralEvent =============================== */
+
+export function isSettleReceiptCollateralEvent(type: string): boolean {
+    type = compressSuiType(type);
+    return type === `${PKG_V1}::trading::SettleReceiptCollateralEvent`;
+}
+
+export interface SettleReceiptCollateralEventFields {
+    user: ToField<"address">;
+    collateralToken: ToField<TypeName>;
+    bidToken: ToField<TypeName>;
+    positionId: ToField<"u64">;
+    realizedLiquidatorFee: ToField<"u64">;
+    remainingUnrealizedSign: ToField<"bool">;
+    remainingUnrealizedValue: ToField<"u64">;
+    remainingValueForLpPool: ToField<"u64">;
+    u64Padding: ToField<Vector<"u64">>;
+}
+
+export type SettleReceiptCollateralEventReified = Reified<SettleReceiptCollateralEvent, SettleReceiptCollateralEventFields>;
+
+export class SettleReceiptCollateralEvent implements StructClass {
+    __StructClass = true as const;
+
+    static readonly $typeName = `${PKG_V1}::trading::SettleReceiptCollateralEvent`;
+    static readonly $numTypeParams = 0;
+    static readonly $isPhantom = [] as const;
+
+    readonly $typeName = SettleReceiptCollateralEvent.$typeName;
+    readonly $fullTypeName: `${typeof PKG_V1}::trading::SettleReceiptCollateralEvent`;
+    readonly $typeArgs: [];
+    readonly $isPhantom = SettleReceiptCollateralEvent.$isPhantom;
+
+    readonly user: ToField<"address">;
+    readonly collateralToken: ToField<TypeName>;
+    readonly bidToken: ToField<TypeName>;
+    readonly positionId: ToField<"u64">;
+    readonly realizedLiquidatorFee: ToField<"u64">;
+    readonly remainingUnrealizedSign: ToField<"bool">;
+    readonly remainingUnrealizedValue: ToField<"u64">;
+    readonly remainingValueForLpPool: ToField<"u64">;
+    readonly u64Padding: ToField<Vector<"u64">>;
+
+    private constructor(typeArgs: [], fields: SettleReceiptCollateralEventFields) {
+        this.$fullTypeName = composeSuiType(
+            SettleReceiptCollateralEvent.$typeName,
+            ...typeArgs
+        ) as `${typeof PKG_V1}::trading::SettleReceiptCollateralEvent`;
+        this.$typeArgs = typeArgs;
+
+        this.user = fields.user;
+        this.collateralToken = fields.collateralToken;
+        this.bidToken = fields.bidToken;
+        this.positionId = fields.positionId;
+        this.realizedLiquidatorFee = fields.realizedLiquidatorFee;
+        this.remainingUnrealizedSign = fields.remainingUnrealizedSign;
+        this.remainingUnrealizedValue = fields.remainingUnrealizedValue;
+        this.remainingValueForLpPool = fields.remainingValueForLpPool;
+        this.u64Padding = fields.u64Padding;
+    }
+
+    static reified(): SettleReceiptCollateralEventReified {
+        return {
+            typeName: SettleReceiptCollateralEvent.$typeName,
+            fullTypeName: composeSuiType(
+                SettleReceiptCollateralEvent.$typeName,
+                ...[]
+            ) as `${typeof PKG_V1}::trading::SettleReceiptCollateralEvent`,
+            typeArgs: [] as [],
+            isPhantom: SettleReceiptCollateralEvent.$isPhantom,
+            reifiedTypeArgs: [],
+            fromFields: (fields: Record<string, any>) => SettleReceiptCollateralEvent.fromFields(fields),
+            fromFieldsWithTypes: (item: FieldsWithTypes) => SettleReceiptCollateralEvent.fromFieldsWithTypes(item),
+            fromBcs: (data: Uint8Array) => SettleReceiptCollateralEvent.fromBcs(data),
+            bcs: SettleReceiptCollateralEvent.bcs,
+            fromJSONField: (field: any) => SettleReceiptCollateralEvent.fromJSONField(field),
+            fromJSON: (json: Record<string, any>) => SettleReceiptCollateralEvent.fromJSON(json),
+            fromSuiParsedData: (content: SuiParsedData) => SettleReceiptCollateralEvent.fromSuiParsedData(content),
+            fromSuiObjectData: (content: SuiObjectData) => SettleReceiptCollateralEvent.fromSuiObjectData(content),
+            fetch: async (client: SuiClient, id: string) => SettleReceiptCollateralEvent.fetch(client, id),
+            new: (fields: SettleReceiptCollateralEventFields) => {
+                return new SettleReceiptCollateralEvent([], fields);
+            },
+            kind: "StructClassReified",
+        };
+    }
+
+    static get r() {
+        return SettleReceiptCollateralEvent.reified();
+    }
+
+    static phantom(): PhantomReified<ToTypeStr<SettleReceiptCollateralEvent>> {
+        return phantom(SettleReceiptCollateralEvent.reified());
+    }
+    static get p() {
+        return SettleReceiptCollateralEvent.phantom();
+    }
+
+    static get bcs() {
+        return bcs.struct("SettleReceiptCollateralEvent", {
+            user: bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
+            collateral_token: TypeName.bcs,
+            bid_token: TypeName.bcs,
+            position_id: bcs.u64(),
+            realized_liquidator_fee: bcs.u64(),
+            remaining_unrealized_sign: bcs.bool(),
+            remaining_unrealized_value: bcs.u64(),
+            remaining_value_for_lp_pool: bcs.u64(),
+            u64_padding: bcs.vector(bcs.u64()),
+        });
+    }
+
+    static fromFields(fields: Record<string, any>): SettleReceiptCollateralEvent {
+        return SettleReceiptCollateralEvent.reified().new({
+            user: decodeFromFields("address", fields.user),
+            collateralToken: decodeFromFields(TypeName.reified(), fields.collateral_token),
+            bidToken: decodeFromFields(TypeName.reified(), fields.bid_token),
+            positionId: decodeFromFields("u64", fields.position_id),
+            realizedLiquidatorFee: decodeFromFields("u64", fields.realized_liquidator_fee),
+            remainingUnrealizedSign: decodeFromFields("bool", fields.remaining_unrealized_sign),
+            remainingUnrealizedValue: decodeFromFields("u64", fields.remaining_unrealized_value),
+            remainingValueForLpPool: decodeFromFields("u64", fields.remaining_value_for_lp_pool),
+            u64Padding: decodeFromFields(reified.vector("u64"), fields.u64_padding),
+        });
+    }
+
+    static fromFieldsWithTypes(item: FieldsWithTypes): SettleReceiptCollateralEvent {
+        if (!isSettleReceiptCollateralEvent(item.type)) {
+            throw new Error("not a SettleReceiptCollateralEvent type");
+        }
+
+        return SettleReceiptCollateralEvent.reified().new({
+            user: decodeFromFieldsWithTypes("address", item.fields.user),
+            collateralToken: decodeFromFieldsWithTypes(TypeName.reified(), item.fields.collateral_token),
+            bidToken: decodeFromFieldsWithTypes(TypeName.reified(), item.fields.bid_token),
+            positionId: decodeFromFieldsWithTypes("u64", item.fields.position_id),
+            realizedLiquidatorFee: decodeFromFieldsWithTypes("u64", item.fields.realized_liquidator_fee),
+            remainingUnrealizedSign: decodeFromFieldsWithTypes("bool", item.fields.remaining_unrealized_sign),
+            remainingUnrealizedValue: decodeFromFieldsWithTypes("u64", item.fields.remaining_unrealized_value),
+            remainingValueForLpPool: decodeFromFieldsWithTypes("u64", item.fields.remaining_value_for_lp_pool),
+            u64Padding: decodeFromFieldsWithTypes(reified.vector("u64"), item.fields.u64_padding),
+        });
+    }
+
+    static fromBcs(data: Uint8Array): SettleReceiptCollateralEvent {
+        return SettleReceiptCollateralEvent.fromFields(SettleReceiptCollateralEvent.bcs.parse(data));
+    }
+
+    toJSONField() {
+        return {
+            user: this.user,
+            collateralToken: this.collateralToken.toJSONField(),
+            bidToken: this.bidToken.toJSONField(),
+            positionId: this.positionId.toString(),
+            realizedLiquidatorFee: this.realizedLiquidatorFee.toString(),
+            remainingUnrealizedSign: this.remainingUnrealizedSign,
+            remainingUnrealizedValue: this.remainingUnrealizedValue.toString(),
+            remainingValueForLpPool: this.remainingValueForLpPool.toString(),
+            u64Padding: fieldToJSON<Vector<"u64">>(`vector<u64>`, this.u64Padding),
+        };
+    }
+
+    toJSON() {
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
+    }
+
+    static fromJSONField(field: any): SettleReceiptCollateralEvent {
+        return SettleReceiptCollateralEvent.reified().new({
+            user: decodeFromJSONField("address", field.user),
+            collateralToken: decodeFromJSONField(TypeName.reified(), field.collateralToken),
+            bidToken: decodeFromJSONField(TypeName.reified(), field.bidToken),
+            positionId: decodeFromJSONField("u64", field.positionId),
+            realizedLiquidatorFee: decodeFromJSONField("u64", field.realizedLiquidatorFee),
+            remainingUnrealizedSign: decodeFromJSONField("bool", field.remainingUnrealizedSign),
+            remainingUnrealizedValue: decodeFromJSONField("u64", field.remainingUnrealizedValue),
+            remainingValueForLpPool: decodeFromJSONField("u64", field.remainingValueForLpPool),
+            u64Padding: decodeFromJSONField(reified.vector("u64"), field.u64Padding),
+        });
+    }
+
+    static fromJSON(json: Record<string, any>): SettleReceiptCollateralEvent {
+        if (json.$typeName !== SettleReceiptCollateralEvent.$typeName) {
+            throw new Error("not a WithTwoGenerics json object");
+        }
+
+        return SettleReceiptCollateralEvent.fromJSONField(json);
+    }
+
+    static fromSuiParsedData(content: SuiParsedData): SettleReceiptCollateralEvent {
+        if (content.dataType !== "moveObject") {
+            throw new Error("not an object");
+        }
+        if (!isSettleReceiptCollateralEvent(content.type)) {
+            throw new Error(`object at ${(content.fields as any).id} is not a SettleReceiptCollateralEvent object`);
+        }
+        return SettleReceiptCollateralEvent.fromFieldsWithTypes(content);
+    }
+
+    static fromSuiObjectData(data: SuiObjectData): SettleReceiptCollateralEvent {
+        if (data.bcs) {
+            if (data.bcs.dataType !== "moveObject" || !isSettleReceiptCollateralEvent(data.bcs.type)) {
+                throw new Error(`object at is not a SettleReceiptCollateralEvent object`);
+            }
+
+            return SettleReceiptCollateralEvent.fromBcs(fromB64(data.bcs.bcsBytes));
+        }
+        if (data.content) {
+            return SettleReceiptCollateralEvent.fromSuiParsedData(data.content);
+        }
+        throw new Error("Both `bcs` and `content` fields are missing from the data. Include `showBcs` or `showContent` in the request.");
+    }
+
+    static async fetch(client: SuiClient, id: string): Promise<SettleReceiptCollateralEvent> {
+        const res = await client.getObject({ id, options: { showBcs: true } });
+        if (res.error) {
+            throw new Error(`error fetching SettleReceiptCollateralEvent object at id ${id}: ${res.error.code}`);
+        }
+        if (res.data?.bcs?.dataType !== "moveObject" || !isSettleReceiptCollateralEvent(res.data.bcs.type)) {
+            throw new Error(`object at id ${id} is not a SettleReceiptCollateralEvent object`);
+        }
+
+        return SettleReceiptCollateralEvent.fromSuiObjectData(res.data);
     }
 }
 

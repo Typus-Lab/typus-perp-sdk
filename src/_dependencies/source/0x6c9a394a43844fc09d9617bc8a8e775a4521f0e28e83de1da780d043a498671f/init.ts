@@ -9,6 +9,7 @@ import { StructClassLoader } from "../../../_framework/loader";
 
 export function registerClasses(loader: StructClassLoader) {
     loader.register(typusDovSingle.Config);
+    loader.register(typusDovSingle.UnsubscribeEvent);
     loader.register(typusDovSingle.Registry);
     loader.register(typusDovSingle.ActivateEvent);
     loader.register(typusDovSingle.AdditionalConfig);
@@ -44,7 +45,6 @@ export function registerClasses(loader: StructClassLoader) {
     loader.register(typusDovSingle.TerminateAuctionEvent);
     loader.register(typusDovSingle.TerminateVaultEvent);
     loader.register(typusDovSingle.TransferBidReceiptEvent);
-    loader.register(typusDovSingle.UnsubscribeEvent);
     loader.register(typusDovSingle.VaultConfig);
     loader.register(typusDovSingle.WithdrawEvent);
     loader.register(typusDovSingle.WitnessOtcEvent);
@@ -97,6 +97,7 @@ export function registerClasses(loader: StructClassLoader) {
     loader.register(tdsFeePoolEntry.RemoveSharedFeePoolAuthorizedUserEvent);
     loader.register(tdsFeePoolEntry.TakeFeeEvent);
     loader.register(tdsFeePoolEntry.TakeSharedFeeEvent);
+    loader.register(tdsRegistryAuthorizedEntry.WithdrawIncentiveEvent);
     loader.register(tdsRegistryAuthorizedEntry.AddAuthorizedUserEvent);
     loader.register(tdsRegistryAuthorizedEntry.AddWitnessEvent);
     loader.register(tdsRegistryAuthorizedEntry.IncentiviseEvent);
@@ -107,5 +108,4 @@ export function registerClasses(loader: StructClassLoader) {
     loader.register(tdsRegistryAuthorizedEntry.SetAvailableIncentiveAmountEvent);
     loader.register(tdsRegistryAuthorizedEntry.SuspendTransactionEvent);
     loader.register(tdsRegistryAuthorizedEntry.UpgradeRegistryEvent);
-    loader.register(tdsRegistryAuthorizedEntry.WithdrawIncentiveEvent);
 }

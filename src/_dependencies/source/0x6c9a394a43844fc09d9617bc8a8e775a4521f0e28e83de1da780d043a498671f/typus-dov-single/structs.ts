@@ -363,6 +363,212 @@ export class Config implements StructClass {
     }
 }
 
+/* ============================== UnsubscribeEvent =============================== */
+
+export function isUnsubscribeEvent(type: string): boolean {
+    type = compressSuiType(type);
+    return type === `${PKG_V1}::typus_dov_single::UnsubscribeEvent`;
+}
+
+export interface UnsubscribeEventFields {
+    signer: ToField<"address">;
+    index: ToField<"u64">;
+    token: ToField<TypeName>;
+    amount: ToField<"u64">;
+    decimal: ToField<"u64">;
+    oracleInfo: ToField<OracleInfo>;
+    u64Padding: ToField<Vector<"u64">>;
+}
+
+export type UnsubscribeEventReified = Reified<UnsubscribeEvent, UnsubscribeEventFields>;
+
+export class UnsubscribeEvent implements StructClass {
+    __StructClass = true as const;
+
+    static readonly $typeName = `${PKG_V1}::typus_dov_single::UnsubscribeEvent`;
+    static readonly $numTypeParams = 0;
+    static readonly $isPhantom = [] as const;
+
+    readonly $typeName = UnsubscribeEvent.$typeName;
+    readonly $fullTypeName: `${typeof PKG_V1}::typus_dov_single::UnsubscribeEvent`;
+    readonly $typeArgs: [];
+    readonly $isPhantom = UnsubscribeEvent.$isPhantom;
+
+    readonly signer: ToField<"address">;
+    readonly index: ToField<"u64">;
+    readonly token: ToField<TypeName>;
+    readonly amount: ToField<"u64">;
+    readonly decimal: ToField<"u64">;
+    readonly oracleInfo: ToField<OracleInfo>;
+    readonly u64Padding: ToField<Vector<"u64">>;
+
+    private constructor(typeArgs: [], fields: UnsubscribeEventFields) {
+        this.$fullTypeName = composeSuiType(
+            UnsubscribeEvent.$typeName,
+            ...typeArgs
+        ) as `${typeof PKG_V1}::typus_dov_single::UnsubscribeEvent`;
+        this.$typeArgs = typeArgs;
+
+        this.signer = fields.signer;
+        this.index = fields.index;
+        this.token = fields.token;
+        this.amount = fields.amount;
+        this.decimal = fields.decimal;
+        this.oracleInfo = fields.oracleInfo;
+        this.u64Padding = fields.u64Padding;
+    }
+
+    static reified(): UnsubscribeEventReified {
+        return {
+            typeName: UnsubscribeEvent.$typeName,
+            fullTypeName: composeSuiType(UnsubscribeEvent.$typeName, ...[]) as `${typeof PKG_V1}::typus_dov_single::UnsubscribeEvent`,
+            typeArgs: [] as [],
+            isPhantom: UnsubscribeEvent.$isPhantom,
+            reifiedTypeArgs: [],
+            fromFields: (fields: Record<string, any>) => UnsubscribeEvent.fromFields(fields),
+            fromFieldsWithTypes: (item: FieldsWithTypes) => UnsubscribeEvent.fromFieldsWithTypes(item),
+            fromBcs: (data: Uint8Array) => UnsubscribeEvent.fromBcs(data),
+            bcs: UnsubscribeEvent.bcs,
+            fromJSONField: (field: any) => UnsubscribeEvent.fromJSONField(field),
+            fromJSON: (json: Record<string, any>) => UnsubscribeEvent.fromJSON(json),
+            fromSuiParsedData: (content: SuiParsedData) => UnsubscribeEvent.fromSuiParsedData(content),
+            fromSuiObjectData: (content: SuiObjectData) => UnsubscribeEvent.fromSuiObjectData(content),
+            fetch: async (client: SuiClient, id: string) => UnsubscribeEvent.fetch(client, id),
+            new: (fields: UnsubscribeEventFields) => {
+                return new UnsubscribeEvent([], fields);
+            },
+            kind: "StructClassReified",
+        };
+    }
+
+    static get r() {
+        return UnsubscribeEvent.reified();
+    }
+
+    static phantom(): PhantomReified<ToTypeStr<UnsubscribeEvent>> {
+        return phantom(UnsubscribeEvent.reified());
+    }
+    static get p() {
+        return UnsubscribeEvent.phantom();
+    }
+
+    static get bcs() {
+        return bcs.struct("UnsubscribeEvent", {
+            signer: bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
+            index: bcs.u64(),
+            token: TypeName.bcs,
+            amount: bcs.u64(),
+            decimal: bcs.u64(),
+            oracle_info: OracleInfo.bcs,
+            u64_padding: bcs.vector(bcs.u64()),
+        });
+    }
+
+    static fromFields(fields: Record<string, any>): UnsubscribeEvent {
+        return UnsubscribeEvent.reified().new({
+            signer: decodeFromFields("address", fields.signer),
+            index: decodeFromFields("u64", fields.index),
+            token: decodeFromFields(TypeName.reified(), fields.token),
+            amount: decodeFromFields("u64", fields.amount),
+            decimal: decodeFromFields("u64", fields.decimal),
+            oracleInfo: decodeFromFields(OracleInfo.reified(), fields.oracle_info),
+            u64Padding: decodeFromFields(reified.vector("u64"), fields.u64_padding),
+        });
+    }
+
+    static fromFieldsWithTypes(item: FieldsWithTypes): UnsubscribeEvent {
+        if (!isUnsubscribeEvent(item.type)) {
+            throw new Error("not a UnsubscribeEvent type");
+        }
+
+        return UnsubscribeEvent.reified().new({
+            signer: decodeFromFieldsWithTypes("address", item.fields.signer),
+            index: decodeFromFieldsWithTypes("u64", item.fields.index),
+            token: decodeFromFieldsWithTypes(TypeName.reified(), item.fields.token),
+            amount: decodeFromFieldsWithTypes("u64", item.fields.amount),
+            decimal: decodeFromFieldsWithTypes("u64", item.fields.decimal),
+            oracleInfo: decodeFromFieldsWithTypes(OracleInfo.reified(), item.fields.oracle_info),
+            u64Padding: decodeFromFieldsWithTypes(reified.vector("u64"), item.fields.u64_padding),
+        });
+    }
+
+    static fromBcs(data: Uint8Array): UnsubscribeEvent {
+        return UnsubscribeEvent.fromFields(UnsubscribeEvent.bcs.parse(data));
+    }
+
+    toJSONField() {
+        return {
+            signer: this.signer,
+            index: this.index.toString(),
+            token: this.token.toJSONField(),
+            amount: this.amount.toString(),
+            decimal: this.decimal.toString(),
+            oracleInfo: this.oracleInfo.toJSONField(),
+            u64Padding: fieldToJSON<Vector<"u64">>(`vector<u64>`, this.u64Padding),
+        };
+    }
+
+    toJSON() {
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
+    }
+
+    static fromJSONField(field: any): UnsubscribeEvent {
+        return UnsubscribeEvent.reified().new({
+            signer: decodeFromJSONField("address", field.signer),
+            index: decodeFromJSONField("u64", field.index),
+            token: decodeFromJSONField(TypeName.reified(), field.token),
+            amount: decodeFromJSONField("u64", field.amount),
+            decimal: decodeFromJSONField("u64", field.decimal),
+            oracleInfo: decodeFromJSONField(OracleInfo.reified(), field.oracleInfo),
+            u64Padding: decodeFromJSONField(reified.vector("u64"), field.u64Padding),
+        });
+    }
+
+    static fromJSON(json: Record<string, any>): UnsubscribeEvent {
+        if (json.$typeName !== UnsubscribeEvent.$typeName) {
+            throw new Error("not a WithTwoGenerics json object");
+        }
+
+        return UnsubscribeEvent.fromJSONField(json);
+    }
+
+    static fromSuiParsedData(content: SuiParsedData): UnsubscribeEvent {
+        if (content.dataType !== "moveObject") {
+            throw new Error("not an object");
+        }
+        if (!isUnsubscribeEvent(content.type)) {
+            throw new Error(`object at ${(content.fields as any).id} is not a UnsubscribeEvent object`);
+        }
+        return UnsubscribeEvent.fromFieldsWithTypes(content);
+    }
+
+    static fromSuiObjectData(data: SuiObjectData): UnsubscribeEvent {
+        if (data.bcs) {
+            if (data.bcs.dataType !== "moveObject" || !isUnsubscribeEvent(data.bcs.type)) {
+                throw new Error(`object at is not a UnsubscribeEvent object`);
+            }
+
+            return UnsubscribeEvent.fromBcs(fromB64(data.bcs.bcsBytes));
+        }
+        if (data.content) {
+            return UnsubscribeEvent.fromSuiParsedData(data.content);
+        }
+        throw new Error("Both `bcs` and `content` fields are missing from the data. Include `showBcs` or `showContent` in the request.");
+    }
+
+    static async fetch(client: SuiClient, id: string): Promise<UnsubscribeEvent> {
+        const res = await client.getObject({ id, options: { showBcs: true } });
+        if (res.error) {
+            throw new Error(`error fetching UnsubscribeEvent object at id ${id}: ${res.error.code}`);
+        }
+        if (res.data?.bcs?.dataType !== "moveObject" || !isUnsubscribeEvent(res.data.bcs.type)) {
+            throw new Error(`object at id ${id} is not a UnsubscribeEvent object`);
+        }
+
+        return UnsubscribeEvent.fromSuiObjectData(res.data);
+    }
+}
+
 /* ============================== Registry =============================== */
 
 export function isRegistry(type: string): boolean {
@@ -7486,212 +7692,6 @@ export class TransferBidReceiptEvent implements StructClass {
         }
 
         return TransferBidReceiptEvent.fromSuiObjectData(res.data);
-    }
-}
-
-/* ============================== UnsubscribeEvent =============================== */
-
-export function isUnsubscribeEvent(type: string): boolean {
-    type = compressSuiType(type);
-    return type === `${PKG_V1}::typus_dov_single::UnsubscribeEvent`;
-}
-
-export interface UnsubscribeEventFields {
-    signer: ToField<"address">;
-    index: ToField<"u64">;
-    token: ToField<TypeName>;
-    amount: ToField<"u64">;
-    decimal: ToField<"u64">;
-    oracleInfo: ToField<OracleInfo>;
-    u64Padding: ToField<Vector<"u64">>;
-}
-
-export type UnsubscribeEventReified = Reified<UnsubscribeEvent, UnsubscribeEventFields>;
-
-export class UnsubscribeEvent implements StructClass {
-    __StructClass = true as const;
-
-    static readonly $typeName = `${PKG_V1}::typus_dov_single::UnsubscribeEvent`;
-    static readonly $numTypeParams = 0;
-    static readonly $isPhantom = [] as const;
-
-    readonly $typeName = UnsubscribeEvent.$typeName;
-    readonly $fullTypeName: `${typeof PKG_V1}::typus_dov_single::UnsubscribeEvent`;
-    readonly $typeArgs: [];
-    readonly $isPhantom = UnsubscribeEvent.$isPhantom;
-
-    readonly signer: ToField<"address">;
-    readonly index: ToField<"u64">;
-    readonly token: ToField<TypeName>;
-    readonly amount: ToField<"u64">;
-    readonly decimal: ToField<"u64">;
-    readonly oracleInfo: ToField<OracleInfo>;
-    readonly u64Padding: ToField<Vector<"u64">>;
-
-    private constructor(typeArgs: [], fields: UnsubscribeEventFields) {
-        this.$fullTypeName = composeSuiType(
-            UnsubscribeEvent.$typeName,
-            ...typeArgs
-        ) as `${typeof PKG_V1}::typus_dov_single::UnsubscribeEvent`;
-        this.$typeArgs = typeArgs;
-
-        this.signer = fields.signer;
-        this.index = fields.index;
-        this.token = fields.token;
-        this.amount = fields.amount;
-        this.decimal = fields.decimal;
-        this.oracleInfo = fields.oracleInfo;
-        this.u64Padding = fields.u64Padding;
-    }
-
-    static reified(): UnsubscribeEventReified {
-        return {
-            typeName: UnsubscribeEvent.$typeName,
-            fullTypeName: composeSuiType(UnsubscribeEvent.$typeName, ...[]) as `${typeof PKG_V1}::typus_dov_single::UnsubscribeEvent`,
-            typeArgs: [] as [],
-            isPhantom: UnsubscribeEvent.$isPhantom,
-            reifiedTypeArgs: [],
-            fromFields: (fields: Record<string, any>) => UnsubscribeEvent.fromFields(fields),
-            fromFieldsWithTypes: (item: FieldsWithTypes) => UnsubscribeEvent.fromFieldsWithTypes(item),
-            fromBcs: (data: Uint8Array) => UnsubscribeEvent.fromBcs(data),
-            bcs: UnsubscribeEvent.bcs,
-            fromJSONField: (field: any) => UnsubscribeEvent.fromJSONField(field),
-            fromJSON: (json: Record<string, any>) => UnsubscribeEvent.fromJSON(json),
-            fromSuiParsedData: (content: SuiParsedData) => UnsubscribeEvent.fromSuiParsedData(content),
-            fromSuiObjectData: (content: SuiObjectData) => UnsubscribeEvent.fromSuiObjectData(content),
-            fetch: async (client: SuiClient, id: string) => UnsubscribeEvent.fetch(client, id),
-            new: (fields: UnsubscribeEventFields) => {
-                return new UnsubscribeEvent([], fields);
-            },
-            kind: "StructClassReified",
-        };
-    }
-
-    static get r() {
-        return UnsubscribeEvent.reified();
-    }
-
-    static phantom(): PhantomReified<ToTypeStr<UnsubscribeEvent>> {
-        return phantom(UnsubscribeEvent.reified());
-    }
-    static get p() {
-        return UnsubscribeEvent.phantom();
-    }
-
-    static get bcs() {
-        return bcs.struct("UnsubscribeEvent", {
-            signer: bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
-            index: bcs.u64(),
-            token: TypeName.bcs,
-            amount: bcs.u64(),
-            decimal: bcs.u64(),
-            oracle_info: OracleInfo.bcs,
-            u64_padding: bcs.vector(bcs.u64()),
-        });
-    }
-
-    static fromFields(fields: Record<string, any>): UnsubscribeEvent {
-        return UnsubscribeEvent.reified().new({
-            signer: decodeFromFields("address", fields.signer),
-            index: decodeFromFields("u64", fields.index),
-            token: decodeFromFields(TypeName.reified(), fields.token),
-            amount: decodeFromFields("u64", fields.amount),
-            decimal: decodeFromFields("u64", fields.decimal),
-            oracleInfo: decodeFromFields(OracleInfo.reified(), fields.oracle_info),
-            u64Padding: decodeFromFields(reified.vector("u64"), fields.u64_padding),
-        });
-    }
-
-    static fromFieldsWithTypes(item: FieldsWithTypes): UnsubscribeEvent {
-        if (!isUnsubscribeEvent(item.type)) {
-            throw new Error("not a UnsubscribeEvent type");
-        }
-
-        return UnsubscribeEvent.reified().new({
-            signer: decodeFromFieldsWithTypes("address", item.fields.signer),
-            index: decodeFromFieldsWithTypes("u64", item.fields.index),
-            token: decodeFromFieldsWithTypes(TypeName.reified(), item.fields.token),
-            amount: decodeFromFieldsWithTypes("u64", item.fields.amount),
-            decimal: decodeFromFieldsWithTypes("u64", item.fields.decimal),
-            oracleInfo: decodeFromFieldsWithTypes(OracleInfo.reified(), item.fields.oracle_info),
-            u64Padding: decodeFromFieldsWithTypes(reified.vector("u64"), item.fields.u64_padding),
-        });
-    }
-
-    static fromBcs(data: Uint8Array): UnsubscribeEvent {
-        return UnsubscribeEvent.fromFields(UnsubscribeEvent.bcs.parse(data));
-    }
-
-    toJSONField() {
-        return {
-            signer: this.signer,
-            index: this.index.toString(),
-            token: this.token.toJSONField(),
-            amount: this.amount.toString(),
-            decimal: this.decimal.toString(),
-            oracleInfo: this.oracleInfo.toJSONField(),
-            u64Padding: fieldToJSON<Vector<"u64">>(`vector<u64>`, this.u64Padding),
-        };
-    }
-
-    toJSON() {
-        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
-    }
-
-    static fromJSONField(field: any): UnsubscribeEvent {
-        return UnsubscribeEvent.reified().new({
-            signer: decodeFromJSONField("address", field.signer),
-            index: decodeFromJSONField("u64", field.index),
-            token: decodeFromJSONField(TypeName.reified(), field.token),
-            amount: decodeFromJSONField("u64", field.amount),
-            decimal: decodeFromJSONField("u64", field.decimal),
-            oracleInfo: decodeFromJSONField(OracleInfo.reified(), field.oracleInfo),
-            u64Padding: decodeFromJSONField(reified.vector("u64"), field.u64Padding),
-        });
-    }
-
-    static fromJSON(json: Record<string, any>): UnsubscribeEvent {
-        if (json.$typeName !== UnsubscribeEvent.$typeName) {
-            throw new Error("not a WithTwoGenerics json object");
-        }
-
-        return UnsubscribeEvent.fromJSONField(json);
-    }
-
-    static fromSuiParsedData(content: SuiParsedData): UnsubscribeEvent {
-        if (content.dataType !== "moveObject") {
-            throw new Error("not an object");
-        }
-        if (!isUnsubscribeEvent(content.type)) {
-            throw new Error(`object at ${(content.fields as any).id} is not a UnsubscribeEvent object`);
-        }
-        return UnsubscribeEvent.fromFieldsWithTypes(content);
-    }
-
-    static fromSuiObjectData(data: SuiObjectData): UnsubscribeEvent {
-        if (data.bcs) {
-            if (data.bcs.dataType !== "moveObject" || !isUnsubscribeEvent(data.bcs.type)) {
-                throw new Error(`object at is not a UnsubscribeEvent object`);
-            }
-
-            return UnsubscribeEvent.fromBcs(fromB64(data.bcs.bcsBytes));
-        }
-        if (data.content) {
-            return UnsubscribeEvent.fromSuiParsedData(data.content);
-        }
-        throw new Error("Both `bcs` and `content` fields are missing from the data. Include `showBcs` or `showContent` in the request.");
-    }
-
-    static async fetch(client: SuiClient, id: string): Promise<UnsubscribeEvent> {
-        const res = await client.getObject({ id, options: { showBcs: true } });
-        if (res.error) {
-            throw new Error(`error fetching UnsubscribeEvent object at id ${id}: ${res.error.code}`);
-        }
-        if (res.data?.bcs?.dataType !== "moveObject" || !isUnsubscribeEvent(res.data.bcs.type)) {
-            throw new Error(`object at id ${id} is not a UnsubscribeEvent object`);
-        }
-
-        return UnsubscribeEvent.fromSuiObjectData(res.data);
     }
 }
 

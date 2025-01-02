@@ -1183,6 +1183,36 @@ export function resumeTradingSymbol(tx: Transaction, typeArg: string, args: Resu
     });
 }
 
+export interface SettleReceiptCollateralArgs {
+    version: TransactionObjectInput;
+    registry: TransactionObjectInput;
+    poolRegistry: TransactionObjectInput;
+    dovRegistry: TransactionObjectInput;
+    marketIndex: bigint | TransactionArgument;
+    poolIndex: bigint | TransactionArgument;
+    pythState: TransactionObjectInput;
+    oracleCToken: TransactionObjectInput;
+    clock: TransactionObjectInput;
+}
+
+export function settleReceiptCollateral(tx: Transaction, typeArgs: [string, string], args: SettleReceiptCollateralArgs) {
+    return tx.moveCall({
+        target: `${PUBLISHED_AT}::trading::settle_receipt_collateral`,
+        typeArguments: typeArgs,
+        arguments: [
+            obj(tx, args.version),
+            obj(tx, args.registry),
+            obj(tx, args.poolRegistry),
+            obj(tx, args.dovRegistry),
+            pure(tx, args.marketIndex, `u64`),
+            pure(tx, args.poolIndex, `u64`),
+            obj(tx, args.pythState),
+            obj(tx, args.oracleCToken),
+            obj(tx, args.clock),
+        ],
+    });
+}
+
 export interface SuspendMarketArgs {
     version: TransactionObjectInput;
     registry: TransactionObjectInput;

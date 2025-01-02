@@ -172,6 +172,209 @@ export class ManagerCap implements StructClass {
     }
 }
 
+/* ============================== MintEvent =============================== */
+
+export function isMintEvent(type: string): boolean {
+    type = compressSuiType(type);
+    return type === `${PKG_V1}::typus_nft::MintEvent`;
+}
+
+export interface MintEventFields {
+    id: ToField<ID>;
+    name: ToField<String>;
+    description: ToField<String>;
+    number: ToField<"u64">;
+    url: ToField<Url>;
+    attributes: ToField<VecMap<String, String>>;
+    sender: ToField<"address">;
+}
+
+export type MintEventReified = Reified<MintEvent, MintEventFields>;
+
+export class MintEvent implements StructClass {
+    __StructClass = true as const;
+
+    static readonly $typeName = `${PKG_V1}::typus_nft::MintEvent`;
+    static readonly $numTypeParams = 0;
+    static readonly $isPhantom = [] as const;
+
+    readonly $typeName = MintEvent.$typeName;
+    readonly $fullTypeName: `${typeof PKG_V1}::typus_nft::MintEvent`;
+    readonly $typeArgs: [];
+    readonly $isPhantom = MintEvent.$isPhantom;
+
+    readonly id: ToField<ID>;
+    readonly name: ToField<String>;
+    readonly description: ToField<String>;
+    readonly number: ToField<"u64">;
+    readonly url: ToField<Url>;
+    readonly attributes: ToField<VecMap<String, String>>;
+    readonly sender: ToField<"address">;
+
+    private constructor(typeArgs: [], fields: MintEventFields) {
+        this.$fullTypeName = composeSuiType(MintEvent.$typeName, ...typeArgs) as `${typeof PKG_V1}::typus_nft::MintEvent`;
+        this.$typeArgs = typeArgs;
+
+        this.id = fields.id;
+        this.name = fields.name;
+        this.description = fields.description;
+        this.number = fields.number;
+        this.url = fields.url;
+        this.attributes = fields.attributes;
+        this.sender = fields.sender;
+    }
+
+    static reified(): MintEventReified {
+        return {
+            typeName: MintEvent.$typeName,
+            fullTypeName: composeSuiType(MintEvent.$typeName, ...[]) as `${typeof PKG_V1}::typus_nft::MintEvent`,
+            typeArgs: [] as [],
+            isPhantom: MintEvent.$isPhantom,
+            reifiedTypeArgs: [],
+            fromFields: (fields: Record<string, any>) => MintEvent.fromFields(fields),
+            fromFieldsWithTypes: (item: FieldsWithTypes) => MintEvent.fromFieldsWithTypes(item),
+            fromBcs: (data: Uint8Array) => MintEvent.fromBcs(data),
+            bcs: MintEvent.bcs,
+            fromJSONField: (field: any) => MintEvent.fromJSONField(field),
+            fromJSON: (json: Record<string, any>) => MintEvent.fromJSON(json),
+            fromSuiParsedData: (content: SuiParsedData) => MintEvent.fromSuiParsedData(content),
+            fromSuiObjectData: (content: SuiObjectData) => MintEvent.fromSuiObjectData(content),
+            fetch: async (client: SuiClient, id: string) => MintEvent.fetch(client, id),
+            new: (fields: MintEventFields) => {
+                return new MintEvent([], fields);
+            },
+            kind: "StructClassReified",
+        };
+    }
+
+    static get r() {
+        return MintEvent.reified();
+    }
+
+    static phantom(): PhantomReified<ToTypeStr<MintEvent>> {
+        return phantom(MintEvent.reified());
+    }
+    static get p() {
+        return MintEvent.phantom();
+    }
+
+    static get bcs() {
+        return bcs.struct("MintEvent", {
+            id: ID.bcs,
+            name: String.bcs,
+            description: String.bcs,
+            number: bcs.u64(),
+            url: Url.bcs,
+            attributes: VecMap.bcs(String.bcs, String.bcs),
+            sender: bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
+        });
+    }
+
+    static fromFields(fields: Record<string, any>): MintEvent {
+        return MintEvent.reified().new({
+            id: decodeFromFields(ID.reified(), fields.id),
+            name: decodeFromFields(String.reified(), fields.name),
+            description: decodeFromFields(String.reified(), fields.description),
+            number: decodeFromFields("u64", fields.number),
+            url: decodeFromFields(Url.reified(), fields.url),
+            attributes: decodeFromFields(VecMap.reified(String.reified(), String.reified()), fields.attributes),
+            sender: decodeFromFields("address", fields.sender),
+        });
+    }
+
+    static fromFieldsWithTypes(item: FieldsWithTypes): MintEvent {
+        if (!isMintEvent(item.type)) {
+            throw new Error("not a MintEvent type");
+        }
+
+        return MintEvent.reified().new({
+            id: decodeFromFieldsWithTypes(ID.reified(), item.fields.id),
+            name: decodeFromFieldsWithTypes(String.reified(), item.fields.name),
+            description: decodeFromFieldsWithTypes(String.reified(), item.fields.description),
+            number: decodeFromFieldsWithTypes("u64", item.fields.number),
+            url: decodeFromFieldsWithTypes(Url.reified(), item.fields.url),
+            attributes: decodeFromFieldsWithTypes(VecMap.reified(String.reified(), String.reified()), item.fields.attributes),
+            sender: decodeFromFieldsWithTypes("address", item.fields.sender),
+        });
+    }
+
+    static fromBcs(data: Uint8Array): MintEvent {
+        return MintEvent.fromFields(MintEvent.bcs.parse(data));
+    }
+
+    toJSONField() {
+        return {
+            id: this.id,
+            name: this.name,
+            description: this.description,
+            number: this.number.toString(),
+            url: this.url,
+            attributes: this.attributes.toJSONField(),
+            sender: this.sender,
+        };
+    }
+
+    toJSON() {
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
+    }
+
+    static fromJSONField(field: any): MintEvent {
+        return MintEvent.reified().new({
+            id: decodeFromJSONField(ID.reified(), field.id),
+            name: decodeFromJSONField(String.reified(), field.name),
+            description: decodeFromJSONField(String.reified(), field.description),
+            number: decodeFromJSONField("u64", field.number),
+            url: decodeFromJSONField(Url.reified(), field.url),
+            attributes: decodeFromJSONField(VecMap.reified(String.reified(), String.reified()), field.attributes),
+            sender: decodeFromJSONField("address", field.sender),
+        });
+    }
+
+    static fromJSON(json: Record<string, any>): MintEvent {
+        if (json.$typeName !== MintEvent.$typeName) {
+            throw new Error("not a WithTwoGenerics json object");
+        }
+
+        return MintEvent.fromJSONField(json);
+    }
+
+    static fromSuiParsedData(content: SuiParsedData): MintEvent {
+        if (content.dataType !== "moveObject") {
+            throw new Error("not an object");
+        }
+        if (!isMintEvent(content.type)) {
+            throw new Error(`object at ${(content.fields as any).id} is not a MintEvent object`);
+        }
+        return MintEvent.fromFieldsWithTypes(content);
+    }
+
+    static fromSuiObjectData(data: SuiObjectData): MintEvent {
+        if (data.bcs) {
+            if (data.bcs.dataType !== "moveObject" || !isMintEvent(data.bcs.type)) {
+                throw new Error(`object at is not a MintEvent object`);
+            }
+
+            return MintEvent.fromBcs(fromB64(data.bcs.bcsBytes));
+        }
+        if (data.content) {
+            return MintEvent.fromSuiParsedData(data.content);
+        }
+        throw new Error("Both `bcs` and `content` fields are missing from the data. Include `showBcs` or `showContent` in the request.");
+    }
+
+    static async fetch(client: SuiClient, id: string): Promise<MintEvent> {
+        const res = await client.getObject({ id, options: { showBcs: true } });
+        if (res.error) {
+            throw new Error(`error fetching MintEvent object at id ${id}: ${res.error.code}`);
+        }
+        if (res.data?.bcs?.dataType !== "moveObject" || !isMintEvent(res.data.bcs.type)) {
+            throw new Error(`object at id ${id} is not a MintEvent object`);
+        }
+
+        return MintEvent.fromSuiObjectData(res.data);
+    }
+}
+
 /* ============================== ExpDownEvent =============================== */
 
 export function isExpDownEvent(type: string): boolean {
@@ -1016,209 +1219,6 @@ export class LevelUpEvent implements StructClass {
         }
 
         return LevelUpEvent.fromSuiObjectData(res.data);
-    }
-}
-
-/* ============================== MintEvent =============================== */
-
-export function isMintEvent(type: string): boolean {
-    type = compressSuiType(type);
-    return type === `${PKG_V1}::typus_nft::MintEvent`;
-}
-
-export interface MintEventFields {
-    id: ToField<ID>;
-    name: ToField<String>;
-    description: ToField<String>;
-    number: ToField<"u64">;
-    url: ToField<Url>;
-    attributes: ToField<VecMap<String, String>>;
-    sender: ToField<"address">;
-}
-
-export type MintEventReified = Reified<MintEvent, MintEventFields>;
-
-export class MintEvent implements StructClass {
-    __StructClass = true as const;
-
-    static readonly $typeName = `${PKG_V1}::typus_nft::MintEvent`;
-    static readonly $numTypeParams = 0;
-    static readonly $isPhantom = [] as const;
-
-    readonly $typeName = MintEvent.$typeName;
-    readonly $fullTypeName: `${typeof PKG_V1}::typus_nft::MintEvent`;
-    readonly $typeArgs: [];
-    readonly $isPhantom = MintEvent.$isPhantom;
-
-    readonly id: ToField<ID>;
-    readonly name: ToField<String>;
-    readonly description: ToField<String>;
-    readonly number: ToField<"u64">;
-    readonly url: ToField<Url>;
-    readonly attributes: ToField<VecMap<String, String>>;
-    readonly sender: ToField<"address">;
-
-    private constructor(typeArgs: [], fields: MintEventFields) {
-        this.$fullTypeName = composeSuiType(MintEvent.$typeName, ...typeArgs) as `${typeof PKG_V1}::typus_nft::MintEvent`;
-        this.$typeArgs = typeArgs;
-
-        this.id = fields.id;
-        this.name = fields.name;
-        this.description = fields.description;
-        this.number = fields.number;
-        this.url = fields.url;
-        this.attributes = fields.attributes;
-        this.sender = fields.sender;
-    }
-
-    static reified(): MintEventReified {
-        return {
-            typeName: MintEvent.$typeName,
-            fullTypeName: composeSuiType(MintEvent.$typeName, ...[]) as `${typeof PKG_V1}::typus_nft::MintEvent`,
-            typeArgs: [] as [],
-            isPhantom: MintEvent.$isPhantom,
-            reifiedTypeArgs: [],
-            fromFields: (fields: Record<string, any>) => MintEvent.fromFields(fields),
-            fromFieldsWithTypes: (item: FieldsWithTypes) => MintEvent.fromFieldsWithTypes(item),
-            fromBcs: (data: Uint8Array) => MintEvent.fromBcs(data),
-            bcs: MintEvent.bcs,
-            fromJSONField: (field: any) => MintEvent.fromJSONField(field),
-            fromJSON: (json: Record<string, any>) => MintEvent.fromJSON(json),
-            fromSuiParsedData: (content: SuiParsedData) => MintEvent.fromSuiParsedData(content),
-            fromSuiObjectData: (content: SuiObjectData) => MintEvent.fromSuiObjectData(content),
-            fetch: async (client: SuiClient, id: string) => MintEvent.fetch(client, id),
-            new: (fields: MintEventFields) => {
-                return new MintEvent([], fields);
-            },
-            kind: "StructClassReified",
-        };
-    }
-
-    static get r() {
-        return MintEvent.reified();
-    }
-
-    static phantom(): PhantomReified<ToTypeStr<MintEvent>> {
-        return phantom(MintEvent.reified());
-    }
-    static get p() {
-        return MintEvent.phantom();
-    }
-
-    static get bcs() {
-        return bcs.struct("MintEvent", {
-            id: ID.bcs,
-            name: String.bcs,
-            description: String.bcs,
-            number: bcs.u64(),
-            url: Url.bcs,
-            attributes: VecMap.bcs(String.bcs, String.bcs),
-            sender: bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
-        });
-    }
-
-    static fromFields(fields: Record<string, any>): MintEvent {
-        return MintEvent.reified().new({
-            id: decodeFromFields(ID.reified(), fields.id),
-            name: decodeFromFields(String.reified(), fields.name),
-            description: decodeFromFields(String.reified(), fields.description),
-            number: decodeFromFields("u64", fields.number),
-            url: decodeFromFields(Url.reified(), fields.url),
-            attributes: decodeFromFields(VecMap.reified(String.reified(), String.reified()), fields.attributes),
-            sender: decodeFromFields("address", fields.sender),
-        });
-    }
-
-    static fromFieldsWithTypes(item: FieldsWithTypes): MintEvent {
-        if (!isMintEvent(item.type)) {
-            throw new Error("not a MintEvent type");
-        }
-
-        return MintEvent.reified().new({
-            id: decodeFromFieldsWithTypes(ID.reified(), item.fields.id),
-            name: decodeFromFieldsWithTypes(String.reified(), item.fields.name),
-            description: decodeFromFieldsWithTypes(String.reified(), item.fields.description),
-            number: decodeFromFieldsWithTypes("u64", item.fields.number),
-            url: decodeFromFieldsWithTypes(Url.reified(), item.fields.url),
-            attributes: decodeFromFieldsWithTypes(VecMap.reified(String.reified(), String.reified()), item.fields.attributes),
-            sender: decodeFromFieldsWithTypes("address", item.fields.sender),
-        });
-    }
-
-    static fromBcs(data: Uint8Array): MintEvent {
-        return MintEvent.fromFields(MintEvent.bcs.parse(data));
-    }
-
-    toJSONField() {
-        return {
-            id: this.id,
-            name: this.name,
-            description: this.description,
-            number: this.number.toString(),
-            url: this.url,
-            attributes: this.attributes.toJSONField(),
-            sender: this.sender,
-        };
-    }
-
-    toJSON() {
-        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
-    }
-
-    static fromJSONField(field: any): MintEvent {
-        return MintEvent.reified().new({
-            id: decodeFromJSONField(ID.reified(), field.id),
-            name: decodeFromJSONField(String.reified(), field.name),
-            description: decodeFromJSONField(String.reified(), field.description),
-            number: decodeFromJSONField("u64", field.number),
-            url: decodeFromJSONField(Url.reified(), field.url),
-            attributes: decodeFromJSONField(VecMap.reified(String.reified(), String.reified()), field.attributes),
-            sender: decodeFromJSONField("address", field.sender),
-        });
-    }
-
-    static fromJSON(json: Record<string, any>): MintEvent {
-        if (json.$typeName !== MintEvent.$typeName) {
-            throw new Error("not a WithTwoGenerics json object");
-        }
-
-        return MintEvent.fromJSONField(json);
-    }
-
-    static fromSuiParsedData(content: SuiParsedData): MintEvent {
-        if (content.dataType !== "moveObject") {
-            throw new Error("not an object");
-        }
-        if (!isMintEvent(content.type)) {
-            throw new Error(`object at ${(content.fields as any).id} is not a MintEvent object`);
-        }
-        return MintEvent.fromFieldsWithTypes(content);
-    }
-
-    static fromSuiObjectData(data: SuiObjectData): MintEvent {
-        if (data.bcs) {
-            if (data.bcs.dataType !== "moveObject" || !isMintEvent(data.bcs.type)) {
-                throw new Error(`object at is not a MintEvent object`);
-            }
-
-            return MintEvent.fromBcs(fromB64(data.bcs.bcsBytes));
-        }
-        if (data.content) {
-            return MintEvent.fromSuiParsedData(data.content);
-        }
-        throw new Error("Both `bcs` and `content` fields are missing from the data. Include `showBcs` or `showContent` in the request.");
-    }
-
-    static async fetch(client: SuiClient, id: string): Promise<MintEvent> {
-        const res = await client.getObject({ id, options: { showBcs: true } });
-        if (res.error) {
-            throw new Error(`error fetching MintEvent object at id ${id}: ${res.error.code}`);
-        }
-        if (res.data?.bcs?.dataType !== "moveObject" || !isMintEvent(res.data.bcs.type)) {
-            throw new Error(`object at id ${id} is not a MintEvent object`);
-        }
-
-        return MintEvent.fromSuiObjectData(res.data);
     }
 }
 

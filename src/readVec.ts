@@ -5,7 +5,7 @@ import { AddressFromBytes } from "@typus/typus-sdk/dist/src/utils";
 export function readVecPosition(bytes: Uint8Array) {
     let reader = new BcsReader(bytes);
     return reader.readVec((reader) => {
-        reader.read16();
+        reader.readULEB();
         let position = {
             id: AddressFromBytes(reader.readBytes(32)),
             createTsMs: reader.read64(),
@@ -31,6 +31,7 @@ export function readVecPosition(bytes: Uint8Array) {
             unrealizedLoss: reader.read64(),
             unrealizedFundingSign: reader.read8(),
             unrealizedFundingFee: reader.read64(),
+            unrealizedTradingFee: reader.read64(),
             unrealizedBorrowFee: reader.read64(),
             unrealizedRebate: reader.read64(),
             optionCollateralInfo: reader
@@ -51,7 +52,7 @@ export function readVecPosition(bytes: Uint8Array) {
 export function readVecOrder(bytes: Uint8Array) {
     let reader = new BcsReader(bytes);
     return reader.readVec((reader) => {
-        reader.read16();
+        reader.readULEB();
         let order = {
             id: AddressFromBytes(reader.readBytes(32)),
             createTsMs: reader.read64(),

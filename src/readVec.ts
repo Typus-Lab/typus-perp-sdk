@@ -69,7 +69,7 @@ export function readVecOrder(bytes: Uint8Array) {
                 baseToken: { name: String.fromCharCode.apply(null, Array.from(reader.readBytes(reader.readULEB()))) },
                 quoteToken: { name: String.fromCharCode.apply(null, Array.from(reader.readBytes(reader.readULEB()))) },
             },
-            leveragePct: reader.read64(),
+            leverageMbp: reader.read64(),
             reduceOnly: reader.read8(),
             isLong: reader.read8(),
             isStopOrder: reader.read8(),

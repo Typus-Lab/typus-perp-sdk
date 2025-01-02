@@ -206,10 +206,7 @@ export async function getLiquidationPrice(
         let TOKEN = typeArgToToken(position.collateralToken.name);
         let BASE_TOKEN = typeArgToToken(position.symbol.baseToken.name);
 
-        let cToken = tokenType[NETWORK][TOKEN];
-        let baseToken = tokenType[NETWORK][BASE_TOKEN];
-
-        getEstimatedLiquidationPrice(tx, [cToken, baseToken], {
+        getEstimatedLiquidationPrice(tx, [position.collateralToken.name, position.symbol.baseToken.name], {
             version: config.version.perp.perp,
             registry: config.registry.perp.market,
             poolRegistry: config.registry.perp.lpPool,

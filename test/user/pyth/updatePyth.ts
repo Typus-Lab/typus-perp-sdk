@@ -4,7 +4,7 @@ import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519";
 import { TypusConfig } from "@typus/typus-sdk/dist/src/utils";
 import { createPythClient, updatePyth } from "@typus/typus-sdk/dist/src/utils";
 
-import mnemonic from "../../../../mnemonic.json";
+import mnemonic from "mnemonic.json";
 
 (async () => {
     let keypair = Ed25519Keypair.deriveKeypair(String(mnemonic.MNEMONIC));

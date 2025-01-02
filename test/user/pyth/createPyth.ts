@@ -4,7 +4,7 @@ import { SuiClient } from "@mysten/sui/client";
 import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519";
 import { TypusConfig } from "@typus/typus-sdk/dist/src/utils";
 
-import mnemonic from "../../../../mnemonic.json";
+import mnemonic from "mnemonic.json";
 
 // Get the Stable Hermes service URL from https://docs.pyth.network/price-feeds/api-instances-and-providers/hermes
 let connection = new SuiPriceServiceConnection("https://hermes-beta.pyth.network");

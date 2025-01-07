@@ -3,7 +3,7 @@ import { Transaction } from "@mysten/sui/transactions";
 import { bcs } from "@mysten/bcs";
 
 import { LiquidityPool } from "./typus_perp/lp-pool/structs";
-import { Markets, SymbolMarket } from "./typus_perp/trading/structs";
+import { MarketRegistry, Markets, SymbolMarket } from "./typus_perp/trading/structs";
 import { TradingOrder, Position } from "./typus_perp/position/structs";
 import {
     getUserOrders as _getUserOrders,
@@ -58,21 +58,14 @@ export async function getStakePools(config: TypusConfig): Promise<StakePool[]> {
 }
 
 export async function getMarkets(config: TypusConfig): Promise<Markets[]> {
-    // const marketRegistry = await MarketRegistry.fetch(provider, config.registry.perp.market);
-    // console.log(marketRegistry);
-    // MarketRegistry {
-    //   '$typeName': '0x1a05edb0e5e670196de98fbbf544180d129dd4ec11c3c57f742badf0304650d::trading::MarketRegistry',
-    //   '$fullTypeName': '0x1a05edb0e5e670196de98fbbf544180d129dd4ec11c3c57f742badf0304650d::trading::MarketRegistry',
-    //   '$typeArgs': [],
-    //   id: '0x6e11e468b50b1665b930020ea8223bdcc7c86024f85d51021a06dd4ee0e27905',
-    //   referralRegistry: '0xd5c597256ac6acac8cbd52369b4fd87712b964686266f2e790b4f381edfb2b89',
-    //   numMarket: 1n,
-    //   u64Padding: []
-    // }
-
     let provider = new SuiClient({ url: config.rpcEndpoint });
+
+    // const marketRegistry = await MarketRegistry.fetch(provider, config.registry.perp.market);
+    // console.log(marketRegistry.markets.vid);
+
     let dynamicFields = await provider.getDynamicFields({
-        parentId: config.registry.perp.market,
+        // @ts-ignore
+        parentId: config.object.perpMarketVid,
     });
 
     let markets: Markets[] = [];

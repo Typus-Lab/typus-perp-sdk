@@ -1,8 +1,9 @@
 {
-    "name": "typus-perp-sdk",
-    "version": "1.0.1",
+    "name": "@typus/typus-perp-sdk",
+    "version": "1.0.0",
     "repository": "https://github.com/Typus-Lab/typus-perp-sdk.git",
-    "author": "Wayne Kuo <wayne.k@typuslab.com>",
+    "author": "Typus",
+    "description": "typus perp sdk",
     "license": "MIT",
     "dependencies": {
         "@typus/typus-sdk": "1.5.3"

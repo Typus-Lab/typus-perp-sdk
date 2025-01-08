@@ -1,4 +1,4 @@
-import { NETWORK } from "src";
+import { NETWORK } from "../index";
 
 export const PACKAGE_ID = NETWORK == "MAINNET" ? "" : "0x89c20927846e2b4b41249d4400d31362e925a2f327acf83f535e51134f611617";
 export const PUBLISHED_AT = NETWORK == "MAINNET" ? "" : "0x7374cba77e1721067926ce764593802e754988df987ea727c631af7f4c424044";

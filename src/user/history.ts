@@ -1,9 +1,9 @@
 import { assetToDecimal, TOKEN, typeArgToToken } from "@typus/typus-sdk/dist/src/constants";
 import { Token } from "@typus/typus-sdk/dist/src/utils";
-import { NETWORK } from "src";
-import { PKG_V1 as PERP_PACKAGE_ID } from "src/typus_perp";
-import { OrderFilledEvent } from "src/typus_perp/position/structs";
-import { CancelTradingOrderEvent, CreateTradingOrderEvent } from "src/typus_perp/trading/structs";
+import { NETWORK } from "../index";
+import { PKG_V1 as PERP_PACKAGE_ID } from "../typus_perp/index";
+import { OrderFilledEvent } from "../typus_perp/position/structs";
+import { CancelTradingOrderEvent, CreateTradingOrderEvent } from "../typus_perp/trading/structs";
 
 type actionType =
     | "Place Order"

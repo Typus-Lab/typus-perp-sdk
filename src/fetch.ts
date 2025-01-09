@@ -18,7 +18,6 @@ import { CLOCK, SENDER, tokenType, typeArgToToken } from "@typus/typus-sdk/dist/
 import { priceInfoObjectIds, pythStateId, PythClient, updatePyth, TypusConfig } from "@typus/typus-sdk/dist/src/utils";
 
 import { NETWORK } from ".";
-// import { readVecOrder, readVecPosition, readVecShares } from "./readVec";
 
 export async function getLpPools(config: TypusConfig): Promise<LiquidityPool[]> {
     // const lpPoolRegistry = await Registry.fetch(provider, config.registry.LP_POOL);

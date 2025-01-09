@@ -1,9 +1,8 @@
 import { SuiClient } from "@mysten/sui/client";
 import { Transaction } from "@mysten/sui/transactions";
-import { bcs } from "@mysten/bcs";
+import { bcs, BcsReader } from "@mysten/bcs";
 
 import { LiquidityPool } from "./typus_perp/lp-pool/structs";
-import { MarketRegistry, Markets, SymbolMarket } from "./typus_perp/trading/structs";
 import { TradingOrder, Position } from "./typus_perp/position/structs";
 import {
     getUserOrders as _getUserOrders,
@@ -18,7 +17,8 @@ import { CLOCK, tokenType, typeArgToToken } from "@typus/typus-sdk/dist/src/cons
 import { priceInfoObjectIds, pythStateId, PythClient, updatePyth, TypusConfig } from "@typus/typus-sdk/dist/src/utils";
 
 import { NETWORK } from ".";
-import { readVecOrder, readVecPosition, readVecShares } from "./readVec";
+// import { readVecOrder, readVecPosition, readVecShares } from "./readVec";
+// import { MarketRegistry, Markets, SymbolMarket } from "./typus_perp/trading/structs";
 
 export async function getLpPools(config: TypusConfig): Promise<LiquidityPool[]> {
     // const lpPoolRegistry = await Registry.fetch(provider, config.registry.LP_POOL);
@@ -57,45 +57,45 @@ export async function getStakePools(config: TypusConfig): Promise<StakePool[]> {
     return stakePools;
 }
 
-export async function getMarkets(config: TypusConfig): Promise<Markets[]> {
-    let provider = new SuiClient({ url: config.rpcEndpoint });
+// export async function getMarkets(config: TypusConfig): Promise<Markets[]> {
+//     let provider = new SuiClient({ url: config.rpcEndpoint });
 
-    // const marketRegistry = await MarketRegistry.fetch(provider, config.registry.perp.market);
-    // console.log(marketRegistry.markets.vid);
+//     // const marketRegistry = await MarketRegistry.fetch(provider, config.registry.perp.market);
+//     // console.log(marketRegistry.markets.vid);
 
-    let dynamicFields = await provider.getDynamicFields({
-        // @ts-ignore
-        parentId: config.object.perpMarketVid,
-    });
+//     let dynamicFields = await provider.getDynamicFields({
+//         // @ts-ignore
+//         parentId: config.object.perpMarketVid,
+//     });
 
-    let markets: Markets[] = [];
+//     let markets: Markets[] = [];
 
-    for (const field of dynamicFields.data) {
-        let market = await Markets.fetch(provider, field.objectId);
-        // console.log(market);
-        markets.push(market);
-    }
-    return markets;
-}
+//     for (const field of dynamicFields.data) {
+//         let market = await Markets.fetch(provider, field.objectId);
+//         // console.log(market);
+//         markets.push(market);
+//     }
+//     return markets;
+// }
 
-export async function getSymbolMarkets(provider: SuiClient, market: Markets): Promise<Map<string, SymbolMarket>> {
-    let symbolMarkets = new Map<string, SymbolMarket>();
+// export async function getSymbolMarkets(provider: SuiClient, market: Markets): Promise<Map<string, SymbolMarket>> {
+//     let symbolMarkets = new Map<string, SymbolMarket>();
 
-    let dynamicFields = await provider.getDynamicFields({
-        parentId: market.symbolMarkets.id,
-    });
+//     let dynamicFields = await provider.getDynamicFields({
+//         parentId: market.symbolMarkets.id,
+//     });
 
-    for (const field of dynamicFields.data) {
-        let symbolMarket = await SymbolMarket.fetch(provider, field.objectId);
-        // @ts-ignore
-        let key = field.name.value.name;
-        // console.log(key);
-        // console.log(symbolMarket);
-        symbolMarkets.set(key, symbolMarket);
-    }
+//     for (const field of dynamicFields.data) {
+//         let symbolMarket = await SymbolMarket.fetch(provider, field.objectId);
+//         // @ts-ignore
+//         let key = field.name.value.name;
+//         // console.log(key);
+//         // console.log(symbolMarket);
+//         symbolMarkets.set(key, symbolMarket);
+//     }
 
-    return symbolMarkets;
-}
+//     return symbolMarkets;
+// }
 
 export async function getUserOrders(config: TypusConfig, user: string) {
     let provider = new SuiClient({ url: config.rpcEndpoint });
@@ -115,7 +115,16 @@ export async function getUserOrders(config: TypusConfig, user: string) {
     let returnValues = res.results[0].returnValues[0][0];
     // console.log(returnValues);
 
-    let orders: TradingOrder[] = readVecOrder(Uint8Array.from(returnValues));
+    let reader = new BcsReader(new Uint8Array(returnValues));
+    let orders: TradingOrder[] = [];
+    reader.readVec((reader) => {
+        let length = reader.readULEB();
+        let bytes = reader.readBytes(length);
+        let order = TradingOrder.fromBcs(Uint8Array.from(Array.from(bytes)));
+        orders.push(order);
+    });
+
+    // let orders: TradingOrder[] = readVecOrder(Uint8Array.from(returnValues));
     // console.log(orders);
     return orders;
 }
@@ -138,7 +147,16 @@ export async function getUserPositions(config: TypusConfig, user: string) {
     let returnValues = res.results[0].returnValues[0][0];
     // console.log(returnValues);
 
-    let positions: Position[] = readVecPosition(Uint8Array.from(returnValues));
+    let reader = new BcsReader(new Uint8Array(returnValues));
+    let positions: Position[] = [];
+    reader.readVec((reader) => {
+        let length = reader.readULEB();
+        let bytes = reader.readBytes(length);
+        let position = Position.fromBcs(Uint8Array.from(Array.from(bytes)));
+        positions.push(position);
+    });
+
+    // let positions: Position[] = readVecPosition(Uint8Array.from(returnValues));
     // console.log(positions);
     return positions;
 }
@@ -161,11 +179,20 @@ export async function getUserStake(config: TypusConfig, user: string): Promise<L
         let returnValues = res.results[0].returnValues[0][0];
         // console.log(returnValues);
 
-        let stake: LpUserShare[] = readVecShares(Uint8Array.from(returnValues));
-        // console.log(stake);
-        // console.log(stake[0].deactivatingShares);
-        // console.log(stake[0].lastIncentivePriceIndex);
-        return stake;
+        let reader = new BcsReader(new Uint8Array(returnValues));
+        let lpShares: LpUserShare[] = [];
+        reader.readVec((reader) => {
+            let length = reader.readULEB();
+            let bytes = reader.readBytes(length);
+            let lpShare = LpUserShare.fromBcs(Uint8Array.from(Array.from(bytes)));
+            lpShares.push(lpShare);
+        });
+
+        // let lpShares: LpUserShare[] = readVecShares(Uint8Array.from(returnValues));
+        // console.log(lpShares);
+        // console.log(lpShares[0].deactivatingShares);
+        // console.log(lpShares[0].lastIncentivePriceIndex);
+        return lpShares;
     } else {
         return [];
     }

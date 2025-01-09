@@ -1,8 +1,6 @@
 export * from "./fetch";
 export * from "./user";
 
-export * from "./typus_perp/lp-pool/structs";
-
 import dotenv from "dotenv";
 // import .env file if exists
 dotenv.config();

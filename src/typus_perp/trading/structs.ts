@@ -442,6 +442,7 @@ export interface CreateTradingOrderEventFields {
     poolIndex: ToField<"u64">;
     collateralToken: ToField<TypeName>;
     baseToken: ToField<TypeName>;
+    orderId: ToField<"u64">;
     linkedPositionId: ToField<Option<"u64">>;
     collateralAmount: ToField<"u64">;
     leverageMbp: ToField<"u64">;
@@ -474,6 +475,7 @@ export class CreateTradingOrderEvent implements StructClass {
     readonly poolIndex: ToField<"u64">;
     readonly collateralToken: ToField<TypeName>;
     readonly baseToken: ToField<TypeName>;
+    readonly orderId: ToField<"u64">;
     readonly linkedPositionId: ToField<Option<"u64">>;
     readonly collateralAmount: ToField<"u64">;
     readonly leverageMbp: ToField<"u64">;
@@ -498,6 +500,7 @@ export class CreateTradingOrderEvent implements StructClass {
         this.poolIndex = fields.poolIndex;
         this.collateralToken = fields.collateralToken;
         this.baseToken = fields.baseToken;
+        this.orderId = fields.orderId;
         this.linkedPositionId = fields.linkedPositionId;
         this.collateralAmount = fields.collateralAmount;
         this.leverageMbp = fields.leverageMbp;
@@ -552,6 +555,7 @@ export class CreateTradingOrderEvent implements StructClass {
             pool_index: bcs.u64(),
             collateral_token: TypeName.bcs,
             base_token: TypeName.bcs,
+            order_id: bcs.u64(),
             linked_position_id: Option.bcs(bcs.u64()),
             collateral_amount: bcs.u64(),
             leverage_mbp: bcs.u64(),
@@ -573,6 +577,7 @@ export class CreateTradingOrderEvent implements StructClass {
             poolIndex: decodeFromFields("u64", fields.pool_index),
             collateralToken: decodeFromFields(TypeName.reified(), fields.collateral_token),
             baseToken: decodeFromFields(TypeName.reified(), fields.base_token),
+            orderId: decodeFromFields("u64", fields.order_id),
             linkedPositionId: decodeFromFields(Option.reified("u64"), fields.linked_position_id),
             collateralAmount: decodeFromFields("u64", fields.collateral_amount),
             leverageMbp: decodeFromFields("u64", fields.leverage_mbp),
@@ -598,6 +603,7 @@ export class CreateTradingOrderEvent implements StructClass {
             poolIndex: decodeFromFieldsWithTypes("u64", item.fields.pool_index),
             collateralToken: decodeFromFieldsWithTypes(TypeName.reified(), item.fields.collateral_token),
             baseToken: decodeFromFieldsWithTypes(TypeName.reified(), item.fields.base_token),
+            orderId: decodeFromFieldsWithTypes("u64", item.fields.order_id),
             linkedPositionId: decodeFromFieldsWithTypes(Option.reified("u64"), item.fields.linked_position_id),
             collateralAmount: decodeFromFieldsWithTypes("u64", item.fields.collateral_amount),
             leverageMbp: decodeFromFieldsWithTypes("u64", item.fields.leverage_mbp),
@@ -623,6 +629,7 @@ export class CreateTradingOrderEvent implements StructClass {
             poolIndex: this.poolIndex.toString(),
             collateralToken: this.collateralToken.toJSONField(),
             baseToken: this.baseToken.toJSONField(),
+            orderId: this.orderId.toString(),
             linkedPositionId: fieldToJSON<Option<"u64">>(`${Option.$typeName}<u64>`, this.linkedPositionId),
             collateralAmount: this.collateralAmount.toString(),
             leverageMbp: this.leverageMbp.toString(),
@@ -648,6 +655,7 @@ export class CreateTradingOrderEvent implements StructClass {
             poolIndex: decodeFromJSONField("u64", field.poolIndex),
             collateralToken: decodeFromJSONField(TypeName.reified(), field.collateralToken),
             baseToken: decodeFromJSONField(TypeName.reified(), field.baseToken),
+            orderId: decodeFromJSONField("u64", field.orderId),
             linkedPositionId: decodeFromJSONField(Option.reified("u64"), field.linkedPositionId),
             collateralAmount: decodeFromJSONField("u64", field.collateralAmount),
             leverageMbp: decodeFromJSONField("u64", field.leverageMbp),
@@ -1365,185 +1373,6 @@ export class IncreaseCollateralEvent implements StructClass {
         }
 
         return IncreaseCollateralEvent.fromSuiObjectData(res.data);
-    }
-}
-
-/* ============================== LinkedOrdersInfo =============================== */
-
-export function isLinkedOrdersInfo(type: string): boolean {
-    type = compressSuiType(type);
-    return type === `${PKG_V1}::trading::LinkedOrdersInfo`;
-}
-
-export interface LinkedOrdersInfoFields {
-    users: ToField<Vector<"address">>;
-    ids: ToField<Vector<Vector<"u64">>>;
-    prices: ToField<Vector<Vector<"u64">>>;
-    u64Padding: ToField<Vector<"u64">>;
-}
-
-export type LinkedOrdersInfoReified = Reified<LinkedOrdersInfo, LinkedOrdersInfoFields>;
-
-export class LinkedOrdersInfo implements StructClass {
-    __StructClass = true as const;
-
-    static readonly $typeName = `${PKG_V1}::trading::LinkedOrdersInfo`;
-    static readonly $numTypeParams = 0;
-    static readonly $isPhantom = [] as const;
-
-    readonly $typeName = LinkedOrdersInfo.$typeName;
-    readonly $fullTypeName: `${typeof PKG_V1}::trading::LinkedOrdersInfo`;
-    readonly $typeArgs: [];
-    readonly $isPhantom = LinkedOrdersInfo.$isPhantom;
-
-    readonly users: ToField<Vector<"address">>;
-    readonly ids: ToField<Vector<Vector<"u64">>>;
-    readonly prices: ToField<Vector<Vector<"u64">>>;
-    readonly u64Padding: ToField<Vector<"u64">>;
-
-    private constructor(typeArgs: [], fields: LinkedOrdersInfoFields) {
-        this.$fullTypeName = composeSuiType(LinkedOrdersInfo.$typeName, ...typeArgs) as `${typeof PKG_V1}::trading::LinkedOrdersInfo`;
-        this.$typeArgs = typeArgs;
-
-        this.users = fields.users;
-        this.ids = fields.ids;
-        this.prices = fields.prices;
-        this.u64Padding = fields.u64Padding;
-    }
-
-    static reified(): LinkedOrdersInfoReified {
-        return {
-            typeName: LinkedOrdersInfo.$typeName,
-            fullTypeName: composeSuiType(LinkedOrdersInfo.$typeName, ...[]) as `${typeof PKG_V1}::trading::LinkedOrdersInfo`,
-            typeArgs: [] as [],
-            isPhantom: LinkedOrdersInfo.$isPhantom,
-            reifiedTypeArgs: [],
-            fromFields: (fields: Record<string, any>) => LinkedOrdersInfo.fromFields(fields),
-            fromFieldsWithTypes: (item: FieldsWithTypes) => LinkedOrdersInfo.fromFieldsWithTypes(item),
-            fromBcs: (data: Uint8Array) => LinkedOrdersInfo.fromBcs(data),
-            bcs: LinkedOrdersInfo.bcs,
-            fromJSONField: (field: any) => LinkedOrdersInfo.fromJSONField(field),
-            fromJSON: (json: Record<string, any>) => LinkedOrdersInfo.fromJSON(json),
-            fromSuiParsedData: (content: SuiParsedData) => LinkedOrdersInfo.fromSuiParsedData(content),
-            fromSuiObjectData: (content: SuiObjectData) => LinkedOrdersInfo.fromSuiObjectData(content),
-            fetch: async (client: SuiClient, id: string) => LinkedOrdersInfo.fetch(client, id),
-            new: (fields: LinkedOrdersInfoFields) => {
-                return new LinkedOrdersInfo([], fields);
-            },
-            kind: "StructClassReified",
-        };
-    }
-
-    static get r() {
-        return LinkedOrdersInfo.reified();
-    }
-
-    static phantom(): PhantomReified<ToTypeStr<LinkedOrdersInfo>> {
-        return phantom(LinkedOrdersInfo.reified());
-    }
-    static get p() {
-        return LinkedOrdersInfo.phantom();
-    }
-
-    static get bcs() {
-        return bcs.struct("LinkedOrdersInfo", {
-            users: bcs.vector(bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) })),
-            ids: bcs.vector(bcs.vector(bcs.u64())),
-            prices: bcs.vector(bcs.vector(bcs.u64())),
-            u64_padding: bcs.vector(bcs.u64()),
-        });
-    }
-
-    static fromFields(fields: Record<string, any>): LinkedOrdersInfo {
-        return LinkedOrdersInfo.reified().new({
-            users: decodeFromFields(reified.vector("address"), fields.users),
-            ids: decodeFromFields(reified.vector(reified.vector("u64")), fields.ids),
-            prices: decodeFromFields(reified.vector(reified.vector("u64")), fields.prices),
-            u64Padding: decodeFromFields(reified.vector("u64"), fields.u64_padding),
-        });
-    }
-
-    static fromFieldsWithTypes(item: FieldsWithTypes): LinkedOrdersInfo {
-        if (!isLinkedOrdersInfo(item.type)) {
-            throw new Error("not a LinkedOrdersInfo type");
-        }
-
-        return LinkedOrdersInfo.reified().new({
-            users: decodeFromFieldsWithTypes(reified.vector("address"), item.fields.users),
-            ids: decodeFromFieldsWithTypes(reified.vector(reified.vector("u64")), item.fields.ids),
-            prices: decodeFromFieldsWithTypes(reified.vector(reified.vector("u64")), item.fields.prices),
-            u64Padding: decodeFromFieldsWithTypes(reified.vector("u64"), item.fields.u64_padding),
-        });
-    }
-
-    static fromBcs(data: Uint8Array): LinkedOrdersInfo {
-        return LinkedOrdersInfo.fromFields(LinkedOrdersInfo.bcs.parse(data));
-    }
-
-    toJSONField() {
-        return {
-            users: fieldToJSON<Vector<"address">>(`vector<address>`, this.users),
-            ids: fieldToJSON<Vector<Vector<"u64">>>(`vector<vector<u64>>`, this.ids),
-            prices: fieldToJSON<Vector<Vector<"u64">>>(`vector<vector<u64>>`, this.prices),
-            u64Padding: fieldToJSON<Vector<"u64">>(`vector<u64>`, this.u64Padding),
-        };
-    }
-
-    toJSON() {
-        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
-    }
-
-    static fromJSONField(field: any): LinkedOrdersInfo {
-        return LinkedOrdersInfo.reified().new({
-            users: decodeFromJSONField(reified.vector("address"), field.users),
-            ids: decodeFromJSONField(reified.vector(reified.vector("u64")), field.ids),
-            prices: decodeFromJSONField(reified.vector(reified.vector("u64")), field.prices),
-            u64Padding: decodeFromJSONField(reified.vector("u64"), field.u64Padding),
-        });
-    }
-
-    static fromJSON(json: Record<string, any>): LinkedOrdersInfo {
-        if (json.$typeName !== LinkedOrdersInfo.$typeName) {
-            throw new Error("not a WithTwoGenerics json object");
-        }
-
-        return LinkedOrdersInfo.fromJSONField(json);
-    }
-
-    static fromSuiParsedData(content: SuiParsedData): LinkedOrdersInfo {
-        if (content.dataType !== "moveObject") {
-            throw new Error("not an object");
-        }
-        if (!isLinkedOrdersInfo(content.type)) {
-            throw new Error(`object at ${(content.fields as any).id} is not a LinkedOrdersInfo object`);
-        }
-        return LinkedOrdersInfo.fromFieldsWithTypes(content);
-    }
-
-    static fromSuiObjectData(data: SuiObjectData): LinkedOrdersInfo {
-        if (data.bcs) {
-            if (data.bcs.dataType !== "moveObject" || !isLinkedOrdersInfo(data.bcs.type)) {
-                throw new Error(`object at is not a LinkedOrdersInfo object`);
-            }
-
-            return LinkedOrdersInfo.fromBcs(fromB64(data.bcs.bcsBytes));
-        }
-        if (data.content) {
-            return LinkedOrdersInfo.fromSuiParsedData(data.content);
-        }
-        throw new Error("Both `bcs` and `content` fields are missing from the data. Include `showBcs` or `showContent` in the request.");
-    }
-
-    static async fetch(client: SuiClient, id: string): Promise<LinkedOrdersInfo> {
-        const res = await client.getObject({ id, options: { showBcs: true } });
-        if (res.error) {
-            throw new Error(`error fetching LinkedOrdersInfo object at id ${id}: ${res.error.code}`);
-        }
-        if (res.data?.bcs?.dataType !== "moveObject" || !isLinkedOrdersInfo(res.data.bcs.type)) {
-            throw new Error(`object at id ${id} is not a LinkedOrdersInfo object`);
-        }
-
-        return LinkedOrdersInfo.fromSuiObjectData(res.data);
     }
 }
 
@@ -3678,7 +3507,6 @@ export interface MatchTradingOrderEventFields {
     collateralToken: ToField<TypeName>;
     baseToken: ToField<TypeName>;
     matchedOrderIds: ToField<Vector<"u64">>;
-    linkedOrdersToBeCancelled: ToField<LinkedOrdersInfo>;
     u64Padding: ToField<Vector<"u64">>;
 }
 
@@ -3699,7 +3527,6 @@ export class MatchTradingOrderEvent implements StructClass {
     readonly collateralToken: ToField<TypeName>;
     readonly baseToken: ToField<TypeName>;
     readonly matchedOrderIds: ToField<Vector<"u64">>;
-    readonly linkedOrdersToBeCancelled: ToField<LinkedOrdersInfo>;
     readonly u64Padding: ToField<Vector<"u64">>;
 
     private constructor(typeArgs: [], fields: MatchTradingOrderEventFields) {
@@ -3712,7 +3539,6 @@ export class MatchTradingOrderEvent implements StructClass {
         this.collateralToken = fields.collateralToken;
         this.baseToken = fields.baseToken;
         this.matchedOrderIds = fields.matchedOrderIds;
-        this.linkedOrdersToBeCancelled = fields.linkedOrdersToBeCancelled;
         this.u64Padding = fields.u64Padding;
     }
 
@@ -3755,7 +3581,6 @@ export class MatchTradingOrderEvent implements StructClass {
             collateral_token: TypeName.bcs,
             base_token: TypeName.bcs,
             matched_order_ids: bcs.vector(bcs.u64()),
-            linked_orders_to_be_cancelled: LinkedOrdersInfo.bcs,
             u64_padding: bcs.vector(bcs.u64()),
         });
     }
@@ -3765,7 +3590,6 @@ export class MatchTradingOrderEvent implements StructClass {
             collateralToken: decodeFromFields(TypeName.reified(), fields.collateral_token),
             baseToken: decodeFromFields(TypeName.reified(), fields.base_token),
             matchedOrderIds: decodeFromFields(reified.vector("u64"), fields.matched_order_ids),
-            linkedOrdersToBeCancelled: decodeFromFields(LinkedOrdersInfo.reified(), fields.linked_orders_to_be_cancelled),
             u64Padding: decodeFromFields(reified.vector("u64"), fields.u64_padding),
         });
     }
@@ -3779,7 +3603,6 @@ export class MatchTradingOrderEvent implements StructClass {
             collateralToken: decodeFromFieldsWithTypes(TypeName.reified(), item.fields.collateral_token),
             baseToken: decodeFromFieldsWithTypes(TypeName.reified(), item.fields.base_token),
             matchedOrderIds: decodeFromFieldsWithTypes(reified.vector("u64"), item.fields.matched_order_ids),
-            linkedOrdersToBeCancelled: decodeFromFieldsWithTypes(LinkedOrdersInfo.reified(), item.fields.linked_orders_to_be_cancelled),
             u64Padding: decodeFromFieldsWithTypes(reified.vector("u64"), item.fields.u64_padding),
         });
     }
@@ -3793,7 +3616,6 @@ export class MatchTradingOrderEvent implements StructClass {
             collateralToken: this.collateralToken.toJSONField(),
             baseToken: this.baseToken.toJSONField(),
             matchedOrderIds: fieldToJSON<Vector<"u64">>(`vector<u64>`, this.matchedOrderIds),
-            linkedOrdersToBeCancelled: this.linkedOrdersToBeCancelled.toJSONField(),
             u64Padding: fieldToJSON<Vector<"u64">>(`vector<u64>`, this.u64Padding),
         };
     }
@@ -3807,7 +3629,6 @@ export class MatchTradingOrderEvent implements StructClass {
             collateralToken: decodeFromJSONField(TypeName.reified(), field.collateralToken),
             baseToken: decodeFromJSONField(TypeName.reified(), field.baseToken),
             matchedOrderIds: decodeFromJSONField(reified.vector("u64"), field.matchedOrderIds),
-            linkedOrdersToBeCancelled: decodeFromJSONField(LinkedOrdersInfo.reified(), field.linkedOrdersToBeCancelled),
             u64Padding: decodeFromJSONField(reified.vector("u64"), field.u64Padding),
         });
     }

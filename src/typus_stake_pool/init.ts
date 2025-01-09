@@ -7,6 +7,8 @@ export function registerClasses(loader: StructClassLoader) {
     loader.register(admin.FeeInfo);
     loader.register(admin.FeePool);
     loader.register(admin.SendFeeEvent);
+    loader.register(stakePool.UnsubscribeEvent);
+    loader.register(stakePool.WithdrawIncentiveEvent);
     loader.register(stakePool.ActivateIncentiveTokenEvent);
     loader.register(stakePool.AddIncentiveTokenEvent);
     loader.register(stakePool.DeactivateIncentiveTokenEvent);
@@ -25,8 +27,6 @@ export function registerClasses(loader: StructClassLoader) {
     loader.register(stakePool.StakePoolInfo);
     loader.register(stakePool.StakePoolRegistry);
     loader.register(stakePool.UnstakeEvent);
-    loader.register(stakePool.UnsubscribeEvent);
     loader.register(stakePool.UpdateIncentiveConfigEvent);
     loader.register(stakePool.UpdateUnlockCountdownTsMsEvent);
-    loader.register(stakePool.WithdrawIncentiveEvent);
 }

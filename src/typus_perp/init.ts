@@ -60,7 +60,6 @@ export function registerClasses(loader: StructClassLoader) {
     loader.register(trading.CreateTradingOrderWithBidReceiptsEvent);
     loader.register(trading.ExpiredPositionInfo);
     loader.register(trading.IncreaseCollateralEvent);
-    loader.register(trading.LinkedOrdersInfo);
     loader.register(trading.LiquidateEvent);
     loader.register(trading.LiquidationInfo);
     loader.register(trading.ManagerCloseOptionPositionEvent);

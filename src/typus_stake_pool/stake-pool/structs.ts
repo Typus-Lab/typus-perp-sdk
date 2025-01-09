@@ -21,6 +21,407 @@ import { bcs } from "@mysten/sui/bcs";
 import { SuiClient, SuiObjectData, SuiParsedData } from "@mysten/sui/client";
 import { fromB64, fromHEX, toHEX } from "@mysten/sui/utils";
 
+/* ============================== UnsubscribeEvent =============================== */
+
+export function isUnsubscribeEvent(type: string): boolean {
+    type = compressSuiType(type);
+    return type === `${PKG_V1}::stake_pool::UnsubscribeEvent`;
+}
+
+export interface UnsubscribeEventFields {
+    sender: ToField<"address">;
+    index: ToField<"u64">;
+    lpTokenType: ToField<TypeName>;
+    userShareId: ToField<"u64">;
+    unsubscribedShares: ToField<"u64">;
+    unsubscribeTsMs: ToField<"u64">;
+    unlockedTsMs: ToField<"u64">;
+    u64Padding: ToField<Vector<"u64">>;
+}
+
+export type UnsubscribeEventReified = Reified<UnsubscribeEvent, UnsubscribeEventFields>;
+
+export class UnsubscribeEvent implements StructClass {
+    __StructClass = true as const;
+
+    static readonly $typeName = `${PKG_V1}::stake_pool::UnsubscribeEvent`;
+    static readonly $numTypeParams = 0;
+    static readonly $isPhantom = [] as const;
+
+    readonly $typeName = UnsubscribeEvent.$typeName;
+    readonly $fullTypeName: `${typeof PKG_V1}::stake_pool::UnsubscribeEvent`;
+    readonly $typeArgs: [];
+    readonly $isPhantom = UnsubscribeEvent.$isPhantom;
+
+    readonly sender: ToField<"address">;
+    readonly index: ToField<"u64">;
+    readonly lpTokenType: ToField<TypeName>;
+    readonly userShareId: ToField<"u64">;
+    readonly unsubscribedShares: ToField<"u64">;
+    readonly unsubscribeTsMs: ToField<"u64">;
+    readonly unlockedTsMs: ToField<"u64">;
+    readonly u64Padding: ToField<Vector<"u64">>;
+
+    private constructor(typeArgs: [], fields: UnsubscribeEventFields) {
+        this.$fullTypeName = composeSuiType(UnsubscribeEvent.$typeName, ...typeArgs) as `${typeof PKG_V1}::stake_pool::UnsubscribeEvent`;
+        this.$typeArgs = typeArgs;
+
+        this.sender = fields.sender;
+        this.index = fields.index;
+        this.lpTokenType = fields.lpTokenType;
+        this.userShareId = fields.userShareId;
+        this.unsubscribedShares = fields.unsubscribedShares;
+        this.unsubscribeTsMs = fields.unsubscribeTsMs;
+        this.unlockedTsMs = fields.unlockedTsMs;
+        this.u64Padding = fields.u64Padding;
+    }
+
+    static reified(): UnsubscribeEventReified {
+        return {
+            typeName: UnsubscribeEvent.$typeName,
+            fullTypeName: composeSuiType(UnsubscribeEvent.$typeName, ...[]) as `${typeof PKG_V1}::stake_pool::UnsubscribeEvent`,
+            typeArgs: [] as [],
+            isPhantom: UnsubscribeEvent.$isPhantom,
+            reifiedTypeArgs: [],
+            fromFields: (fields: Record<string, any>) => UnsubscribeEvent.fromFields(fields),
+            fromFieldsWithTypes: (item: FieldsWithTypes) => UnsubscribeEvent.fromFieldsWithTypes(item),
+            fromBcs: (data: Uint8Array) => UnsubscribeEvent.fromBcs(data),
+            bcs: UnsubscribeEvent.bcs,
+            fromJSONField: (field: any) => UnsubscribeEvent.fromJSONField(field),
+            fromJSON: (json: Record<string, any>) => UnsubscribeEvent.fromJSON(json),
+            fromSuiParsedData: (content: SuiParsedData) => UnsubscribeEvent.fromSuiParsedData(content),
+            fromSuiObjectData: (content: SuiObjectData) => UnsubscribeEvent.fromSuiObjectData(content),
+            fetch: async (client: SuiClient, id: string) => UnsubscribeEvent.fetch(client, id),
+            new: (fields: UnsubscribeEventFields) => {
+                return new UnsubscribeEvent([], fields);
+            },
+            kind: "StructClassReified",
+        };
+    }
+
+    static get r() {
+        return UnsubscribeEvent.reified();
+    }
+
+    static phantom(): PhantomReified<ToTypeStr<UnsubscribeEvent>> {
+        return phantom(UnsubscribeEvent.reified());
+    }
+    static get p() {
+        return UnsubscribeEvent.phantom();
+    }
+
+    static get bcs() {
+        return bcs.struct("UnsubscribeEvent", {
+            sender: bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
+            index: bcs.u64(),
+            lp_token_type: TypeName.bcs,
+            user_share_id: bcs.u64(),
+            unsubscribed_shares: bcs.u64(),
+            unsubscribe_ts_ms: bcs.u64(),
+            unlocked_ts_ms: bcs.u64(),
+            u64_padding: bcs.vector(bcs.u64()),
+        });
+    }
+
+    static fromFields(fields: Record<string, any>): UnsubscribeEvent {
+        return UnsubscribeEvent.reified().new({
+            sender: decodeFromFields("address", fields.sender),
+            index: decodeFromFields("u64", fields.index),
+            lpTokenType: decodeFromFields(TypeName.reified(), fields.lp_token_type),
+            userShareId: decodeFromFields("u64", fields.user_share_id),
+            unsubscribedShares: decodeFromFields("u64", fields.unsubscribed_shares),
+            unsubscribeTsMs: decodeFromFields("u64", fields.unsubscribe_ts_ms),
+            unlockedTsMs: decodeFromFields("u64", fields.unlocked_ts_ms),
+            u64Padding: decodeFromFields(reified.vector("u64"), fields.u64_padding),
+        });
+    }
+
+    static fromFieldsWithTypes(item: FieldsWithTypes): UnsubscribeEvent {
+        if (!isUnsubscribeEvent(item.type)) {
+            throw new Error("not a UnsubscribeEvent type");
+        }
+
+        return UnsubscribeEvent.reified().new({
+            sender: decodeFromFieldsWithTypes("address", item.fields.sender),
+            index: decodeFromFieldsWithTypes("u64", item.fields.index),
+            lpTokenType: decodeFromFieldsWithTypes(TypeName.reified(), item.fields.lp_token_type),
+            userShareId: decodeFromFieldsWithTypes("u64", item.fields.user_share_id),
+            unsubscribedShares: decodeFromFieldsWithTypes("u64", item.fields.unsubscribed_shares),
+            unsubscribeTsMs: decodeFromFieldsWithTypes("u64", item.fields.unsubscribe_ts_ms),
+            unlockedTsMs: decodeFromFieldsWithTypes("u64", item.fields.unlocked_ts_ms),
+            u64Padding: decodeFromFieldsWithTypes(reified.vector("u64"), item.fields.u64_padding),
+        });
+    }
+
+    static fromBcs(data: Uint8Array): UnsubscribeEvent {
+        return UnsubscribeEvent.fromFields(UnsubscribeEvent.bcs.parse(data));
+    }
+
+    toJSONField() {
+        return {
+            sender: this.sender,
+            index: this.index.toString(),
+            lpTokenType: this.lpTokenType.toJSONField(),
+            userShareId: this.userShareId.toString(),
+            unsubscribedShares: this.unsubscribedShares.toString(),
+            unsubscribeTsMs: this.unsubscribeTsMs.toString(),
+            unlockedTsMs: this.unlockedTsMs.toString(),
+            u64Padding: fieldToJSON<Vector<"u64">>(`vector<u64>`, this.u64Padding),
+        };
+    }
+
+    toJSON() {
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
+    }
+
+    static fromJSONField(field: any): UnsubscribeEvent {
+        return UnsubscribeEvent.reified().new({
+            sender: decodeFromJSONField("address", field.sender),
+            index: decodeFromJSONField("u64", field.index),
+            lpTokenType: decodeFromJSONField(TypeName.reified(), field.lpTokenType),
+            userShareId: decodeFromJSONField("u64", field.userShareId),
+            unsubscribedShares: decodeFromJSONField("u64", field.unsubscribedShares),
+            unsubscribeTsMs: decodeFromJSONField("u64", field.unsubscribeTsMs),
+            unlockedTsMs: decodeFromJSONField("u64", field.unlockedTsMs),
+            u64Padding: decodeFromJSONField(reified.vector("u64"), field.u64Padding),
+        });
+    }
+
+    static fromJSON(json: Record<string, any>): UnsubscribeEvent {
+        if (json.$typeName !== UnsubscribeEvent.$typeName) {
+            throw new Error("not a WithTwoGenerics json object");
+        }
+
+        return UnsubscribeEvent.fromJSONField(json);
+    }
+
+    static fromSuiParsedData(content: SuiParsedData): UnsubscribeEvent {
+        if (content.dataType !== "moveObject") {
+            throw new Error("not an object");
+        }
+        if (!isUnsubscribeEvent(content.type)) {
+            throw new Error(`object at ${(content.fields as any).id} is not a UnsubscribeEvent object`);
+        }
+        return UnsubscribeEvent.fromFieldsWithTypes(content);
+    }
+
+    static fromSuiObjectData(data: SuiObjectData): UnsubscribeEvent {
+        if (data.bcs) {
+            if (data.bcs.dataType !== "moveObject" || !isUnsubscribeEvent(data.bcs.type)) {
+                throw new Error(`object at is not a UnsubscribeEvent object`);
+            }
+
+            return UnsubscribeEvent.fromBcs(fromB64(data.bcs.bcsBytes));
+        }
+        if (data.content) {
+            return UnsubscribeEvent.fromSuiParsedData(data.content);
+        }
+        throw new Error("Both `bcs` and `content` fields are missing from the data. Include `showBcs` or `showContent` in the request.");
+    }
+
+    static async fetch(client: SuiClient, id: string): Promise<UnsubscribeEvent> {
+        const res = await client.getObject({ id, options: { showBcs: true } });
+        if (res.error) {
+            throw new Error(`error fetching UnsubscribeEvent object at id ${id}: ${res.error.code}`);
+        }
+        if (res.data?.bcs?.dataType !== "moveObject" || !isUnsubscribeEvent(res.data.bcs.type)) {
+            throw new Error(`object at id ${id} is not a UnsubscribeEvent object`);
+        }
+
+        return UnsubscribeEvent.fromSuiObjectData(res.data);
+    }
+}
+
+/* ============================== WithdrawIncentiveEvent =============================== */
+
+export function isWithdrawIncentiveEvent(type: string): boolean {
+    type = compressSuiType(type);
+    return type === `${PKG_V1}::stake_pool::WithdrawIncentiveEvent`;
+}
+
+export interface WithdrawIncentiveEventFields {
+    sender: ToField<"address">;
+    index: ToField<"u64">;
+    incentiveTokenType: ToField<TypeName>;
+    withdrawalAmount: ToField<"u64">;
+    u64Padding: ToField<Vector<"u64">>;
+}
+
+export type WithdrawIncentiveEventReified = Reified<WithdrawIncentiveEvent, WithdrawIncentiveEventFields>;
+
+export class WithdrawIncentiveEvent implements StructClass {
+    __StructClass = true as const;
+
+    static readonly $typeName = `${PKG_V1}::stake_pool::WithdrawIncentiveEvent`;
+    static readonly $numTypeParams = 0;
+    static readonly $isPhantom = [] as const;
+
+    readonly $typeName = WithdrawIncentiveEvent.$typeName;
+    readonly $fullTypeName: `${typeof PKG_V1}::stake_pool::WithdrawIncentiveEvent`;
+    readonly $typeArgs: [];
+    readonly $isPhantom = WithdrawIncentiveEvent.$isPhantom;
+
+    readonly sender: ToField<"address">;
+    readonly index: ToField<"u64">;
+    readonly incentiveTokenType: ToField<TypeName>;
+    readonly withdrawalAmount: ToField<"u64">;
+    readonly u64Padding: ToField<Vector<"u64">>;
+
+    private constructor(typeArgs: [], fields: WithdrawIncentiveEventFields) {
+        this.$fullTypeName = composeSuiType(
+            WithdrawIncentiveEvent.$typeName,
+            ...typeArgs
+        ) as `${typeof PKG_V1}::stake_pool::WithdrawIncentiveEvent`;
+        this.$typeArgs = typeArgs;
+
+        this.sender = fields.sender;
+        this.index = fields.index;
+        this.incentiveTokenType = fields.incentiveTokenType;
+        this.withdrawalAmount = fields.withdrawalAmount;
+        this.u64Padding = fields.u64Padding;
+    }
+
+    static reified(): WithdrawIncentiveEventReified {
+        return {
+            typeName: WithdrawIncentiveEvent.$typeName,
+            fullTypeName: composeSuiType(WithdrawIncentiveEvent.$typeName, ...[]) as `${typeof PKG_V1}::stake_pool::WithdrawIncentiveEvent`,
+            typeArgs: [] as [],
+            isPhantom: WithdrawIncentiveEvent.$isPhantom,
+            reifiedTypeArgs: [],
+            fromFields: (fields: Record<string, any>) => WithdrawIncentiveEvent.fromFields(fields),
+            fromFieldsWithTypes: (item: FieldsWithTypes) => WithdrawIncentiveEvent.fromFieldsWithTypes(item),
+            fromBcs: (data: Uint8Array) => WithdrawIncentiveEvent.fromBcs(data),
+            bcs: WithdrawIncentiveEvent.bcs,
+            fromJSONField: (field: any) => WithdrawIncentiveEvent.fromJSONField(field),
+            fromJSON: (json: Record<string, any>) => WithdrawIncentiveEvent.fromJSON(json),
+            fromSuiParsedData: (content: SuiParsedData) => WithdrawIncentiveEvent.fromSuiParsedData(content),
+            fromSuiObjectData: (content: SuiObjectData) => WithdrawIncentiveEvent.fromSuiObjectData(content),
+            fetch: async (client: SuiClient, id: string) => WithdrawIncentiveEvent.fetch(client, id),
+            new: (fields: WithdrawIncentiveEventFields) => {
+                return new WithdrawIncentiveEvent([], fields);
+            },
+            kind: "StructClassReified",
+        };
+    }
+
+    static get r() {
+        return WithdrawIncentiveEvent.reified();
+    }
+
+    static phantom(): PhantomReified<ToTypeStr<WithdrawIncentiveEvent>> {
+        return phantom(WithdrawIncentiveEvent.reified());
+    }
+    static get p() {
+        return WithdrawIncentiveEvent.phantom();
+    }
+
+    static get bcs() {
+        return bcs.struct("WithdrawIncentiveEvent", {
+            sender: bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
+            index: bcs.u64(),
+            incentive_token_type: TypeName.bcs,
+            withdrawal_amount: bcs.u64(),
+            u64_padding: bcs.vector(bcs.u64()),
+        });
+    }
+
+    static fromFields(fields: Record<string, any>): WithdrawIncentiveEvent {
+        return WithdrawIncentiveEvent.reified().new({
+            sender: decodeFromFields("address", fields.sender),
+            index: decodeFromFields("u64", fields.index),
+            incentiveTokenType: decodeFromFields(TypeName.reified(), fields.incentive_token_type),
+            withdrawalAmount: decodeFromFields("u64", fields.withdrawal_amount),
+            u64Padding: decodeFromFields(reified.vector("u64"), fields.u64_padding),
+        });
+    }
+
+    static fromFieldsWithTypes(item: FieldsWithTypes): WithdrawIncentiveEvent {
+        if (!isWithdrawIncentiveEvent(item.type)) {
+            throw new Error("not a WithdrawIncentiveEvent type");
+        }
+
+        return WithdrawIncentiveEvent.reified().new({
+            sender: decodeFromFieldsWithTypes("address", item.fields.sender),
+            index: decodeFromFieldsWithTypes("u64", item.fields.index),
+            incentiveTokenType: decodeFromFieldsWithTypes(TypeName.reified(), item.fields.incentive_token_type),
+            withdrawalAmount: decodeFromFieldsWithTypes("u64", item.fields.withdrawal_amount),
+            u64Padding: decodeFromFieldsWithTypes(reified.vector("u64"), item.fields.u64_padding),
+        });
+    }
+
+    static fromBcs(data: Uint8Array): WithdrawIncentiveEvent {
+        return WithdrawIncentiveEvent.fromFields(WithdrawIncentiveEvent.bcs.parse(data));
+    }
+
+    toJSONField() {
+        return {
+            sender: this.sender,
+            index: this.index.toString(),
+            incentiveTokenType: this.incentiveTokenType.toJSONField(),
+            withdrawalAmount: this.withdrawalAmount.toString(),
+            u64Padding: fieldToJSON<Vector<"u64">>(`vector<u64>`, this.u64Padding),
+        };
+    }
+
+    toJSON() {
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
+    }
+
+    static fromJSONField(field: any): WithdrawIncentiveEvent {
+        return WithdrawIncentiveEvent.reified().new({
+            sender: decodeFromJSONField("address", field.sender),
+            index: decodeFromJSONField("u64", field.index),
+            incentiveTokenType: decodeFromJSONField(TypeName.reified(), field.incentiveTokenType),
+            withdrawalAmount: decodeFromJSONField("u64", field.withdrawalAmount),
+            u64Padding: decodeFromJSONField(reified.vector("u64"), field.u64Padding),
+        });
+    }
+
+    static fromJSON(json: Record<string, any>): WithdrawIncentiveEvent {
+        if (json.$typeName !== WithdrawIncentiveEvent.$typeName) {
+            throw new Error("not a WithTwoGenerics json object");
+        }
+
+        return WithdrawIncentiveEvent.fromJSONField(json);
+    }
+
+    static fromSuiParsedData(content: SuiParsedData): WithdrawIncentiveEvent {
+        if (content.dataType !== "moveObject") {
+            throw new Error("not an object");
+        }
+        if (!isWithdrawIncentiveEvent(content.type)) {
+            throw new Error(`object at ${(content.fields as any).id} is not a WithdrawIncentiveEvent object`);
+        }
+        return WithdrawIncentiveEvent.fromFieldsWithTypes(content);
+    }
+
+    static fromSuiObjectData(data: SuiObjectData): WithdrawIncentiveEvent {
+        if (data.bcs) {
+            if (data.bcs.dataType !== "moveObject" || !isWithdrawIncentiveEvent(data.bcs.type)) {
+                throw new Error(`object at is not a WithdrawIncentiveEvent object`);
+            }
+
+            return WithdrawIncentiveEvent.fromBcs(fromB64(data.bcs.bcsBytes));
+        }
+        if (data.content) {
+            return WithdrawIncentiveEvent.fromSuiParsedData(data.content);
+        }
+        throw new Error("Both `bcs` and `content` fields are missing from the data. Include `showBcs` or `showContent` in the request.");
+    }
+
+    static async fetch(client: SuiClient, id: string): Promise<WithdrawIncentiveEvent> {
+        const res = await client.getObject({ id, options: { showBcs: true } });
+        if (res.error) {
+            throw new Error(`error fetching WithdrawIncentiveEvent object at id ${id}: ${res.error.code}`);
+        }
+        if (res.data?.bcs?.dataType !== "moveObject" || !isWithdrawIncentiveEvent(res.data.bcs.type)) {
+            throw new Error(`object at id ${id} is not a WithdrawIncentiveEvent object`);
+        }
+
+        return WithdrawIncentiveEvent.fromSuiObjectData(res.data);
+    }
+}
+
 /* ============================== ActivateIncentiveTokenEvent =============================== */
 
 export function isActivateIncentiveTokenEvent(type: string): boolean {
@@ -3419,217 +3820,6 @@ export class UnstakeEvent implements StructClass {
     }
 }
 
-/* ============================== UnsubscribeEvent =============================== */
-
-export function isUnsubscribeEvent(type: string): boolean {
-    type = compressSuiType(type);
-    return type === `${PKG_V1}::stake_pool::UnsubscribeEvent`;
-}
-
-export interface UnsubscribeEventFields {
-    sender: ToField<"address">;
-    index: ToField<"u64">;
-    lpTokenType: ToField<TypeName>;
-    userShareId: ToField<"u64">;
-    unsubscribedShares: ToField<"u64">;
-    unsubscribeTsMs: ToField<"u64">;
-    unlockedTsMs: ToField<"u64">;
-    u64Padding: ToField<Vector<"u64">>;
-}
-
-export type UnsubscribeEventReified = Reified<UnsubscribeEvent, UnsubscribeEventFields>;
-
-export class UnsubscribeEvent implements StructClass {
-    __StructClass = true as const;
-
-    static readonly $typeName = `${PKG_V1}::stake_pool::UnsubscribeEvent`;
-    static readonly $numTypeParams = 0;
-    static readonly $isPhantom = [] as const;
-
-    readonly $typeName = UnsubscribeEvent.$typeName;
-    readonly $fullTypeName: `${typeof PKG_V1}::stake_pool::UnsubscribeEvent`;
-    readonly $typeArgs: [];
-    readonly $isPhantom = UnsubscribeEvent.$isPhantom;
-
-    readonly sender: ToField<"address">;
-    readonly index: ToField<"u64">;
-    readonly lpTokenType: ToField<TypeName>;
-    readonly userShareId: ToField<"u64">;
-    readonly unsubscribedShares: ToField<"u64">;
-    readonly unsubscribeTsMs: ToField<"u64">;
-    readonly unlockedTsMs: ToField<"u64">;
-    readonly u64Padding: ToField<Vector<"u64">>;
-
-    private constructor(typeArgs: [], fields: UnsubscribeEventFields) {
-        this.$fullTypeName = composeSuiType(UnsubscribeEvent.$typeName, ...typeArgs) as `${typeof PKG_V1}::stake_pool::UnsubscribeEvent`;
-        this.$typeArgs = typeArgs;
-
-        this.sender = fields.sender;
-        this.index = fields.index;
-        this.lpTokenType = fields.lpTokenType;
-        this.userShareId = fields.userShareId;
-        this.unsubscribedShares = fields.unsubscribedShares;
-        this.unsubscribeTsMs = fields.unsubscribeTsMs;
-        this.unlockedTsMs = fields.unlockedTsMs;
-        this.u64Padding = fields.u64Padding;
-    }
-
-    static reified(): UnsubscribeEventReified {
-        return {
-            typeName: UnsubscribeEvent.$typeName,
-            fullTypeName: composeSuiType(UnsubscribeEvent.$typeName, ...[]) as `${typeof PKG_V1}::stake_pool::UnsubscribeEvent`,
-            typeArgs: [] as [],
-            isPhantom: UnsubscribeEvent.$isPhantom,
-            reifiedTypeArgs: [],
-            fromFields: (fields: Record<string, any>) => UnsubscribeEvent.fromFields(fields),
-            fromFieldsWithTypes: (item: FieldsWithTypes) => UnsubscribeEvent.fromFieldsWithTypes(item),
-            fromBcs: (data: Uint8Array) => UnsubscribeEvent.fromBcs(data),
-            bcs: UnsubscribeEvent.bcs,
-            fromJSONField: (field: any) => UnsubscribeEvent.fromJSONField(field),
-            fromJSON: (json: Record<string, any>) => UnsubscribeEvent.fromJSON(json),
-            fromSuiParsedData: (content: SuiParsedData) => UnsubscribeEvent.fromSuiParsedData(content),
-            fromSuiObjectData: (content: SuiObjectData) => UnsubscribeEvent.fromSuiObjectData(content),
-            fetch: async (client: SuiClient, id: string) => UnsubscribeEvent.fetch(client, id),
-            new: (fields: UnsubscribeEventFields) => {
-                return new UnsubscribeEvent([], fields);
-            },
-            kind: "StructClassReified",
-        };
-    }
-
-    static get r() {
-        return UnsubscribeEvent.reified();
-    }
-
-    static phantom(): PhantomReified<ToTypeStr<UnsubscribeEvent>> {
-        return phantom(UnsubscribeEvent.reified());
-    }
-    static get p() {
-        return UnsubscribeEvent.phantom();
-    }
-
-    static get bcs() {
-        return bcs.struct("UnsubscribeEvent", {
-            sender: bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
-            index: bcs.u64(),
-            lp_token_type: TypeName.bcs,
-            user_share_id: bcs.u64(),
-            unsubscribed_shares: bcs.u64(),
-            unsubscribe_ts_ms: bcs.u64(),
-            unlocked_ts_ms: bcs.u64(),
-            u64_padding: bcs.vector(bcs.u64()),
-        });
-    }
-
-    static fromFields(fields: Record<string, any>): UnsubscribeEvent {
-        return UnsubscribeEvent.reified().new({
-            sender: decodeFromFields("address", fields.sender),
-            index: decodeFromFields("u64", fields.index),
-            lpTokenType: decodeFromFields(TypeName.reified(), fields.lp_token_type),
-            userShareId: decodeFromFields("u64", fields.user_share_id),
-            unsubscribedShares: decodeFromFields("u64", fields.unsubscribed_shares),
-            unsubscribeTsMs: decodeFromFields("u64", fields.unsubscribe_ts_ms),
-            unlockedTsMs: decodeFromFields("u64", fields.unlocked_ts_ms),
-            u64Padding: decodeFromFields(reified.vector("u64"), fields.u64_padding),
-        });
-    }
-
-    static fromFieldsWithTypes(item: FieldsWithTypes): UnsubscribeEvent {
-        if (!isUnsubscribeEvent(item.type)) {
-            throw new Error("not a UnsubscribeEvent type");
-        }
-
-        return UnsubscribeEvent.reified().new({
-            sender: decodeFromFieldsWithTypes("address", item.fields.sender),
-            index: decodeFromFieldsWithTypes("u64", item.fields.index),
-            lpTokenType: decodeFromFieldsWithTypes(TypeName.reified(), item.fields.lp_token_type),
-            userShareId: decodeFromFieldsWithTypes("u64", item.fields.user_share_id),
-            unsubscribedShares: decodeFromFieldsWithTypes("u64", item.fields.unsubscribed_shares),
-            unsubscribeTsMs: decodeFromFieldsWithTypes("u64", item.fields.unsubscribe_ts_ms),
-            unlockedTsMs: decodeFromFieldsWithTypes("u64", item.fields.unlocked_ts_ms),
-            u64Padding: decodeFromFieldsWithTypes(reified.vector("u64"), item.fields.u64_padding),
-        });
-    }
-
-    static fromBcs(data: Uint8Array): UnsubscribeEvent {
-        return UnsubscribeEvent.fromFields(UnsubscribeEvent.bcs.parse(data));
-    }
-
-    toJSONField() {
-        return {
-            sender: this.sender,
-            index: this.index.toString(),
-            lpTokenType: this.lpTokenType.toJSONField(),
-            userShareId: this.userShareId.toString(),
-            unsubscribedShares: this.unsubscribedShares.toString(),
-            unsubscribeTsMs: this.unsubscribeTsMs.toString(),
-            unlockedTsMs: this.unlockedTsMs.toString(),
-            u64Padding: fieldToJSON<Vector<"u64">>(`vector<u64>`, this.u64Padding),
-        };
-    }
-
-    toJSON() {
-        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
-    }
-
-    static fromJSONField(field: any): UnsubscribeEvent {
-        return UnsubscribeEvent.reified().new({
-            sender: decodeFromJSONField("address", field.sender),
-            index: decodeFromJSONField("u64", field.index),
-            lpTokenType: decodeFromJSONField(TypeName.reified(), field.lpTokenType),
-            userShareId: decodeFromJSONField("u64", field.userShareId),
-            unsubscribedShares: decodeFromJSONField("u64", field.unsubscribedShares),
-            unsubscribeTsMs: decodeFromJSONField("u64", field.unsubscribeTsMs),
-            unlockedTsMs: decodeFromJSONField("u64", field.unlockedTsMs),
-            u64Padding: decodeFromJSONField(reified.vector("u64"), field.u64Padding),
-        });
-    }
-
-    static fromJSON(json: Record<string, any>): UnsubscribeEvent {
-        if (json.$typeName !== UnsubscribeEvent.$typeName) {
-            throw new Error("not a WithTwoGenerics json object");
-        }
-
-        return UnsubscribeEvent.fromJSONField(json);
-    }
-
-    static fromSuiParsedData(content: SuiParsedData): UnsubscribeEvent {
-        if (content.dataType !== "moveObject") {
-            throw new Error("not an object");
-        }
-        if (!isUnsubscribeEvent(content.type)) {
-            throw new Error(`object at ${(content.fields as any).id} is not a UnsubscribeEvent object`);
-        }
-        return UnsubscribeEvent.fromFieldsWithTypes(content);
-    }
-
-    static fromSuiObjectData(data: SuiObjectData): UnsubscribeEvent {
-        if (data.bcs) {
-            if (data.bcs.dataType !== "moveObject" || !isUnsubscribeEvent(data.bcs.type)) {
-                throw new Error(`object at is not a UnsubscribeEvent object`);
-            }
-
-            return UnsubscribeEvent.fromBcs(fromB64(data.bcs.bcsBytes));
-        }
-        if (data.content) {
-            return UnsubscribeEvent.fromSuiParsedData(data.content);
-        }
-        throw new Error("Both `bcs` and `content` fields are missing from the data. Include `showBcs` or `showContent` in the request.");
-    }
-
-    static async fetch(client: SuiClient, id: string): Promise<UnsubscribeEvent> {
-        const res = await client.getObject({ id, options: { showBcs: true } });
-        if (res.error) {
-            throw new Error(`error fetching UnsubscribeEvent object at id ${id}: ${res.error.code}`);
-        }
-        if (res.data?.bcs?.dataType !== "moveObject" || !isUnsubscribeEvent(res.data.bcs.type)) {
-            throw new Error(`object at id ${id} is not a UnsubscribeEvent object`);
-        }
-
-        return UnsubscribeEvent.fromSuiObjectData(res.data);
-    }
-}
-
 /* ============================== UpdateIncentiveConfigEvent =============================== */
 
 export function isUpdateIncentiveConfigEvent(type: string): boolean {
@@ -4013,195 +4203,5 @@ export class UpdateUnlockCountdownTsMsEvent implements StructClass {
         }
 
         return UpdateUnlockCountdownTsMsEvent.fromSuiObjectData(res.data);
-    }
-}
-
-/* ============================== WithdrawIncentiveEvent =============================== */
-
-export function isWithdrawIncentiveEvent(type: string): boolean {
-    type = compressSuiType(type);
-    return type === `${PKG_V1}::stake_pool::WithdrawIncentiveEvent`;
-}
-
-export interface WithdrawIncentiveEventFields {
-    sender: ToField<"address">;
-    index: ToField<"u64">;
-    incentiveTokenType: ToField<TypeName>;
-    withdrawalAmount: ToField<"u64">;
-    u64Padding: ToField<Vector<"u64">>;
-}
-
-export type WithdrawIncentiveEventReified = Reified<WithdrawIncentiveEvent, WithdrawIncentiveEventFields>;
-
-export class WithdrawIncentiveEvent implements StructClass {
-    __StructClass = true as const;
-
-    static readonly $typeName = `${PKG_V1}::stake_pool::WithdrawIncentiveEvent`;
-    static readonly $numTypeParams = 0;
-    static readonly $isPhantom = [] as const;
-
-    readonly $typeName = WithdrawIncentiveEvent.$typeName;
-    readonly $fullTypeName: `${typeof PKG_V1}::stake_pool::WithdrawIncentiveEvent`;
-    readonly $typeArgs: [];
-    readonly $isPhantom = WithdrawIncentiveEvent.$isPhantom;
-
-    readonly sender: ToField<"address">;
-    readonly index: ToField<"u64">;
-    readonly incentiveTokenType: ToField<TypeName>;
-    readonly withdrawalAmount: ToField<"u64">;
-    readonly u64Padding: ToField<Vector<"u64">>;
-
-    private constructor(typeArgs: [], fields: WithdrawIncentiveEventFields) {
-        this.$fullTypeName = composeSuiType(
-            WithdrawIncentiveEvent.$typeName,
-            ...typeArgs
-        ) as `${typeof PKG_V1}::stake_pool::WithdrawIncentiveEvent`;
-        this.$typeArgs = typeArgs;
-
-        this.sender = fields.sender;
-        this.index = fields.index;
-        this.incentiveTokenType = fields.incentiveTokenType;
-        this.withdrawalAmount = fields.withdrawalAmount;
-        this.u64Padding = fields.u64Padding;
-    }
-
-    static reified(): WithdrawIncentiveEventReified {
-        return {
-            typeName: WithdrawIncentiveEvent.$typeName,
-            fullTypeName: composeSuiType(WithdrawIncentiveEvent.$typeName, ...[]) as `${typeof PKG_V1}::stake_pool::WithdrawIncentiveEvent`,
-            typeArgs: [] as [],
-            isPhantom: WithdrawIncentiveEvent.$isPhantom,
-            reifiedTypeArgs: [],
-            fromFields: (fields: Record<string, any>) => WithdrawIncentiveEvent.fromFields(fields),
-            fromFieldsWithTypes: (item: FieldsWithTypes) => WithdrawIncentiveEvent.fromFieldsWithTypes(item),
-            fromBcs: (data: Uint8Array) => WithdrawIncentiveEvent.fromBcs(data),
-            bcs: WithdrawIncentiveEvent.bcs,
-            fromJSONField: (field: any) => WithdrawIncentiveEvent.fromJSONField(field),
-            fromJSON: (json: Record<string, any>) => WithdrawIncentiveEvent.fromJSON(json),
-            fromSuiParsedData: (content: SuiParsedData) => WithdrawIncentiveEvent.fromSuiParsedData(content),
-            fromSuiObjectData: (content: SuiObjectData) => WithdrawIncentiveEvent.fromSuiObjectData(content),
-            fetch: async (client: SuiClient, id: string) => WithdrawIncentiveEvent.fetch(client, id),
-            new: (fields: WithdrawIncentiveEventFields) => {
-                return new WithdrawIncentiveEvent([], fields);
-            },
-            kind: "StructClassReified",
-        };
-    }
-
-    static get r() {
-        return WithdrawIncentiveEvent.reified();
-    }
-
-    static phantom(): PhantomReified<ToTypeStr<WithdrawIncentiveEvent>> {
-        return phantom(WithdrawIncentiveEvent.reified());
-    }
-    static get p() {
-        return WithdrawIncentiveEvent.phantom();
-    }
-
-    static get bcs() {
-        return bcs.struct("WithdrawIncentiveEvent", {
-            sender: bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
-            index: bcs.u64(),
-            incentive_token_type: TypeName.bcs,
-            withdrawal_amount: bcs.u64(),
-            u64_padding: bcs.vector(bcs.u64()),
-        });
-    }
-
-    static fromFields(fields: Record<string, any>): WithdrawIncentiveEvent {
-        return WithdrawIncentiveEvent.reified().new({
-            sender: decodeFromFields("address", fields.sender),
-            index: decodeFromFields("u64", fields.index),
-            incentiveTokenType: decodeFromFields(TypeName.reified(), fields.incentive_token_type),
-            withdrawalAmount: decodeFromFields("u64", fields.withdrawal_amount),
-            u64Padding: decodeFromFields(reified.vector("u64"), fields.u64_padding),
-        });
-    }
-
-    static fromFieldsWithTypes(item: FieldsWithTypes): WithdrawIncentiveEvent {
-        if (!isWithdrawIncentiveEvent(item.type)) {
-            throw new Error("not a WithdrawIncentiveEvent type");
-        }
-
-        return WithdrawIncentiveEvent.reified().new({
-            sender: decodeFromFieldsWithTypes("address", item.fields.sender),
-            index: decodeFromFieldsWithTypes("u64", item.fields.index),
-            incentiveTokenType: decodeFromFieldsWithTypes(TypeName.reified(), item.fields.incentive_token_type),
-            withdrawalAmount: decodeFromFieldsWithTypes("u64", item.fields.withdrawal_amount),
-            u64Padding: decodeFromFieldsWithTypes(reified.vector("u64"), item.fields.u64_padding),
-        });
-    }
-
-    static fromBcs(data: Uint8Array): WithdrawIncentiveEvent {
-        return WithdrawIncentiveEvent.fromFields(WithdrawIncentiveEvent.bcs.parse(data));
-    }
-
-    toJSONField() {
-        return {
-            sender: this.sender,
-            index: this.index.toString(),
-            incentiveTokenType: this.incentiveTokenType.toJSONField(),
-            withdrawalAmount: this.withdrawalAmount.toString(),
-            u64Padding: fieldToJSON<Vector<"u64">>(`vector<u64>`, this.u64Padding),
-        };
-    }
-
-    toJSON() {
-        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
-    }
-
-    static fromJSONField(field: any): WithdrawIncentiveEvent {
-        return WithdrawIncentiveEvent.reified().new({
-            sender: decodeFromJSONField("address", field.sender),
-            index: decodeFromJSONField("u64", field.index),
-            incentiveTokenType: decodeFromJSONField(TypeName.reified(), field.incentiveTokenType),
-            withdrawalAmount: decodeFromJSONField("u64", field.withdrawalAmount),
-            u64Padding: decodeFromJSONField(reified.vector("u64"), field.u64Padding),
-        });
-    }
-
-    static fromJSON(json: Record<string, any>): WithdrawIncentiveEvent {
-        if (json.$typeName !== WithdrawIncentiveEvent.$typeName) {
-            throw new Error("not a WithTwoGenerics json object");
-        }
-
-        return WithdrawIncentiveEvent.fromJSONField(json);
-    }
-
-    static fromSuiParsedData(content: SuiParsedData): WithdrawIncentiveEvent {
-        if (content.dataType !== "moveObject") {
-            throw new Error("not an object");
-        }
-        if (!isWithdrawIncentiveEvent(content.type)) {
-            throw new Error(`object at ${(content.fields as any).id} is not a WithdrawIncentiveEvent object`);
-        }
-        return WithdrawIncentiveEvent.fromFieldsWithTypes(content);
-    }
-
-    static fromSuiObjectData(data: SuiObjectData): WithdrawIncentiveEvent {
-        if (data.bcs) {
-            if (data.bcs.dataType !== "moveObject" || !isWithdrawIncentiveEvent(data.bcs.type)) {
-                throw new Error(`object at is not a WithdrawIncentiveEvent object`);
-            }
-
-            return WithdrawIncentiveEvent.fromBcs(fromB64(data.bcs.bcsBytes));
-        }
-        if (data.content) {
-            return WithdrawIncentiveEvent.fromSuiParsedData(data.content);
-        }
-        throw new Error("Both `bcs` and `content` fields are missing from the data. Include `showBcs` or `showContent` in the request.");
-    }
-
-    static async fetch(client: SuiClient, id: string): Promise<WithdrawIncentiveEvent> {
-        const res = await client.getObject({ id, options: { showBcs: true } });
-        if (res.error) {
-            throw new Error(`error fetching WithdrawIncentiveEvent object at id ${id}: ${res.error.code}`);
-        }
-        if (res.data?.bcs?.dataType !== "moveObject" || !isWithdrawIncentiveEvent(res.data.bcs.type)) {
-            throw new Error(`object at id ${id} is not a WithdrawIncentiveEvent object`);
-        }
-
-        return WithdrawIncentiveEvent.fromSuiObjectData(res.data);
     }
 }

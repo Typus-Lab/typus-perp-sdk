@@ -32,6 +32,7 @@ export function isOptionCollateralInfo(type: string): boolean {
 export interface OptionCollateralInfoFields {
     index: ToField<"u64">;
     bidToken: ToField<TypeName>;
+    bidReceiptsBcs: ToField<Vector<Vector<"u8">>>;
 }
 
 export type OptionCollateralInfoReified = Reified<OptionCollateralInfo, OptionCollateralInfoFields>;
@@ -50,6 +51,7 @@ export class OptionCollateralInfo implements StructClass {
 
     readonly index: ToField<"u64">;
     readonly bidToken: ToField<TypeName>;
+    readonly bidReceiptsBcs: ToField<Vector<Vector<"u8">>>;
 
     private constructor(typeArgs: [], fields: OptionCollateralInfoFields) {
         this.$fullTypeName = composeSuiType(
@@ -60,6 +62,7 @@ export class OptionCollateralInfo implements StructClass {
 
         this.index = fields.index;
         this.bidToken = fields.bidToken;
+        this.bidReceiptsBcs = fields.bidReceiptsBcs;
     }
 
     static reified(): OptionCollateralInfoReified {
@@ -100,6 +103,7 @@ export class OptionCollateralInfo implements StructClass {
         return bcs.struct("OptionCollateralInfo", {
             index: bcs.u64(),
             bid_token: TypeName.bcs,
+            bid_receipts_bcs: bcs.vector(bcs.vector(bcs.u8())),
         });
     }
 
@@ -107,6 +111,7 @@ export class OptionCollateralInfo implements StructClass {
         return OptionCollateralInfo.reified().new({
             index: decodeFromFields("u64", fields.index),
             bidToken: decodeFromFields(TypeName.reified(), fields.bid_token),
+            bidReceiptsBcs: decodeFromFields(reified.vector(reified.vector("u8")), fields.bid_receipts_bcs),
         });
     }
 
@@ -118,6 +123,7 @@ export class OptionCollateralInfo implements StructClass {
         return OptionCollateralInfo.reified().new({
             index: decodeFromFieldsWithTypes("u64", item.fields.index),
             bidToken: decodeFromFieldsWithTypes(TypeName.reified(), item.fields.bid_token),
+            bidReceiptsBcs: decodeFromFieldsWithTypes(reified.vector(reified.vector("u8")), item.fields.bid_receipts_bcs),
         });
     }
 
@@ -129,6 +135,7 @@ export class OptionCollateralInfo implements StructClass {
         return {
             index: this.index.toString(),
             bidToken: this.bidToken.toJSONField(),
+            bidReceiptsBcs: fieldToJSON<Vector<Vector<"u8">>>(`vector<vector<u8>>`, this.bidReceiptsBcs),
         };
     }
 
@@ -140,6 +147,7 @@ export class OptionCollateralInfo implements StructClass {
         return OptionCollateralInfo.reified().new({
             index: decodeFromJSONField("u64", field.index),
             bidToken: decodeFromJSONField(TypeName.reified(), field.bidToken),
+            bidReceiptsBcs: decodeFromJSONField(reified.vector(reified.vector("u8")), field.bidReceiptsBcs),
         });
     }
 
@@ -209,6 +217,7 @@ export interface OrderFilledEventFields {
     positionAveragePrice: ToField<"u64">;
     realizedTradingFee: ToField<"u64">;
     realizedBorrowFee: ToField<"u64">;
+    realizedFeeInUsd: ToField<"u64">;
     u64Padding: ToField<Vector<"u64">>;
 }
 
@@ -239,6 +248,7 @@ export class OrderFilledEvent implements StructClass {
     readonly positionAveragePrice: ToField<"u64">;
     readonly realizedTradingFee: ToField<"u64">;
     readonly realizedBorrowFee: ToField<"u64">;
+    readonly realizedFeeInUsd: ToField<"u64">;
     readonly u64Padding: ToField<Vector<"u64">>;
 
     private constructor(typeArgs: [], fields: OrderFilledEventFields) {
@@ -258,6 +268,7 @@ export class OrderFilledEvent implements StructClass {
         this.positionAveragePrice = fields.positionAveragePrice;
         this.realizedTradingFee = fields.realizedTradingFee;
         this.realizedBorrowFee = fields.realizedBorrowFee;
+        this.realizedFeeInUsd = fields.realizedFeeInUsd;
         this.u64Padding = fields.u64Padding;
     }
 
@@ -310,6 +321,7 @@ export class OrderFilledEvent implements StructClass {
             position_average_price: bcs.u64(),
             realized_trading_fee: bcs.u64(),
             realized_borrow_fee: bcs.u64(),
+            realized_fee_in_usd: bcs.u64(),
             u64_padding: bcs.vector(bcs.u64()),
         });
     }
@@ -329,6 +341,7 @@ export class OrderFilledEvent implements StructClass {
             positionAveragePrice: decodeFromFields("u64", fields.position_average_price),
             realizedTradingFee: decodeFromFields("u64", fields.realized_trading_fee),
             realizedBorrowFee: decodeFromFields("u64", fields.realized_borrow_fee),
+            realizedFeeInUsd: decodeFromFields("u64", fields.realized_fee_in_usd),
             u64Padding: decodeFromFields(reified.vector("u64"), fields.u64_padding),
         });
     }
@@ -352,6 +365,7 @@ export class OrderFilledEvent implements StructClass {
             positionAveragePrice: decodeFromFieldsWithTypes("u64", item.fields.position_average_price),
             realizedTradingFee: decodeFromFieldsWithTypes("u64", item.fields.realized_trading_fee),
             realizedBorrowFee: decodeFromFieldsWithTypes("u64", item.fields.realized_borrow_fee),
+            realizedFeeInUsd: decodeFromFieldsWithTypes("u64", item.fields.realized_fee_in_usd),
             u64Padding: decodeFromFieldsWithTypes(reified.vector("u64"), item.fields.u64_padding),
         });
     }
@@ -375,6 +389,7 @@ export class OrderFilledEvent implements StructClass {
             positionAveragePrice: this.positionAveragePrice.toString(),
             realizedTradingFee: this.realizedTradingFee.toString(),
             realizedBorrowFee: this.realizedBorrowFee.toString(),
+            realizedFeeInUsd: this.realizedFeeInUsd.toString(),
             u64Padding: fieldToJSON<Vector<"u64">>(`vector<u64>`, this.u64Padding),
         };
     }
@@ -398,6 +413,7 @@ export class OrderFilledEvent implements StructClass {
             positionAveragePrice: decodeFromJSONField("u64", field.positionAveragePrice),
             realizedTradingFee: decodeFromJSONField("u64", field.realizedTradingFee),
             realizedBorrowFee: decodeFromJSONField("u64", field.realizedBorrowFee),
+            realizedFeeInUsd: decodeFromJSONField("u64", field.realizedFeeInUsd),
             u64Padding: decodeFromJSONField(reified.vector("u64"), field.u64Padding),
         });
     }

@@ -1,6 +1,10 @@
 import { PUBLISHED_AT } from "..";
 import { Transaction } from "@mysten/sui/transactions";
 
+export function auctionNotYetEnded(tx: Transaction) {
+    return tx.moveCall({ target: `${PUBLISHED_AT}::error::auction_not_yet_ended`, arguments: [] });
+}
+
 export function invalidVersion(tx: Transaction) {
     return tx.moveCall({ target: `${PUBLISHED_AT}::error::invalid_version`, arguments: [] });
 }
@@ -165,6 +169,10 @@ export function portfolioIndexMismatched(tx: Transaction) {
     return tx.moveCall({ target: `${PUBLISHED_AT}::error::portfolio_index_mismatched`, arguments: [] });
 }
 
+export function positionIdNeededWithReduceOnlyOrder(tx: Transaction) {
+    return tx.moveCall({ target: `${PUBLISHED_AT}::error::position_id_needed_with_reduce_only_order`, arguments: [] });
+}
+
 export function processShouldRemoveOrder(tx: Transaction) {
     return tx.moveCall({ target: `${PUBLISHED_AT}::error::process_should_remove_order`, arguments: [] });
 }
@@ -207,6 +215,10 @@ export function tokenPoolAlreadyActive(tx: Transaction) {
 
 export function tokenPoolInactive(tx: Transaction) {
     return tx.moveCall({ target: `${PUBLISHED_AT}::error::token_pool_inactive`, arguments: [] });
+}
+
+export function tooManyLinkedOrders(tx: Transaction) {
+    return tx.moveCall({ target: `${PUBLISHED_AT}::error::too_many_linked_orders`, arguments: [] });
 }
 
 export function tradingSymbolExisted(tx: Transaction) {

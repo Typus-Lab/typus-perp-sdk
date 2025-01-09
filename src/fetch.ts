@@ -2,6 +2,7 @@ import { SuiClient } from "@mysten/sui/client";
 import { Transaction } from "@mysten/sui/transactions";
 import { bcs, BcsReader } from "@mysten/bcs";
 
+import { MarketRegistry, Markets, SymbolMarket } from "./typus_perp/trading/structs";
 import { LiquidityPool } from "./typus_perp/lp-pool/structs";
 import { TradingOrder, Position } from "./typus_perp/position/structs";
 import {
@@ -13,12 +14,11 @@ import {
 import { getUserShares } from "./typus_stake_pool/stake-pool/functions";
 import { LpUserShare, StakePool } from "./typus_stake_pool/stake-pool/structs";
 
-import { CLOCK, tokenType, typeArgToToken } from "@typus/typus-sdk/dist/src/constants";
+import { CLOCK, SENDER, tokenType, typeArgToToken } from "@typus/typus-sdk/dist/src/constants";
 import { priceInfoObjectIds, pythStateId, PythClient, updatePyth, TypusConfig } from "@typus/typus-sdk/dist/src/utils";
 
 import { NETWORK } from ".";
 // import { readVecOrder, readVecPosition, readVecShares } from "./readVec";
-// import { MarketRegistry, Markets, SymbolMarket } from "./typus_perp/trading/structs";
 
 export async function getLpPools(config: TypusConfig): Promise<LiquidityPool[]> {
     // const lpPoolRegistry = await Registry.fetch(provider, config.registry.LP_POOL);
@@ -55,6 +55,46 @@ export async function getStakePools(config: TypusConfig): Promise<StakePool[]> {
     }
 
     return stakePools;
+}
+
+export interface MarketsData {
+    markets: Markets;
+    symbolMarkets: SymbolMarket[];
+}
+
+export async function getMarkets(
+    config: TypusConfig,
+    input: {
+        indexes: string[];
+    }
+): Promise<MarketsData[]> {
+    let provider = new SuiClient({ url: config.rpcEndpoint });
+    let transaction = new Transaction();
+    transaction.moveCall({
+        target: `${config.package.perp.perp}::trading::get_markets_bcs`,
+        arguments: [transaction.object(config.registry.perp.market), transaction.pure.vector("u64", input.indexes)],
+    });
+    let devInspectTransactionBlockResult = await provider.devInspectTransactionBlock({ sender: SENDER, transactionBlock: transaction });
+    // @ts-ignore
+    let bytes = devInspectTransactionBlockResult.results[0].returnValues[0][0];
+    let reader = new BcsReader(new Uint8Array(bytes));
+    let marketIndex = 0;
+    let results: MarketsData[] = [];
+    reader.readVec((reader, i) => {
+        if (i == marketIndex) {
+            let length = reader.readULEB();
+            let bytes = reader.readBytes(length);
+            let markets = Markets.fromBcs(Uint8Array.from(Array.from(bytes)));
+            results.push({ markets, symbolMarkets: [] });
+            marketIndex = i + markets.symbols.length + 1;
+        } else {
+            let length = reader.readULEB();
+            let bytes = reader.readBytes(length);
+            let symbolMarket = SymbolMarket.fromBcs(Uint8Array.from(Array.from(bytes)));
+            results[results.length - 1].symbolMarkets.push(symbolMarket);
+        }
+    });
+    return results;
 }
 
 // export async function getMarkets(config: TypusConfig): Promise<Markets[]> {

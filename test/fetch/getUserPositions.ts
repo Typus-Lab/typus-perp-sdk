@@ -13,11 +13,13 @@ import { createPythClient } from "@typus/typus-sdk/dist/src/utils";
     let positions = await getUserPositions(config, user);
     console.log(positions);
 
-    let pythClient = createPythClient(provider, NETWORK);
+    if (positions.length > 0) {
+        let pythClient = createPythClient(provider, NETWORK);
 
-    let liquidationPrices = await getLiquidationPrice(config, pythClient, {
-        positions,
-        user,
-    });
-    console.log(liquidationPrices);
+        let liquidationPrices = await getLiquidationPrice(config, pythClient, {
+            positions,
+            user,
+        });
+        console.log(liquidationPrices);
+    }
 })();

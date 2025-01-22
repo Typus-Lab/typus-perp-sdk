@@ -44,6 +44,7 @@ import { createPythClient } from "@typus/typus-sdk/dist/src/utils";
         transactionBlock: tx,
         sender: user,
     });
+    console.log(dryrunRes);
     console.log(dryrunRes.events.filter((e) => e.type.endsWith("SwapEvent"))[0].parsedJson);
 
     let res = await provider.signAndExecuteTransaction({ signer: keypair, transaction: tx });

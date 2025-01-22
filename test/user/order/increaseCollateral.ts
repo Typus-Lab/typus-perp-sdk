@@ -6,6 +6,7 @@ import { Transaction } from "@mysten/sui/transactions";
 import { increaseCollateral, getUserPositions, NETWORK } from "src";
 import { createPythClient } from "@typus/typus-sdk/dist/src/utils";
 import { tokenType, typeArgToToken } from "@typus/typus-sdk/dist/src/constants";
+import { normalizeStructTag } from "@mysten/sui/utils";
 
 (async () => {
     let keypair = Ed25519Keypair.deriveKeypair(String(process.env.MNEMONIC));
@@ -18,17 +19,15 @@ import { tokenType, typeArgToToken } from "@typus/typus-sdk/dist/src/constants";
     var tx = new Transaction();
 
     let positions = await getUserPositions(config, user);
-    let position = positions[0];
-    console.log(position);
-
-    let cToken = typeArgToToken(position.collateralToken.name);
+    let position = positions.at(-1)!;
+    // console.log(position);
 
     let pythClient = createPythClient(provider, NETWORK);
 
     let coins = (
         await provider.getCoins({
             owner: user,
-            coinType: tokenType[NETWORK][cToken],
+            coinType: normalizeStructTag(position.collateralToken.name),
         })
     ).data.map((coin) => coin.coinObjectId);
 
@@ -42,6 +41,7 @@ import { tokenType, typeArgToToken } from "@typus/typus-sdk/dist/src/constants";
         transactionBlock: tx,
         sender: user,
     });
+    console.log(dryrunRes);
     console.log(dryrunRes.events.filter((e) => e.type.endsWith("IncreaseCollateralEvent"))[0].parsedJson);
 
     let res = await provider.signAndExecuteTransaction({ signer: keypair, transaction: tx });

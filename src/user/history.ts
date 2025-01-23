@@ -1,11 +1,10 @@
 import { assetToDecimal, TOKEN, typeArgToToken } from "@typus/typus-sdk/dist/src/constants";
-import { Token } from "@typus/typus-sdk/dist/src/utils";
-import { NETWORK } from "../index";
 import { PKG_V1 as PERP_PACKAGE_ID } from "../typus_perp/index";
 import { OrderFilledEvent } from "../typus_perp/position/structs";
 import {
     CancelTradingOrderEvent,
     CreateTradingOrderEvent,
+    CreateTradingOrderWithBidReceiptsEvent,
     IncreaseCollateralEvent,
     ReleaseCollateralEvent,
 } from "../typus_perp/trading/structs";
@@ -69,11 +68,18 @@ export async function getUserHistory(sender: string) {
 
         switch (type) {
             case CreateTradingOrderEvent.$typeName:
+            case CreateTradingOrderWithBidReceiptsEvent.$typeName:
                 var base_token = typeArgToToken(json.base_token.name) as TOKEN;
                 var collateral_token = typeArgToToken(json.collateral_token.name) as TOKEN;
+                var market = `${base_token}/USD`;
 
                 var size = Number(json.size) / 10 ** assetToDecimal(base_token)!;
-                var collateral = Number(json.collateral_amount) / 10 ** assetToDecimal(collateral_token)!;
+                var collateral: number;
+                if (json.collateral_amount) {
+                    collateral = Number(json.collateral_amount) / 10 ** assetToDecimal(collateral_token)!;
+                } else {
+                    collateral = Number(json.collateral_in_deposit_token) / 10 ** assetToDecimal(collateral_token)!;
+                }
 
                 var order_type: orderType = "Limit";
                 var price = json.trigger_price;
@@ -90,7 +96,7 @@ export async function getUserHistory(sender: string) {
                     action: "Place Order",
                     order_id: json.order_id,
                     position_id: json.linked_position_id,
-                    market: `${base_token}/USD`,
+                    market,
                     side: json.is_long ? "Long" : "Short",
                     order_type,
                     status: json.filled ? "Filled" : "Open",
@@ -109,6 +115,7 @@ export async function getUserHistory(sender: string) {
             case OrderFilledEvent.$typeName:
                 var base_token = typeArgToToken(json.symbol.base_token.name) as TOKEN;
                 var collateral_token = typeArgToToken(json.collateral_token.name) as TOKEN;
+                var market = `${base_token}/USD`;
 
                 var size = Number(json.filled_size) / 10 ** assetToDecimal(base_token)!;
                 var price = json.filled_price;
@@ -117,11 +124,11 @@ export async function getUserHistory(sender: string) {
 
                 if (json.linked_position_id) {
                     action = "Order Filled (Close Position)";
-                    related = events.findLast((e) => e.position_id === json.linked_position_id);
+                    related = events.findLast((e) => e.position_id === json.linked_position_id && e.market === market);
                     // the "Place Order" is emit after Order Filled if filled immediately
                 } else {
                     action = "Order Filled (Open Position)";
-                    related = events.findLast((e) => e.order_id === json.order_id);
+                    related = events.findLast((e) => e.order_id === json.order_id && e.market === market);
                 }
 
                 var realized_trading_fee = Number(json.realized_trading_fee) + Number(json.realized_borrow_fee);
@@ -130,7 +137,7 @@ export async function getUserHistory(sender: string) {
                     action,
                     order_id: json.order_id,
                     position_id: json.linked_position_id ?? json.new_position_id,
-                    market: `${base_token}/USD`,
+                    market,
                     side: related?.side,
                     order_type: related?.order_type,
                     status: json.filled ? "Filled" : "Open",
@@ -149,17 +156,18 @@ export async function getUserHistory(sender: string) {
             case CancelTradingOrderEvent.$typeName:
                 var base_token = typeArgToToken(json.base_token.name) as TOKEN;
                 var collateral_token = typeArgToToken(json.collateral_token.name) as TOKEN;
-                var related = events.findLast((e) => e.order_id === json.order_id);
+                var market = `${base_token}/USD`;
+                var related = events.findLast((e) => e.order_id === json.order_id && e.market === market);
 
                 var e: Event = {
                     action: "Cancel Order",
                     order_id: json.order_id,
                     position_id: undefined,
-                    market: `${base_token}/USD`,
+                    market,
                     side: related?.side,
                     order_type: related?.order_type,
                     status: "Canceled",
-                    size: 0,
+                    size: related?.size,
                     base_token,
                     collateral: Number(json.released_collateral_amount) / 10 ** assetToDecimal(collateral_token)!, // WARNING: fixed decimal
                     collateral_token,
@@ -175,7 +183,8 @@ export async function getUserHistory(sender: string) {
             case ReleaseCollateralEvent.$typeName:
                 var base_token = typeArgToToken(json.base_token.name) as TOKEN;
                 var collateral_token = typeArgToToken(json.collateral_token.name) as TOKEN;
-                var related = events.findLast((e) => e.position_id === json.position_id);
+                var market = `${base_token}/USD`;
+                var related = events.findLast((e) => e.position_id === json.position_id && e.market === market);
 
                 var collateral: number;
                 if (json.increased_collateral_amount) {
@@ -188,7 +197,7 @@ export async function getUserHistory(sender: string) {
                     action: "Modify Collateral",
                     order_id: undefined,
                     position_id: json.position_id,
-                    market: `${base_token}/USD`,
+                    market,
                     side: related?.side,
                     order_type: related?.order_type,
                     status: "Filled",

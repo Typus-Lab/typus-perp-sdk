@@ -90,10 +90,8 @@ export async function reduceOptionCollateralPositionSize(
         cToken: TOKEN;
         tradingToken: TOKEN;
         bToken: string;
-        share: string | null;
-        index: string;
-        user: string;
-        bidReceipt: string;
+        positionId: string;
+        orderSize: string | null;
     }
 ): Promise<Transaction> {
     let TOKEN = input.cToken;
@@ -105,19 +103,6 @@ export async function reduceOptionCollateralPositionSize(
     let baseToken = tokenType[NETWORK][BASE_TOKEN];
 
     updateOracleWithPyth(pythClient, tx, config.package.oracle, config.oracle[BASE_TOKEN.toLocaleLowerCase()], BASE_TOKEN, "USDC");
-
-    // split bid receipt
-    var collateralBidReceipt;
-    if (input.share) {
-        collateralBidReceipt = getSplitBidReceiptTx(config, tx, {
-            index: input.index,
-            receipts: [input.bidReceipt],
-            share: input.share,
-            recipient: input.user,
-        });
-    } else {
-        collateralBidReceipt = input.bidReceipt;
-    }
 
     _reduceOptionCollateralPositionSize(tx, [cToken, bToken, baseToken], {
         version: config.version.perp.perp,
@@ -134,8 +119,8 @@ export async function reduceOptionCollateralPositionSize(
         typusLeaderboardRegistry: config.registry.typus.leaderboard,
         dovRegistry: config.registry.dov.dovSingle,
         typusOracle: config.oracle[BASE_TOKEN.toLocaleLowerCase()],
-        positionId: BigInt(123),
-        orderSize: null,
+        positionId: BigInt(input.positionId),
+        orderSize: input.orderSize ? BigInt(input.orderSize) : null,
     });
 
     return tx;

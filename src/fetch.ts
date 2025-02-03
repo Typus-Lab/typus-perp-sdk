@@ -18,6 +18,7 @@ import { CLOCK, SENDER, tokenType, typeArgToToken } from "@typus/typus-sdk/dist/
 import { priceInfoObjectIds, pythStateId, PythClient, updatePyth, TypusConfig } from "@typus/typus-sdk/dist/src/utils";
 
 import { NETWORK } from ".";
+import { TypusBidReceipt } from "./_dependencies/source/0x908a10789a1a6953e0b73a997c10e3552f7ce4e2907afd00a334ed74bd973ded/vault/structs";
 
 export async function getLpPools(config: TypusConfig): Promise<LiquidityPool[]> {
     // const lpPoolRegistry = await Registry.fetch(provider, config.registry.LP_POOL);
@@ -198,6 +199,18 @@ export async function getUserPositions(config: TypusConfig, user: string) {
     // let positions: Position[] = readVecPosition(Uint8Array.from(returnValues));
     // console.log(positions);
     return positions;
+}
+
+export function parseOptionBidReceipts(positions: Position[]): (TypusBidReceipt | null)[] {
+    return positions.map((position) => {
+        if (position.optionCollateralInfo) {
+            let bidReceipt = TypusBidReceipt.fromBcs(Uint8Array.from(Array.from(position.optionCollateralInfo.bidReceiptsBcs[0])));
+            // console.log(bidReceipt);
+            return bidReceipt;
+        } else {
+            return null;
+        }
+    });
 }
 
 export async function getUserStake(config: TypusConfig, user: string): Promise<LpUserShare[]> {

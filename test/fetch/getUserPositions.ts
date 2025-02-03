@@ -1,17 +1,20 @@
 import { TypusConfig } from "@typus/typus-sdk/dist/src/utils";
 import { SuiClient } from "@mysten/sui/client";
-import { getLiquidationPrice, getUserPositions, NETWORK } from "src";
+import { getLiquidationPrice, getUserPositions, NETWORK, parseOptionBidReceipts } from "src";
 import { createPythClient } from "@typus/typus-sdk/dist/src/utils";
 
 (async () => {
     let config = await TypusConfig.default("TESTNET", null);
     let provider = new SuiClient({ url: config.rpcEndpoint });
 
-    let user = "0xb6b29d18c728503fb59cc59ecbe52611d26b2746b2cedc8d38cabf81428cae6c";
+    let user = "0xb6c7e3b1c61ee81516a8317f221daa035f1503e0ac3ae7a50b61834bc7a3ead9";
     console.log(user);
 
     let positions = await getUserPositions(config, user);
     console.log(positions);
+
+    let bidReceipts = parseOptionBidReceipts(positions);
+    console.log(bidReceipts);
 
     if (positions.length > 0) {
         let pythClient = createPythClient(provider, NETWORK);

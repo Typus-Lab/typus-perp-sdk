@@ -1,6 +1,6 @@
 import { assetToDecimal, TOKEN, typeArgToToken } from "@typus/typus-sdk/dist/src/constants";
 import { PKG_V1 as PERP_PACKAGE_ID } from "../typus_perp/index";
-import { OrderFilledEvent } from "../typus_perp/position/structs";
+import { OrderFilledEvent, RealizedPnlEvent } from "../typus_perp/position/structs";
 import {
     CancelTradingOrderEvent,
     CreateTradingOrderEvent,
@@ -15,6 +15,7 @@ type actionType =
     | "Cancel Order"
     | "Order Filled (Open Position)"
     | "Order Filled (Close Position)"
+    | "Realized PnL"
     | "Modify Collateral"
     | "Exercise Position"
     | "Liquidation"
@@ -131,22 +132,23 @@ export async function getUserHistory(sender: string) {
                     related = events.findLast((e) => e.order_id === json.order_id && e.market === market);
                 }
 
-                var realized_trading_fee = Number(json.realized_trading_fee) + Number(json.realized_borrow_fee);
+                // var realized_trading_fee = Number(json.realized_trading_fee) + Number(json.realized_borrow_fee);
+                var realized_fee_in_usd = Number(json.realized_fee_in_usd) / 10 ** 9;
 
                 var e: Event = {
                     action,
                     order_id: json.order_id,
                     position_id: json.linked_position_id ?? json.new_position_id,
                     market,
-                    side: related?.side,
+                    side: json.position_side ? "Long" : "Short",
                     order_type: related?.order_type,
-                    status: json.filled ? "Filled" : "Open",
+                    status: "Filled",
                     size,
                     base_token,
                     collateral: related?.collateral,
                     collateral_token,
                     price: Number(price) / 10 ** 8, // WARNING: fixed decimal
-                    realized_pnl: (0 - realized_trading_fee) / 10 ** assetToDecimal(base_token)!,
+                    realized_pnl: 0 - realized_fee_in_usd,
                     timestamp,
                     tx_digest,
                 };

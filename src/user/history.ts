@@ -1,6 +1,6 @@
 import { assetToDecimal, TOKEN, typeArgToToken } from "@typus/typus-sdk/dist/src/constants";
 import { PKG_V1 as PERP_PACKAGE_ID } from "../typus_perp/index";
-import { OrderFilledEvent, RealizedPnlEvent } from "../typus_perp/position/structs";
+import { OrderFilledEvent, RealizeFundingEvent } from "../typus_perp/position/structs";
 import {
     CancelTradingOrderEvent,
     CreateTradingOrderEvent,
@@ -154,6 +154,14 @@ export async function getUserHistory(sender: string) {
                 };
                 events.push(e);
                 break;
+
+            case RealizeFundingEvent.$typeName:
+                // same tx with order filled
+                related = events.findLast((e) => e.tx_digest === json.tx_digest);
+                if (related) {
+                    let x = json.realized_funding_sign ? json.realized_funding_fee : -json.realized_funding_fee;
+                    related.realized_pnl = related.realized_pnl! + x;
+                }
 
             case CancelTradingOrderEvent.$typeName:
                 var base_token = typeArgToToken(json.base_token.name) as TOKEN;

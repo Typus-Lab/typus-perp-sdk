@@ -406,6 +406,7 @@ export interface EmitRealizedFundingEventArgs {
     positionId: bigint | TransactionArgument;
     realizedFundingSign: boolean | TransactionArgument;
     realizedFundingFee: bigint | TransactionArgument;
+    realizedFundingFeeUsd: bigint | TransactionArgument;
     u64Padding: Array<bigint | TransactionArgument> | TransactionArgument;
 }
 
@@ -419,6 +420,7 @@ export function emitRealizedFundingEvent(tx: Transaction, args: EmitRealizedFund
             pure(tx, args.positionId, `u64`),
             pure(tx, args.realizedFundingSign, `bool`),
             pure(tx, args.realizedFundingFee, `u64`),
+            pure(tx, args.realizedFundingFeeUsd, `u64`),
             pure(tx, args.u64Padding, `vector<u64>`),
         ],
     });
@@ -781,13 +783,20 @@ export function orderFilledWithBidReceiptsCollateral(
 export interface RealizeFundingArgs {
     position: TransactionObjectInput;
     fundingIncome: TransactionObjectInput;
+    collateralOraclePrice: bigint | TransactionArgument;
+    collateralOraclePriceDecimal: bigint | TransactionArgument;
 }
 
 export function realizeFunding(tx: Transaction, typeArg: string, args: RealizeFundingArgs) {
     return tx.moveCall({
         target: `${PUBLISHED_AT}::position::realize_funding`,
         typeArguments: [typeArg],
-        arguments: [obj(tx, args.position), obj(tx, args.fundingIncome)],
+        arguments: [
+            obj(tx, args.position),
+            obj(tx, args.fundingIncome),
+            pure(tx, args.collateralOraclePrice, `u64`),
+            pure(tx, args.collateralOraclePriceDecimal, `u64`),
+        ],
     });
 }
 

@@ -706,3 +706,166 @@ export class SendFeeEvent implements StructClass {
         return SendFeeEvent.fromSuiObjectData(res.data);
     }
 }
+
+/* ============================== ProtocolFeeEvent =============================== */
+
+export function isProtocolFeeEvent(type: string): boolean {
+    type = compressSuiType(type);
+    return type === `${PKG_V1}::admin::ProtocolFeeEvent`;
+}
+
+export interface ProtocolFeeEventFields {
+    token: ToField<TypeName>;
+    amount: ToField<"u64">;
+}
+
+export type ProtocolFeeEventReified = Reified<ProtocolFeeEvent, ProtocolFeeEventFields>;
+
+export class ProtocolFeeEvent implements StructClass {
+    __StructClass = true as const;
+
+    static readonly $typeName = `${PKG_V1}::admin::ProtocolFeeEvent`;
+    static readonly $numTypeParams = 0;
+    static readonly $isPhantom = [] as const;
+
+    readonly $typeName = ProtocolFeeEvent.$typeName;
+    readonly $fullTypeName: `${typeof PKG_V1}::admin::ProtocolFeeEvent`;
+    readonly $typeArgs: [];
+    readonly $isPhantom = ProtocolFeeEvent.$isPhantom;
+
+    readonly token: ToField<TypeName>;
+    readonly amount: ToField<"u64">;
+
+    private constructor(typeArgs: [], fields: ProtocolFeeEventFields) {
+        this.$fullTypeName = composeSuiType(ProtocolFeeEvent.$typeName, ...typeArgs) as `${typeof PKG_V1}::admin::ProtocolFeeEvent`;
+        this.$typeArgs = typeArgs;
+
+        this.token = fields.token;
+        this.amount = fields.amount;
+    }
+
+    static reified(): ProtocolFeeEventReified {
+        return {
+            typeName: ProtocolFeeEvent.$typeName,
+            fullTypeName: composeSuiType(ProtocolFeeEvent.$typeName, ...[]) as `${typeof PKG_V1}::admin::ProtocolFeeEvent`,
+            typeArgs: [] as [],
+            isPhantom: ProtocolFeeEvent.$isPhantom,
+            reifiedTypeArgs: [],
+            fromFields: (fields: Record<string, any>) => ProtocolFeeEvent.fromFields(fields),
+            fromFieldsWithTypes: (item: FieldsWithTypes) => ProtocolFeeEvent.fromFieldsWithTypes(item),
+            fromBcs: (data: Uint8Array) => ProtocolFeeEvent.fromBcs(data),
+            bcs: ProtocolFeeEvent.bcs,
+            fromJSONField: (field: any) => ProtocolFeeEvent.fromJSONField(field),
+            fromJSON: (json: Record<string, any>) => ProtocolFeeEvent.fromJSON(json),
+            fromSuiParsedData: (content: SuiParsedData) => ProtocolFeeEvent.fromSuiParsedData(content),
+            fromSuiObjectData: (content: SuiObjectData) => ProtocolFeeEvent.fromSuiObjectData(content),
+            fetch: async (client: SuiClient, id: string) => ProtocolFeeEvent.fetch(client, id),
+            new: (fields: ProtocolFeeEventFields) => {
+                return new ProtocolFeeEvent([], fields);
+            },
+            kind: "StructClassReified",
+        };
+    }
+
+    static get r() {
+        return ProtocolFeeEvent.reified();
+    }
+
+    static phantom(): PhantomReified<ToTypeStr<ProtocolFeeEvent>> {
+        return phantom(ProtocolFeeEvent.reified());
+    }
+    static get p() {
+        return ProtocolFeeEvent.phantom();
+    }
+
+    static get bcs() {
+        return bcs.struct("ProtocolFeeEvent", {
+            token: TypeName.bcs,
+            amount: bcs.u64(),
+        });
+    }
+
+    static fromFields(fields: Record<string, any>): ProtocolFeeEvent {
+        return ProtocolFeeEvent.reified().new({
+            token: decodeFromFields(TypeName.reified(), fields.token),
+            amount: decodeFromFields("u64", fields.amount),
+        });
+    }
+
+    static fromFieldsWithTypes(item: FieldsWithTypes): ProtocolFeeEvent {
+        if (!isProtocolFeeEvent(item.type)) {
+            throw new Error("not a ProtocolFeeEvent type");
+        }
+
+        return ProtocolFeeEvent.reified().new({
+            token: decodeFromFieldsWithTypes(TypeName.reified(), item.fields.token),
+            amount: decodeFromFieldsWithTypes("u64", item.fields.amount),
+        });
+    }
+
+    static fromBcs(data: Uint8Array): ProtocolFeeEvent {
+        return ProtocolFeeEvent.fromFields(ProtocolFeeEvent.bcs.parse(data));
+    }
+
+    toJSONField() {
+        return {
+            token: this.token.toJSONField(),
+            amount: this.amount.toString(),
+        };
+    }
+
+    toJSON() {
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
+    }
+
+    static fromJSONField(field: any): ProtocolFeeEvent {
+        return ProtocolFeeEvent.reified().new({
+            token: decodeFromJSONField(TypeName.reified(), field.token),
+            amount: decodeFromJSONField("u64", field.amount),
+        });
+    }
+
+    static fromJSON(json: Record<string, any>): ProtocolFeeEvent {
+        if (json.$typeName !== ProtocolFeeEvent.$typeName) {
+            throw new Error("not a WithTwoGenerics json object");
+        }
+
+        return ProtocolFeeEvent.fromJSONField(json);
+    }
+
+    static fromSuiParsedData(content: SuiParsedData): ProtocolFeeEvent {
+        if (content.dataType !== "moveObject") {
+            throw new Error("not an object");
+        }
+        if (!isProtocolFeeEvent(content.type)) {
+            throw new Error(`object at ${(content.fields as any).id} is not a ProtocolFeeEvent object`);
+        }
+        return ProtocolFeeEvent.fromFieldsWithTypes(content);
+    }
+
+    static fromSuiObjectData(data: SuiObjectData): ProtocolFeeEvent {
+        if (data.bcs) {
+            if (data.bcs.dataType !== "moveObject" || !isProtocolFeeEvent(data.bcs.type)) {
+                throw new Error(`object at is not a ProtocolFeeEvent object`);
+            }
+
+            return ProtocolFeeEvent.fromBcs(fromB64(data.bcs.bcsBytes));
+        }
+        if (data.content) {
+            return ProtocolFeeEvent.fromSuiParsedData(data.content);
+        }
+        throw new Error("Both `bcs` and `content` fields are missing from the data. Include `showBcs` or `showContent` in the request.");
+    }
+
+    static async fetch(client: SuiClient, id: string): Promise<ProtocolFeeEvent> {
+        const res = await client.getObject({ id, options: { showBcs: true } });
+        if (res.error) {
+            throw new Error(`error fetching ProtocolFeeEvent object at id ${id}: ${res.error.code}`);
+        }
+        if (res.data?.bcs?.dataType !== "moveObject" || !isProtocolFeeEvent(res.data.bcs.type)) {
+            throw new Error(`object at id ${id} is not a ProtocolFeeEvent object`);
+        }
+
+        return ProtocolFeeEvent.fromSuiObjectData(res.data);
+    }
+}

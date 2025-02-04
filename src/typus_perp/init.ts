@@ -14,6 +14,7 @@ export function registerClasses(loader: StructClassLoader) {
     loader.register(admin.FeeInfo);
     loader.register(admin.FeePool);
     loader.register(admin.SendFeeEvent);
+    loader.register(admin.ProtocolFeeEvent);
     loader.register(escrow.UnsettledBidReceipt);
     loader.register(treasuryCaps.TreasuryCaps);
     loader.register(tlp.LpRegistry);
@@ -51,7 +52,6 @@ export function registerClasses(loader: StructClassLoader) {
     loader.register(position.OrderFilledEvent);
     loader.register(position.Position);
     loader.register(position.RealizeFundingEvent);
-    loader.register(position.RealizedPnlEvent);
     loader.register(position.RemovePositionEvent);
     loader.register(position.TradingOrder);
     loader.register(trading.AddTradingSymbolEvent);
@@ -72,6 +72,7 @@ export function registerClasses(loader: StructClassLoader) {
     loader.register(trading.Markets);
     loader.register(trading.MatchTradingOrderEvent);
     loader.register(trading.NewMarketsEvent);
+    loader.register(trading.RealizeOptionPositionEvent);
     loader.register(trading.ReleaseCollateralEvent);
     loader.register(trading.ResumeMarketEvent);
     loader.register(trading.ResumeTradingSymbolEvent);

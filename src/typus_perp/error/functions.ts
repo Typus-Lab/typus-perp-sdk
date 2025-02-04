@@ -49,6 +49,10 @@ export function bidReceiptNotItm(tx: Transaction) {
     return tx.moveCall({ target: `${PUBLISHED_AT}::error::bid_receipt_not_itm`, arguments: [] });
 }
 
+export function bidTokenMismatched(tx: Transaction) {
+    return tx.moveCall({ target: `${PUBLISHED_AT}::error::bid_token_mismatched`, arguments: [] });
+}
+
 export function collateralTokenTypeMismatched(tx: Transaction) {
     return tx.moveCall({ target: `${PUBLISHED_AT}::error::collateral_token_type_mismatched`, arguments: [] });
 }

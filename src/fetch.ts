@@ -19,6 +19,7 @@ import { priceInfoObjectIds, pythStateId, PythClient, updatePyth, TypusConfig } 
 
 import { NETWORK } from ".";
 import { TypusBidReceipt } from "./_dependencies/source/0x908a10789a1a6953e0b73a997c10e3552f7ce4e2907afd00a334ed74bd973ded/vault/structs";
+import { PUBLISHED_AT } from "./typus_perp";
 
 export async function getLpPools(config: TypusConfig): Promise<LiquidityPool[]> {
     // const lpPoolRegistry = await Registry.fetch(provider, config.registry.LP_POOL);
@@ -71,7 +72,7 @@ export async function getMarkets(
     let provider = new SuiClient({ url: config.rpcEndpoint });
     let transaction = new Transaction();
     transaction.moveCall({
-        target: `${config.package.perp.perp}::trading::get_markets_bcs`,
+        target: `${PUBLISHED_AT}::trading::get_markets_bcs`,
         arguments: [transaction.object(config.registry.perp.market), transaction.pure.vector("u64", input.indexes)],
     });
     let devInspectTransactionBlockResult = await provider.devInspectTransactionBlock({ sender: SENDER, transactionBlock: transaction });

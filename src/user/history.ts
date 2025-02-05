@@ -64,6 +64,7 @@ export async function getUserHistory(sender: string) {
         const timestamp = event.timestamp;
         const tx_digest = event.transactionBlock.digest;
         // console.log(type);
+        // console.log(tx_digest);
         // console.log(json);
         // console.log(timestamp);
 
@@ -159,10 +160,15 @@ export async function getUserHistory(sender: string) {
 
             case RealizeFundingEvent.$typeName:
                 // same tx with order filled
-                related = events.findLast((e) => e.tx_digest === json.tx_digest);
-                if (related) {
-                    let x = json.realized_funding_sign ? json.realized_funding_fee : -json.realized_funding_fee;
-                    related.realized_pnl = related.realized_pnl! + x;
+                const index = events.findLastIndex((e) => e.tx_digest == tx_digest);
+                // console.log(index);
+                if (index !== -1) {
+                    // true => user paid to pool
+                    let x = json.realized_funding_sign ? json.realized_funding_fee_usd / 10 ** 9 : -json.realized_funding_fee_usd / 10 ** 9;
+                    events[index] = {
+                        ...events[index],
+                        realized_pnl: (events[index].realized_pnl ?? 0) - x,
+                    };
                 }
                 break;
 

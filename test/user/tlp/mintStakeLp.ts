@@ -2,8 +2,7 @@ import "@typus/typus-sdk/dist/src/utils/load_env";
 import { SuiClient } from "@mysten/sui/client";
 import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519";
 import { Transaction } from "@mysten/sui/transactions";
-import { mintStakeLp, NETWORK, getUserStake } from "src";
-import { LiquidityPool, Registry } from "src";
+import { mintStakeLp, NETWORK, getUserStake, getLpPools } from "src";
 import { TypusConfig, createPythClient } from "@typus/typus-sdk/dist/src/utils";
 import { TOKEN, tokenType } from "@typus/typus-sdk/dist/src/constants";
 
@@ -15,16 +14,8 @@ import { TOKEN, tokenType } from "@typus/typus-sdk/dist/src/constants";
     let user = keypair.toSuiAddress();
     console.log(user);
 
-    let lpPoolRegistry = await Registry.fetch(provider, config.registry.perp.lpPool);
-    // console.log(lpPoolRegistry);
-
-    let dynamicFields = await provider.getDynamicFields({
-        parentId: lpPoolRegistry.liquidityPoolRegistry,
-    });
-
-    // console.log(dynamicFields.data);
-    let field = dynamicFields.data[0];
-    let lpPool = await LiquidityPool.fetch(provider, field.objectId);
+    let lpPools = await getLpPools(config);
+    let lpPool = lpPools[0];
     // console.log(lpPool);
 
     let pythClient = createPythClient(provider, NETWORK);
@@ -33,7 +24,7 @@ import { TOKEN, tokenType } from "@typus/typus-sdk/dist/src/constants";
     // console.log(stakes);
 
     // INPUT
-    let cTOKEN: TOKEN = "USDT";
+    let cTOKEN: TOKEN = "wUSDC";
     let cToken = tokenType[NETWORK][cTOKEN];
 
     // coins
@@ -51,7 +42,7 @@ import { TOKEN, tokenType } from "@typus/typus-sdk/dist/src/constants";
         lpPool,
         coins,
         cTOKEN,
-        amount: "1000000",
+        amount: "100000000000",
         userShareId: stakes.length > 0 ? stakes[0].userShareId.toString() : null,
     });
 

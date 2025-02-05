@@ -4,7 +4,7 @@ import { burnLp, mintLp, updateLiquidityValue, swap as _swap } from "../typus_pe
 import { harvestPerUserShare, stake, unstake, unsubscribe as _unsubscribe } from "../typus_stake_pool/stake-pool/functions";
 import { PythClient, updatePyth, priceInfoObjectIds, pythStateId, TypusConfig } from "@typus/typus-sdk/dist/src/utils";
 import { CLOCK, tokenType, typeArgToAsset, TOKEN } from "@typus/typus-sdk/dist/src/constants";
-import { LP_POOL, NETWORK, PERP_VERSION, STAKE_POOL, STAKE_POOL_VERSION } from "..";
+import { LP_POOL, NETWORK, PERP_VERSION, STAKE_POOL, STAKE_POOL_VERSION, TLP_TOKEN, TLP_TREASURY_CAP } from "..";
 
 export async function mintStakeLp(
     config: TypusConfig,
@@ -50,10 +50,10 @@ export async function mintStakeLp(
         [coin] = tx.splitCoins(destination, [input.amount]);
     }
 
-    let lpCoin = mintLp(tx, [cToken, config.token.tlp], {
+    let lpCoin = mintLp(tx, [cToken, TLP_TOKEN], {
         version: PERP_VERSION,
         registry: LP_POOL,
-        treasuryCaps: config.object.tlpTreasuryCap,
+        treasuryCaps: TLP_TREASURY_CAP,
         index: BigInt(0),
         pythState: pythStateId[NETWORK],
         oracle: priceInfoObjectIds[NETWORK][input.cTOKEN],
@@ -61,7 +61,7 @@ export async function mintStakeLp(
         clock: CLOCK,
     });
 
-    stake(tx, config.token.tlp, {
+    stake(tx, TLP_TOKEN, {
         version: STAKE_POOL_VERSION,
         registry: STAKE_POOL,
         index: BigInt(0),
@@ -103,7 +103,7 @@ export async function unstakeBurn(
         });
     }
 
-    let lpCoin = unstake(tx, config.token.tlp, {
+    let lpCoin = unstake(tx, TLP_TOKEN, {
         version: STAKE_POOL_VERSION,
         registry: STAKE_POOL,
         index: BigInt(0),
@@ -112,10 +112,10 @@ export async function unstakeBurn(
         unstakedShares: input.share ? BigInt(input.share) : null,
     });
 
-    let coin = burnLp(tx, [cToken, config.token.tlp], {
+    let coin = burnLp(tx, [cToken, TLP_TOKEN], {
         version: PERP_VERSION,
         registry: LP_POOL,
-        treasuryCaps: config.object.tlpTreasuryCap,
+        treasuryCaps: TLP_TREASURY_CAP,
         index: BigInt(0),
         pythState: pythStateId[NETWORK],
         oracle,
@@ -183,7 +183,7 @@ export async function unsubscribe(
         share: string | null;
     }
 ): Promise<Transaction> {
-    _unsubscribe(tx, config.token.tlp, {
+    _unsubscribe(tx, TLP_TOKEN, {
         version: STAKE_POOL_VERSION,
         registry: STAKE_POOL,
         index: BigInt(0),

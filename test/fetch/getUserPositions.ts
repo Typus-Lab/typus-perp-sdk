@@ -1,6 +1,6 @@
 import { TypusConfig } from "@typus/typus-sdk/dist/src/utils";
 import { SuiClient } from "@mysten/sui/client";
-import { getLiquidationPrice, getUserPositions, NETWORK, parseOptionBidReceipts } from "src";
+import { getLiquidationPriceAndPnl, getUserPositions, NETWORK, parseOptionBidReceipts } from "src";
 import { createPythClient } from "@typus/typus-sdk/dist/src/utils";
 
 (async () => {
@@ -12,6 +12,7 @@ import { createPythClient } from "@typus/typus-sdk/dist/src/utils";
 
     let positions = await getUserPositions(config, user);
     console.log(positions);
+    // console.log(positions.map((x) => x.symbol.baseToken));
 
     let bidReceipts = parseOptionBidReceipts(positions);
     console.log(bidReceipts);
@@ -19,7 +20,7 @@ import { createPythClient } from "@typus/typus-sdk/dist/src/utils";
     if (positions.length > 0) {
         let pythClient = createPythClient(provider, NETWORK);
 
-        let liquidationPrices = await getLiquidationPrice(config, pythClient, {
+        let liquidationPrices = await getLiquidationPriceAndPnl(config, pythClient, {
             positions,
             user,
         });

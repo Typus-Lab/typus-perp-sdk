@@ -41,7 +41,7 @@ interface Event {
     collateral: number | undefined;
     collateral_token: TOKEN;
     price: number | undefined;
-    realized_pnl: number | undefined;
+    realized_pnl: number | undefined; // in USD
     timestamp: string;
     tx_digest: string;
 }
@@ -132,8 +132,10 @@ export async function getUserHistory(sender: string) {
                     related = events.findLast((e) => e.order_id === json.order_id && e.market === market);
                 }
 
-                // var realized_trading_fee = Number(json.realized_trading_fee) + Number(json.realized_borrow_fee);
+                var realized_trading_fee = Number(json.realized_trading_fee) + Number(json.realized_borrow_fee);
                 var realized_fee_in_usd = Number(json.realized_fee_in_usd) / 10 ** 9;
+                var realized_amount = json.realized_amount_sign ? Number(json.realized_amount) : -Number(json.realized_amount);
+                var realized_pnl = ((realized_amount - realized_trading_fee) * realized_fee_in_usd) / realized_trading_fee;
 
                 var e: Event = {
                     action,
@@ -148,7 +150,7 @@ export async function getUserHistory(sender: string) {
                     collateral: related?.collateral,
                     collateral_token,
                     price: Number(price) / 10 ** 8, // WARNING: fixed decimal
-                    realized_pnl: 0 - realized_fee_in_usd,
+                    realized_pnl,
                     timestamp,
                     tx_digest,
                 };

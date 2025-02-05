@@ -8,7 +8,7 @@ import { TradingOrder, Position } from "./typus_perp/position/structs";
 import {
     getUserOrders as _getUserOrders,
     getUserPositions as _getUserPositions,
-    getEstimatedLiquidationPrice,
+    getEstimatedLiquidationPriceAndPnl,
 } from "./typus_perp/trading/functions";
 
 import { getUserShares } from "./typus_stake_pool/stake-pool/functions";
@@ -252,7 +252,8 @@ export async function getUserStake(config: TypusConfig, user: string): Promise<L
     }
 }
 
-export async function getLiquidationPrice(
+/// returns [liquidationPrice, pnl(in USD)]
+export async function getLiquidationPriceAndPnl(
     config: TypusConfig,
     pythClient: PythClient,
     input: {
@@ -280,7 +281,7 @@ export async function getLiquidationPrice(
         let TOKEN = typeArgToToken(position.collateralToken.name);
         let BASE_TOKEN = typeArgToToken(position.symbol.baseToken.name);
 
-        getEstimatedLiquidationPrice(tx, [position.collateralToken.name, position.symbol.baseToken.name], {
+        getEstimatedLiquidationPriceAndPnl(tx, [position.collateralToken.name, position.symbol.baseToken.name], {
             version: PERP_VERSION,
             registry: MARKET,
             poolRegistry: LP_POOL,
@@ -297,7 +298,13 @@ export async function getLiquidationPrice(
     let res = await provider.devInspectTransactionBlock({ sender: input.user, transactionBlock: tx });
     // console.log(res);
 
-    let prices = res.results?.slice(-input.positions.length).map((x) => bcs.u64().parse(Uint8Array.from(x.returnValues![0][0])));
-    // console.log(prices);
-    return prices;
+    let results = res.results?.slice(-input.positions.length).map((x) => {
+        // console.log(x);
+        let liquidationPrice = bcs.u64().parse(Uint8Array.from(x.returnValues![0][0]));
+        let isProfit = bcs.bool().parse(Uint8Array.from(x.returnValues![1][0]));
+        let pnl = bcs.u64().parse(Uint8Array.from(x.returnValues![2][0]));
+        return [liquidationPrice, isProfit ? pnl : -pnl];
+    });
+    // console.log(results);
+    return results;
 }

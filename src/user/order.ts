@@ -40,13 +40,18 @@ export async function createTradingOrder(
     if (TOKEN == "SUI") {
         [coin] = tx.splitCoins(tx.gas, [input.amount]);
     } else {
-        let destination = input.coins.pop()!;
+        if (input.coins.length == 0) {
+            // support zero coin input for closing position
+            [coin] = zeroCoin(tx, [cToken]);
+        } else {
+            let destination = input.coins.pop()!;
 
-        if (input.coins.length > 0) {
-            tx.mergeCoins(destination, input.coins);
+            if (input.coins.length > 0) {
+                tx.mergeCoins(destination, input.coins);
+            }
+
+            [coin] = tx.splitCoins(destination, [input.amount]);
         }
-
-        [coin] = tx.splitCoins(destination, [input.amount]);
     }
 
     _createTradingOrder(tx, [cToken, baseToken], {
@@ -72,6 +77,14 @@ export async function createTradingOrder(
     });
 
     return tx;
+}
+
+export function zeroCoin(tx: Transaction, typeArgs: [string]) {
+    return tx.moveCall({
+        target: `0x2::coin::zero`,
+        typeArguments: typeArgs,
+        arguments: [],
+    });
 }
 
 export async function cancelTradingOrder(

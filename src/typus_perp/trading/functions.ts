@@ -8,38 +8,6 @@ export function init(tx: Transaction) {
     return tx.moveCall({ target: `${PUBLISHED_AT}::trading::init`, arguments: [] });
 }
 
-export interface GetEstimatedLiquidationPriceArgs {
-    version: TransactionObjectInput;
-    registry: TransactionObjectInput;
-    poolRegistry: TransactionObjectInput;
-    marketIndex: bigint | TransactionArgument;
-    poolIndex: bigint | TransactionArgument;
-    pythState: TransactionObjectInput;
-    oracleCToken: TransactionObjectInput;
-    oracleTradingSymbol: TransactionObjectInput;
-    clock: TransactionObjectInput;
-    positionId: bigint | TransactionArgument;
-}
-
-export function getEstimatedLiquidationPrice(tx: Transaction, typeArgs: [string, string], args: GetEstimatedLiquidationPriceArgs) {
-    return tx.moveCall({
-        target: `${PUBLISHED_AT}::trading::get_estimated_liquidation_price`,
-        typeArguments: typeArgs,
-        arguments: [
-            obj(tx, args.version),
-            obj(tx, args.registry),
-            obj(tx, args.poolRegistry),
-            pure(tx, args.marketIndex, `u64`),
-            pure(tx, args.poolIndex, `u64`),
-            obj(tx, args.pythState),
-            obj(tx, args.oracleCToken),
-            obj(tx, args.oracleTradingSymbol),
-            obj(tx, args.clock),
-            pure(tx, args.positionId, `u64`),
-        ],
-    });
-}
-
 export interface IncreaseCollateralArgs {
     version: TransactionObjectInput;
     registry: TransactionObjectInput;
@@ -575,6 +543,42 @@ export function getActiveOrdersByOrderTagAndCtoken(
         target: `${PUBLISHED_AT}::trading::get_active_orders_by_order_tag_and_ctoken`,
         typeArguments: typeArgs,
         arguments: [obj(tx, args.version), obj(tx, args.registry), pure(tx, args.marketIndex, `u64`), pure(tx, args.orderTypeTag, `u8`)],
+    });
+}
+
+export interface GetEstimatedLiquidationPriceAndPnlArgs {
+    version: TransactionObjectInput;
+    registry: TransactionObjectInput;
+    poolRegistry: TransactionObjectInput;
+    marketIndex: bigint | TransactionArgument;
+    poolIndex: bigint | TransactionArgument;
+    pythState: TransactionObjectInput;
+    oracleCToken: TransactionObjectInput;
+    oracleTradingSymbol: TransactionObjectInput;
+    clock: TransactionObjectInput;
+    positionId: bigint | TransactionArgument;
+}
+
+export function getEstimatedLiquidationPriceAndPnl(
+    tx: Transaction,
+    typeArgs: [string, string],
+    args: GetEstimatedLiquidationPriceAndPnlArgs
+) {
+    return tx.moveCall({
+        target: `${PUBLISHED_AT}::trading::get_estimated_liquidation_price_and_pnl`,
+        typeArguments: typeArgs,
+        arguments: [
+            obj(tx, args.version),
+            obj(tx, args.registry),
+            obj(tx, args.poolRegistry),
+            pure(tx, args.marketIndex, `u64`),
+            pure(tx, args.poolIndex, `u64`),
+            obj(tx, args.pythState),
+            obj(tx, args.oracleCToken),
+            obj(tx, args.oracleTradingSymbol),
+            obj(tx, args.clock),
+            pure(tx, args.positionId, `u64`),
+        ],
     });
 }
 

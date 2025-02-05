@@ -302,8 +302,12 @@ export async function getLiquidationPriceAndPnl(
         // console.log(x);
         let liquidationPrice = bcs.u64().parse(Uint8Array.from(x.returnValues![0][0]));
         let isProfit = bcs.bool().parse(Uint8Array.from(x.returnValues![1][0]));
-        let pnl = bcs.u64().parse(Uint8Array.from(x.returnValues![2][0]));
-        return [liquidationPrice, isProfit ? pnl : -pnl];
+        var pnl = Number(bcs.u64().parse(Uint8Array.from(x.returnValues![2][0])));
+        pnl = isProfit ? pnl : -pnl;
+        let isCost = bcs.bool().parse(Uint8Array.from(x.returnValues![3][0]));
+        var cost = Number(bcs.u64().parse(Uint8Array.from(x.returnValues![4][0])));
+        cost = isCost ? cost : -cost;
+        return [liquidationPrice, pnl - cost];
     });
     // console.log(results);
     return results;

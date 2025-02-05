@@ -187,6 +187,10 @@ export function calculateTradingFee(tx: Transaction, args: CalculateTradingFeeAr
     });
 }
 
+export function calculateUnrealizedCost(tx: Transaction, position: TransactionObjectInput) {
+    return tx.moveCall({ target: `${PUBLISHED_AT}::position::calculate_unrealized_cost`, arguments: [obj(tx, position)] });
+}
+
 export interface CalculateUnrealizedPnlArgs {
     position: TransactionObjectInput;
     tradingPairOraclePrice: bigint | TransactionArgument;
@@ -433,7 +437,6 @@ export interface GetEstimatedLiquidationPriceArgs {
     tradingPairOraclePrice: bigint | TransactionArgument;
     tradingPairOraclePriceDecimal: bigint | TransactionArgument;
     tradingFeeMbp: bigint | TransactionArgument;
-    cumulativeBorrowRate: bigint | TransactionArgument;
 }
 
 export function getEstimatedLiquidationPrice(tx: Transaction, args: GetEstimatedLiquidationPriceArgs) {
@@ -446,7 +449,6 @@ export function getEstimatedLiquidationPrice(tx: Transaction, args: GetEstimated
             pure(tx, args.tradingPairOraclePrice, `u64`),
             pure(tx, args.tradingPairOraclePriceDecimal, `u64`),
             pure(tx, args.tradingFeeMbp, `u64`),
-            pure(tx, args.cumulativeBorrowRate, `u64`),
         ],
     });
 }

@@ -164,6 +164,7 @@ export async function getUserHistory(sender: string) {
                     let x = json.realized_funding_sign ? json.realized_funding_fee : -json.realized_funding_fee;
                     related.realized_pnl = related.realized_pnl! + x;
                 }
+                break;
 
             case CancelTradingOrderEvent.$typeName:
                 var base_token = typeArgToToken(json.base_token.name) as TOKEN;

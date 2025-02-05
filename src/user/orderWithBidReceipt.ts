@@ -17,7 +17,7 @@ import {
 } from "@typus/typus-sdk/dist/src/utils";
 import { tokenType, TOKEN, CLOCK } from "@typus/typus-sdk/dist/src/constants";
 import { getSplitBidReceiptTx } from "@typus/typus-sdk/dist/src/typus-dov-single-v2";
-import { NETWORK } from "..";
+import { LP_POOL, MARKET, NETWORK, PERP_VERSION } from "..";
 
 export async function createTradingOrderWithBidReceipt(
     config: TypusConfig,
@@ -60,9 +60,9 @@ export async function createTradingOrderWithBidReceipt(
     }
 
     _createTradingOrderWithBidReceipt(tx, [cToken, bToken, baseToken], {
-        version: config.version.perp.perp,
-        registry: config.registry.perp.market,
-        poolRegistry: config.registry.perp.lpPool,
+        version: PERP_VERSION,
+        registry: MARKET,
+        poolRegistry: LP_POOL,
         marketIndex: BigInt(0),
         poolIndex: BigInt(0),
         pythState: pythStateId[NETWORK],
@@ -105,9 +105,9 @@ export async function reduceOptionCollateralPositionSize(
     updateOracleWithPyth(pythClient, tx, config.package.oracle, config.oracle[BASE_TOKEN.toLocaleLowerCase()], BASE_TOKEN, "USDC");
 
     _reduceOptionCollateralPositionSize(tx, [cToken, bToken, baseToken], {
-        version: config.version.perp.perp,
-        registry: config.registry.perp.market,
-        poolRegistry: config.registry.perp.lpPool,
+        version: PERP_VERSION,
+        registry: MARKET,
+        poolRegistry: LP_POOL,
         marketIndex: BigInt(0),
         poolIndex: BigInt(0),
         pythState: pythStateId[NETWORK],

@@ -3,7 +3,7 @@ import { Transaction } from "@mysten/sui/transactions";
 import { bcs, BcsReader } from "@mysten/bcs";
 
 import { MarketRegistry, Markets, SymbolMarket } from "./typus_perp/trading/structs";
-import { LiquidityPool } from "./typus_perp/lp-pool/structs";
+import { LiquidityPool, Registry } from "./typus_perp/lp-pool/structs";
 import { TradingOrder, Position } from "./typus_perp/position/structs";
 import {
     getUserOrders as _getUserOrders,
@@ -17,17 +17,18 @@ import { LpUserShare, StakePool } from "./typus_stake_pool/stake-pool/structs";
 import { CLOCK, SENDER, tokenType, typeArgToToken } from "@typus/typus-sdk/dist/src/constants";
 import { priceInfoObjectIds, pythStateId, PythClient, updatePyth, TypusConfig } from "@typus/typus-sdk/dist/src/utils";
 
-import { NETWORK } from ".";
+import { LIQUIDITY_POOL, LP_POOL, MARKET, NETWORK, PERP_VERSION, STAKE_POOL } from ".";
 import { TypusBidReceipt } from "./_dependencies/source/0x908a10789a1a6953e0b73a997c10e3552f7ce4e2907afd00a334ed74bd973ded/vault/structs";
 import { PUBLISHED_AT } from "./typus_perp";
 
 export async function getLpPools(config: TypusConfig): Promise<LiquidityPool[]> {
-    // const lpPoolRegistry = await Registry.fetch(provider, config.registry.LP_POOL);
+    let provider = new SuiClient({ url: config.rpcEndpoint });
+
+    // const lpPoolRegistry = await Registry.fetch(provider, LP_POOL);
     // console.log(lpPoolRegistry);
 
-    let provider = new SuiClient({ url: config.rpcEndpoint });
     let dynamicFields = await provider.getDynamicFields({
-        parentId: config.registry.perp.liquidityPool,
+        parentId: LIQUIDITY_POOL,
     });
 
     let lpPools: LiquidityPool[] = [];
@@ -44,7 +45,7 @@ export async function getLpPools(config: TypusConfig): Promise<LiquidityPool[]> 
 export async function getStakePools(config: TypusConfig): Promise<StakePool[]> {
     let provider = new SuiClient({ url: config.rpcEndpoint });
     let dynamicFields = await provider.getDynamicFields({
-        parentId: config.registry.perp.stakePool,
+        parentId: STAKE_POOL,
     });
 
     let stakePools: StakePool[] = [];
@@ -73,7 +74,7 @@ export async function getMarkets(
     let transaction = new Transaction();
     transaction.moveCall({
         target: `${PUBLISHED_AT}::trading::get_markets_bcs`,
-        arguments: [transaction.object(config.registry.perp.market), transaction.pure.vector("u64", input.indexes)],
+        arguments: [transaction.object(MARKET), transaction.pure.vector("u64", input.indexes)],
     });
     let devInspectTransactionBlockResult = await provider.devInspectTransactionBlock({ sender: SENDER, transactionBlock: transaction });
     // @ts-ignore
@@ -101,7 +102,7 @@ export async function getMarkets(
 // export async function getMarkets(config: TypusConfig): Promise<Markets[]> {
 //     let provider = new SuiClient({ url: config.rpcEndpoint });
 
-//     // const marketRegistry = await MarketRegistry.fetch(provider, config.registry.perp.market);
+//     // const marketRegistry = await MarketRegistry.fetch(provider, MARKET);
 //     // console.log(marketRegistry.markets.vid);
 
 //     let dynamicFields = await provider.getDynamicFields({
@@ -143,8 +144,8 @@ export async function getUserOrders(config: TypusConfig, user: string) {
     let tx = new Transaction();
 
     _getUserOrders(tx, {
-        version: config.version.perp.perp,
-        registry: config.registry.perp.market,
+        version: PERP_VERSION,
+        registry: MARKET,
         marketIndex: BigInt(0),
         user,
     });
@@ -175,8 +176,8 @@ export async function getUserPositions(config: TypusConfig, user: string) {
     let tx = new Transaction();
 
     _getUserPositions(tx, {
-        version: config.version.perp.perp,
-        registry: config.registry.perp.market,
+        version: PERP_VERSION,
+        registry: MARKET,
         marketIndex: BigInt(0),
         user,
     });
@@ -219,7 +220,7 @@ export async function getUserStake(config: TypusConfig, user: string): Promise<L
     let tx = new Transaction();
 
     getUserShares(tx, {
-        registry: config.registry.perp.stakePool,
+        registry: STAKE_POOL,
         index: BigInt(0),
         user,
     });
@@ -280,9 +281,9 @@ export async function getLiquidationPrice(
         let BASE_TOKEN = typeArgToToken(position.symbol.baseToken.name);
 
         getEstimatedLiquidationPrice(tx, [position.collateralToken.name, position.symbol.baseToken.name], {
-            version: config.version.perp.perp,
-            registry: config.registry.perp.market,
-            poolRegistry: config.registry.perp.lpPool,
+            version: PERP_VERSION,
+            registry: MARKET,
+            poolRegistry: LP_POOL,
             marketIndex: BigInt(0),
             poolIndex: BigInt(0),
             pythState: pythStateId[NETWORK],

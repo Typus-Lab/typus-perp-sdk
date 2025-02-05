@@ -5,7 +5,7 @@ import {
     releaseCollateral as _releaseCollateral,
 } from "../typus_perp/trading/functions";
 import { Position, TradingOrder } from "../typus_perp/position/structs";
-import { NETWORK } from "..";
+import { LP_POOL, MARKET, NETWORK, PERP_VERSION } from "..";
 import { PythClient, updatePyth, priceInfoObjectIds, pythStateId, TypusConfig } from "@typus/typus-sdk/dist/src/utils";
 import { CLOCK, tokenType, TOKEN, typeArgToToken } from "@typus/typus-sdk/dist/src/constants";
 import { Transaction } from "@mysten/sui/transactions";
@@ -50,9 +50,9 @@ export async function createTradingOrder(
     }
 
     _createTradingOrder(tx, [cToken, baseToken], {
-        version: config.version.perp.perp,
-        registry: config.registry.perp.market,
-        poolRegistry: config.registry.perp.lpPool,
+        version: PERP_VERSION,
+        registry: MARKET,
+        poolRegistry: LP_POOL,
         marketIndex: BigInt(0),
         poolIndex: BigInt(0),
         pythState: pythStateId[NETWORK],
@@ -86,8 +86,8 @@ export async function cancelTradingOrder(
     let BASE_TOKEN = "0x" + input.order.symbol.baseToken.name;
 
     let coin = _cancelTradingOrder(tx, [cToken, BASE_TOKEN], {
-        version: config.version.perp.perp,
-        registry: config.registry.perp.market,
+        version: PERP_VERSION,
+        registry: MARKET,
         marketIndex: BigInt(0),
         orderId: input.order.orderId,
         triggerPrice: input.order.triggerPrice,
@@ -135,9 +135,9 @@ export async function increaseCollateral(
     }
 
     _increaseCollateral(tx, [cToken, baseToken], {
-        version: config.version.perp.perp,
-        registry: config.registry.perp.market,
-        poolRegistry: config.registry.perp.lpPool,
+        version: PERP_VERSION,
+        registry: MARKET,
+        poolRegistry: LP_POOL,
         marketIndex: BigInt(0),
         poolIndex: BigInt(0),
         pythState: pythStateId[NETWORK],
@@ -172,9 +172,9 @@ export async function releaseCollateral(
     let baseToken = tokenType[NETWORK][BASE_TOKEN];
 
     let coin = _releaseCollateral(tx, [cToken, baseToken], {
-        version: config.version.perp.perp,
-        registry: config.registry.perp.market,
-        poolRegistry: config.registry.perp.lpPool,
+        version: PERP_VERSION,
+        registry: MARKET,
+        poolRegistry: LP_POOL,
         marketIndex: BigInt(0),
         poolIndex: BigInt(0),
         pythState: pythStateId[NETWORK],

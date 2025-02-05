@@ -5,6 +5,7 @@ import { installEcosystemManagerCapEntry } from "src/typus_perp/admin/functions"
 import { Transaction } from "@mysten/sui/transactions";
 
 import mnemonic from "mnemonic.json";
+import { PERP_VERSION } from "src";
 
 (async () => {
     let keypair = Ed25519Keypair.deriveKeypair(String(mnemonic.MNEMONIC));
@@ -17,7 +18,7 @@ import mnemonic from "mnemonic.json";
     let tx = new Transaction();
 
     installEcosystemManagerCapEntry(tx, {
-        version: config.version.perp.perp,
+        version: PERP_VERSION,
         typusEcosystemVersion: config.version.typus,
     });
 

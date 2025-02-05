@@ -15,7 +15,7 @@ import { createPythClient } from "@typus/typus-sdk/dist/src/utils";
     let user = keypair.toSuiAddress();
     console.log(user);
 
-    let lpPoolRegistry = await Registry.fetch(provider, config.registry.perp.lpPool);
+    let lpPoolRegistry = await Registry.fetch(provider, LP_POOL);
     // console.log(lpPoolRegistry);
 
     let dynamicFields = await provider.getDynamicFields({

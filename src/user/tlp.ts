@@ -4,7 +4,7 @@ import { burnLp, mintLp, updateLiquidityValue, swap as _swap } from "../typus_pe
 import { harvestPerUserShare, stake, unstake, unsubscribe as _unsubscribe } from "../typus_stake_pool/stake-pool/functions";
 import { PythClient, updatePyth, priceInfoObjectIds, pythStateId, TypusConfig } from "@typus/typus-sdk/dist/src/utils";
 import { CLOCK, tokenType, typeArgToAsset, TOKEN } from "@typus/typus-sdk/dist/src/constants";
-import { NETWORK } from "..";
+import { LP_POOL, NETWORK, PERP_VERSION, STAKE_POOL, STAKE_POOL_VERSION } from "..";
 
 export async function mintStakeLp(
     config: TypusConfig,
@@ -27,8 +27,8 @@ export async function mintStakeLp(
 
     for (let token of tokens) {
         updateLiquidityValue(tx, tokenType[NETWORK][token], {
-            version: config.version.perp.perp,
-            registry: config.registry.perp.lpPool,
+            version: PERP_VERSION,
+            registry: LP_POOL,
             index: BigInt(0),
             pythState: pythStateId[NETWORK],
             oracle: priceInfoObjectIds[NETWORK][token],
@@ -51,8 +51,8 @@ export async function mintStakeLp(
     }
 
     let lpCoin = mintLp(tx, [cToken, config.token.tlp], {
-        version: config.version.perp.perp,
-        registry: config.registry.perp.lpPool,
+        version: PERP_VERSION,
+        registry: LP_POOL,
         treasuryCaps: config.object.tlpTreasuryCap,
         index: BigInt(0),
         pythState: pythStateId[NETWORK],
@@ -62,8 +62,8 @@ export async function mintStakeLp(
     });
 
     stake(tx, config.token.tlp, {
-        version: config.version.perp.stakePool,
-        registry: config.registry.perp.stakePool,
+        version: STAKE_POOL_VERSION,
+        registry: STAKE_POOL,
         index: BigInt(0),
         lpToken: lpCoin,
         clock: CLOCK,
@@ -94,8 +94,8 @@ export async function unstakeBurn(
 
     for (let token of tokens) {
         updateLiquidityValue(tx, tokenType[NETWORK][token], {
-            version: config.version.perp.perp,
-            registry: config.registry.perp.lpPool,
+            version: PERP_VERSION,
+            registry: LP_POOL,
             index: BigInt(0),
             pythState: pythStateId[NETWORK],
             oracle: priceInfoObjectIds[NETWORK][token],
@@ -104,8 +104,8 @@ export async function unstakeBurn(
     }
 
     let lpCoin = unstake(tx, config.token.tlp, {
-        version: config.version.perp.stakePool,
-        registry: config.registry.perp.stakePool,
+        version: STAKE_POOL_VERSION,
+        registry: STAKE_POOL,
         index: BigInt(0),
         userShareId: BigInt(input.userShareId),
         clock: CLOCK,
@@ -113,8 +113,8 @@ export async function unstakeBurn(
     });
 
     let coin = burnLp(tx, [cToken, config.token.tlp], {
-        version: config.version.perp.perp,
-        registry: config.registry.perp.lpPool,
+        version: PERP_VERSION,
+        registry: LP_POOL,
         treasuryCaps: config.object.tlpTreasuryCap,
         index: BigInt(0),
         pythState: pythStateId[NETWORK],
@@ -159,8 +159,8 @@ export async function swap(
     }
 
     let token = _swap(tx, [fromToken, toToken], {
-        version: config.version.perp.perp,
-        registry: config.registry.perp.lpPool,
+        version: PERP_VERSION,
+        registry: LP_POOL,
         pythState: pythStateId[NETWORK],
         clock: CLOCK,
         index: BigInt(0),
@@ -184,8 +184,8 @@ export async function unsubscribe(
     }
 ): Promise<Transaction> {
     _unsubscribe(tx, config.token.tlp, {
-        version: config.version.perp.stakePool,
-        registry: config.registry.perp.stakePool,
+        version: STAKE_POOL_VERSION,
+        registry: STAKE_POOL,
         index: BigInt(0),
         userShareId: BigInt(input.userShareId),
         clock: CLOCK,
@@ -202,8 +202,8 @@ export async function harvest(
     }
 ): Promise<Transaction> {
     harvestPerUserShare(tx, "0x2::sui::SUI", {
-        version: config.version.perp.stakePool,
-        registry: config.registry.perp.stakePool,
+        version: STAKE_POOL_VERSION,
+        registry: STAKE_POOL,
         index: BigInt(0),
         userShareId: BigInt(input.userShareId),
         clock: CLOCK,

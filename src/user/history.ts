@@ -9,6 +9,7 @@ import {
     ReleaseCollateralEvent,
 } from "../typus_perp/trading/structs";
 import { SwapEvent } from "src/typus_perp/lp-pool/structs";
+import { getFromSentio } from "src/api/sentio";
 
 type actionType =
     | "Place Order"
@@ -46,16 +47,10 @@ interface Event {
     tx_digest: string;
 }
 
-export async function getUserHistory(sender: string) {
-    const raw_events = await getGraphQLEvents(PERP_PACKAGE_ID, sender);
-
-    const pageInfo = raw_events.pageInfo;
-    console.log(pageInfo);
-    // for pagination
-
+export async function parseUserHistory(raw_events) {
     const events: Event[] = [];
 
-    raw_events.nodes.forEach((event) => {
+    raw_events.forEach((event) => {
         const type = event.contents.type.repr;
         if (type.endsWith("PythPrice")) {
             return;
@@ -261,7 +256,8 @@ export async function getUserHistory(sender: string) {
         }
     });
 
-    console.log(events);
+    // console.log(events);
+    return events;
 
     // CreateTradingOrderEvent => Place Order
     //      filled => market order
@@ -281,12 +277,16 @@ export async function getUserHistory(sender: string) {
 }
 
 export async function getGraphQLEvents(module: string, sender: string, beforeCursor: string | null = null) {
+    let before = "";
+    if (beforeCursor) {
+        before = `before: "${beforeCursor}",`;
+    }
     var graphql = JSON.stringify({
         query: `
         {
         events(
           last: 50,
-          before: ${beforeCursor ? `"${beforeCursor}"` : null},
+          ${before}
           filter: {
             eventType: "${module}",
             sender: "${sender}"
@@ -330,3 +330,59 @@ export async function getGraphQLEvents(module: string, sender: string, beforeCur
         return data.data.events;
     }
 }
+
+export async function getLiquidateFromSentio(userAddress: string, startTimestamp: number) {
+    const datas = await getFromSentio("Liquidate", userAddress, startTimestamp.toString());
+    // console.log(datas);
+    return datas.map((x) => {
+        let collateral = Number(x.liquidator_fee) + Number(x.value_for_lp_pool);
+        let txHistory: Event = {
+            action: "Liquidation",
+            order_id: x.order_id,
+            position_id: x.position_id,
+            market: `${x.trading_token}/USD`,
+            side: undefined,
+            order_type: "Market",
+            status: "Filled",
+            size: undefined,
+            base_token: x.trading_token,
+            collateral,
+            collateral_token: x.collateral_token,
+            price: x.trading_price,
+            realized_pnl: collateral * Number(x.collateral_price),
+            timestamp: x.timestamp,
+            tx_digest: x.transaction_hash,
+        };
+
+        return txHistory;
+    });
+}
+
+export async function getOrderMatchFromSentio(userAddress: string, startTimestamp: number) {
+    const datas = await getFromSentio("OrderFilled", userAddress, startTimestamp.toString());
+    // console.log(datas);
+    return datas.map((x) => {
+        let realized_pnl = ((x.realized_amount - x.realized_trading_fee) * x.realized_fee_in_usd) / x.realized_trading_fee;
+        let txHistory: Event = {
+            action: x.order_type == "Open" ? "Order Filled (Open Position)" : "Order Filled (Close Position)",
+            order_id: x.order_id,
+            position_id: x.position_id,
+            market: `${x.trading_token}/USD`,
+            side: x.side,
+            order_type: undefined,
+            status: "Filled",
+            size: x.filled_size,
+            base_token: x.trading_token,
+            collateral: undefined,
+            collateral_token: x.collateral_token,
+            price: x.filled_price,
+            realized_pnl,
+            timestamp: x.timestamp,
+            tx_digest: x.transaction_hash,
+        };
+
+        return txHistory;
+    });
+}
+
+// getOrderMatchFromSentio("0x95f26ce574fc9ace2608807648d99a4dce17f1be8964613d5b972edc82849e9e", 0);

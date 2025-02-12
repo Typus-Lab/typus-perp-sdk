@@ -38,7 +38,12 @@ export async function createTradingOrder(
     var coin;
 
     if (TOKEN == "SUI") {
-        [coin] = tx.splitCoins(tx.gas, [input.amount]);
+        if (input.coins.length == 0) {
+            // support zero coin input for closing position
+            [coin] = zeroCoin(tx, [cToken]);
+        } else {
+            [coin] = tx.splitCoins(tx.gas, [input.amount]);
+        }
     } else {
         if (input.coins.length == 0) {
             // support zero coin input for closing position

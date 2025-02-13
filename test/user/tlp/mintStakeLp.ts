@@ -44,6 +44,8 @@ import { TOKEN, tokenType } from "@typus/typus-sdk/dist/src/constants";
         cTOKEN,
         amount: "100000000000",
         userShareId: stakes.length > 0 ? stakes[0].userShareId.toString() : null,
+        iTOKEN: "TYPUS",
+        user,
     });
 
     // console.log(tx.getData());

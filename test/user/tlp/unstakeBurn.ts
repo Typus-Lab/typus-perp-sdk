@@ -3,8 +3,7 @@ import { TypusConfig } from "@typus/typus-sdk/dist/src/utils";
 import { SuiClient } from "@mysten/sui/client";
 import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519";
 import { Transaction } from "@mysten/sui/transactions";
-import { NETWORK, getUserStake, unstakeBurn } from "src";
-import { LiquidityPool, Registry } from "src";
+import { NETWORK, getLpPools, getUserStake, unstakeBurn } from "src";
 import { createPythClient } from "@typus/typus-sdk/dist/src/utils";
 
 (async () => {
@@ -15,15 +14,8 @@ import { createPythClient } from "@typus/typus-sdk/dist/src/utils";
     let user = keypair.toSuiAddress();
     console.log(user);
 
-    let lpPoolRegistry = await Registry.fetch(provider, LP_POOL);
-    // console.log(lpPoolRegistry);
-
-    let dynamicFields = await provider.getDynamicFields({
-        parentId: lpPoolRegistry.liquidityPoolRegistry,
-    });
-
-    let field = dynamicFields.data[0];
-    let lpPool = await LiquidityPool.fetch(provider, field.objectId);
+    let lpPools = await getLpPools(config);
+    let lpPool = lpPools[0];
     // console.log(lpPool);
 
     let pythClient = createPythClient(provider, NETWORK);
@@ -46,6 +38,7 @@ import { createPythClient } from "@typus/typus-sdk/dist/src/utils";
         cTOKEN: "USDC",
         share: "987450000000",
         user,
+        iTOKEN: "TYPUS",
     });
 
     let dryrunRes = await provider.devInspectTransactionBlock({

@@ -14,8 +14,10 @@ export async function mintStakeLp(
         lpPool: LiquidityPool;
         coins: string[];
         cTOKEN: TOKEN;
+        iTOKEN: TOKEN;
         amount: string;
         userShareId: string | null;
+        user: string;
     }
 ): Promise<Transaction> {
     // update pyth oracle
@@ -50,6 +52,19 @@ export async function mintStakeLp(
         [coin] = tx.splitCoins(destination, [input.amount]);
     }
 
+    let iToken = tokenType[NETWORK][input.iTOKEN];
+    console.log(iToken);
+    if (input.userShareId) {
+        let iCoin = harvestPerUserShare(tx, iToken, {
+            version: STAKE_POOL_VERSION,
+            registry: STAKE_POOL,
+            index: BigInt(0),
+            userShareId: BigInt(input.userShareId),
+            clock: CLOCK,
+        });
+        tx.transferObjects([iCoin], input.user);
+    }
+
     let lpCoin = mintLp(tx, [cToken, TLP_TOKEN], {
         version: PERP_VERSION,
         registry: LP_POOL,
@@ -80,6 +95,7 @@ export async function unstakeBurn(
     input: {
         lpPool: LiquidityPool;
         cTOKEN: TOKEN;
+        iTOKEN: TOKEN;
         userShareId: string;
         share: string | null;
         user: string;
@@ -101,6 +117,19 @@ export async function unstakeBurn(
             oracle: priceInfoObjectIds[NETWORK][token],
             clock: CLOCK,
         });
+    }
+
+    let iToken = tokenType[NETWORK][input.iTOKEN];
+    console.log(iToken);
+    if (input.userShareId) {
+        let iCoin = harvestPerUserShare(tx, iToken, {
+            version: STAKE_POOL_VERSION,
+            registry: STAKE_POOL,
+            index: BigInt(0),
+            userShareId: BigInt(input.userShareId),
+            clock: CLOCK,
+        });
+        tx.transferObjects([iCoin], input.user);
     }
 
     let lpCoin = unstake(tx, TLP_TOKEN, {

@@ -11,13 +11,13 @@ import {
     getEstimatedLiquidationPriceAndPnl,
 } from "./typus_perp/trading/functions";
 
-import { getUserShares } from "./typus_stake_pool/stake-pool/functions";
+import { allocateIncentive, getUserShares } from "./typus_stake_pool/stake-pool/functions";
 import { LpUserShare, StakePool } from "./typus_stake_pool/stake-pool/structs";
 
 import { CLOCK, SENDER, tokenType, typeArgToToken } from "@typus/typus-sdk/dist/src/constants";
 import { priceInfoObjectIds, pythStateId, PythClient, updatePyth, TypusConfig } from "@typus/typus-sdk/dist/src/utils";
 
-import { LIQUIDITY_POOL, LP_POOL, MARKET, NETWORK, PERP_VERSION, STAKE_POOL } from ".";
+import { LIQUIDITY_POOL, LP_POOL, MARKET, NETWORK, PERP_VERSION, STAKE_POOL, STAKE_POOL_VERSION } from ".";
 import { TypusBidReceipt } from "./_dependencies/source/0x908a10789a1a6953e0b73a997c10e3552f7ce4e2907afd00a334ed74bd973ded/vault/structs";
 import { PUBLISHED_AT } from "./typus_perp";
 
@@ -219,6 +219,13 @@ export async function getUserStake(config: TypusConfig, user: string): Promise<[
     let provider = new SuiClient({ url: config.rpcEndpoint });
     let tx = new Transaction();
 
+    allocateIncentive(tx, {
+        version: STAKE_POOL_VERSION,
+        registry: STAKE_POOL,
+        index: BigInt(0),
+        clock: CLOCK,
+    });
+
     getUserShares(tx, {
         registry: STAKE_POOL,
         index: BigInt(0),
@@ -230,7 +237,7 @@ export async function getUserStake(config: TypusConfig, user: string): Promise<[
 
     if (res.results) {
         // @ts-ignore
-        let returnValues = res.results[0].returnValues[0][0];
+        let returnValues = res.results[1].returnValues[0][0];
         // console.log(returnValues);
 
         let reader = new BcsReader(new Uint8Array(returnValues));

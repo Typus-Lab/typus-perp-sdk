@@ -53,7 +53,7 @@ export async function mintStakeLp(
     }
 
     let iToken = tokenType[NETWORK][input.iTOKEN];
-    console.log(iToken);
+    // console.log(iToken);
     if (input.userShareId) {
         let iCoin = harvestPerUserShare(tx, iToken, {
             version: STAKE_POOL_VERSION,
@@ -120,7 +120,7 @@ export async function unstakeBurn(
     }
 
     let iToken = tokenType[NETWORK][input.iTOKEN];
-    console.log(iToken);
+    // console.log(iToken);
     if (input.userShareId) {
         let iCoin = harvestPerUserShare(tx, iToken, {
             version: STAKE_POOL_VERSION,
@@ -223,19 +223,24 @@ export async function unsubscribe(
     return tx;
 }
 
-export async function harvest(
+export async function harvestStakeReward(
     config: TypusConfig,
     tx: Transaction,
     input: {
         userShareId: string;
+        user: string;
+        iTOKEN: TOKEN;
     }
 ): Promise<Transaction> {
-    harvestPerUserShare(tx, "0x2::sui::SUI", {
+    let iToken = tokenType[NETWORK][input.iTOKEN];
+    // console.log(iToken);
+    let iCoin = harvestPerUserShare(tx, iToken, {
         version: STAKE_POOL_VERSION,
         registry: STAKE_POOL,
         index: BigInt(0),
         userShareId: BigInt(input.userShareId),
         clock: CLOCK,
     });
+    tx.transferObjects([iCoin], input.user);
     return tx;
 }

@@ -6,4 +6,9 @@ import { getStakePools } from "src";
 
     let stakePools = await getStakePools(config);
     console.log(stakePools[0]); // 1 lpPool inclueded
+
+    console.log(
+        "Incentives: ",
+        stakePools[0].incentives.map((i) => i.tokenType.name)
+    );
 })();

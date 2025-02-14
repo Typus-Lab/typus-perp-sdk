@@ -215,7 +215,7 @@ export function parseOptionBidReceipts(positions: Position[]): (TypusBidReceipt 
     });
 }
 
-export async function getUserStake(config: TypusConfig, user: string): Promise<LpUserShare[]> {
+export async function getUserStake(config: TypusConfig, user: string): Promise<[LpUserShare, string[]][]> {
     let provider = new SuiClient({ url: config.rpcEndpoint });
     let tx = new Transaction();
 
@@ -234,12 +234,19 @@ export async function getUserStake(config: TypusConfig, user: string): Promise<L
         // console.log(returnValues);
 
         let reader = new BcsReader(new Uint8Array(returnValues));
-        let lpShares: LpUserShare[] = [];
+        let lpShares: [LpUserShare, string[]][] = [];
         reader.readVec((reader) => {
             let length = reader.readULEB();
-            let bytes = reader.readBytes(length);
-            let lpShare = LpUserShare.fromBcs(Uint8Array.from(Array.from(bytes)));
-            lpShares.push(lpShare);
+            // let bytes = reader.readBytes(length);
+            // let lpShare = LpUserShare.fromBcs(Uint8Array.from(Array.from(bytes)));
+            let lpShare = LpUserShare.fromFields(LpUserShare.bcs.read(reader));
+            let incentives: string[] = [];
+            reader.readVec((reader) => {
+                let incentive = reader.read64();
+                incentives.push(incentive);
+            });
+
+            lpShares.push([lpShare, incentives]);
         });
 
         // let lpShares: LpUserShare[] = readVecShares(Uint8Array.from(returnValues));

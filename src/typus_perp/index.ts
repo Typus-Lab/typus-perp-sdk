@@ -1,5 +1,5 @@
 import { NETWORK } from "../index";
 
 export const PACKAGE_ID = NETWORK == "MAINNET" ? "" : "0x7c19f81d9d411e78305d7af8dad25317c56bb449fede8a78b6021232478f0509";
-export const PUBLISHED_AT = NETWORK == "MAINNET" ? "" : "0x2ee86fc212394e7440f3c08f897c7a9cdc036f203eb1788332a06e1f69b1b685";
+export const PUBLISHED_AT = NETWORK == "MAINNET" ? "" : "0xeb3331e74efa1e2e51d665fe1369c4f721eaabbb3974ffd75503a84ab4409c42";
 export const PKG_V1 = NETWORK == "MAINNET" ? "" : "0x7c19f81d9d411e78305d7af8dad25317c56bb449fede8a78b6021232478f0509";

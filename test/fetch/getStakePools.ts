@@ -1,17 +1,21 @@
 import { TypusConfig } from "@typus/typus-sdk/dist/src/utils";
-import { getStakePools } from "src";
+import { getStakePool, getStakePools } from "src";
 
 (async () => {
     let config = await TypusConfig.default("TESTNET", null);
 
-    let stakePools = await getStakePools(config);
-    console.log(stakePools[0]); // 1 lpPool inclueded
+    // let stakePools = await getStakePools(config);
+    // console.log(stakePools); // 1 lpPool inclueded
+    // let stakePool = stakePools[0];
+
+    let stakePool = await getStakePool(config);
+    console.log(stakePool);
 
     console.log(
         "Incentives: ",
-        stakePools[0].incentives.map((i) => i.tokenType.name)
+        stakePool.incentives.map((i) => i.tokenType.name)
     );
 
-    console.log("config: ", stakePools[0].incentives[0].config);
-    console.log("info: ", stakePools[0].incentives[0].info);
+    console.log("config: ", stakePool.incentives[0].config);
+    console.log("info: ", stakePool.incentives[0].info);
 })();

@@ -1,21 +1,26 @@
 import { TypusConfig } from "@typus/typus-sdk/dist/src/utils";
-import { getLpPools } from "src";
+import { getLpPool, getLpPools } from "src";
 
 (async () => {
     let config = await TypusConfig.default("TESTNET", null);
 
-    let lpPools = await getLpPools(config);
-    console.log(lpPools); // 1 lpPool inclueded
+    // let lpPools = await getLpPools(config);
+    // console.log(lpPools); // 1 lpPool inclueded
+    // const lpPool = lpPools[0];
+
+    // skip dynamic field fetching
+    let lpPool = await getLpPool(config);
+    console.log(lpPool);
 
     // avaliable token types to mint the lp tokens (3 token types supported)
-    console.log(lpPools[0].liquidityTokens);
+    console.log(lpPool.liquidityTokens);
 
     //
-    console.log(lpPools[0].tokenPools);
+    console.log(lpPool.tokenPools);
 
     // maxCapacity, targetWeightBp
-    console.log(lpPools[0].tokenPools[1].config.spotConfig);
+    console.log(lpPool.tokenPools[1].config.spotConfig);
 
     // utilizationThresholdBp0
-    console.log(lpPools[0].tokenPools[1].config.marginConfig);
+    console.log(lpPool.tokenPools[1].config.marginConfig);
 })();

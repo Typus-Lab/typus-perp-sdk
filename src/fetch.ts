@@ -17,7 +17,7 @@ import { LpUserShare, StakePool } from "./typus_stake_pool/stake-pool/structs";
 import { CLOCK, SENDER, tokenType, typeArgToToken } from "@typus/typus-sdk/dist/src/constants";
 import { priceInfoObjectIds, pythStateId, PythClient, updatePyth, TypusConfig } from "@typus/typus-sdk/dist/src/utils";
 
-import { LIQUIDITY_POOL, LP_POOL, MARKET, NETWORK, PERP_VERSION, STAKE_POOL, STAKE_POOL_VERSION } from ".";
+import { LIQUIDITY_POOL, LIQUIDITY_POOL_0, LP_POOL, MARKET, NETWORK, PERP_VERSION, STAKE_POOL, STAKE_POOL_0, STAKE_POOL_VERSION } from ".";
 import { TypusBidReceipt } from "./_dependencies/source/0x908a10789a1a6953e0b73a997c10e3552f7ce4e2907afd00a334ed74bd973ded/vault/structs";
 import { PUBLISHED_AT } from "./typus_perp";
 
@@ -42,6 +42,12 @@ export async function getLpPools(config: TypusConfig): Promise<LiquidityPool[]> 
     return lpPools;
 }
 
+export async function getLpPool(config: TypusConfig, objectId: string = LIQUIDITY_POOL_0): Promise<LiquidityPool> {
+    let provider = new SuiClient({ url: config.rpcEndpoint });
+    let lpPool = await LiquidityPool.fetch(provider, objectId);
+    return lpPool;
+}
+
 export async function getStakePools(config: TypusConfig): Promise<StakePool[]> {
     let provider = new SuiClient({ url: config.rpcEndpoint });
     let dynamicFields = await provider.getDynamicFields({
@@ -57,6 +63,12 @@ export async function getStakePools(config: TypusConfig): Promise<StakePool[]> {
     }
 
     return stakePools;
+}
+
+export async function getStakePool(config: TypusConfig, objectId: string = STAKE_POOL_0): Promise<StakePool> {
+    let provider = new SuiClient({ url: config.rpcEndpoint });
+    let stakePool = await StakePool.fetch(provider, objectId);
+    return stakePool;
 }
 
 export interface MarketsData {

@@ -22,7 +22,7 @@ import { unsubscribe, getUserStake } from "src";
     let tx = new Transaction();
 
     unsubscribe(config, tx, {
-        userShareId: stake.userShareId.toString(),
+        userShareId: stake[0].userShareId.toString(),
         share: "5000000",
     });
 

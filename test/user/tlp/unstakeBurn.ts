@@ -24,7 +24,7 @@ import { createPythClient } from "@typus/typus-sdk/dist/src/utils";
     let stakes = await getUserStake(config, user);
     console.log(stakes);
 
-    let unlockedStakes = stakes.filter((s) => s.deactivatingShares.filter((d) => d.unlockedTsMs < Date.now()).length > 0);
+    let unlockedStakes = stakes.filter((s) => s[0].deactivatingShares.filter((d) => d.unlockedTsMs < Date.now()).length > 0);
     console.log(unlockedStakes);
 
     let stake = unlockedStakes[0];
@@ -33,7 +33,7 @@ import { createPythClient } from "@typus/typus-sdk/dist/src/utils";
     let tx = new Transaction();
 
     unstakeBurn(config, tx, pythClient, {
-        userShareId: stake.userShareId.toString(),
+        userShareId: stake[0].userShareId.toString(),
         lpPool,
         cTOKEN: "USDC",
         share: "987450000000",

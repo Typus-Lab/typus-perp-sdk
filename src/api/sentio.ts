@@ -38,8 +38,7 @@ export async function getTlpAPRFromSentio(): Promise<number> {
         timeRange: {
             start: "now-7d",
             end: "now",
-            step: 3600,
-            timezone: "Asia/Taipei",
+            step: 24 * 3600,
         },
         limit: 20,
         queries: [

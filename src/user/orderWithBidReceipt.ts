@@ -38,12 +38,14 @@ export async function createTradingOrderWithBidReceipt(
     let TOKEN = input.cToken;
     let BASE_TOKEN = input.tradingToken;
 
-    await updatePyth(pythClient, tx, [TOKEN, BASE_TOKEN]);
+    // TODO: deduplicate
+    await updatePyth(pythClient, tx, [TOKEN, BASE_TOKEN, "wUSDC"]);
     let cToken = tokenType[NETWORK][TOKEN];
     let bToken = tokenType[NETWORK][input.bToken];
     let baseToken = tokenType[NETWORK][BASE_TOKEN];
 
-    updateOracleWithPyth(pythClient, tx, config.package.oracle, config.oracle[BASE_TOKEN.toLocaleLowerCase()], BASE_TOKEN, "USDC");
+    // TODO: use updateOracleWithPythUsd
+    updateOracleWithPyth(pythClient, tx, config.package.oracle, config.oracle[BASE_TOKEN.toLocaleLowerCase()], BASE_TOKEN, "wUSDC");
 
     // split bid receipt
     var collateralBidReceipt;
@@ -97,12 +99,12 @@ export async function reduceOptionCollateralPositionSize(
     let TOKEN = input.cToken;
     let BASE_TOKEN = input.tradingToken;
 
-    await updatePyth(pythClient, tx, [TOKEN, BASE_TOKEN]);
+    await updatePyth(pythClient, tx, [TOKEN, BASE_TOKEN, "wUSDC"]);
     let cToken = tokenType[NETWORK][TOKEN];
     let bToken = tokenType[NETWORK][input.bToken];
     let baseToken = tokenType[NETWORK][BASE_TOKEN];
 
-    updateOracleWithPyth(pythClient, tx, config.package.oracle, config.oracle[BASE_TOKEN.toLocaleLowerCase()], BASE_TOKEN, "USDC");
+    updateOracleWithPyth(pythClient, tx, config.package.oracle, config.oracle[BASE_TOKEN.toLocaleLowerCase()], BASE_TOKEN, "wUSDC");
 
     _reduceOptionCollateralPositionSize(tx, [cToken, bToken, baseToken], {
         version: PERP_VERSION,

@@ -15,7 +15,15 @@ import { allocateIncentive, getUserShares } from "./typus_stake_pool/stake-pool/
 import { LpUserShare, StakePool } from "./typus_stake_pool/stake-pool/structs";
 
 import { CLOCK, SENDER, tokenType, typeArgToToken } from "@typus/typus-sdk/dist/src/constants";
-import { priceInfoObjectIds, pythStateId, PythClient, updatePyth, TypusConfig } from "@typus/typus-sdk/dist/src/utils";
+import {
+    priceInfoObjectIds,
+    pythStateId,
+    PythClient,
+    updatePyth,
+    TypusConfig,
+    updateOracleWithPyth,
+    Token,
+} from "@typus/typus-sdk/dist/src/utils";
 
 import { LIQUIDITY_POOL, LIQUIDITY_POOL_0, LP_POOL, MARKET, NETWORK, PERP_VERSION, STAKE_POOL, STAKE_POOL_0, STAKE_POOL_VERSION } from ".";
 import { TypusBidReceipt } from "./_dependencies/source/0x908a10789a1a6953e0b73a997c10e3552f7ce4e2907afd00a334ed74bd973ded/vault/structs";
@@ -290,17 +298,26 @@ export async function getLiquidationPriceAndPnl(
     let provider = new SuiClient({ url: config.rpcEndpoint });
     let tx = new Transaction();
 
+    let cTokens: string[] = ["SUI"];
     let pythTokens: string[] = [];
 
     for (let position of input.positions) {
         // parse from Position
         let TOKEN = typeArgToToken(position.collateralToken.name);
         let BASE_TOKEN = typeArgToToken(position.symbol.baseToken.name);
+        cTokens.push(TOKEN);
         pythTokens.push(TOKEN);
         pythTokens.push(BASE_TOKEN);
     }
 
     await updatePyth(pythClient, tx, Array.from(new Set(pythTokens)));
+
+    for (let cToken of Array.from(new Set(cTokens))) {
+        if (config.oracle[cToken.toLocaleLowerCase()]) {
+            // @ts-ignore
+            updateOracleWithPyth(pythClient, tx, config.package.oracle, config.oracle[cToken.toLocaleLowerCase()], cToken, "wUSDC");
+        }
+    }
 
     for (let position of input.positions) {
         // parse from Position
@@ -318,6 +335,8 @@ export async function getLiquidationPriceAndPnl(
             oracleTradingSymbol: priceInfoObjectIds[NETWORK][BASE_TOKEN],
             clock: CLOCK,
             positionId: position.positionId,
+            dovRegistry: config.registry.dov.dovSingle,
+            typusOracle: config.oracle[TOKEN.toLocaleLowerCase()] ?? config.oracle["sui"],
         });
     }
 

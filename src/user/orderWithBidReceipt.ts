@@ -38,8 +38,8 @@ export async function createTradingOrderWithBidReceipt(
     let TOKEN = input.cToken;
     let BASE_TOKEN = input.tradingToken;
 
-    // TODO: deduplicate
-    await updatePyth(pythClient, tx, [TOKEN, BASE_TOKEN, "wUSDC"]);
+    // deduplicate
+    await updatePyth(pythClient, tx, Array.from(new Set([TOKEN, BASE_TOKEN, "wUSDC"])));
     let cToken = tokenType[NETWORK][TOKEN];
     let bToken = tokenType[NETWORK][input.bToken];
     let baseToken = tokenType[NETWORK][BASE_TOKEN];

@@ -432,11 +432,11 @@ export function emitRealizedFundingEvent(tx: Transaction, args: EmitRealizedFund
 
 export interface GetEstimatedLiquidationPriceArgs {
     position: TransactionObjectInput;
+    isSameToken: boolean | TransactionArgument;
     collateralOraclePrice: bigint | TransactionArgument;
     collateralOraclePriceDecimal: bigint | TransactionArgument;
-    tradingPairOraclePrice: bigint | TransactionArgument;
-    tradingPairOraclePriceDecimal: bigint | TransactionArgument;
     tradingFeeMbp: bigint | TransactionArgument;
+    maintenanceMarginRateBp: bigint | TransactionArgument;
 }
 
 export function getEstimatedLiquidationPrice(tx: Transaction, args: GetEstimatedLiquidationPriceArgs) {
@@ -444,11 +444,11 @@ export function getEstimatedLiquidationPrice(tx: Transaction, args: GetEstimated
         target: `${PUBLISHED_AT}::position::get_estimated_liquidation_price`,
         arguments: [
             obj(tx, args.position),
+            pure(tx, args.isSameToken, `bool`),
             pure(tx, args.collateralOraclePrice, `u64`),
             pure(tx, args.collateralOraclePriceDecimal, `u64`),
-            pure(tx, args.tradingPairOraclePrice, `u64`),
-            pure(tx, args.tradingPairOraclePriceDecimal, `u64`),
             pure(tx, args.tradingFeeMbp, `u64`),
+            pure(tx, args.maintenanceMarginRateBp, `u64`),
         ],
     });
 }
@@ -618,10 +618,6 @@ export function getPositionSymbol(tx: Transaction, position: TransactionObjectIn
     return tx.moveCall({ target: `${PUBLISHED_AT}::position::get_position_symbol`, arguments: [obj(tx, position)] });
 }
 
-export function getPositionUnrealizedCost(tx: Transaction, position: TransactionObjectInput) {
-    return tx.moveCall({ target: `${PUBLISHED_AT}::position::get_position_unrealized_cost`, arguments: [obj(tx, position)] });
-}
-
 export function getPositionUnrealizedFundingSign(tx: Transaction, position: TransactionObjectInput) {
     return tx.moveCall({ target: `${PUBLISHED_AT}::position::get_position_unrealized_funding_sign`, arguments: [obj(tx, position)] });
 }
@@ -637,13 +633,24 @@ export function getReserveAmount(tx: Transaction, position: TransactionObjectInp
 export interface IncreaseCollateralArgs {
     position: TransactionObjectInput;
     collateral: TransactionObjectInput;
+    collateralOraclePrice: bigint | TransactionArgument;
+    collateralOraclePriceDecimal: bigint | TransactionArgument;
+    tradingPairOraclePrice: bigint | TransactionArgument;
+    tradingPairOraclePriceDecimal: bigint | TransactionArgument;
 }
 
 export function increaseCollateral(tx: Transaction, typeArg: string, args: IncreaseCollateralArgs) {
     return tx.moveCall({
         target: `${PUBLISHED_AT}::position::increase_collateral`,
         typeArguments: [typeArg],
-        arguments: [obj(tx, args.position), obj(tx, args.collateral)],
+        arguments: [
+            obj(tx, args.position),
+            obj(tx, args.collateral),
+            pure(tx, args.collateralOraclePrice, `u64`),
+            pure(tx, args.collateralOraclePriceDecimal, `u64`),
+            pure(tx, args.tradingPairOraclePrice, `u64`),
+            pure(tx, args.tradingPairOraclePriceDecimal, `u64`),
+        ],
     });
 }
 
@@ -805,13 +812,24 @@ export function realizeFunding(tx: Transaction, typeArg: string, args: RealizeFu
 export interface ReleaseCollateralArgs {
     position: TransactionObjectInput;
     releaseAmount: bigint | TransactionArgument;
+    collateralOraclePrice: bigint | TransactionArgument;
+    collateralOraclePriceDecimal: bigint | TransactionArgument;
+    tradingPairOraclePrice: bigint | TransactionArgument;
+    tradingPairOraclePriceDecimal: bigint | TransactionArgument;
 }
 
 export function releaseCollateral(tx: Transaction, typeArg: string, args: ReleaseCollateralArgs) {
     return tx.moveCall({
         target: `${PUBLISHED_AT}::position::release_collateral`,
         typeArguments: [typeArg],
-        arguments: [obj(tx, args.position), pure(tx, args.releaseAmount, `u64`)],
+        arguments: [
+            obj(tx, args.position),
+            pure(tx, args.releaseAmount, `u64`),
+            pure(tx, args.collateralOraclePrice, `u64`),
+            pure(tx, args.collateralOraclePriceDecimal, `u64`),
+            pure(tx, args.tradingPairOraclePrice, `u64`),
+            pure(tx, args.tradingPairOraclePriceDecimal, `u64`),
+        ],
     });
 }
 
@@ -874,6 +892,21 @@ export function removePositionWithBidReceipts(tx: Transaction, args: RemovePosit
     return tx.moveCall({
         target: `${PUBLISHED_AT}::position::remove_position_with_bid_receipts`,
         arguments: [obj(tx, args.version), obj(tx, args.position)],
+    });
+}
+
+export interface UpdateOptionPositionCollateralAmountArgs {
+    dovRegistry: TransactionObjectInput;
+    typusOracle: TransactionObjectInput;
+    position: TransactionObjectInput;
+    clock: TransactionObjectInput;
+}
+
+export function updateOptionPositionCollateralAmount(tx: Transaction, typeArg: string, args: UpdateOptionPositionCollateralAmountArgs) {
+    return tx.moveCall({
+        target: `${PUBLISHED_AT}::position::update_option_position_collateral_amount`,
+        typeArguments: [typeArg],
+        arguments: [obj(tx, args.dovRegistry), obj(tx, args.typusOracle), obj(tx, args.position), obj(tx, args.clock)],
     });
 }
 

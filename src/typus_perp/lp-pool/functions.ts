@@ -788,6 +788,20 @@ export function updateRemoveLiquidityTokenProcessToken(tx: Transaction, typeArg:
     });
 }
 
+export interface UpdateReserveAmountArgs {
+    liquidityPool: TransactionObjectInput;
+    addReserve: boolean | TransactionArgument;
+    dReserve: bigint | TransactionArgument;
+}
+
+export function updateReserveAmount(tx: Transaction, typeArg: string, args: UpdateReserveAmountArgs) {
+    return tx.moveCall({
+        target: `${PUBLISHED_AT}::lp_pool::update_reserve_amount`,
+        typeArguments: [typeArg],
+        arguments: [obj(tx, args.liquidityPool), pure(tx, args.addReserve, `bool`), pure(tx, args.dReserve, `u64`)],
+    });
+}
+
 export interface UpdateSpotConfigArgs {
     version: TransactionObjectInput;
     registry: TransactionObjectInput;

@@ -550,6 +550,8 @@ export interface GetEstimatedLiquidationPriceAndPnlArgs {
     version: TransactionObjectInput;
     registry: TransactionObjectInput;
     poolRegistry: TransactionObjectInput;
+    dovRegistry: TransactionObjectInput;
+    typusOracle: TransactionObjectInput;
     marketIndex: bigint | TransactionArgument;
     poolIndex: bigint | TransactionArgument;
     pythState: TransactionObjectInput;
@@ -571,6 +573,8 @@ export function getEstimatedLiquidationPriceAndPnl(
             obj(tx, args.version),
             obj(tx, args.registry),
             obj(tx, args.poolRegistry),
+            obj(tx, args.dovRegistry),
+            obj(tx, args.typusOracle),
             pure(tx, args.marketIndex, `u64`),
             pure(tx, args.poolIndex, `u64`),
             obj(tx, args.pythState),

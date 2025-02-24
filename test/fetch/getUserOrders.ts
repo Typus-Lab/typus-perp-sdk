@@ -7,5 +7,5 @@ import { getUserOrders } from "src";
     console.log(user);
 
     let orders = await getUserOrders(config, user);
-    console.log(orders);
+    console.log(JSON.stringify(orders, (_, v) => (typeof v === "bigint" ? `${v}` : v), 2));
 })();

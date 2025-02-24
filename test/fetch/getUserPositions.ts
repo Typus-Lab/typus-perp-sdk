@@ -11,8 +11,7 @@ import { createPythClient } from "@typus/typus-sdk/dist/src/utils";
     console.log(user);
 
     let positions = await getUserPositions(config, user);
-    console.log(positions);
-    // console.log(positions.map((x) => x.symbol.baseToken));
+    console.log(JSON.stringify(positions, (_, v) => (typeof v === "bigint" ? `${v}` : v), 2));
 
     let bidReceipts = parseOptionBidReceipts(positions);
     console.log(bidReceipts);

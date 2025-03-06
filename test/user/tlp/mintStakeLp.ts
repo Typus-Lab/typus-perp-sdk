@@ -42,9 +42,9 @@ import { TOKEN, tokenType } from "@typus/typus-sdk/dist/src/constants";
         lpPool,
         coins,
         cTOKEN,
-        amount: "100000000000",
-        userShareId: stakes.length > 0 ? stakes[0].userShareId.toString() : null,
         iTOKEN: "TYPUS",
+        amount: "100000000000",
+        userShareId: stakes.length > 0 ? stakes[0][0].userShareId.toString() : null,
         user,
     });
 

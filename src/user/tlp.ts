@@ -2,11 +2,12 @@ import { Transaction } from "@mysten/sui/transactions";
 import { LiquidityPool } from "../typus_perp/lp-pool/structs";
 import { burnLp, mintLp, updateLiquidityValue, swap as _swap } from "../typus_perp/lp-pool/functions";
 import { harvestPerUserShare, stake, unstake, unsubscribe as _unsubscribe } from "../typus_stake_pool/stake-pool/functions";
-import { PythClient, updatePyth } from "@typus/typus-sdk/dist/src/utils";
+import { PythClient, TypusConfig, updateOracleWithPythUsd, updatePyth } from "@typus/typus-sdk/dist/src/utils";
 import { CLOCK, tokenType, typeArgToAsset, TOKEN, oracle } from "@typus/typus-sdk/dist/src/constants";
 import { LP_POOL, NETWORK, PERP_VERSION, STAKE_POOL, STAKE_POOL_VERSION, TLP_TOKEN, TLP_TREASURY_CAP } from "..";
 
 export async function mintStakeLp(
+    config: TypusConfig,
     tx: Transaction,
     pythClient: PythClient,
     input: {
@@ -26,6 +27,7 @@ export async function mintStakeLp(
     await updatePyth(pythClient, tx, tokens);
 
     for (let token of tokens) {
+        updateOracleWithPythUsd(pythClient, tx, config.package.oracle, token);
         updateLiquidityValue(tx, tokenType[NETWORK][token], {
             version: PERP_VERSION,
             registry: LP_POOL,
@@ -86,6 +88,7 @@ export async function mintStakeLp(
 }
 
 export async function unstakeBurn(
+    config: TypusConfig,
     tx: Transaction,
     pythClient: PythClient,
     input: {
@@ -150,6 +153,7 @@ export async function unstakeBurn(
 }
 
 export async function swap(
+    config: TypusConfig,
     tx: Transaction,
     pythClient: PythClient,
     input: {
@@ -194,6 +198,7 @@ export async function swap(
 }
 
 export async function unsubscribe(
+    config: TypusConfig,
     tx: Transaction,
     input: {
         userShareId: string;
@@ -212,6 +217,7 @@ export async function unsubscribe(
 }
 
 export async function harvestStakeReward(
+    config: TypusConfig,
     tx: Transaction,
     input: {
         userShareId: string;

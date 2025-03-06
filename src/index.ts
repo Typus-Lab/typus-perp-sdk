@@ -18,8 +18,8 @@ export const MARKET = NETWORK == "MAINNET" ? "" : "0x819ad73d991f69640e553048a34
 export const PERP_VERSION = NETWORK == "MAINNET" ? "" : "0x26acf84bc93db806e435da1223e9e6add249724495c4103a08296d1b67d1edfc";
 // LpRegistry
 export const TLP = NETWORK == "MAINNET" ? "" : "0x42096762e1dd5721621c4104c167569e6afb0586ba92a7f92d834062dd38d7e7";
-export const TLP_TOKEN = NETWORK == "MAINNET" ? "" : "0x42096762e1dd5721621c4104c167569e6afb0586ba92a7f92d834062dd38d7e7::tlp::TLP";
-export const TLP_TREASURY_CAP = NETWORK == "MAINNET" ? "" : "0x7d9c6f9dfceb4788c21388f77e4ccf83e1b3f10282ae272b379402e92c97bbf6";
+export const TLP_TOKEN = NETWORK == "MAINNET" ? "" : "0x21a3b745eaeee0ec0cbc3207230185013d1d8939f7a920aa61f5fea7d09db600::tlp::TLP";
+export const TLP_TREASURY_CAP = NETWORK == "MAINNET" ? "" : "0xb180a31c9335d0fb9b7f59b5aa9f0fef7e09292bb0edab9af587f9aa0f411b04";
 // StakePoolRegistry
 export const STAKE_POOL = NETWORK == "MAINNET" ? "" : "0xcd9b35eca5209f8abe8bd9f57b5a6cdda033cc21c3e6663418d40b38681f1d34";
 export const STAKE_POOL_0 = NETWORK == "MAINNET" ? "" : "0x29f3c845641a256d13a68c8613836b13aab5bd6ed6c5542e97d8098bec40e09f";

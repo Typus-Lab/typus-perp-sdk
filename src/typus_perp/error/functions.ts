@@ -1,20 +1,16 @@
 import { PUBLISHED_AT } from "..";
 import { Transaction } from "@mysten/sui/transactions";
 
-export function auctionNotYetEnded(tx: Transaction) {
-    return tx.moveCall({ target: `${PUBLISHED_AT}::error::auction_not_yet_ended`, arguments: [] });
-}
-
-export function invalidVersion(tx: Transaction) {
-    return tx.moveCall({ target: `${PUBLISHED_AT}::error::invalid_version`, arguments: [] });
-}
-
 export function activeTradingSymbol(tx: Transaction) {
     return tx.moveCall({ target: `${PUBLISHED_AT}::error::active_trading_symbol`, arguments: [] });
 }
 
 export function addSizeNotAllowed(tx: Transaction) {
     return tx.moveCall({ target: `${PUBLISHED_AT}::error::add_size_not_allowed`, arguments: [] });
+}
+
+export function auctionNotYetEnded(tx: Transaction) {
+    return tx.moveCall({ target: `${PUBLISHED_AT}::error::auction_not_yet_ended`, arguments: [] });
 }
 
 export function authorityAlreadyExisted(tx: Transaction) {
@@ -91,6 +87,10 @@ export function invalidOrderSize(tx: Transaction) {
 
 export function invalidTradingFeeConfig(tx: Transaction) {
     return tx.moveCall({ target: `${PUBLISHED_AT}::error::invalid_trading_fee_config`, arguments: [] });
+}
+
+export function invalidVersion(tx: Transaction) {
+    return tx.moveCall({ target: `${PUBLISHED_AT}::error::invalid_version`, arguments: [] });
 }
 
 export function linkedOrderIdNotExisted(tx: Transaction) {

@@ -8,7 +8,6 @@ export interface SwapArgs {
     version: TransactionObjectInput;
     registry: TransactionObjectInput;
     index: bigint | TransactionArgument;
-    pythState: TransactionObjectInput;
     oracleFromToken: TransactionObjectInput;
     oracleToToken: TransactionObjectInput;
     fromCoin: TransactionObjectInput;
@@ -24,7 +23,6 @@ export function swap(tx: Transaction, typeArgs: [string, string], args: SwapArgs
             obj(tx, args.version),
             obj(tx, args.registry),
             pure(tx, args.index, `u64`),
-            obj(tx, args.pythState),
             obj(tx, args.oracleFromToken),
             obj(tx, args.oracleToToken),
             obj(tx, args.fromCoin),
@@ -36,10 +34,6 @@ export function swap(tx: Transaction, typeArgs: [string, string], args: SwapArgs
 
 export function init(tx: Transaction) {
     return tx.moveCall({ target: `${PUBLISHED_AT}::lp_pool::init`, arguments: [] });
-}
-
-export function safetyCheck(tx: Transaction, liquidityPool: TransactionObjectInput) {
-    return tx.moveCall({ target: `${PUBLISHED_AT}::lp_pool::safety_check`, arguments: [obj(tx, liquidityPool)] });
 }
 
 export interface AddLiquidityTokenArgs {
@@ -103,7 +97,6 @@ export interface BurnLpArgs {
     registry: TransactionObjectInput;
     index: bigint | TransactionArgument;
     treasuryCaps: TransactionObjectInput;
-    pythState: TransactionObjectInput;
     oracle: TransactionObjectInput;
     coin: TransactionObjectInput;
     clock: TransactionObjectInput;
@@ -118,7 +111,6 @@ export function burnLp(tx: Transaction, typeArgs: [string, string], args: BurnLp
             obj(tx, args.registry),
             pure(tx, args.index, `u64`),
             obj(tx, args.treasuryCaps),
-            obj(tx, args.pythState),
             obj(tx, args.oracle),
             obj(tx, args.coin),
             obj(tx, args.clock),
@@ -443,7 +435,6 @@ export interface ManagerFlashRemoveLiquidityArgs {
     version: TransactionObjectInput;
     registry: TransactionObjectInput;
     index: bigint | TransactionArgument;
-    pythState: TransactionObjectInput;
     oracle: TransactionObjectInput;
     process: TransactionObjectInput;
     clock: TransactionObjectInput;
@@ -457,7 +448,6 @@ export function managerFlashRemoveLiquidity(tx: Transaction, typeArg: string, ar
             obj(tx, args.version),
             obj(tx, args.registry),
             pure(tx, args.index, `u64`),
-            obj(tx, args.pythState),
             obj(tx, args.oracle),
             obj(tx, args.process),
             obj(tx, args.clock),
@@ -469,7 +459,6 @@ export interface ManagerFlashRepayLiquidityArgs {
     version: TransactionObjectInput;
     registry: TransactionObjectInput;
     index: bigint | TransactionArgument;
-    pythState: TransactionObjectInput;
     oracle: TransactionObjectInput;
     process: TransactionObjectInput;
     balance: TransactionObjectInput;
@@ -484,7 +473,6 @@ export function managerFlashRepayLiquidity(tx: Transaction, typeArg: string, arg
             obj(tx, args.version),
             obj(tx, args.registry),
             pure(tx, args.index, `u64`),
-            obj(tx, args.pythState),
             obj(tx, args.oracle),
             obj(tx, args.process),
             obj(tx, args.balance),
@@ -497,9 +485,8 @@ export interface MintLpArgs {
     version: TransactionObjectInput;
     registry: TransactionObjectInput;
     treasuryCaps: TransactionObjectInput;
-    index: bigint | TransactionArgument;
-    pythState: TransactionObjectInput;
     oracle: TransactionObjectInput;
+    index: bigint | TransactionArgument;
     coin: TransactionObjectInput;
     clock: TransactionObjectInput;
 }
@@ -512,9 +499,8 @@ export function mintLp(tx: Transaction, typeArgs: [string, string], args: MintLp
             obj(tx, args.version),
             obj(tx, args.registry),
             obj(tx, args.treasuryCaps),
-            pure(tx, args.index, `u64`),
-            obj(tx, args.pythState),
             obj(tx, args.oracle),
+            pure(tx, args.index, `u64`),
             obj(tx, args.coin),
             obj(tx, args.clock),
         ],
@@ -647,6 +633,10 @@ export function resumeTokenPool(tx: Transaction, typeArg: string, args: ResumeTo
     });
 }
 
+export function safetyCheck(tx: Transaction, liquidityPool: TransactionObjectInput) {
+    return tx.moveCall({ target: `${PUBLISHED_AT}::lp_pool::safety_check`, arguments: [obj(tx, liquidityPool)] });
+}
+
 export interface StartRemoveLiquidityTokenProcessArgs {
     version: TransactionObjectInput;
     registry: TransactionObjectInput;
@@ -711,7 +701,6 @@ export interface UpdateLiquidityValueArgs {
     version: TransactionObjectInput;
     registry: TransactionObjectInput;
     index: bigint | TransactionArgument;
-    pythState: TransactionObjectInput;
     oracle: TransactionObjectInput;
     clock: TransactionObjectInput;
 }
@@ -720,14 +709,7 @@ export function updateLiquidityValue(tx: Transaction, typeArg: string, args: Upd
     return tx.moveCall({
         target: `${PUBLISHED_AT}::lp_pool::update_liquidity_value`,
         typeArguments: [typeArg],
-        arguments: [
-            obj(tx, args.version),
-            obj(tx, args.registry),
-            pure(tx, args.index, `u64`),
-            obj(tx, args.pythState),
-            obj(tx, args.oracle),
-            obj(tx, args.clock),
-        ],
+        arguments: [obj(tx, args.version), obj(tx, args.registry), pure(tx, args.index, `u64`), obj(tx, args.oracle), obj(tx, args.clock)],
     });
 }
 
@@ -842,7 +824,6 @@ export interface UpdateTvlArgs {
     version: TransactionObjectInput;
     liquidityPool: TransactionObjectInput;
     tokenType: TransactionObjectInput;
-    pythState: TransactionObjectInput;
     oracle: TransactionObjectInput;
     clock: TransactionObjectInput;
 }
@@ -850,14 +831,7 @@ export interface UpdateTvlArgs {
 export function updateTvl(tx: Transaction, args: UpdateTvlArgs) {
     return tx.moveCall({
         target: `${PUBLISHED_AT}::lp_pool::update_tvl`,
-        arguments: [
-            obj(tx, args.version),
-            obj(tx, args.liquidityPool),
-            obj(tx, args.tokenType),
-            obj(tx, args.pythState),
-            obj(tx, args.oracle),
-            obj(tx, args.clock),
-        ],
+        arguments: [obj(tx, args.version), obj(tx, args.liquidityPool), obj(tx, args.tokenType), obj(tx, args.oracle), obj(tx, args.clock)],
     });
 }
 
@@ -865,7 +839,6 @@ export interface ViewSwapResultArgs {
     version: TransactionObjectInput;
     registry: TransactionObjectInput;
     index: bigint | TransactionArgument;
-    pythState: TransactionObjectInput;
     oracleFromToken: TransactionObjectInput;
     oracleToToken: TransactionObjectInput;
     fromAmount: bigint | TransactionArgument;
@@ -880,7 +853,6 @@ export function viewSwapResult(tx: Transaction, typeArgs: [string, string], args
             obj(tx, args.version),
             obj(tx, args.registry),
             pure(tx, args.index, `u64`),
-            obj(tx, args.pythState),
             obj(tx, args.oracleFromToken),
             obj(tx, args.oracleToToken),
             pure(tx, args.fromAmount, `u64`),

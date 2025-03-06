@@ -2610,6 +2610,7 @@ export function isMarketConfig(type: string): boolean {
 export interface MarketConfigFields {
     oracleId: ToField<"address">;
     maxLeverageMbp: ToField<"u64">;
+    optionCollateralMaxLeverageMbp: ToField<"u64">;
     minSize: ToField<"u64">;
     lotSize: ToField<"u64">;
     tradingFeeConfig: ToField<Vector<"u64">>;
@@ -2635,6 +2636,7 @@ export class MarketConfig implements StructClass {
 
     readonly oracleId: ToField<"address">;
     readonly maxLeverageMbp: ToField<"u64">;
+    readonly optionCollateralMaxLeverageMbp: ToField<"u64">;
     readonly minSize: ToField<"u64">;
     readonly lotSize: ToField<"u64">;
     readonly tradingFeeConfig: ToField<Vector<"u64">>;
@@ -2649,6 +2651,7 @@ export class MarketConfig implements StructClass {
 
         this.oracleId = fields.oracleId;
         this.maxLeverageMbp = fields.maxLeverageMbp;
+        this.optionCollateralMaxLeverageMbp = fields.optionCollateralMaxLeverageMbp;
         this.minSize = fields.minSize;
         this.lotSize = fields.lotSize;
         this.tradingFeeConfig = fields.tradingFeeConfig;
@@ -2696,6 +2699,7 @@ export class MarketConfig implements StructClass {
         return bcs.struct("MarketConfig", {
             oracle_id: bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
             max_leverage_mbp: bcs.u64(),
+            option_collateral_max_leverage_mbp: bcs.u64(),
             min_size: bcs.u64(),
             lot_size: bcs.u64(),
             trading_fee_config: bcs.vector(bcs.u64()),
@@ -2710,6 +2714,7 @@ export class MarketConfig implements StructClass {
         return MarketConfig.reified().new({
             oracleId: decodeFromFields("address", fields.oracle_id),
             maxLeverageMbp: decodeFromFields("u64", fields.max_leverage_mbp),
+            optionCollateralMaxLeverageMbp: decodeFromFields("u64", fields.option_collateral_max_leverage_mbp),
             minSize: decodeFromFields("u64", fields.min_size),
             lotSize: decodeFromFields("u64", fields.lot_size),
             tradingFeeConfig: decodeFromFields(reified.vector("u64"), fields.trading_fee_config),
@@ -2728,6 +2733,7 @@ export class MarketConfig implements StructClass {
         return MarketConfig.reified().new({
             oracleId: decodeFromFieldsWithTypes("address", item.fields.oracle_id),
             maxLeverageMbp: decodeFromFieldsWithTypes("u64", item.fields.max_leverage_mbp),
+            optionCollateralMaxLeverageMbp: decodeFromFieldsWithTypes("u64", item.fields.option_collateral_max_leverage_mbp),
             minSize: decodeFromFieldsWithTypes("u64", item.fields.min_size),
             lotSize: decodeFromFieldsWithTypes("u64", item.fields.lot_size),
             tradingFeeConfig: decodeFromFieldsWithTypes(reified.vector("u64"), item.fields.trading_fee_config),
@@ -2746,6 +2752,7 @@ export class MarketConfig implements StructClass {
         return {
             oracleId: this.oracleId,
             maxLeverageMbp: this.maxLeverageMbp.toString(),
+            optionCollateralMaxLeverageMbp: this.optionCollateralMaxLeverageMbp.toString(),
             minSize: this.minSize.toString(),
             lotSize: this.lotSize.toString(),
             tradingFeeConfig: fieldToJSON<Vector<"u64">>(`vector<u64>`, this.tradingFeeConfig),
@@ -2764,6 +2771,7 @@ export class MarketConfig implements StructClass {
         return MarketConfig.reified().new({
             oracleId: decodeFromJSONField("address", field.oracleId),
             maxLeverageMbp: decodeFromJSONField("u64", field.maxLeverageMbp),
+            optionCollateralMaxLeverageMbp: decodeFromJSONField("u64", field.optionCollateralMaxLeverageMbp),
             minSize: decodeFromJSONField("u64", field.minSize),
             lotSize: decodeFromJSONField("u64", field.lotSize),
             tradingFeeConfig: decodeFromJSONField(reified.vector("u64"), field.tradingFeeConfig),

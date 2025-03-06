@@ -94,7 +94,8 @@ export function calculateFilled_(tx: Transaction, args: CalculateFilled_Args) {
 
 export interface CalculateIntrinsicValueArgs {
     dovRegistry: TransactionObjectInput;
-    typusOracle: TransactionObjectInput;
+    typusOracleTradingSymbol: TransactionObjectInput;
+    typusOracleCToken: TransactionObjectInput;
     receipts: Array<TransactionObjectInput> | TransactionArgument;
     clock: TransactionObjectInput;
 }
@@ -105,7 +106,8 @@ export function calculateIntrinsicValue(tx: Transaction, typeArg: string, args: 
         typeArguments: [typeArg],
         arguments: [
             obj(tx, args.dovRegistry),
-            obj(tx, args.typusOracle),
+            obj(tx, args.typusOracleTradingSymbol),
+            obj(tx, args.typusOracleCToken),
             vector(tx, `${TypusBidReceipt.$typeName}`, args.receipts),
             obj(tx, args.clock),
         ],
@@ -212,7 +214,8 @@ export function calculateUnrealizedPnl(tx: Transaction, args: CalculateUnrealize
 
 export interface CheckOptionCollateralPositionLiquidatedArgs {
     dovRegistry: TransactionObjectInput;
-    typusOracle: TransactionObjectInput;
+    typusOracleTradingSymbol: TransactionObjectInput;
+    typusOracleCToken: TransactionObjectInput;
     position: TransactionObjectInput;
     collateralOraclePrice: bigint | TransactionArgument;
     collateralOraclePriceDecimal: bigint | TransactionArgument;
@@ -234,7 +237,8 @@ export function checkOptionCollateralPositionLiquidated(
         typeArguments: [typeArg],
         arguments: [
             obj(tx, args.dovRegistry),
-            obj(tx, args.typusOracle),
+            obj(tx, args.typusOracleTradingSymbol),
+            obj(tx, args.typusOracleCToken),
             obj(tx, args.position),
             pure(tx, args.collateralOraclePrice, `u64`),
             pure(tx, args.collateralOraclePriceDecimal, `u64`),
@@ -435,6 +439,7 @@ export interface GetEstimatedLiquidationPriceArgs {
     isSameToken: boolean | TransactionArgument;
     collateralOraclePrice: bigint | TransactionArgument;
     collateralOraclePriceDecimal: bigint | TransactionArgument;
+    tradingOraclePriceDecimal: bigint | TransactionArgument;
     tradingFeeMbp: bigint | TransactionArgument;
     maintenanceMarginRateBp: bigint | TransactionArgument;
 }
@@ -447,6 +452,7 @@ export function getEstimatedLiquidationPrice(tx: Transaction, args: GetEstimated
             pure(tx, args.isSameToken, `bool`),
             pure(tx, args.collateralOraclePrice, `u64`),
             pure(tx, args.collateralOraclePriceDecimal, `u64`),
+            pure(tx, args.tradingOraclePriceDecimal, `u64`),
             pure(tx, args.tradingFeeMbp, `u64`),
             pure(tx, args.maintenanceMarginRateBp, `u64`),
         ],
@@ -459,7 +465,8 @@ export function getMaxOrderTypeTag(tx: Transaction) {
 
 export interface GetOptionCollateralOrderCollateralAmountArgs {
     dovRegistry: TransactionObjectInput;
-    typusOracle: TransactionObjectInput;
+    typusOracleTradingSymbol: TransactionObjectInput;
+    typusOracleCToken: TransactionObjectInput;
     order: TransactionObjectInput;
     clock: TransactionObjectInput;
 }
@@ -472,13 +479,20 @@ export function getOptionCollateralOrderCollateralAmount(
     return tx.moveCall({
         target: `${PUBLISHED_AT}::position::get_option_collateral_order_collateral_amount`,
         typeArguments: [typeArg],
-        arguments: [obj(tx, args.dovRegistry), obj(tx, args.typusOracle), obj(tx, args.order), obj(tx, args.clock)],
+        arguments: [
+            obj(tx, args.dovRegistry),
+            obj(tx, args.typusOracleTradingSymbol),
+            obj(tx, args.typusOracleCToken),
+            obj(tx, args.order),
+            obj(tx, args.clock),
+        ],
     });
 }
 
 export interface GetOptionPositionCollateralAmountArgs {
     dovRegistry: TransactionObjectInput;
-    typusOracle: TransactionObjectInput;
+    typusOracleTradingSymbol: TransactionObjectInput;
+    typusOracleCToken: TransactionObjectInput;
     position: TransactionObjectInput;
     clock: TransactionObjectInput;
 }
@@ -487,7 +501,35 @@ export function getOptionPositionCollateralAmount(tx: Transaction, typeArg: stri
     return tx.moveCall({
         target: `${PUBLISHED_AT}::position::get_option_position_collateral_amount`,
         typeArguments: [typeArg],
-        arguments: [obj(tx, args.dovRegistry), obj(tx, args.typusOracle), obj(tx, args.position), obj(tx, args.clock)],
+        arguments: [
+            obj(tx, args.dovRegistry),
+            obj(tx, args.typusOracleTradingSymbol),
+            obj(tx, args.typusOracleCToken),
+            obj(tx, args.position),
+            obj(tx, args.clock),
+        ],
+    });
+}
+
+export interface GetOptionPositionExerciseValueArgs {
+    dovRegistry: TransactionObjectInput;
+    typusOracleTradingSymbol: TransactionObjectInput;
+    typusOracleCToken: TransactionObjectInput;
+    position: TransactionObjectInput;
+    clock: TransactionObjectInput;
+}
+
+export function getOptionPositionExerciseValue(tx: Transaction, typeArg: string, args: GetOptionPositionExerciseValueArgs) {
+    return tx.moveCall({
+        target: `${PUBLISHED_AT}::position::get_option_position_exercise_value`,
+        typeArguments: [typeArg],
+        arguments: [
+            obj(tx, args.dovRegistry),
+            obj(tx, args.typusOracleTradingSymbol),
+            obj(tx, args.typusOracleCToken),
+            obj(tx, args.position),
+            obj(tx, args.clock),
+        ],
     });
 }
 
@@ -743,7 +785,8 @@ export interface OrderFilledWithBidReceiptsCollateralArgs {
     version: TransactionObjectInput;
     liquidityPool: TransactionObjectInput;
     dovRegistry: TransactionObjectInput;
-    typusOracle: TransactionObjectInput;
+    typusOracleTradingSymbol: TransactionObjectInput;
+    typusOracleCToken: TransactionObjectInput;
     order: TransactionObjectInput;
     originalPosition: TransactionObjectInput | TransactionArgument | null;
     nextPositionId: bigint | TransactionArgument;
@@ -771,7 +814,8 @@ export function orderFilledWithBidReceiptsCollateral(
             obj(tx, args.version),
             obj(tx, args.liquidityPool),
             obj(tx, args.dovRegistry),
-            obj(tx, args.typusOracle),
+            obj(tx, args.typusOracleTradingSymbol),
+            obj(tx, args.typusOracleCToken),
             obj(tx, args.order),
             option(tx, `${Position.$typeName}`, args.originalPosition),
             pure(tx, args.nextPositionId, `u64`),
@@ -897,7 +941,8 @@ export function removePositionWithBidReceipts(tx: Transaction, args: RemovePosit
 
 export interface UpdateOptionPositionCollateralAmountArgs {
     dovRegistry: TransactionObjectInput;
-    typusOracle: TransactionObjectInput;
+    typusOracleTradingSymbol: TransactionObjectInput;
+    typusOracleCToken: TransactionObjectInput;
     position: TransactionObjectInput;
     clock: TransactionObjectInput;
 }
@@ -906,7 +951,13 @@ export function updateOptionPositionCollateralAmount(tx: Transaction, typeArg: s
     return tx.moveCall({
         target: `${PUBLISHED_AT}::position::update_option_position_collateral_amount`,
         typeArguments: [typeArg],
-        arguments: [obj(tx, args.dovRegistry), obj(tx, args.typusOracle), obj(tx, args.position), obj(tx, args.clock)],
+        arguments: [
+            obj(tx, args.dovRegistry),
+            obj(tx, args.typusOracleTradingSymbol),
+            obj(tx, args.typusOracleCToken),
+            obj(tx, args.position),
+            obj(tx, args.clock),
+        ],
     });
 }
 

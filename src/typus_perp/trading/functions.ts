@@ -12,12 +12,11 @@ export interface IncreaseCollateralArgs {
     version: TransactionObjectInput;
     registry: TransactionObjectInput;
     poolRegistry: TransactionObjectInput;
+    typusOracleCToken: TransactionObjectInput;
+    typusOracleTradingSymbol: TransactionObjectInput;
+    clock: TransactionObjectInput;
     marketIndex: bigint | TransactionArgument;
     poolIndex: bigint | TransactionArgument;
-    pythState: TransactionObjectInput;
-    oracleCToken: TransactionObjectInput;
-    oracleTradingSymbol: TransactionObjectInput;
-    clock: TransactionObjectInput;
     positionId: bigint | TransactionArgument;
     collateral: TransactionObjectInput;
 }
@@ -30,12 +29,11 @@ export function increaseCollateral(tx: Transaction, typeArgs: [string, string], 
             obj(tx, args.version),
             obj(tx, args.registry),
             obj(tx, args.poolRegistry),
+            obj(tx, args.typusOracleCToken),
+            obj(tx, args.typusOracleTradingSymbol),
+            obj(tx, args.clock),
             pure(tx, args.marketIndex, `u64`),
             pure(tx, args.poolIndex, `u64`),
-            obj(tx, args.pythState),
-            obj(tx, args.oracleCToken),
-            obj(tx, args.oracleTradingSymbol),
-            obj(tx, args.clock),
             pure(tx, args.positionId, `u64`),
             obj(tx, args.collateral),
         ],
@@ -46,12 +44,11 @@ export interface ReleaseCollateralArgs {
     version: TransactionObjectInput;
     registry: TransactionObjectInput;
     poolRegistry: TransactionObjectInput;
+    typusOracleCToken: TransactionObjectInput;
+    typusOracleTradingSymbol: TransactionObjectInput;
+    clock: TransactionObjectInput;
     marketIndex: bigint | TransactionArgument;
     poolIndex: bigint | TransactionArgument;
-    pythState: TransactionObjectInput;
-    oracleCToken: TransactionObjectInput;
-    oracleTradingSymbol: TransactionObjectInput;
-    clock: TransactionObjectInput;
     positionId: bigint | TransactionArgument;
     releaseAmount: bigint | TransactionArgument;
 }
@@ -64,12 +61,11 @@ export function releaseCollateral(tx: Transaction, typeArgs: [string, string], a
             obj(tx, args.version),
             obj(tx, args.registry),
             obj(tx, args.poolRegistry),
+            obj(tx, args.typusOracleCToken),
+            obj(tx, args.typusOracleTradingSymbol),
+            obj(tx, args.clock),
             pure(tx, args.marketIndex, `u64`),
             pure(tx, args.poolIndex, `u64`),
-            obj(tx, args.pythState),
-            obj(tx, args.oracleCToken),
-            obj(tx, args.oracleTradingSymbol),
-            obj(tx, args.clock),
             pure(tx, args.positionId, `u64`),
             pure(tx, args.releaseAmount, `u64`),
         ],
@@ -83,6 +79,7 @@ export interface AddTradingSymbolArgs {
     sizeDecimal: bigint | TransactionArgument;
     oracle: TransactionObjectInput;
     maxLeverageMbp: bigint | TransactionArgument;
+    optionCollateralMaxLeverageMbp: bigint | TransactionArgument;
     minSize: bigint | TransactionArgument;
     lotSize: bigint | TransactionArgument;
     tradingFeeConfig: Array<bigint | TransactionArgument> | TransactionArgument;
@@ -103,6 +100,7 @@ export function addTradingSymbol(tx: Transaction, typeArg: string, args: AddTrad
             pure(tx, args.sizeDecimal, `u64`),
             obj(tx, args.oracle),
             pure(tx, args.maxLeverageMbp, `u64`),
+            pure(tx, args.optionCollateralMaxLeverageMbp, `u64`),
             pure(tx, args.minSize, `u64`),
             pure(tx, args.lotSize, `u64`),
             pure(tx, args.tradingFeeConfig, `vector<u64>`),
@@ -257,7 +255,8 @@ export function checkCollateralEnough(tx: Transaction, typeArg: string, args: Ch
 
 export interface CheckOptionCollateralEnoughArgs {
     dovRegistry: TransactionObjectInput;
-    typusOracle: TransactionObjectInput;
+    typusOracleTradingSymbol: TransactionObjectInput;
+    typusOracleCToken: TransactionObjectInput;
     symbolMarket: TransactionObjectInput;
     order: TransactionObjectInput;
     collateralOraclePrice: bigint | TransactionArgument;
@@ -274,7 +273,8 @@ export function checkOptionCollateralEnough(tx: Transaction, typeArg: string, ar
         typeArguments: [typeArg],
         arguments: [
             obj(tx, args.dovRegistry),
-            obj(tx, args.typusOracle),
+            obj(tx, args.typusOracleTradingSymbol),
+            obj(tx, args.typusOracleCToken),
             obj(tx, args.symbolMarket),
             obj(tx, args.order),
             pure(tx, args.collateralOraclePrice, `u64`),
@@ -317,12 +317,11 @@ export interface CreateTradingOrderArgs {
     version: TransactionObjectInput;
     registry: TransactionObjectInput;
     poolRegistry: TransactionObjectInput;
+    typusOracleCToken: TransactionObjectInput;
+    typusOracleTradingSymbol: TransactionObjectInput;
+    clock: TransactionObjectInput;
     marketIndex: bigint | TransactionArgument;
     poolIndex: bigint | TransactionArgument;
-    pythState: TransactionObjectInput;
-    oracleCToken: TransactionObjectInput;
-    oracleTradingSymbol: TransactionObjectInput;
-    clock: TransactionObjectInput;
     typusEcosystemVersion: TransactionObjectInput;
     typusUserRegistry: TransactionObjectInput;
     typusLeaderboardRegistry: TransactionObjectInput;
@@ -343,12 +342,11 @@ export function createTradingOrder(tx: Transaction, typeArgs: [string, string], 
             obj(tx, args.version),
             obj(tx, args.registry),
             obj(tx, args.poolRegistry),
+            obj(tx, args.typusOracleCToken),
+            obj(tx, args.typusOracleTradingSymbol),
+            obj(tx, args.clock),
             pure(tx, args.marketIndex, `u64`),
             pure(tx, args.poolIndex, `u64`),
-            obj(tx, args.pythState),
-            obj(tx, args.oracleCToken),
-            obj(tx, args.oracleTradingSymbol),
-            obj(tx, args.clock),
             obj(tx, args.typusEcosystemVersion),
             obj(tx, args.typusUserRegistry),
             obj(tx, args.typusLeaderboardRegistry),
@@ -368,13 +366,11 @@ export interface CreateTradingOrderWithBidReceiptArgs {
     registry: TransactionObjectInput;
     poolRegistry: TransactionObjectInput;
     dovRegistry: TransactionObjectInput;
-    typusOracle: TransactionObjectInput;
+    typusOracleCToken: TransactionObjectInput;
+    typusOracleTradingSymbol: TransactionObjectInput;
+    clock: TransactionObjectInput;
     marketIndex: bigint | TransactionArgument;
     poolIndex: bigint | TransactionArgument;
-    pythState: TransactionObjectInput;
-    oracleCToken: TransactionObjectInput;
-    oracleTradingSymbol: TransactionObjectInput;
-    clock: TransactionObjectInput;
     typusEcosystemVersion: TransactionObjectInput;
     typusUserRegistry: TransactionObjectInput;
     typusLeaderboardRegistry: TransactionObjectInput;
@@ -396,13 +392,11 @@ export function createTradingOrderWithBidReceipt(
             obj(tx, args.registry),
             obj(tx, args.poolRegistry),
             obj(tx, args.dovRegistry),
-            obj(tx, args.typusOracle),
+            obj(tx, args.typusOracleCToken),
+            obj(tx, args.typusOracleTradingSymbol),
+            obj(tx, args.clock),
             pure(tx, args.marketIndex, `u64`),
             pure(tx, args.poolIndex, `u64`),
-            obj(tx, args.pythState),
-            obj(tx, args.oracleCToken),
-            obj(tx, args.oracleTradingSymbol),
-            obj(tx, args.clock),
             obj(tx, args.typusEcosystemVersion),
             obj(tx, args.typusUserRegistry),
             obj(tx, args.typusLeaderboardRegistry),
@@ -416,7 +410,8 @@ export function createTradingOrderWithBidReceipt(
 export interface ExecuteOptionCollateralOrder_Args {
     version: TransactionObjectInput;
     dovRegistry: TransactionObjectInput;
-    typusOracle: TransactionObjectInput;
+    typusOracleTradingSymbol: TransactionObjectInput;
+    typusOracleCToken: TransactionObjectInput;
     symbolMarket: TransactionObjectInput;
     liquidityPool: TransactionObjectInput;
     order: TransactionObjectInput;
@@ -439,7 +434,8 @@ export function executeOptionCollateralOrder_(tx: Transaction, typeArgs: [string
         arguments: [
             obj(tx, args.version),
             obj(tx, args.dovRegistry),
-            obj(tx, args.typusOracle),
+            obj(tx, args.typusOracleTradingSymbol),
+            obj(tx, args.typusOracleCToken),
             obj(tx, args.symbolMarket),
             obj(tx, args.liquidityPool),
             obj(tx, args.order),
@@ -551,12 +547,10 @@ export interface GetEstimatedLiquidationPriceAndPnlArgs {
     registry: TransactionObjectInput;
     poolRegistry: TransactionObjectInput;
     dovRegistry: TransactionObjectInput;
-    typusOracle: TransactionObjectInput;
+    typusOracleCToken: TransactionObjectInput;
+    typusOracleTradingSymbol: TransactionObjectInput;
     marketIndex: bigint | TransactionArgument;
     poolIndex: bigint | TransactionArgument;
-    pythState: TransactionObjectInput;
-    oracleCToken: TransactionObjectInput;
-    oracleTradingSymbol: TransactionObjectInput;
     clock: TransactionObjectInput;
     positionId: bigint | TransactionArgument;
 }
@@ -574,12 +568,10 @@ export function getEstimatedLiquidationPriceAndPnl(
             obj(tx, args.registry),
             obj(tx, args.poolRegistry),
             obj(tx, args.dovRegistry),
-            obj(tx, args.typusOracle),
+            obj(tx, args.typusOracleCToken),
+            obj(tx, args.typusOracleTradingSymbol),
             pure(tx, args.marketIndex, `u64`),
             pure(tx, args.poolIndex, `u64`),
-            obj(tx, args.pythState),
-            obj(tx, args.oracleCToken),
-            obj(tx, args.oracleTradingSymbol),
             obj(tx, args.clock),
             pure(tx, args.positionId, `u64`),
         ],
@@ -631,14 +623,12 @@ export interface GetLiquidationInfoArgs {
     registry: TransactionObjectInput;
     poolRegistry: TransactionObjectInput;
     dovRegistry: TransactionObjectInput;
-    typusOracle: TransactionObjectInput;
+    typusOracleCToken: TransactionObjectInput;
+    typusOracleTradingSymbol: TransactionObjectInput;
+    clock: TransactionObjectInput;
     marketIndex: bigint | TransactionArgument;
     poolIndex: bigint | TransactionArgument;
-    pythState: TransactionObjectInput;
-    oracleCToken: TransactionObjectInput;
-    oracleTradingSymbol: TransactionObjectInput;
     getAll: boolean | TransactionArgument;
-    clock: TransactionObjectInput;
 }
 
 export function getLiquidationInfo(tx: Transaction, typeArgs: [string, string], args: GetLiquidationInfoArgs) {
@@ -650,14 +640,12 @@ export function getLiquidationInfo(tx: Transaction, typeArgs: [string, string], 
             obj(tx, args.registry),
             obj(tx, args.poolRegistry),
             obj(tx, args.dovRegistry),
-            obj(tx, args.typusOracle),
+            obj(tx, args.typusOracleCToken),
+            obj(tx, args.typusOracleTradingSymbol),
+            obj(tx, args.clock),
             pure(tx, args.marketIndex, `u64`),
             pure(tx, args.poolIndex, `u64`),
-            obj(tx, args.pythState),
-            obj(tx, args.oracleCToken),
-            obj(tx, args.oracleTradingSymbol),
             pure(tx, args.getAll, `bool`),
-            obj(tx, args.clock),
         ],
     });
 }
@@ -678,12 +666,11 @@ export interface GetMaxReleasingCollateralAmountArgs {
     version: TransactionObjectInput;
     registry: TransactionObjectInput;
     poolRegistry: TransactionObjectInput;
+    typusOracleCToken: TransactionObjectInput;
+    typusOracleTradingSymbol: TransactionObjectInput;
+    clock: TransactionObjectInput;
     marketIndex: bigint | TransactionArgument;
     poolIndex: bigint | TransactionArgument;
-    pythState: TransactionObjectInput;
-    oracleCToken: TransactionObjectInput;
-    oracleTradingSymbol: TransactionObjectInput;
-    clock: TransactionObjectInput;
     positionId: bigint | TransactionArgument;
 }
 
@@ -695,12 +682,11 @@ export function getMaxReleasingCollateralAmount(tx: Transaction, typeArgs: [stri
             obj(tx, args.version),
             obj(tx, args.registry),
             obj(tx, args.poolRegistry),
+            obj(tx, args.typusOracleCToken),
+            obj(tx, args.typusOracleTradingSymbol),
+            obj(tx, args.clock),
             pure(tx, args.marketIndex, `u64`),
             pure(tx, args.poolIndex, `u64`),
-            obj(tx, args.pythState),
-            obj(tx, args.oracleCToken),
-            obj(tx, args.oracleTradingSymbol),
-            obj(tx, args.clock),
             pure(tx, args.positionId, `u64`),
         ],
     });
@@ -765,12 +751,10 @@ export interface LiquidateArgs {
     registry: TransactionObjectInput;
     poolRegistry: TransactionObjectInput;
     dovRegistry: TransactionObjectInput;
-    typusOracle: TransactionObjectInput;
+    typusOracleCToken: TransactionObjectInput;
+    typusOracleTradingSymbol: TransactionObjectInput;
     marketIndex: bigint | TransactionArgument;
     poolIndex: bigint | TransactionArgument;
-    pythState: TransactionObjectInput;
-    oracleCToken: TransactionObjectInput;
-    oracleTradingSymbol: TransactionObjectInput;
     clock: TransactionObjectInput;
     positionId: bigint | TransactionArgument;
 }
@@ -784,12 +768,10 @@ export function liquidate(tx: Transaction, typeArgs: [string, string, string], a
             obj(tx, args.registry),
             obj(tx, args.poolRegistry),
             obj(tx, args.dovRegistry),
-            obj(tx, args.typusOracle),
+            obj(tx, args.typusOracleCToken),
+            obj(tx, args.typusOracleTradingSymbol),
             pure(tx, args.marketIndex, `u64`),
             pure(tx, args.poolIndex, `u64`),
-            obj(tx, args.pythState),
-            obj(tx, args.oracleCToken),
-            obj(tx, args.oracleTradingSymbol),
             obj(tx, args.clock),
             pure(tx, args.positionId, `u64`),
         ],
@@ -801,16 +783,14 @@ export interface ManagerCloseOptionPositionArgs {
     registry: TransactionObjectInput;
     poolRegistry: TransactionObjectInput;
     dovRegistry: TransactionObjectInput;
+    typusOracleCToken: TransactionObjectInput;
+    typusOracleTradingSymbol: TransactionObjectInput;
+    clock: TransactionObjectInput;
     marketIndex: bigint | TransactionArgument;
     poolIndex: bigint | TransactionArgument;
     typusEcosystemVersion: TransactionObjectInput;
     typusUserRegistry: TransactionObjectInput;
     typusLeaderboardRegistry: TransactionObjectInput;
-    typusOracle: TransactionObjectInput;
-    pythState: TransactionObjectInput;
-    oracleCToken: TransactionObjectInput;
-    oracleTradingSymbol: TransactionObjectInput;
-    clock: TransactionObjectInput;
     positionId: bigint | TransactionArgument;
 }
 
@@ -823,16 +803,14 @@ export function managerCloseOptionPosition(tx: Transaction, typeArgs: [string, s
             obj(tx, args.registry),
             obj(tx, args.poolRegistry),
             obj(tx, args.dovRegistry),
+            obj(tx, args.typusOracleCToken),
+            obj(tx, args.typusOracleTradingSymbol),
+            obj(tx, args.clock),
             pure(tx, args.marketIndex, `u64`),
             pure(tx, args.poolIndex, `u64`),
             obj(tx, args.typusEcosystemVersion),
             obj(tx, args.typusUserRegistry),
             obj(tx, args.typusLeaderboardRegistry),
-            obj(tx, args.typusOracle),
-            obj(tx, args.pythState),
-            obj(tx, args.oracleCToken),
-            obj(tx, args.oracleTradingSymbol),
-            obj(tx, args.clock),
             pure(tx, args.positionId, `u64`),
         ],
     });
@@ -842,12 +820,11 @@ export interface ManagerReducePositionArgs {
     version: TransactionObjectInput;
     registry: TransactionObjectInput;
     poolRegistry: TransactionObjectInput;
-    pythState: TransactionObjectInput;
-    oracleCToken: TransactionObjectInput;
-    oracleTradingSymbol: TransactionObjectInput;
+    typusOracleCToken: TransactionObjectInput;
+    typusOracleTradingSymbol: TransactionObjectInput;
+    clock: TransactionObjectInput;
     marketIndex: bigint | TransactionArgument;
     poolIndex: bigint | TransactionArgument;
-    clock: TransactionObjectInput;
     typusEcosystemVersion: TransactionObjectInput;
     typusUserRegistry: TransactionObjectInput;
     typusLeaderboardRegistry: TransactionObjectInput;
@@ -863,12 +840,11 @@ export function managerReducePosition(tx: Transaction, typeArgs: [string, string
             obj(tx, args.version),
             obj(tx, args.registry),
             obj(tx, args.poolRegistry),
-            obj(tx, args.pythState),
-            obj(tx, args.oracleCToken),
-            obj(tx, args.oracleTradingSymbol),
+            obj(tx, args.typusOracleCToken),
+            obj(tx, args.typusOracleTradingSymbol),
+            obj(tx, args.clock),
             pure(tx, args.marketIndex, `u64`),
             pure(tx, args.poolIndex, `u64`),
-            obj(tx, args.clock),
             obj(tx, args.typusEcosystemVersion),
             obj(tx, args.typusUserRegistry),
             obj(tx, args.typusLeaderboardRegistry),
@@ -913,13 +889,11 @@ export interface ManagerRemovePositionArgs {
     registry: TransactionObjectInput;
     poolRegistry: TransactionObjectInput;
     dovRegistry: TransactionObjectInput;
-    typusOracle: TransactionObjectInput;
-    pythState: TransactionObjectInput;
-    oracleCToken: TransactionObjectInput;
-    oracleTradingSymbol: TransactionObjectInput;
+    typusOracleCToken: TransactionObjectInput;
+    typusOracleTradingSymbol: TransactionObjectInput;
+    clock: TransactionObjectInput;
     marketIndex: bigint | TransactionArgument;
     poolIndex: bigint | TransactionArgument;
-    clock: TransactionObjectInput;
     typusEcosystemVersion: TransactionObjectInput;
     typusUserRegistry: TransactionObjectInput;
     typusLeaderboardRegistry: TransactionObjectInput;
@@ -937,13 +911,11 @@ export function managerRemovePosition(tx: Transaction, typeArgs: [string, string
             obj(tx, args.registry),
             obj(tx, args.poolRegistry),
             obj(tx, args.dovRegistry),
-            obj(tx, args.typusOracle),
-            obj(tx, args.pythState),
-            obj(tx, args.oracleCToken),
-            obj(tx, args.oracleTradingSymbol),
+            obj(tx, args.typusOracleCToken),
+            obj(tx, args.typusOracleTradingSymbol),
+            obj(tx, args.clock),
             pure(tx, args.marketIndex, `u64`),
             pure(tx, args.poolIndex, `u64`),
-            obj(tx, args.clock),
             obj(tx, args.typusEcosystemVersion),
             obj(tx, args.typusUserRegistry),
             obj(tx, args.typusLeaderboardRegistry),
@@ -987,14 +959,12 @@ export interface ManagerUpdateProcessStatusAfterPositionArgs {
     registry: TransactionObjectInput;
     poolRegistry: TransactionObjectInput;
     dovRegistry: TransactionObjectInput;
-    typusOracle: TransactionObjectInput;
+    typusOracleCToken: TransactionObjectInput;
+    typusOracleTradingSymbol: TransactionObjectInput;
+    clock: TransactionObjectInput;
     marketIndex: bigint | TransactionArgument;
     poolIndex: bigint | TransactionArgument;
-    pythState: TransactionObjectInput;
-    oracleCToken: TransactionObjectInput;
-    oracleTradingSymbol: TransactionObjectInput;
     process: TransactionObjectInput;
-    clock: TransactionObjectInput;
 }
 
 export function managerUpdateProcessStatusAfterPosition(
@@ -1010,14 +980,12 @@ export function managerUpdateProcessStatusAfterPosition(
             obj(tx, args.registry),
             obj(tx, args.poolRegistry),
             obj(tx, args.dovRegistry),
-            obj(tx, args.typusOracle),
+            obj(tx, args.typusOracleCToken),
+            obj(tx, args.typusOracleTradingSymbol),
+            obj(tx, args.clock),
             pure(tx, args.marketIndex, `u64`),
             pure(tx, args.poolIndex, `u64`),
-            obj(tx, args.pythState),
-            obj(tx, args.oracleCToken),
-            obj(tx, args.oracleTradingSymbol),
             obj(tx, args.process),
-            obj(tx, args.clock),
         ],
     });
 }
@@ -1026,12 +994,11 @@ export interface MatchTradingOrderArgs {
     version: TransactionObjectInput;
     registry: TransactionObjectInput;
     poolRegistry: TransactionObjectInput;
-    pythState: TransactionObjectInput;
-    oracleCToken: TransactionObjectInput;
-    oracleTradingSymbol: TransactionObjectInput;
+    typusOracleCToken: TransactionObjectInput;
+    typusOracleTradingSymbol: TransactionObjectInput;
+    clock: TransactionObjectInput;
     marketIndex: bigint | TransactionArgument;
     poolIndex: bigint | TransactionArgument;
-    clock: TransactionObjectInput;
     typusEcosystemVersion: TransactionObjectInput;
     typusUserRegistry: TransactionObjectInput;
     typusLeaderboardRegistry: TransactionObjectInput;
@@ -1048,12 +1015,11 @@ export function matchTradingOrder(tx: Transaction, typeArgs: [string, string], a
             obj(tx, args.version),
             obj(tx, args.registry),
             obj(tx, args.poolRegistry),
-            obj(tx, args.pythState),
-            obj(tx, args.oracleCToken),
-            obj(tx, args.oracleTradingSymbol),
+            obj(tx, args.typusOracleCToken),
+            obj(tx, args.typusOracleTradingSymbol),
+            obj(tx, args.clock),
             pure(tx, args.marketIndex, `u64`),
             pure(tx, args.poolIndex, `u64`),
-            obj(tx, args.clock),
             obj(tx, args.typusEcosystemVersion),
             obj(tx, args.typusUserRegistry),
             obj(tx, args.typusLeaderboardRegistry),
@@ -1083,16 +1049,14 @@ export interface ReduceOptionCollateralPositionSizeArgs {
     registry: TransactionObjectInput;
     poolRegistry: TransactionObjectInput;
     dovRegistry: TransactionObjectInput;
-    typusOracle: TransactionObjectInput;
+    typusOracleCToken: TransactionObjectInput;
+    typusOracleTradingSymbol: TransactionObjectInput;
+    clock: TransactionObjectInput;
     marketIndex: bigint | TransactionArgument;
     poolIndex: bigint | TransactionArgument;
     typusEcosystemVersion: TransactionObjectInput;
     typusUserRegistry: TransactionObjectInput;
     typusLeaderboardRegistry: TransactionObjectInput;
-    pythState: TransactionObjectInput;
-    oracleCToken: TransactionObjectInput;
-    oracleTradingSymbol: TransactionObjectInput;
-    clock: TransactionObjectInput;
     positionId: bigint | TransactionArgument;
     orderSize: bigint | TransactionArgument | TransactionArgument | null;
 }
@@ -1110,16 +1074,14 @@ export function reduceOptionCollateralPositionSize(
             obj(tx, args.registry),
             obj(tx, args.poolRegistry),
             obj(tx, args.dovRegistry),
-            obj(tx, args.typusOracle),
+            obj(tx, args.typusOracleCToken),
+            obj(tx, args.typusOracleTradingSymbol),
+            obj(tx, args.clock),
             pure(tx, args.marketIndex, `u64`),
             pure(tx, args.poolIndex, `u64`),
             obj(tx, args.typusEcosystemVersion),
             obj(tx, args.typusUserRegistry),
             obj(tx, args.typusLeaderboardRegistry),
-            obj(tx, args.pythState),
-            obj(tx, args.oracleCToken),
-            obj(tx, args.oracleTradingSymbol),
-            obj(tx, args.clock),
             pure(tx, args.positionId, `u64`),
             pure(tx, args.orderSize, `${Option.$typeName}<u64>`),
         ],
@@ -1196,11 +1158,10 @@ export interface SettleReceiptCollateralArgs {
     registry: TransactionObjectInput;
     poolRegistry: TransactionObjectInput;
     dovRegistry: TransactionObjectInput;
+    typusOracleCToken: TransactionObjectInput;
+    clock: TransactionObjectInput;
     marketIndex: bigint | TransactionArgument;
     poolIndex: bigint | TransactionArgument;
-    pythState: TransactionObjectInput;
-    oracleCToken: TransactionObjectInput;
-    clock: TransactionObjectInput;
 }
 
 export function settleReceiptCollateral(tx: Transaction, typeArgs: [string, string], args: SettleReceiptCollateralArgs) {
@@ -1212,11 +1173,10 @@ export function settleReceiptCollateral(tx: Transaction, typeArgs: [string, stri
             obj(tx, args.registry),
             obj(tx, args.poolRegistry),
             obj(tx, args.dovRegistry),
+            obj(tx, args.typusOracleCToken),
+            obj(tx, args.clock),
             pure(tx, args.marketIndex, `u64`),
             pure(tx, args.poolIndex, `u64`),
-            obj(tx, args.pythState),
-            obj(tx, args.oracleCToken),
-            obj(tx, args.clock),
         ],
     });
 }
@@ -1281,11 +1241,10 @@ export interface UpdateFundingRateArgs {
     version: TransactionObjectInput;
     registry: TransactionObjectInput;
     poolRegistry: TransactionObjectInput;
+    typusOracleTradingSymbol: TransactionObjectInput;
+    clock: TransactionObjectInput;
     marketIndex: bigint | TransactionArgument;
     poolIndex: bigint | TransactionArgument;
-    pythState: TransactionObjectInput;
-    oracleTradingSymbol: TransactionObjectInput;
-    clock: TransactionObjectInput;
 }
 
 export function updateFundingRate(tx: Transaction, typeArg: string, args: UpdateFundingRateArgs) {
@@ -1296,11 +1255,10 @@ export function updateFundingRate(tx: Transaction, typeArg: string, args: Update
             obj(tx, args.version),
             obj(tx, args.registry),
             obj(tx, args.poolRegistry),
+            obj(tx, args.typusOracleTradingSymbol),
+            obj(tx, args.clock),
             pure(tx, args.marketIndex, `u64`),
             pure(tx, args.poolIndex, `u64`),
-            obj(tx, args.pythState),
-            obj(tx, args.oracleTradingSymbol),
-            obj(tx, args.clock),
         ],
     });
 }
@@ -1311,6 +1269,7 @@ export interface UpdateMarketConfigArgs {
     marketIndex: bigint | TransactionArgument;
     oracleId: string | TransactionArgument | TransactionArgument | null;
     maxLeverageMbp: bigint | TransactionArgument | TransactionArgument | null;
+    optionCollateralMaxLeverageMbp: bigint | TransactionArgument | TransactionArgument | null;
     minSize: bigint | TransactionArgument | TransactionArgument | null;
     lotSize: bigint | TransactionArgument | TransactionArgument | null;
     tradingFeeConfig: Array<bigint | TransactionArgument> | TransactionArgument | TransactionArgument | null;
@@ -1329,6 +1288,7 @@ export function updateMarketConfig(tx: Transaction, typeArg: string, args: Updat
             pure(tx, args.marketIndex, `u64`),
             pure(tx, args.oracleId, `${Option.$typeName}<address>`),
             pure(tx, args.maxLeverageMbp, `${Option.$typeName}<u64>`),
+            pure(tx, args.optionCollateralMaxLeverageMbp, `${Option.$typeName}<u64>`),
             pure(tx, args.minSize, `${Option.$typeName}<u64>`),
             pure(tx, args.lotSize, `${Option.$typeName}<u64>`),
             pure(tx, args.tradingFeeConfig, `${Option.$typeName}<vector<u64>>`),

@@ -1,7 +1,6 @@
 import * as admin from "./admin/structs";
 import * as escrow from "./escrow/structs";
 import * as lpPool from "./lp-pool/structs";
-import * as oracle from "./oracle/structs";
 import * as position from "./position/structs";
 import * as symbol from "./symbol/structs";
 import * as tlp from "./tlp/structs";
@@ -19,8 +18,6 @@ export function registerClasses(loader: StructClassLoader) {
     loader.register(treasuryCaps.TreasuryCaps);
     loader.register(tlp.LpRegistry);
     loader.register(tlp.TLP);
-    loader.register(oracle.PythPrice);
-    loader.register(oracle.PythPriceInfoObject);
     loader.register(lpPool.Config);
     loader.register(lpPool.State);
     loader.register(lpPool.Registry);

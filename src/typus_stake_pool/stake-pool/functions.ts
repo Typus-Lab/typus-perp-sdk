@@ -372,7 +372,6 @@ export interface UnstakeArgs {
     registry: TransactionObjectInput;
     index: bigint | TransactionArgument;
     userShareId: bigint | TransactionArgument;
-    unstakedShares: bigint | TransactionArgument | TransactionArgument | null;
     clock: TransactionObjectInput;
 }
 
@@ -385,7 +384,6 @@ export function unstake(tx: Transaction, typeArg: string, args: UnstakeArgs) {
             obj(tx, args.registry),
             pure(tx, args.index, `u64`),
             pure(tx, args.userShareId, `u64`),
-            pure(tx, args.unstakedShares, `${Option.$typeName}<u64>`),
             obj(tx, args.clock),
         ],
     });

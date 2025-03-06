@@ -6,8 +6,8 @@ import {
 } from "../typus_perp/trading/functions";
 import { Position, TradingOrder } from "../typus_perp/position/structs";
 import { LP_POOL, MARKET, NETWORK, PERP_VERSION } from "..";
-import { PythClient, updatePyth, priceInfoObjectIds, pythStateId, TypusConfig } from "@typus/typus-sdk/dist/src/utils";
-import { CLOCK, tokenType, TOKEN, typeArgToToken } from "@typus/typus-sdk/dist/src/constants";
+import { PythClient, updatePyth, pythStateId, TypusConfig } from "@typus/typus-sdk/dist/src/utils";
+import { CLOCK, tokenType, TOKEN, typeArgToAsset, oracle } from "@typus/typus-sdk/dist/src/constants";
 import { Transaction } from "@mysten/sui/transactions";
 
 export async function createTradingOrder(
@@ -65,9 +65,8 @@ export async function createTradingOrder(
         poolRegistry: LP_POOL,
         marketIndex: BigInt(0),
         poolIndex: BigInt(0),
-        pythState: pythStateId[NETWORK],
-        oracleCToken: priceInfoObjectIds[NETWORK][TOKEN],
-        oracleTradingSymbol: priceInfoObjectIds[NETWORK][BASE_TOKEN],
+        typusOracleCToken: oracle[NETWORK][TOKEN]!,
+        typusOracleTradingSymbol: oracle[NETWORK][BASE_TOKEN]!,
         clock: CLOCK,
         typusEcosystemVersion: config.version.typus,
         typusUserRegistry: config.registry.typus.user,
@@ -128,11 +127,11 @@ export async function increaseCollateral(
     }
 ): Promise<Transaction> {
     // parse from Position
-    let TOKEN = typeArgToToken(input.position.collateralToken.name);
+    let TOKEN = typeArgToAsset(input.position.collateralToken.name);
     if (TOKEN == "USDC") {
         TOKEN = "wUSDC";
     }
-    let BASE_TOKEN = typeArgToToken(input.position.symbol.baseToken.name);
+    let BASE_TOKEN = typeArgToAsset(input.position.symbol.baseToken.name);
 
     await updatePyth(pythClient, tx, [TOKEN, BASE_TOKEN]);
     let cToken = tokenType[NETWORK][TOKEN];
@@ -158,9 +157,8 @@ export async function increaseCollateral(
         poolRegistry: LP_POOL,
         marketIndex: BigInt(0),
         poolIndex: BigInt(0),
-        pythState: pythStateId[NETWORK],
-        oracleCToken: priceInfoObjectIds[NETWORK][TOKEN],
-        oracleTradingSymbol: priceInfoObjectIds[NETWORK][BASE_TOKEN],
+        typusOracleCToken: oracle[NETWORK][TOKEN]!,
+        typusOracleTradingSymbol: oracle[NETWORK][BASE_TOKEN]!,
         clock: CLOCK,
         positionId: BigInt(input.position.positionId),
         collateral: coin,
@@ -179,11 +177,11 @@ export async function releaseCollateral(
     }
 ): Promise<Transaction> {
     // parse from Position
-    let TOKEN = typeArgToToken(input.position.collateralToken.name);
+    let TOKEN = typeArgToAsset(input.position.collateralToken.name);
     if (TOKEN == "USDC") {
         TOKEN = "wUSDC";
     }
-    let BASE_TOKEN = typeArgToToken(input.position.symbol.baseToken.name);
+    let BASE_TOKEN = typeArgToAsset(input.position.symbol.baseToken.name);
 
     await updatePyth(pythClient, tx, [TOKEN, BASE_TOKEN]);
     let cToken = tokenType[NETWORK][TOKEN];
@@ -195,9 +193,8 @@ export async function releaseCollateral(
         poolRegistry: LP_POOL,
         marketIndex: BigInt(0),
         poolIndex: BigInt(0),
-        pythState: pythStateId[NETWORK],
-        oracleCToken: priceInfoObjectIds[NETWORK][TOKEN],
-        oracleTradingSymbol: priceInfoObjectIds[NETWORK][BASE_TOKEN],
+        typusOracleCToken: oracle[NETWORK][TOKEN]!,
+        typusOracleTradingSymbol: oracle[NETWORK][BASE_TOKEN]!,
         clock: CLOCK,
         positionId: BigInt(input.position.positionId),
         releaseAmount: BigInt(input.amount),

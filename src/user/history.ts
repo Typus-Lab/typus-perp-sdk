@@ -1,4 +1,4 @@
-import { assetToDecimal, TOKEN, typeArgToToken } from "@typus/typus-sdk/dist/src/constants";
+import { assetToDecimal, TOKEN, typeArgToAsset } from "@typus/typus-sdk/dist/src/constants";
 import { PKG_V1 as PERP_PACKAGE_ID } from "../typus_perp/index";
 import { OrderFilledEvent, RealizeFundingEvent } from "../typus_perp/position/structs";
 import {
@@ -66,8 +66,8 @@ export async function parseUserHistory(raw_events) {
         switch (type) {
             case CreateTradingOrderEvent.$typeName:
             case CreateTradingOrderWithBidReceiptsEvent.$typeName:
-                var base_token = typeArgToToken(json.base_token.name) as TOKEN;
-                var collateral_token = typeArgToToken(json.collateral_token.name) as TOKEN;
+                var base_token = typeArgToAsset(json.base_token.name) as TOKEN;
+                var collateral_token = typeArgToAsset(json.collateral_token.name) as TOKEN;
                 var market = `${base_token}/USD`;
 
                 var size = Number(json.size) / 10 ** assetToDecimal(base_token)!;
@@ -110,8 +110,8 @@ export async function parseUserHistory(raw_events) {
                 break;
 
             case OrderFilledEvent.$typeName:
-                var base_token = typeArgToToken(json.symbol.base_token.name) as TOKEN;
-                var collateral_token = typeArgToToken(json.collateral_token.name) as TOKEN;
+                var base_token = typeArgToAsset(json.symbol.base_token.name) as TOKEN;
+                var collateral_token = typeArgToAsset(json.collateral_token.name) as TOKEN;
                 var market = `${base_token}/USD`;
 
                 var size = Number(json.filled_size) / 10 ** assetToDecimal(base_token)!;
@@ -168,8 +168,8 @@ export async function parseUserHistory(raw_events) {
                 break;
 
             case CancelTradingOrderEvent.$typeName:
-                var base_token = typeArgToToken(json.base_token.name) as TOKEN;
-                var collateral_token = typeArgToToken(json.collateral_token.name) as TOKEN;
+                var base_token = typeArgToAsset(json.base_token.name) as TOKEN;
+                var collateral_token = typeArgToAsset(json.collateral_token.name) as TOKEN;
                 var market = `${base_token}/USD`;
                 var related = events.findLast((e) => e.order_id === json.order_id && e.market === market);
 
@@ -195,8 +195,8 @@ export async function parseUserHistory(raw_events) {
 
             case IncreaseCollateralEvent.$typeName:
             case ReleaseCollateralEvent.$typeName:
-                var base_token = typeArgToToken(json.base_token.name) as TOKEN;
-                var collateral_token = typeArgToToken(json.collateral_token.name) as TOKEN;
+                var base_token = typeArgToAsset(json.base_token.name) as TOKEN;
+                var collateral_token = typeArgToAsset(json.collateral_token.name) as TOKEN;
                 var market = `${base_token}/USD`;
                 var related = events.findLast((e) => e.position_id === json.position_id && e.market === market);
 
@@ -228,8 +228,8 @@ export async function parseUserHistory(raw_events) {
                 break;
 
             case SwapEvent.$typeName:
-                var from_token = typeArgToToken(json.from_token_type.name) as TOKEN;
-                var to_token = typeArgToToken(json.to_token_type.name) as TOKEN;
+                var from_token = typeArgToAsset(json.from_token_type.name) as TOKEN;
+                var to_token = typeArgToAsset(json.to_token_type.name) as TOKEN;
 
                 var from_price = Number(json.oracle_price_from_token);
                 var to_price = Number(json.oracle_price_to_token);

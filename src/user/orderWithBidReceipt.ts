@@ -7,15 +7,8 @@ import {
     reduceOptionCollateralPositionSize as _reduceOptionCollateralPositionSize,
 } from "../typus_perp/trading/functions";
 import { Transaction } from "@mysten/sui/transactions";
-import {
-    PythClient,
-    updatePyth,
-    updateOracleWithPyth,
-    priceInfoObjectIds,
-    pythStateId,
-    TypusConfig,
-} from "@typus/typus-sdk/dist/src/utils";
-import { tokenType, TOKEN, CLOCK } from "@typus/typus-sdk/dist/src/constants";
+import { PythClient, updatePyth, TypusConfig, updateOracleWithPythUsd } from "@typus/typus-sdk/dist/src/utils";
+import { tokenType, TOKEN, CLOCK, oracle } from "@typus/typus-sdk/dist/src/constants";
 import { getSplitBidReceiptTx } from "@typus/typus-sdk/dist/src/typus-dov-single-v2";
 import { LP_POOL, MARKET, NETWORK, PERP_VERSION } from "..";
 
@@ -38,14 +31,9 @@ export async function createTradingOrderWithBidReceipt(
     let TOKEN = input.cToken;
     let BASE_TOKEN = input.tradingToken;
 
-    // deduplicate
-    await updatePyth(pythClient, tx, Array.from(new Set([TOKEN, BASE_TOKEN, "wUSDC"])));
-    let cToken = tokenType[NETWORK][TOKEN];
-    let bToken = tokenType[NETWORK][input.bToken];
-    let baseToken = tokenType[NETWORK][BASE_TOKEN];
-
-    // TODO: use updateOracleWithPythUsd
-    updateOracleWithPyth(pythClient, tx, config.package.oracle, config.oracle[BASE_TOKEN.toLocaleLowerCase()], BASE_TOKEN, "wUSDC");
+    await updatePyth(pythClient, tx, Array.from(new Set([TOKEN, BASE_TOKEN])));
+    updateOracleWithPythUsd(pythClient, tx, config.package.oracle, TOKEN);
+    updateOracleWithPythUsd(pythClient, tx, config.package.oracle, BASE_TOKEN);
 
     // split bid receipt
     var collateralBidReceipt;
@@ -61,22 +49,23 @@ export async function createTradingOrderWithBidReceipt(
         collateralBidReceipt = input.bidReceipt;
     }
 
+    let cToken = tokenType[NETWORK][TOKEN];
+    let bToken = tokenType[NETWORK][input.bToken];
+    let baseToken = tokenType[NETWORK][BASE_TOKEN];
     _createTradingOrderWithBidReceipt(tx, [cToken, bToken, baseToken], {
         version: PERP_VERSION,
         registry: MARKET,
         poolRegistry: LP_POOL,
         marketIndex: BigInt(0),
         poolIndex: BigInt(0),
-        pythState: pythStateId[NETWORK],
-        oracleCToken: priceInfoObjectIds[NETWORK][TOKEN],
-        oracleTradingSymbol: priceInfoObjectIds[NETWORK][BASE_TOKEN],
+        typusOracleCToken: oracle[NETWORK][TOKEN]!,
+        typusOracleTradingSymbol: oracle[NETWORK][BASE_TOKEN]!,
         clock: CLOCK,
         typusEcosystemVersion: config.version.typus,
         typusUserRegistry: config.registry.typus.user,
         typusLeaderboardRegistry: config.registry.typus.leaderboard,
         isLong: input.isLong,
         dovRegistry: config.registry.dov.dovSingle,
-        typusOracle: config.oracle[BASE_TOKEN.toLocaleLowerCase()],
         collateralBidReceipt,
         user: input.user,
     });
@@ -100,27 +89,25 @@ export async function reduceOptionCollateralPositionSize(
     let BASE_TOKEN = input.tradingToken;
 
     await updatePyth(pythClient, tx, [TOKEN, BASE_TOKEN, "wUSDC"]);
+    updateOracleWithPythUsd(pythClient, tx, config.package.oracle, TOKEN);
+    updateOracleWithPythUsd(pythClient, tx, config.package.oracle, BASE_TOKEN);
+
     let cToken = tokenType[NETWORK][TOKEN];
     let bToken = tokenType[NETWORK][input.bToken];
     let baseToken = tokenType[NETWORK][BASE_TOKEN];
-
-    updateOracleWithPyth(pythClient, tx, config.package.oracle, config.oracle[BASE_TOKEN.toLocaleLowerCase()], BASE_TOKEN, "wUSDC");
-
     _reduceOptionCollateralPositionSize(tx, [cToken, bToken, baseToken], {
         version: PERP_VERSION,
         registry: MARKET,
         poolRegistry: LP_POOL,
         marketIndex: BigInt(0),
         poolIndex: BigInt(0),
-        pythState: pythStateId[NETWORK],
-        oracleCToken: priceInfoObjectIds[NETWORK][TOKEN],
-        oracleTradingSymbol: priceInfoObjectIds[NETWORK][BASE_TOKEN],
+        typusOracleCToken: oracle[NETWORK][TOKEN]!,
+        typusOracleTradingSymbol: oracle[NETWORK][BASE_TOKEN]!,
         clock: CLOCK,
         typusEcosystemVersion: config.version.typus,
         typusUserRegistry: config.registry.typus.user,
         typusLeaderboardRegistry: config.registry.typus.leaderboard,
         dovRegistry: config.registry.dov.dovSingle,
-        typusOracle: config.oracle[BASE_TOKEN.toLocaleLowerCase()],
         positionId: BigInt(input.positionId),
         orderSize: input.orderSize ? BigInt(input.orderSize) : null,
     });

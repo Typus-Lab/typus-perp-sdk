@@ -2,12 +2,11 @@ import { Transaction } from "@mysten/sui/transactions";
 import { LiquidityPool } from "../typus_perp/lp-pool/structs";
 import { burnLp, mintLp, updateLiquidityValue, swap as _swap } from "../typus_perp/lp-pool/functions";
 import { harvestPerUserShare, stake, unstake, unsubscribe as _unsubscribe } from "../typus_stake_pool/stake-pool/functions";
-import { PythClient, updatePyth, priceInfoObjectIds, pythStateId, TypusConfig } from "@typus/typus-sdk/dist/src/utils";
-import { CLOCK, tokenType, typeArgToAsset, TOKEN } from "@typus/typus-sdk/dist/src/constants";
+import { PythClient, updatePyth } from "@typus/typus-sdk/dist/src/utils";
+import { CLOCK, tokenType, typeArgToAsset, TOKEN, oracle } from "@typus/typus-sdk/dist/src/constants";
 import { LP_POOL, NETWORK, PERP_VERSION, STAKE_POOL, STAKE_POOL_VERSION, TLP_TOKEN, TLP_TREASURY_CAP } from "..";
 
 export async function mintStakeLp(
-    config: TypusConfig,
     tx: Transaction,
     pythClient: PythClient,
     input: {
@@ -25,15 +24,13 @@ export async function mintStakeLp(
     // console.log("tokens", tokens);
 
     await updatePyth(pythClient, tx, tokens);
-    let cToken = tokenType[NETWORK][input.cTOKEN];
 
     for (let token of tokens) {
         updateLiquidityValue(tx, tokenType[NETWORK][token], {
             version: PERP_VERSION,
             registry: LP_POOL,
             index: BigInt(0),
-            pythState: pythStateId[NETWORK],
-            oracle: priceInfoObjectIds[NETWORK][token],
+            oracle: oracle[NETWORK][token]!,
             clock: CLOCK,
         });
     }
@@ -65,13 +62,13 @@ export async function mintStakeLp(
         tx.transferObjects([iCoin], input.user);
     }
 
+    let cToken = tokenType[NETWORK][input.cTOKEN];
     let lpCoin = mintLp(tx, [cToken, TLP_TOKEN], {
         version: PERP_VERSION,
         registry: LP_POOL,
         treasuryCaps: TLP_TREASURY_CAP,
         index: BigInt(0),
-        pythState: pythStateId[NETWORK],
-        oracle: priceInfoObjectIds[NETWORK][input.cTOKEN],
+        oracle: oracle[NETWORK][input.cTOKEN]!,
         coin,
         clock: CLOCK,
     });
@@ -89,7 +86,6 @@ export async function mintStakeLp(
 }
 
 export async function unstakeBurn(
-    config: TypusConfig,
     tx: Transaction,
     pythClient: PythClient,
     input: {
@@ -105,16 +101,13 @@ export async function unstakeBurn(
     let tokens = input.lpPool.tokenPools.map((p) => typeArgToAsset("0x" + p.tokenType.name));
 
     await updatePyth(pythClient, tx, tokens);
-    let cToken = tokenType[NETWORK][input.cTOKEN];
-    let oracle = priceInfoObjectIds[NETWORK][input.cTOKEN];
 
     for (let token of tokens) {
         updateLiquidityValue(tx, tokenType[NETWORK][token], {
             version: PERP_VERSION,
             registry: LP_POOL,
             index: BigInt(0),
-            pythState: pythStateId[NETWORK],
-            oracle: priceInfoObjectIds[NETWORK][token],
+            oracle: oracle[NETWORK][token]!,
             clock: CLOCK,
         });
     }
@@ -140,13 +133,13 @@ export async function unstakeBurn(
         clock: CLOCK,
     });
 
+    let cToken = tokenType[NETWORK][input.cTOKEN];
     let coin = burnLp(tx, [cToken, TLP_TOKEN], {
         version: PERP_VERSION,
         registry: LP_POOL,
         treasuryCaps: TLP_TREASURY_CAP,
         index: BigInt(0),
-        pythState: pythStateId[NETWORK],
-        oracle,
+        oracle: oracle[NETWORK][input.cTOKEN]!,
         coin: lpCoin,
         clock: CLOCK,
     });
@@ -157,7 +150,6 @@ export async function unstakeBurn(
 }
 
 export async function swap(
-    config: TypusConfig,
     tx: Transaction,
     pythClient: PythClient,
     input: {
@@ -169,11 +161,8 @@ export async function swap(
     }
 ): Promise<Transaction> {
     await updatePyth(pythClient, tx, [input.FROM_TOKEN, input.TO_TOKEN]);
-    let fromToken = tokenType[NETWORK][input.FROM_TOKEN];
-    let toToken = tokenType[NETWORK][input.TO_TOKEN];
 
     var coin;
-
     if (input.FROM_TOKEN == "SUI") {
         [coin] = tx.splitCoins(tx.gas, [input.amount]);
     } else {
@@ -186,14 +175,15 @@ export async function swap(
         [coin] = tx.splitCoins(destination, [input.amount]);
     }
 
+    let fromToken = tokenType[NETWORK][input.FROM_TOKEN];
+    let toToken = tokenType[NETWORK][input.TO_TOKEN];
     let token = _swap(tx, [fromToken, toToken], {
         version: PERP_VERSION,
         registry: LP_POOL,
-        pythState: pythStateId[NETWORK],
         clock: CLOCK,
         index: BigInt(0),
-        oracleFromToken: priceInfoObjectIds[NETWORK][input.FROM_TOKEN],
-        oracleToToken: priceInfoObjectIds[NETWORK][input.TO_TOKEN],
+        oracleFromToken: oracle[NETWORK][input.FROM_TOKEN]!,
+        oracleToToken: oracle[NETWORK][input.TO_TOKEN]!,
         fromCoin: coin,
         minToAmount: BigInt(0),
     });
@@ -204,7 +194,6 @@ export async function swap(
 }
 
 export async function unsubscribe(
-    config: TypusConfig,
     tx: Transaction,
     input: {
         userShareId: string;
@@ -223,7 +212,6 @@ export async function unsubscribe(
 }
 
 export async function harvestStakeReward(
-    config: TypusConfig,
     tx: Transaction,
     input: {
         userShareId: string;

@@ -5,7 +5,7 @@ import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519";
 import { Transaction } from "@mysten/sui/transactions";
 import { increaseCollateral, getUserPositions, NETWORK } from "src";
 import { createPythClient } from "@typus/typus-sdk/dist/src/utils";
-import { tokenType, typeArgToToken } from "@typus/typus-sdk/dist/src/constants";
+import { tokenType, typeArgToAsset } from "@typus/typus-sdk/dist/src/constants";
 import { normalizeStructTag } from "@mysten/sui/utils";
 
 (async () => {

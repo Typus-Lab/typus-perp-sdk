@@ -138,7 +138,6 @@ export async function unstakeBurn(
         index: BigInt(0),
         userShareId: BigInt(input.userShareId),
         clock: CLOCK,
-        unstakedShares: input.share ? BigInt(input.share) : null,
     });
 
     let coin = burnLp(tx, [cToken, TLP_TOKEN], {

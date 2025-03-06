@@ -9,14 +9,18 @@ export const NETWORK = process.env.NEXT_PUBLIC_CLUSTER == "mainnet" ? "MAINNET" 
 console.log(`Load .env NEXT_PUBLIC_CLUSTER: ${process.env.NEXT_PUBLIC_CLUSTER}`);
 console.log(`Initializing Typus Perp SDK for ${NETWORK}`);
 
-export const LP_POOL = NETWORK == "MAINNET" ? "" : "0xf85bb9b6bbe877e43e9a79f9c59d57331884f7519825f1116d8634806cd167e1";
-export const LIQUIDITY_POOL = NETWORK == "MAINNET" ? "" : "0x93bc498e59e97c93820c14687a9a340bc794eada7f7ce0f458bb25190bdd395e";
-export const LIQUIDITY_POOL_0 = NETWORK == "MAINNET" ? "" : "0xc0bf75a16dbd11f0d52b27d933d4e1efaa8bdfbe3cdb89587464465aad1b6606";
-export const MARKET = NETWORK == "MAINNET" ? "" : "0xb73983f279effad13b455846c192a2eb402ed453f84a1e627c9e34cfd329bf92";
-export const TLP = NETWORK == "MAINNET" ? "" : "0x7c19f81d9d411e78305d7af8dad25317c56bb449fede8a78b6021232478f0509";
-export const TLP_TOKEN = NETWORK == "MAINNET" ? "" : "0x7c19f81d9d411e78305d7af8dad25317c56bb449fede8a78b6021232478f0509::tlp::TLP";
+// Registry
+export const LP_POOL = NETWORK == "MAINNET" ? "" : "0xdfd138d539ecfd3b57286e20e5b9fff6c3fcd7986651567591245ba4c87ca6b5";
+export const LIQUIDITY_POOL = NETWORK == "MAINNET" ? "" : "0x8e4ad806781a50b0bed6011e97d48cc07ef23f2f6d95fd021e8625ffc1ee44f8";
+export const LIQUIDITY_POOL_0 = NETWORK == "MAINNET" ? "" : "0x952fadd71b6ada8fc2e9aacc2e9de2dd3dade9813427af6a3c42a5926e371f04";
+// MarketRegistry
+export const MARKET = NETWORK == "MAINNET" ? "" : "0x819ad73d991f69640e553048a343b3ddade3c1f807581166c40bb49fa5ae1ded";
+export const PERP_VERSION = NETWORK == "MAINNET" ? "" : "0x26acf84bc93db806e435da1223e9e6add249724495c4103a08296d1b67d1edfc";
+// LpRegistry
+export const TLP = NETWORK == "MAINNET" ? "" : "0x42096762e1dd5721621c4104c167569e6afb0586ba92a7f92d834062dd38d7e7";
+export const TLP_TOKEN = NETWORK == "MAINNET" ? "" : "0x42096762e1dd5721621c4104c167569e6afb0586ba92a7f92d834062dd38d7e7::tlp::TLP";
 export const TLP_TREASURY_CAP = NETWORK == "MAINNET" ? "" : "0x7d9c6f9dfceb4788c21388f77e4ccf83e1b3f10282ae272b379402e92c97bbf6";
-export const STAKE_POOL = NETWORK == "MAINNET" ? "" : "0x27efed0157eea40aa1a8483622edeb48ca8c3fa3073f9e662503280a22a4e51b";
-export const STAKE_POOL_0 = NETWORK == "MAINNET" ? "" : "0xf784850926a300257546695fcb23333bcc0b2fdc4bd492b5174a3eb0e3fd4f00";
-export const PERP_VERSION = NETWORK == "MAINNET" ? "" : "0xa3066f440d0e2fa74b1c98e55c316ce63b208be87b018b089bf39d5dd11e8dfd";
-export const STAKE_POOL_VERSION = NETWORK == "MAINNET" ? "" : "0x25868624d2254a14eb513ae2b276fb56ca355ffd6cdd8ee05c5a51620f3f1bf3";
+// StakePoolRegistry
+export const STAKE_POOL = NETWORK == "MAINNET" ? "" : "0xcd9b35eca5209f8abe8bd9f57b5a6cdda033cc21c3e6663418d40b38681f1d34";
+export const STAKE_POOL_0 = NETWORK == "MAINNET" ? "" : "0x29f3c845641a256d13a68c8613836b13aab5bd6ed6c5542e97d8098bec40e09f";
+export const STAKE_POOL_VERSION = NETWORK == "MAINNET" ? "" : "0xf9c29dd67d8e6a145671a8cf34681d7445b85cbf79b2f204d80af230fc7e8b50";

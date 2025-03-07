@@ -26,7 +26,7 @@ import { TOKEN } from "@typus/typus-sdk/dist/src/constants";
     let index = "18";
     let cToken: TOKEN = "wUSDC"; // dToken
     let bToken: TOKEN = "wUSDC";
-    let tradingToken: TOKEN = "ETH"; // oToken
+    let tradingToken: TOKEN = "wETH"; // oToken
     let isLong = false; // call => short, put => long
     let share: string | null = "300000";
 

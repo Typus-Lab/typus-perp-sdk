@@ -88,7 +88,7 @@ export async function reduceOptionCollateralPositionSize(
     let TOKEN = input.cToken;
     let BASE_TOKEN = input.tradingToken;
 
-    await updatePyth(pythClient, tx, [TOKEN, BASE_TOKEN, "wUSDC"]);
+    await updatePyth(pythClient, tx, [TOKEN, BASE_TOKEN]);
     updateOracleWithPythUsd(pythClient, tx, config.package.oracle, TOKEN);
     updateOracleWithPythUsd(pythClient, tx, config.package.oracle, BASE_TOKEN);
 

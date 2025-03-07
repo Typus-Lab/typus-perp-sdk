@@ -128,9 +128,6 @@ export async function increaseCollateral(
 ): Promise<Transaction> {
     // parse from Position
     let TOKEN = typeArgToAsset(input.position.collateralToken.name);
-    if (TOKEN == "USDC") {
-        TOKEN = "wUSDC";
-    }
     let BASE_TOKEN = typeArgToAsset(input.position.symbol.baseToken.name);
 
     await updatePyth(pythClient, tx, [TOKEN, BASE_TOKEN]);
@@ -178,9 +175,6 @@ export async function releaseCollateral(
 ): Promise<Transaction> {
     // parse from Position
     let TOKEN = typeArgToAsset(input.position.collateralToken.name);
-    if (TOKEN == "USDC") {
-        TOKEN = "wUSDC";
-    }
     let BASE_TOKEN = typeArgToAsset(input.position.symbol.baseToken.name);
 
     await updatePyth(pythClient, tx, [TOKEN, BASE_TOKEN]);

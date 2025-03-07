@@ -14,7 +14,7 @@ import {
 import { allocateIncentive, getUserShares } from "./typus_stake_pool/stake-pool/functions";
 import { LpUserShare, StakePool } from "./typus_stake_pool/stake-pool/structs";
 
-import { CLOCK, oracle, SENDER, tokenType, typeArgToAsset } from "@typus/typus-sdk/dist/src/constants";
+import { CLOCK, oracle, SENDER, TOKEN, tokenType, typeArgToAsset } from "@typus/typus-sdk/dist/src/constants";
 import { pythStateId, PythClient, updatePyth, TypusConfig, updateOracleWithPythUsd } from "@typus/typus-sdk/dist/src/utils";
 
 import { LIQUIDITY_POOL, LIQUIDITY_POOL_0, LP_POOL, MARKET, NETWORK, PERP_VERSION, STAKE_POOL, STAKE_POOL_0, STAKE_POOL_VERSION } from ".";
@@ -290,7 +290,7 @@ export async function getLiquidationPriceAndPnl(
     let provider = new SuiClient({ url: config.rpcEndpoint });
     let tx = new Transaction();
 
-    let cTokens: string[] = ["SUI"];
+    let cTokens: TOKEN[] = ["SUI"];
     let pythTokens: string[] = [];
 
     for (let position of input.positions) {
@@ -305,10 +305,7 @@ export async function getLiquidationPriceAndPnl(
     await updatePyth(pythClient, tx, Array.from(new Set(pythTokens)));
 
     for (let cToken of Array.from(new Set(cTokens))) {
-        if (oracle[NETWORK][cToken.toLocaleLowerCase()]) {
-            // @ts-ignore
-            updateOracleWithPyth(pythClient, tx, config.package.oracle, config.oracle[cToken.toLocaleLowerCase()], cToken, "wUSDC");
-        }
+        updateOracleWithPythUsd(pythClient, tx, config.package.oracle, cToken);
     }
 
     for (let position of input.positions) {

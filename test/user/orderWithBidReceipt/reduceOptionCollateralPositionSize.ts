@@ -22,7 +22,7 @@ import { TOKEN } from "@typus/typus-sdk/dist/src/constants";
     // 2. Get receipt detail, vaultIndex, dToken, bToken, oToken
     let cToken: TOKEN = "wUSDC"; // dToken
     let bToken: TOKEN = "wUSDC";
-    let tradingToken: TOKEN = "ETH"; // oToken
+    let tradingToken: TOKEN = "wETH"; // oToken
 
     tx = await reduceOptionCollateralPositionSize(config, tx, pythClient, {
         cToken,

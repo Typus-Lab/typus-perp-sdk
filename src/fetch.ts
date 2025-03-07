@@ -290,22 +290,19 @@ export async function getLiquidationPriceAndPnl(
     let provider = new SuiClient({ url: config.rpcEndpoint });
     let tx = new Transaction();
 
-    let cTokens: TOKEN[] = ["SUI"];
-    let pythTokens: string[] = [];
+    let tokens: TOKEN[] = [];
 
     for (let position of input.positions) {
         // parse from Position
         let TOKEN = typeArgToAsset(position.collateralToken.name);
         let BASE_TOKEN = typeArgToAsset(position.symbol.baseToken.name);
-        cTokens.push(TOKEN);
-        pythTokens.push(TOKEN);
-        pythTokens.push(BASE_TOKEN);
+        tokens.push(TOKEN);
+        tokens.push(BASE_TOKEN);
     }
 
-    await updatePyth(pythClient, tx, Array.from(new Set(pythTokens)));
-
-    for (let cToken of Array.from(new Set(cTokens))) {
-        updateOracleWithPythUsd(pythClient, tx, config.package.oracle, cToken);
+    await updatePyth(pythClient, tx, Array.from(new Set(tokens)));
+    for (let token of Array.from(new Set(tokens))) {
+        updateOracleWithPythUsd(pythClient, tx, config.package.oracle, token);
     }
 
     for (let position of input.positions) {

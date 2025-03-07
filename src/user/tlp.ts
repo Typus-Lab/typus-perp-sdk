@@ -106,6 +106,7 @@ export async function unstakeBurn(
     await updatePyth(pythClient, tx, tokens);
 
     for (let token of tokens) {
+        updateOracleWithPythUsd(pythClient, tx, config.package.oracle, token);
         updateLiquidityValue(tx, tokenType[NETWORK][token], {
             version: PERP_VERSION,
             registry: LP_POOL,
@@ -165,6 +166,8 @@ export async function swap(
     }
 ): Promise<Transaction> {
     await updatePyth(pythClient, tx, [input.FROM_TOKEN, input.TO_TOKEN]);
+    updateOracleWithPythUsd(pythClient, tx, config.package.oracle, input.FROM_TOKEN);
+    updateOracleWithPythUsd(pythClient, tx, config.package.oracle, input.TO_TOKEN);
 
     var coin;
     if (input.FROM_TOKEN == "SUI") {

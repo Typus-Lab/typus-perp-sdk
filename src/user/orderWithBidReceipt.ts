@@ -31,9 +31,11 @@ export async function createTradingOrderWithBidReceipt(
     let TOKEN = input.cToken;
     let BASE_TOKEN = input.tradingToken;
 
-    await updatePyth(pythClient, tx, Array.from(new Set([TOKEN, BASE_TOKEN])));
-    updateOracleWithPythUsd(pythClient, tx, config.package.oracle, TOKEN);
-    updateOracleWithPythUsd(pythClient, tx, config.package.oracle, BASE_TOKEN);
+    let tokens = Array.from(new Set([TOKEN, BASE_TOKEN]));
+    await updatePyth(pythClient, tx, tokens);
+    for (let token of tokens) {
+        updateOracleWithPythUsd(pythClient, tx, config.package.oracle, token);
+    }
 
     // split bid receipt
     var collateralBidReceipt;
@@ -88,9 +90,11 @@ export async function reduceOptionCollateralPositionSize(
     let TOKEN = input.cToken;
     let BASE_TOKEN = input.tradingToken;
 
-    await updatePyth(pythClient, tx, [TOKEN, BASE_TOKEN]);
-    updateOracleWithPythUsd(pythClient, tx, config.package.oracle, TOKEN);
-    updateOracleWithPythUsd(pythClient, tx, config.package.oracle, BASE_TOKEN);
+    let tokens = Array.from(new Set([TOKEN, BASE_TOKEN]));
+    await updatePyth(pythClient, tx, tokens);
+    for (let token of tokens) {
+        updateOracleWithPythUsd(pythClient, tx, config.package.oracle, token);
+    }
 
     let cToken = tokenType[NETWORK][TOKEN];
     let bToken = tokenType[NETWORK][input.bToken];

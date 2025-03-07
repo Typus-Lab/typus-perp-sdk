@@ -18,8 +18,8 @@ import { createPythClient } from "@typus/typus-sdk/dist/src/utils";
     let pythClient = createPythClient(provider, NETWORK);
 
     // INPUT
-    let FROM_TOKEN: TOKEN = "USDT";
-    let TO_TOKEN: TOKEN = "USDC";
+    let FROM_TOKEN: TOKEN = "wUSDT";
+    let TO_TOKEN: TOKEN = "wUSDC";
 
     // coins
     let coins = (

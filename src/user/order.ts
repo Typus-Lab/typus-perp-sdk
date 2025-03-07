@@ -6,7 +6,7 @@ import {
 } from "../typus_perp/trading/functions";
 import { Position, TradingOrder } from "../typus_perp/position/structs";
 import { LP_POOL, MARKET, NETWORK, PERP_VERSION } from "..";
-import { PythClient, updatePyth, pythStateId, TypusConfig } from "@typus/typus-sdk/dist/src/utils";
+import { PythClient, updatePyth, TypusConfig, updateOracleWithPythUsd } from "@typus/typus-sdk/dist/src/utils";
 import { CLOCK, tokenType, TOKEN, typeArgToAsset, oracle } from "@typus/typus-sdk/dist/src/constants";
 import { Transaction } from "@mysten/sui/transactions";
 
@@ -31,7 +31,12 @@ export async function createTradingOrder(
     let TOKEN = input.cToken;
     let BASE_TOKEN = input.tradingToken;
 
-    await updatePyth(pythClient, tx, [TOKEN, BASE_TOKEN]);
+    let tokens = Array.from(new Set([TOKEN, BASE_TOKEN]));
+    await updatePyth(pythClient, tx, tokens);
+    for (let token of tokens) {
+        updateOracleWithPythUsd(pythClient, tx, config.package.oracle, token);
+    }
+
     let cToken = tokenType[NETWORK][TOKEN];
     let baseToken = tokenType[NETWORK][BASE_TOKEN];
 
@@ -130,7 +135,12 @@ export async function increaseCollateral(
     let TOKEN = typeArgToAsset(input.position.collateralToken.name);
     let BASE_TOKEN = typeArgToAsset(input.position.symbol.baseToken.name);
 
-    await updatePyth(pythClient, tx, [TOKEN, BASE_TOKEN]);
+    let tokens = Array.from(new Set([TOKEN, BASE_TOKEN]));
+    await updatePyth(pythClient, tx, tokens);
+    for (let token of tokens) {
+        updateOracleWithPythUsd(pythClient, tx, config.package.oracle, token);
+    }
+
     let cToken = tokenType[NETWORK][TOKEN];
     let baseToken = tokenType[NETWORK][BASE_TOKEN];
 
@@ -177,7 +187,12 @@ export async function releaseCollateral(
     let TOKEN = typeArgToAsset(input.position.collateralToken.name);
     let BASE_TOKEN = typeArgToAsset(input.position.symbol.baseToken.name);
 
-    await updatePyth(pythClient, tx, [TOKEN, BASE_TOKEN]);
+    let tokens = Array.from(new Set([TOKEN, BASE_TOKEN]));
+    await updatePyth(pythClient, tx, tokens);
+    for (let token of tokens) {
+        updateOracleWithPythUsd(pythClient, tx, config.package.oracle, token);
+    }
+
     let cToken = tokenType[NETWORK][TOKEN];
     let baseToken = tokenType[NETWORK][BASE_TOKEN];
 

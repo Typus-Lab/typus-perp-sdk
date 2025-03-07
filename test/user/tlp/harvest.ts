@@ -3,7 +3,7 @@ import { TypusConfig } from "@typus/typus-sdk/dist/src/utils";
 import { SuiClient } from "@mysten/sui/client";
 import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519";
 import { Transaction } from "@mysten/sui/transactions";
-import { getUserStake, harvestStakeReward } from "src";
+import { getStakePool, getUserStake, harvestStakeReward } from "src";
 
 (async () => {
     let keypair = Ed25519Keypair.deriveKeypair(String(process.env.MNEMONIC));
@@ -19,12 +19,16 @@ import { getUserStake, harvestStakeReward } from "src";
     let stake = stakes[0];
     console.log(stake);
 
+    // 2. StakePool
+    let stakePool = await getStakePool(config);
+    // console.log(stakePool);
+
     let tx = new Transaction();
 
     harvestStakeReward(config, tx, {
+        stakePool,
         userShareId: "0",
         user,
-        iTOKEN: "TYPUS",
     });
 
     let dryrunRes = await provider.devInspectTransactionBlock({

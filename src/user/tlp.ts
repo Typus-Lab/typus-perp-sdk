@@ -5,6 +5,7 @@ import { harvestPerUserShare, stake, unstake, unsubscribe as _unsubscribe } from
 import { PythClient, TypusConfig, updateOracleWithPythUsd, updatePyth } from "@typus/typus-sdk/dist/src/utils";
 import { CLOCK, tokenType, typeArgToAsset, TOKEN, oracle } from "@typus/typus-sdk/dist/src/constants";
 import { LP_POOL, NETWORK, PERP_VERSION, STAKE_POOL, STAKE_POOL_VERSION, TLP_TOKEN, TLP_TREASURY_CAP } from "..";
+import { StakePool } from "src/typus_stake_pool/stake-pool/structs";
 
 export async function mintStakeLp(
     config: TypusConfig,
@@ -12,9 +13,9 @@ export async function mintStakeLp(
     pythClient: PythClient,
     input: {
         lpPool: LiquidityPool;
+        stakePool: StakePool;
         coins: string[];
         cTOKEN: TOKEN;
-        iTOKEN: TOKEN;
         amount: string;
         userShareId: string | null;
         user: string;
@@ -51,17 +52,19 @@ export async function mintStakeLp(
         [coin] = tx.splitCoins(destination, [input.amount]);
     }
 
-    let iToken = tokenType[NETWORK][input.iTOKEN];
     // console.log(iToken);
     if (input.userShareId) {
-        let iCoin = harvestPerUserShare(tx, iToken, {
-            version: STAKE_POOL_VERSION,
-            registry: STAKE_POOL,
-            index: BigInt(0),
-            userShareId: BigInt(input.userShareId),
-            clock: CLOCK,
-        });
-        tx.transferObjects([iCoin], input.user);
+        let iTokens = input.stakePool.incentives.map((i) => i.tokenType.name);
+        for (let iToken of iTokens) {
+            let iCoin = harvestPerUserShare(tx, iToken, {
+                version: STAKE_POOL_VERSION,
+                registry: STAKE_POOL,
+                index: BigInt(0),
+                userShareId: BigInt(input.userShareId),
+                clock: CLOCK,
+            });
+            tx.transferObjects([iCoin], input.user);
+        }
     }
 
     let cToken = tokenType[NETWORK][input.cTOKEN];
@@ -93,8 +96,8 @@ export async function unstakeBurn(
     pythClient: PythClient,
     input: {
         lpPool: LiquidityPool;
+        stakePool: StakePool;
         cTOKEN: TOKEN;
-        iTOKEN: TOKEN;
         userShareId: string;
         share: string | null;
         user: string;
@@ -116,17 +119,18 @@ export async function unstakeBurn(
         });
     }
 
-    let iToken = tokenType[NETWORK][input.iTOKEN];
-    // console.log(iToken);
     if (input.userShareId) {
-        let iCoin = harvestPerUserShare(tx, iToken, {
-            version: STAKE_POOL_VERSION,
-            registry: STAKE_POOL,
-            index: BigInt(0),
-            userShareId: BigInt(input.userShareId),
-            clock: CLOCK,
-        });
-        tx.transferObjects([iCoin], input.user);
+        let iTokens = input.stakePool.incentives.map((i) => i.tokenType.name);
+        for (let iToken of iTokens) {
+            let iCoin = harvestPerUserShare(tx, iToken, {
+                version: STAKE_POOL_VERSION,
+                registry: STAKE_POOL,
+                index: BigInt(0),
+                userShareId: BigInt(input.userShareId),
+                clock: CLOCK,
+            });
+            tx.transferObjects([iCoin], input.user);
+        }
     }
 
     let lpCoin = unstake(tx, TLP_TOKEN, {
@@ -223,20 +227,22 @@ export async function harvestStakeReward(
     config: TypusConfig,
     tx: Transaction,
     input: {
+        stakePool: StakePool;
         userShareId: string;
         user: string;
-        iTOKEN: TOKEN;
     }
 ): Promise<Transaction> {
-    let iToken = tokenType[NETWORK][input.iTOKEN];
-    // console.log(iToken);
-    let iCoin = harvestPerUserShare(tx, iToken, {
-        version: STAKE_POOL_VERSION,
-        registry: STAKE_POOL,
-        index: BigInt(0),
-        userShareId: BigInt(input.userShareId),
-        clock: CLOCK,
-    });
-    tx.transferObjects([iCoin], input.user);
+    let iTokens = input.stakePool.incentives.map((i) => i.tokenType.name);
+    for (let iToken of iTokens) {
+        // console.log(iToken);
+        let iCoin = harvestPerUserShare(tx, iToken, {
+            version: STAKE_POOL_VERSION,
+            registry: STAKE_POOL,
+            index: BigInt(0),
+            userShareId: BigInt(input.userShareId),
+            clock: CLOCK,
+        });
+        tx.transferObjects([iCoin], input.user);
+    }
     return tx;
 }

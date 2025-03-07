@@ -3,7 +3,7 @@ import { TypusConfig } from "@typus/typus-sdk/dist/src/utils";
 import { SuiClient } from "@mysten/sui/client";
 import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519";
 import { Transaction } from "@mysten/sui/transactions";
-import { NETWORK, getLpPools, getUserStake, unstakeBurn } from "src";
+import { NETWORK, getLpPools, getStakePool, getUserStake, unstakeBurn } from "src";
 import { createPythClient } from "@typus/typus-sdk/dist/src/utils";
 
 (async () => {
@@ -24,6 +24,10 @@ import { createPythClient } from "@typus/typus-sdk/dist/src/utils";
     let stakes = await getUserStake(config, user);
     console.log(stakes);
 
+    // 2. StakePool
+    let stakePool = await getStakePool(config);
+    // console.log(stakePool);
+
     let unlockedStakes = stakes.filter((s) => s[0].deactivatingShares.filter((d) => d.unlockedTsMs < Date.now()).length > 0);
     console.log(unlockedStakes);
 
@@ -35,10 +39,10 @@ import { createPythClient } from "@typus/typus-sdk/dist/src/utils";
     unstakeBurn(config, tx, pythClient, {
         userShareId: stake[0].userShareId.toString(),
         lpPool,
+        stakePool,
         cTOKEN: "USDC",
         share: "987450000000",
         user,
-        iTOKEN: "TYPUS",
     });
 
     let dryrunRes = await provider.devInspectTransactionBlock({

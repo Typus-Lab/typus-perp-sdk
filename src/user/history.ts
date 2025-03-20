@@ -10,6 +10,7 @@ import {
 } from "../typus_perp/trading/structs";
 import { SwapEvent } from "src/typus_perp/lp-pool/structs";
 import { getFromSentio } from "src/api/sentio";
+import { NETWORK } from "src";
 
 type actionType =
     | "Place Order"
@@ -51,7 +52,7 @@ export async function parseUserHistory(raw_events) {
     const events: Event[] = [];
 
     raw_events.forEach((event) => {
-        const type = event.contents.type.repr;
+        const type: string = event.contents.type.repr;
         if (type.endsWith("PythPrice")) {
             return;
         }
@@ -63,9 +64,11 @@ export async function parseUserHistory(raw_events) {
         // console.log(json);
         // console.log(timestamp);
 
-        switch (type) {
-            case CreateTradingOrderEvent.$typeName:
-            case CreateTradingOrderWithBidReceiptsEvent.$typeName:
+        const [pkg, mod, name] = type.split("::");
+
+        switch (name) {
+            case CreateTradingOrderEvent.name:
+            case CreateTradingOrderWithBidReceiptsEvent.name:
                 var base_token = typeArgToAsset(json.base_token.name) as TOKEN;
                 var collateral_token = typeArgToAsset(json.collateral_token.name) as TOKEN;
                 var market = `${base_token}/USD`;
@@ -109,7 +112,7 @@ export async function parseUserHistory(raw_events) {
                 events.push(e);
                 break;
 
-            case OrderFilledEvent.$typeName:
+            case OrderFilledEvent.name:
                 var base_token = typeArgToAsset(json.symbol.base_token.name) as TOKEN;
                 var collateral_token = typeArgToAsset(json.collateral_token.name) as TOKEN;
                 var market = `${base_token}/USD`;
@@ -153,7 +156,7 @@ export async function parseUserHistory(raw_events) {
                 events.push(e);
                 break;
 
-            case RealizeFundingEvent.$typeName:
+            case RealizeFundingEvent.name:
                 // same tx with order filled
                 const index = events.findLastIndex((e) => e.tx_digest == tx_digest);
                 // console.log(index);
@@ -167,7 +170,7 @@ export async function parseUserHistory(raw_events) {
                 }
                 break;
 
-            case CancelTradingOrderEvent.$typeName:
+            case CancelTradingOrderEvent.name:
                 var base_token = typeArgToAsset(json.base_token.name) as TOKEN;
                 var collateral_token = typeArgToAsset(json.collateral_token.name) as TOKEN;
                 var market = `${base_token}/USD`;
@@ -193,8 +196,8 @@ export async function parseUserHistory(raw_events) {
                 events.push(e);
                 break;
 
-            case IncreaseCollateralEvent.$typeName:
-            case ReleaseCollateralEvent.$typeName:
+            case IncreaseCollateralEvent.name:
+            case ReleaseCollateralEvent.name:
                 var base_token = typeArgToAsset(json.base_token.name) as TOKEN;
                 var collateral_token = typeArgToAsset(json.collateral_token.name) as TOKEN;
                 var market = `${base_token}/USD`;
@@ -227,7 +230,7 @@ export async function parseUserHistory(raw_events) {
                 events.push(e);
                 break;
 
-            case SwapEvent.$typeName:
+            case SwapEvent.name:
                 var from_token = typeArgToAsset(json.from_token_type.name) as TOKEN;
                 var to_token = typeArgToAsset(json.to_token_type.name) as TOKEN;
 
@@ -316,7 +319,7 @@ export async function getGraphQLEvents(module: string, sender: string, beforeCur
           `,
     });
 
-    let response = await fetch(`https://sui-testnet.mystenlabs.com/graphql`, {
+    let response = await fetch(`https://sui-${NETWORK.toLowerCase()}.mystenlabs.com/graphql`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: graphql,

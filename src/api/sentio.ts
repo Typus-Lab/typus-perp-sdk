@@ -81,4 +81,62 @@ export async function getTlpAPRFromSentio(): Promise<number> {
     return apr;
 }
 
+export async function getVolumeFromSentio(): Promise<any[]> {
+    let apiUrl = "https://app.sentio.xyz/api/v1/insights/typus/typus_perp/query";
+    let requestData = {
+        timeRange: {
+            start: "now-3d",
+            end: "now",
+            step: 3600,
+        },
+        limit: 20,
+        queries: [
+            {
+                eventsQuery: {
+                    resource: {
+                        name: "OrderFilled",
+                        type: "EVENTS",
+                    },
+                    alias: "",
+                    id: "a",
+                    aggregation: {
+                        total: {},
+                    },
+                    groupBy: ["trading_token"],
+                    limit: 0,
+                    functions: [],
+                    color: "",
+                    disabled: false,
+                },
+                dataSource: "EVENTS",
+                sourceName: "",
+            },
+        ],
+        formulas: [],
+    };
+
+    let jsonData = JSON.stringify(requestData);
+
+    let response = await fetch(apiUrl, {
+        method: "POST",
+        headers,
+        body: jsonData,
+    });
+
+    let data = await response.json();
+    let symbols: string[] = data.results[0].matrix.samples.map((s) => s.metric.labels.trading_token);
+    console.log(symbols);
+
+    let volume: Volume[][] = data.results[0].matrix.samples.map((s) => s.values);
+    console.log(volume);
+
+    return data.results as any[];
+}
+
 // getTlpAPRFromSentio();
+// getVolumeFromSentio();
+
+export interface Volume {
+    timestamp: string;
+    value: number;
+}

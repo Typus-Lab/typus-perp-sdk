@@ -23,8 +23,8 @@ export async function createTradingOrderWithBidReceipt(
         user: string;
         index: string;
         bToken: TOKEN;
-        bidReceipt: string;
-        share: string | null;
+        bidReceipts: string[];
+        share?: string; // if undefined, merge all receipts
     }
 ): Promise<Transaction> {
     // INPUTS
@@ -38,18 +38,12 @@ export async function createTradingOrderWithBidReceipt(
     }
 
     // split bid receipt
-    var collateralBidReceipt;
-
-    if (input.share) {
-        collateralBidReceipt = getSplitBidReceiptTx(config, tx, {
-            index: input.index,
-            receipts: [input.bidReceipt],
-            share: input.share,
-            recipient: input.user,
-        });
-    } else {
-        collateralBidReceipt = input.bidReceipt;
-    }
+    let collateralBidReceipt = getSplitBidReceiptTx(config, tx, {
+        index: input.index,
+        receipts: input.bidReceipts,
+        share: input.share, // if undefined, merge all receipts
+        recipient: input.user,
+    });
 
     let cToken = tokenType[NETWORK][TOKEN];
     let bToken = tokenType[NETWORK][input.bToken];

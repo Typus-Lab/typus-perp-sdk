@@ -28,7 +28,7 @@ import { TOKEN } from "@typus/typus-sdk/dist/src/constants";
     let bToken: TOKEN = "wUSDC";
     let tradingToken: TOKEN = "wETH"; // oToken
     let isLong = false; // call => short, put => long
-    let share: string | null = "300000";
+    let share: string | undefined = "300000";
 
     tx = await createTradingOrderWithBidReceipt(config, tx, pythClient, {
         cToken,
@@ -37,7 +37,7 @@ import { TOKEN } from "@typus/typus-sdk/dist/src/constants";
         user,
         index,
         bToken,
-        bidReceipt,
+        bidReceipts: [bidReceipt],
         share,
     });
 

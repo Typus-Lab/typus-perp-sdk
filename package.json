@@ -6,7 +6,7 @@
     "description": "typus perp sdk",
     "license": "MIT",
     "dependencies": {
-        "@typus/typus-sdk": "1.6.4-tk7"
+        "@typus/typus-sdk": "1.6.4-tk9"
     },
     "devDependencies": {
         "@types/bs58": "^4.0.1",

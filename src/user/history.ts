@@ -32,6 +32,7 @@ type statusType = "Open" | "Filled" | "Canceled";
 
 interface Event {
     action: actionType;
+    typeName: string | undefined;
     order_id: string | undefined;
     position_id: string | undefined;
     market: string;
@@ -94,6 +95,7 @@ export async function parseUserHistory(raw_events) {
 
                 var e: Event = {
                     action: "Place Order",
+                    typeName: name,
                     order_id: json.order_id,
                     position_id: json.linked_position_id,
                     market,
@@ -104,7 +106,7 @@ export async function parseUserHistory(raw_events) {
                     base_token,
                     collateral,
                     collateral_token,
-                    price: Number(price) / 10 ** 8, // WARNING: fixed decimal
+                    price: Number(price) / 10 ** assetToDecimal("USD")!, // WARNING: fixed decimal
                     realized_pnl: undefined,
                     timestamp,
                     tx_digest,
@@ -138,6 +140,7 @@ export async function parseUserHistory(raw_events) {
 
                 var e: Event = {
                     action,
+                    typeName: name,
                     order_id: json.order_id,
                     position_id: json.linked_position_id ?? json.new_position_id,
                     market,
@@ -178,6 +181,7 @@ export async function parseUserHistory(raw_events) {
 
                 var e: Event = {
                     action: "Cancel Order",
+                    typeName: name,
                     order_id: json.order_id,
                     position_id: undefined,
                     market,
@@ -212,6 +216,7 @@ export async function parseUserHistory(raw_events) {
 
                 var e: Event = {
                     action: "Modify Collateral",
+                    typeName: name,
                     order_id: undefined,
                     position_id: json.position_id,
                     market,
@@ -239,6 +244,7 @@ export async function parseUserHistory(raw_events) {
 
                 var e: Event = {
                     action: "Swap",
+                    typeName: name,
                     order_id: undefined,
                     position_id: undefined,
                     market: `${from_token}/${to_token}`,
@@ -341,6 +347,7 @@ export async function getLiquidateFromSentio(userAddress: string, startTimestamp
         let collateral = Number(x.liquidator_fee) + Number(x.value_for_lp_pool);
         let txHistory: Event = {
             action: "Liquidation",
+            typeName: undefined,
             order_id: x.order_id,
             position_id: x.position_id,
             market: `${x.trading_token}/USD`,
@@ -368,6 +375,7 @@ export async function getOrderMatchFromSentio(userAddress: string, startTimestam
         let realized_pnl = ((x.realized_amount - x.realized_trading_fee) * x.realized_fee_in_usd) / x.realized_trading_fee;
         let txHistory: Event = {
             action: x.order_type == "Open" ? "Order Filled (Open Position)" : "Order Filled (Close Position)",
+            typeName: undefined,
             order_id: x.order_id,
             position_id: x.position_id,
             market: `${x.trading_token}/USD`,

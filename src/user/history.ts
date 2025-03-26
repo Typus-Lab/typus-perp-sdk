@@ -106,7 +106,7 @@ export async function parseUserHistory(raw_events) {
                     base_token,
                     collateral,
                     collateral_token,
-                    price: Number(price) / 10 ** assetToDecimal("USD")!, // WARNING: fixed decimal
+                    price: Number(price) / 10 ** 8, // WARNING: fixed decimal
                     realized_pnl: undefined,
                     timestamp,
                     tx_digest,
@@ -256,7 +256,7 @@ export async function parseUserHistory(raw_events) {
                     collateral: Number(json.from_amount) / 10 ** assetToDecimal(from_token)!,
                     collateral_token: from_token,
                     price: from_price / to_price,
-                    realized_pnl: -Number(json.fee_amount_usd) / 10 ** 6,
+                    realized_pnl: -Number(json.fee_amount_usd) / 10 ** 9,
                     timestamp,
                     tx_digest,
                 };

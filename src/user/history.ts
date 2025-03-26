@@ -12,7 +12,7 @@ import { SwapEvent } from "src/typus_perp/lp-pool/structs";
 import { getFromSentio } from "src/api/sentio";
 import { NETWORK } from "src";
 
-type actionType =
+export type actionType =
     | "Place Order"
     | "Cancel Order"
     | "Order Filled (Open Position)"
@@ -24,13 +24,13 @@ type actionType =
     | "Force Close Position "
     | "Swap";
 
-type sideType = "Long" | "Short";
+export type sideType = "Long" | "Short";
 
-type orderType = "Market" | "Limit" | "Take Profit" | "Stop Loss";
+export type orderType = "Market" | "Limit" | "Take Profit" | "Stop Loss";
 
-type statusType = "Open" | "Filled" | "Canceled";
+export type statusType = "Open" | "Filled" | "Canceled";
 
-interface Event {
+export interface Event {
     action: actionType;
     typeName: string | undefined;
     order_id: string | undefined;

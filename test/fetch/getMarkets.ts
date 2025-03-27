@@ -1,8 +1,8 @@
 import { TypusConfig } from "@typus/typus-sdk/dist/src/utils";
-import { getMarkets } from "src";
+import { getMarkets, NETWORK } from "src";
 
 (async () => {
-    let config = await TypusConfig.default("TESTNET", null);
+    let config = await TypusConfig.default(NETWORK, null);
     let markets = await getMarkets(config, { indexes: ["0"] });
     console.log(JSON.stringify(markets, null, 2));
     console.log(

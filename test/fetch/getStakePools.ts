@@ -1,8 +1,8 @@
 import { TypusConfig } from "@typus/typus-sdk/dist/src/utils";
-import { getStakePool, getStakePools } from "src";
+import { getStakePool, getStakePools, NETWORK } from "src";
 
 (async () => {
-    let config = await TypusConfig.default("TESTNET", null);
+    let config = await TypusConfig.default(NETWORK, null);
 
     // let stakePools = await getStakePools(config);
     // console.log(stakePools); // 1 lpPool inclueded

@@ -1,8 +1,8 @@
 import { TypusConfig } from "@typus/typus-sdk/dist/src/utils";
-import { getLpPool, getLpPools } from "src";
+import { getLpPool, getLpPools, NETWORK } from "src";
 
 (async () => {
-    let config = await TypusConfig.default("TESTNET", null);
+    let config = await TypusConfig.default(NETWORK, null);
 
     // let lpPools = await getLpPools(config);
     // console.log(lpPools); // 1 lpPool inclueded

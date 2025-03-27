@@ -225,6 +225,7 @@ export interface StateFields {
     cumulativeBorrowRate: ToField<"u64">;
     previousLastBorrowRateTsMs: ToField<"u64">;
     previousCumulativeBorrowRate: ToField<"u64">;
+    currentLendingAmount: ToField<Vector<"u64">>;
     u64Padding: ToField<Vector<"u64">>;
 }
 
@@ -251,6 +252,7 @@ export class State implements StructClass {
     readonly cumulativeBorrowRate: ToField<"u64">;
     readonly previousLastBorrowRateTsMs: ToField<"u64">;
     readonly previousCumulativeBorrowRate: ToField<"u64">;
+    readonly currentLendingAmount: ToField<Vector<"u64">>;
     readonly u64Padding: ToField<Vector<"u64">>;
 
     private constructor(typeArgs: [], fields: StateFields) {
@@ -266,6 +268,7 @@ export class State implements StructClass {
         this.cumulativeBorrowRate = fields.cumulativeBorrowRate;
         this.previousLastBorrowRateTsMs = fields.previousLastBorrowRateTsMs;
         this.previousCumulativeBorrowRate = fields.previousCumulativeBorrowRate;
+        this.currentLendingAmount = fields.currentLendingAmount;
         this.u64Padding = fields.u64Padding;
     }
 
@@ -314,6 +317,7 @@ export class State implements StructClass {
             cumulative_borrow_rate: bcs.u64(),
             previous_last_borrow_rate_ts_ms: bcs.u64(),
             previous_cumulative_borrow_rate: bcs.u64(),
+            current_lending_amount: bcs.vector(bcs.u64()),
             u64_padding: bcs.vector(bcs.u64()),
         });
     }
@@ -329,6 +333,7 @@ export class State implements StructClass {
             cumulativeBorrowRate: decodeFromFields("u64", fields.cumulative_borrow_rate),
             previousLastBorrowRateTsMs: decodeFromFields("u64", fields.previous_last_borrow_rate_ts_ms),
             previousCumulativeBorrowRate: decodeFromFields("u64", fields.previous_cumulative_borrow_rate),
+            currentLendingAmount: decodeFromFields(reified.vector("u64"), fields.current_lending_amount),
             u64Padding: decodeFromFields(reified.vector("u64"), fields.u64_padding),
         });
     }
@@ -348,6 +353,7 @@ export class State implements StructClass {
             cumulativeBorrowRate: decodeFromFieldsWithTypes("u64", item.fields.cumulative_borrow_rate),
             previousLastBorrowRateTsMs: decodeFromFieldsWithTypes("u64", item.fields.previous_last_borrow_rate_ts_ms),
             previousCumulativeBorrowRate: decodeFromFieldsWithTypes("u64", item.fields.previous_cumulative_borrow_rate),
+            currentLendingAmount: decodeFromFieldsWithTypes(reified.vector("u64"), item.fields.current_lending_amount),
             u64Padding: decodeFromFieldsWithTypes(reified.vector("u64"), item.fields.u64_padding),
         });
     }
@@ -367,6 +373,7 @@ export class State implements StructClass {
             cumulativeBorrowRate: this.cumulativeBorrowRate.toString(),
             previousLastBorrowRateTsMs: this.previousLastBorrowRateTsMs.toString(),
             previousCumulativeBorrowRate: this.previousCumulativeBorrowRate.toString(),
+            currentLendingAmount: fieldToJSON<Vector<"u64">>(`vector<u64>`, this.currentLendingAmount),
             u64Padding: fieldToJSON<Vector<"u64">>(`vector<u64>`, this.u64Padding),
         };
     }
@@ -386,6 +393,7 @@ export class State implements StructClass {
             cumulativeBorrowRate: decodeFromJSONField("u64", field.cumulativeBorrowRate),
             previousLastBorrowRateTsMs: decodeFromJSONField("u64", field.previousLastBorrowRateTsMs),
             previousCumulativeBorrowRate: decodeFromJSONField("u64", field.previousCumulativeBorrowRate),
+            currentLendingAmount: decodeFromJSONField(reified.vector("u64"), field.currentLendingAmount),
             u64Padding: decodeFromJSONField(reified.vector("u64"), field.u64Padding),
         });
     }
@@ -3251,6 +3259,7 @@ export interface SpotConfigFields {
     additionalBurnFeeBp: ToField<"u64">;
     swapFeeBp: ToField<"u64">;
     swapFeeProtocolShareBp: ToField<"u64">;
+    lendingProtocolShareBp: ToField<"u64">;
     u64Padding: ToField<Vector<"u64">>;
 }
 
@@ -3277,6 +3286,7 @@ export class SpotConfig implements StructClass {
     readonly additionalBurnFeeBp: ToField<"u64">;
     readonly swapFeeBp: ToField<"u64">;
     readonly swapFeeProtocolShareBp: ToField<"u64">;
+    readonly lendingProtocolShareBp: ToField<"u64">;
     readonly u64Padding: ToField<Vector<"u64">>;
 
     private constructor(typeArgs: [], fields: SpotConfigFields) {
@@ -3292,6 +3302,7 @@ export class SpotConfig implements StructClass {
         this.additionalBurnFeeBp = fields.additionalBurnFeeBp;
         this.swapFeeBp = fields.swapFeeBp;
         this.swapFeeProtocolShareBp = fields.swapFeeProtocolShareBp;
+        this.lendingProtocolShareBp = fields.lendingProtocolShareBp;
         this.u64Padding = fields.u64Padding;
     }
 
@@ -3340,6 +3351,7 @@ export class SpotConfig implements StructClass {
             additional_burn_fee_bp: bcs.u64(),
             swap_fee_bp: bcs.u64(),
             swap_fee_protocol_share_bp: bcs.u64(),
+            lending_protocol_share_bp: bcs.u64(),
             u64_padding: bcs.vector(bcs.u64()),
         });
     }
@@ -3355,6 +3367,7 @@ export class SpotConfig implements StructClass {
             additionalBurnFeeBp: decodeFromFields("u64", fields.additional_burn_fee_bp),
             swapFeeBp: decodeFromFields("u64", fields.swap_fee_bp),
             swapFeeProtocolShareBp: decodeFromFields("u64", fields.swap_fee_protocol_share_bp),
+            lendingProtocolShareBp: decodeFromFields("u64", fields.lending_protocol_share_bp),
             u64Padding: decodeFromFields(reified.vector("u64"), fields.u64_padding),
         });
     }
@@ -3374,6 +3387,7 @@ export class SpotConfig implements StructClass {
             additionalBurnFeeBp: decodeFromFieldsWithTypes("u64", item.fields.additional_burn_fee_bp),
             swapFeeBp: decodeFromFieldsWithTypes("u64", item.fields.swap_fee_bp),
             swapFeeProtocolShareBp: decodeFromFieldsWithTypes("u64", item.fields.swap_fee_protocol_share_bp),
+            lendingProtocolShareBp: decodeFromFieldsWithTypes("u64", item.fields.lending_protocol_share_bp),
             u64Padding: decodeFromFieldsWithTypes(reified.vector("u64"), item.fields.u64_padding),
         });
     }
@@ -3393,6 +3407,7 @@ export class SpotConfig implements StructClass {
             additionalBurnFeeBp: this.additionalBurnFeeBp.toString(),
             swapFeeBp: this.swapFeeBp.toString(),
             swapFeeProtocolShareBp: this.swapFeeProtocolShareBp.toString(),
+            lendingProtocolShareBp: this.lendingProtocolShareBp.toString(),
             u64Padding: fieldToJSON<Vector<"u64">>(`vector<u64>`, this.u64Padding),
         };
     }
@@ -3412,6 +3427,7 @@ export class SpotConfig implements StructClass {
             additionalBurnFeeBp: decodeFromJSONField("u64", field.additionalBurnFeeBp),
             swapFeeBp: decodeFromJSONField("u64", field.swapFeeBp),
             swapFeeProtocolShareBp: decodeFromJSONField("u64", field.swapFeeProtocolShareBp),
+            lendingProtocolShareBp: decodeFromJSONField("u64", field.lendingProtocolShareBp),
             u64Padding: decodeFromJSONField(reified.vector("u64"), field.u64Padding),
         });
     }

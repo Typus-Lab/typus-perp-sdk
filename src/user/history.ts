@@ -68,8 +68,8 @@ export async function parseUserHistory(raw_events) {
         const [pkg, mod, name] = type.split("::");
 
         switch (name) {
-            case CreateTradingOrderEvent.name:
-            case CreateTradingOrderWithBidReceiptsEvent.name:
+            case CreateTradingOrderEvent.$typeName.split("::")[2]:
+            case CreateTradingOrderWithBidReceiptsEvent.$typeName.split("::")[2]:
                 var base_token = typeArgToAsset(json.base_token.name) as TOKEN;
                 var collateral_token = typeArgToAsset(json.collateral_token.name) as TOKEN;
                 var market = `${base_token}/USD`;
@@ -114,7 +114,7 @@ export async function parseUserHistory(raw_events) {
                 events.push(e);
                 break;
 
-            case OrderFilledEvent.name:
+            case OrderFilledEvent.$typeName.split("::")[2]:
                 var base_token = typeArgToAsset(json.symbol.base_token.name) as TOKEN;
                 var collateral_token = typeArgToAsset(json.collateral_token.name) as TOKEN;
                 var market = `${base_token}/USD`;
@@ -159,7 +159,7 @@ export async function parseUserHistory(raw_events) {
                 events.push(e);
                 break;
 
-            case RealizeFundingEvent.name:
+            case RealizeFundingEvent.$typeName.split("::")[2]:
                 // same tx with order filled
                 const index = events.findLastIndex((e) => e.tx_digest == tx_digest);
                 // console.log(index);
@@ -173,7 +173,7 @@ export async function parseUserHistory(raw_events) {
                 }
                 break;
 
-            case CancelTradingOrderEvent.name:
+            case CancelTradingOrderEvent.$typeName.split("::")[2]:
                 var base_token = typeArgToAsset(json.base_token.name) as TOKEN;
                 var collateral_token = typeArgToAsset(json.collateral_token.name) as TOKEN;
                 var market = `${base_token}/USD`;
@@ -200,8 +200,8 @@ export async function parseUserHistory(raw_events) {
                 events.push(e);
                 break;
 
-            case IncreaseCollateralEvent.name:
-            case ReleaseCollateralEvent.name:
+            case IncreaseCollateralEvent.$typeName.split("::")[2]:
+            case ReleaseCollateralEvent.$typeName.split("::")[2]:
                 var base_token = typeArgToAsset(json.base_token.name) as TOKEN;
                 var collateral_token = typeArgToAsset(json.collateral_token.name) as TOKEN;
                 var market = `${base_token}/USD`;
@@ -235,7 +235,7 @@ export async function parseUserHistory(raw_events) {
                 events.push(e);
                 break;
 
-            case SwapEvent.name:
+            case SwapEvent.$typeName.split("::")[2]:
                 var from_token = typeArgToAsset(json.from_token_type.name) as TOKEN;
                 var to_token = typeArgToAsset(json.to_token_type.name) as TOKEN;
 

@@ -8,7 +8,7 @@ import { createPythClient } from "@typus/typus-sdk/dist/src/utils";
 import { TOKEN, tokenType } from "@typus/typus-sdk/dist/src/constants";
 
 (async () => {
-    let config = await TypusConfig.default("TESTNET", null);
+    let config = await TypusConfig.default(NETWORK, null);
     let keypair = Ed25519Keypair.deriveKeypair(String(process.env.MNEMONIC));
     let provider = new SuiClient({ url: config.rpcEndpoint });
 
@@ -18,7 +18,7 @@ import { TOKEN, tokenType } from "@typus/typus-sdk/dist/src/constants";
     var tx = new Transaction();
 
     // INPUTS
-    let cToken: TOKEN = "wUSDC";
+    let cToken: TOKEN = "SUI";
     let tradingToken: TOKEN = "SUI";
 
     let pythClient = createPythClient(provider, NETWORK);
@@ -33,7 +33,7 @@ import { TOKEN, tokenType } from "@typus/typus-sdk/dist/src/constants";
     tx = await createTradingOrder(config, tx, pythClient, {
         coins,
         cToken,
-        amount: "100000",
+        amount: "100000000",
         tradingToken,
         size: "1000000000",
         triggerPrice: "500000000",

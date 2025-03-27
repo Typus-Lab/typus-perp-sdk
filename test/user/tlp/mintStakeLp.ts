@@ -8,7 +8,7 @@ import { TOKEN, tokenType } from "@typus/typus-sdk/dist/src/constants";
 
 (async () => {
     let keypair = Ed25519Keypair.deriveKeypair(String(process.env.MNEMONIC));
-    let config = await TypusConfig.default("TESTNET", null);
+    let config = await TypusConfig.default(NETWORK, null);
     let provider = new SuiClient({ url: config.rpcEndpoint });
 
     let user = keypair.toSuiAddress();
@@ -27,7 +27,7 @@ import { TOKEN, tokenType } from "@typus/typus-sdk/dist/src/constants";
     // console.log(stakes);
 
     // INPUT
-    let cTOKEN: TOKEN = "wUSDC";
+    let cTOKEN: TOKEN = "SUI";
     let cToken = tokenType[NETWORK][cTOKEN];
 
     // coins
@@ -46,7 +46,7 @@ import { TOKEN, tokenType } from "@typus/typus-sdk/dist/src/constants";
         stakePool,
         coins,
         cTOKEN,
-        amount: "100000000000",
+        amount: "10000000000",
         userShareId: stakes.length > 0 ? stakes[0][0].userShareId.toString() : null,
         user,
     });

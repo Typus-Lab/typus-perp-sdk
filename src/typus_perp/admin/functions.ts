@@ -2,81 +2,15 @@ import { PUBLISHED_AT } from "..";
 import { obj, pure } from "../../_framework/util";
 import { Transaction, TransactionArgument, TransactionObjectInput } from "@mysten/sui/transactions";
 
-export function upgrade(tx: Transaction, version: TransactionObjectInput) {
-    return tx.moveCall({ target: `${PUBLISHED_AT}::admin::upgrade`, arguments: [obj(tx, version)] });
-}
-
-export function init(tx: Transaction) {
-    return tx.moveCall({ target: `${PUBLISHED_AT}::admin::init`, arguments: [] });
-}
-
-export function verify(tx: Transaction, version: TransactionObjectInput) {
-    return tx.moveCall({ target: `${PUBLISHED_AT}::admin::verify`, arguments: [obj(tx, version)] });
-}
-
 export interface AddAuthorizedUserArgs {
     version: TransactionObjectInput;
     userAddress: string | TransactionArgument;
 }
 
-export function addAuthorizedUser(tx: Transaction, args: AddAuthorizedUserArgs) {
+export function addAuthorizedUser(tx: Transaction, args: AddAuthorizedUserArgs, published_at: string = PUBLISHED_AT) {
     return tx.moveCall({
-        target: `${PUBLISHED_AT}::admin::add_authorized_user`,
+        target: `${published_at}::admin::add_authorized_user`,
         arguments: [obj(tx, args.version), pure(tx, args.userAddress, `address`)],
-    });
-}
-
-export interface ChargeFeeArgs {
-    version: TransactionObjectInput;
-    balance: TransactionObjectInput;
-}
-
-export function chargeFee(tx: Transaction, typeArg: string, args: ChargeFeeArgs) {
-    return tx.moveCall({
-        target: `${PUBLISHED_AT}::admin::charge_fee`,
-        typeArguments: [typeArg],
-        arguments: [obj(tx, args.version), obj(tx, args.balance)],
-    });
-}
-
-export interface RemoveAuthorizedUserArgs {
-    version: TransactionObjectInput;
-    userAddress: string | TransactionArgument;
-}
-
-export function removeAuthorizedUser(tx: Transaction, args: RemoveAuthorizedUserArgs) {
-    return tx.moveCall({
-        target: `${PUBLISHED_AT}::admin::remove_authorized_user`,
-        arguments: [obj(tx, args.version), pure(tx, args.userAddress, `address`)],
-    });
-}
-
-export function sendFee(tx: Transaction, typeArg: string, version: TransactionObjectInput) {
-    return tx.moveCall({ target: `${PUBLISHED_AT}::admin::send_fee`, typeArguments: [typeArg], arguments: [obj(tx, version)] });
-}
-
-export function versionCheck(tx: Transaction, version: TransactionObjectInput) {
-    return tx.moveCall({ target: `${PUBLISHED_AT}::admin::version_check`, arguments: [obj(tx, version)] });
-}
-
-export interface AddTailsExpAmountArgs {
-    version: TransactionObjectInput;
-    typusEcosystemVersion: TransactionObjectInput;
-    typusUserRegistry: TransactionObjectInput;
-    user: string | TransactionArgument;
-    amount: bigint | TransactionArgument;
-}
-
-export function addTailsExpAmount(tx: Transaction, args: AddTailsExpAmountArgs) {
-    return tx.moveCall({
-        target: `${PUBLISHED_AT}::admin::add_tails_exp_amount`,
-        arguments: [
-            obj(tx, args.version),
-            obj(tx, args.typusEcosystemVersion),
-            obj(tx, args.typusUserRegistry),
-            pure(tx, args.user, `address`),
-            pure(tx, args.amount, `u64`),
-        ],
     });
 }
 
@@ -89,9 +23,9 @@ export interface AddExpLeaderboardArgs {
     clock: TransactionObjectInput;
 }
 
-export function addExpLeaderboard(tx: Transaction, args: AddExpLeaderboardArgs) {
+export function addExpLeaderboard(tx: Transaction, args: AddExpLeaderboardArgs, published_at: string = PUBLISHED_AT) {
     return tx.moveCall({
-        target: `${PUBLISHED_AT}::admin::add_exp_leaderboard`,
+        target: `${published_at}::admin::add_exp_leaderboard`,
         arguments: [
             obj(tx, args.version),
             obj(tx, args.typusEcosystemVersion),
@@ -103,17 +37,55 @@ export function addExpLeaderboard(tx: Transaction, args: AddExpLeaderboardArgs) 
     });
 }
 
+export interface AddTailsExpAmountArgs {
+    version: TransactionObjectInput;
+    typusEcosystemVersion: TransactionObjectInput;
+    typusUserRegistry: TransactionObjectInput;
+    user: string | TransactionArgument;
+    amount: bigint | TransactionArgument;
+}
+
+export function addTailsExpAmount(tx: Transaction, args: AddTailsExpAmountArgs, published_at: string = PUBLISHED_AT) {
+    return tx.moveCall({
+        target: `${published_at}::admin::add_tails_exp_amount`,
+        arguments: [
+            obj(tx, args.version),
+            obj(tx, args.typusEcosystemVersion),
+            obj(tx, args.typusUserRegistry),
+            pure(tx, args.user, `address`),
+            pure(tx, args.amount, `u64`),
+        ],
+    });
+}
+
+export interface ChargeFeeArgs {
+    version: TransactionObjectInput;
+    balance: TransactionObjectInput;
+}
+
+export function chargeFee(tx: Transaction, typeArg: string, args: ChargeFeeArgs, published_at: string = PUBLISHED_AT) {
+    return tx.moveCall({
+        target: `${published_at}::admin::charge_fee`,
+        typeArguments: [typeArg],
+        arguments: [obj(tx, args.version), obj(tx, args.balance)],
+    });
+}
+
 export interface ChargeLiquidatorFeeArgs {
     version: TransactionObjectInput;
     balance: TransactionObjectInput;
 }
 
-export function chargeLiquidatorFee(tx: Transaction, typeArg: string, args: ChargeLiquidatorFeeArgs) {
+export function chargeLiquidatorFee(tx: Transaction, typeArg: string, args: ChargeLiquidatorFeeArgs, published_at: string = PUBLISHED_AT) {
     return tx.moveCall({
-        target: `${PUBLISHED_AT}::admin::charge_liquidator_fee`,
+        target: `${published_at}::admin::charge_liquidator_fee`,
         typeArguments: [typeArg],
         arguments: [obj(tx, args.version), obj(tx, args.balance)],
     });
+}
+
+export function init(tx: Transaction, published_at: string = PUBLISHED_AT) {
+    return tx.moveCall({ target: `${published_at}::admin::init`, arguments: [] });
 }
 
 export interface InstallEcosystemManagerCapEntryArgs {
@@ -121,13 +93,45 @@ export interface InstallEcosystemManagerCapEntryArgs {
     typusEcosystemVersion: TransactionObjectInput;
 }
 
-export function installEcosystemManagerCapEntry(tx: Transaction, args: InstallEcosystemManagerCapEntryArgs) {
+export function installEcosystemManagerCapEntry(
+    tx: Transaction,
+    args: InstallEcosystemManagerCapEntryArgs,
+    published_at: string = PUBLISHED_AT
+) {
     return tx.moveCall({
-        target: `${PUBLISHED_AT}::admin::install_ecosystem_manager_cap_entry`,
+        target: `${published_at}::admin::install_ecosystem_manager_cap_entry`,
         arguments: [obj(tx, args.version), obj(tx, args.typusEcosystemVersion)],
     });
 }
 
-export function sendLiquidatorFee(tx: Transaction, typeArg: string, version: TransactionObjectInput) {
-    return tx.moveCall({ target: `${PUBLISHED_AT}::admin::send_liquidator_fee`, typeArguments: [typeArg], arguments: [obj(tx, version)] });
+export interface RemoveAuthorizedUserArgs {
+    version: TransactionObjectInput;
+    userAddress: string | TransactionArgument;
+}
+
+export function removeAuthorizedUser(tx: Transaction, args: RemoveAuthorizedUserArgs, published_at: string = PUBLISHED_AT) {
+    return tx.moveCall({
+        target: `${published_at}::admin::remove_authorized_user`,
+        arguments: [obj(tx, args.version), pure(tx, args.userAddress, `address`)],
+    });
+}
+
+export function sendFee(tx: Transaction, typeArg: string, version: TransactionObjectInput, published_at: string = PUBLISHED_AT) {
+    return tx.moveCall({ target: `${published_at}::admin::send_fee`, typeArguments: [typeArg], arguments: [obj(tx, version)] });
+}
+
+export function sendLiquidatorFee(tx: Transaction, typeArg: string, version: TransactionObjectInput, published_at: string = PUBLISHED_AT) {
+    return tx.moveCall({ target: `${published_at}::admin::send_liquidator_fee`, typeArguments: [typeArg], arguments: [obj(tx, version)] });
+}
+
+export function upgrade(tx: Transaction, version: TransactionObjectInput, published_at: string = PUBLISHED_AT) {
+    return tx.moveCall({ target: `${published_at}::admin::upgrade`, arguments: [obj(tx, version)] });
+}
+
+export function verify(tx: Transaction, version: TransactionObjectInput, published_at: string = PUBLISHED_AT) {
+    return tx.moveCall({ target: `${published_at}::admin::verify`, arguments: [obj(tx, version)] });
+}
+
+export function versionCheck(tx: Transaction, version: TransactionObjectInput, published_at: string = PUBLISHED_AT) {
+    return tx.moveCall({ target: `${published_at}::admin::version_check`, arguments: [obj(tx, version)] });
 }

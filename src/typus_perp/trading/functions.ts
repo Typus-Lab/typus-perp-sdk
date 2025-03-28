@@ -4,74 +4,6 @@ import { TypusBidReceipt } from "../../_dependencies/source/0x908a10789a1a6953e0
 import { obj, pure, vector } from "../../_framework/util";
 import { Transaction, TransactionArgument, TransactionObjectInput } from "@mysten/sui/transactions";
 
-export function init(tx: Transaction) {
-    return tx.moveCall({ target: `${PUBLISHED_AT}::trading::init`, arguments: [] });
-}
-
-export interface IncreaseCollateralArgs {
-    version: TransactionObjectInput;
-    registry: TransactionObjectInput;
-    poolRegistry: TransactionObjectInput;
-    typusOracleCToken: TransactionObjectInput;
-    typusOracleTradingSymbol: TransactionObjectInput;
-    clock: TransactionObjectInput;
-    marketIndex: bigint | TransactionArgument;
-    poolIndex: bigint | TransactionArgument;
-    positionId: bigint | TransactionArgument;
-    collateral: TransactionObjectInput;
-}
-
-export function increaseCollateral(tx: Transaction, typeArgs: [string, string], args: IncreaseCollateralArgs) {
-    return tx.moveCall({
-        target: `${PUBLISHED_AT}::trading::increase_collateral`,
-        typeArguments: typeArgs,
-        arguments: [
-            obj(tx, args.version),
-            obj(tx, args.registry),
-            obj(tx, args.poolRegistry),
-            obj(tx, args.typusOracleCToken),
-            obj(tx, args.typusOracleTradingSymbol),
-            obj(tx, args.clock),
-            pure(tx, args.marketIndex, `u64`),
-            pure(tx, args.poolIndex, `u64`),
-            pure(tx, args.positionId, `u64`),
-            obj(tx, args.collateral),
-        ],
-    });
-}
-
-export interface ReleaseCollateralArgs {
-    version: TransactionObjectInput;
-    registry: TransactionObjectInput;
-    poolRegistry: TransactionObjectInput;
-    typusOracleCToken: TransactionObjectInput;
-    typusOracleTradingSymbol: TransactionObjectInput;
-    clock: TransactionObjectInput;
-    marketIndex: bigint | TransactionArgument;
-    poolIndex: bigint | TransactionArgument;
-    positionId: bigint | TransactionArgument;
-    releaseAmount: bigint | TransactionArgument;
-}
-
-export function releaseCollateral(tx: Transaction, typeArgs: [string, string], args: ReleaseCollateralArgs) {
-    return tx.moveCall({
-        target: `${PUBLISHED_AT}::trading::release_collateral`,
-        typeArguments: typeArgs,
-        arguments: [
-            obj(tx, args.version),
-            obj(tx, args.registry),
-            obj(tx, args.poolRegistry),
-            obj(tx, args.typusOracleCToken),
-            obj(tx, args.typusOracleTradingSymbol),
-            obj(tx, args.clock),
-            pure(tx, args.marketIndex, `u64`),
-            pure(tx, args.poolIndex, `u64`),
-            pure(tx, args.positionId, `u64`),
-            pure(tx, args.releaseAmount, `u64`),
-        ],
-    });
-}
-
 export interface AddTradingSymbolArgs {
     version: TransactionObjectInput;
     registry: TransactionObjectInput;
@@ -89,9 +21,9 @@ export interface AddTradingSymbolArgs {
     clock: TransactionObjectInput;
 }
 
-export function addTradingSymbol(tx: Transaction, typeArg: string, args: AddTradingSymbolArgs) {
+export function addTradingSymbol(tx: Transaction, typeArg: string, args: AddTradingSymbolArgs, published_at: string = PUBLISHED_AT) {
     return tx.moveCall({
-        target: `${PUBLISHED_AT}::trading::add_trading_symbol`,
+        target: `${published_at}::trading::add_trading_symbol`,
         typeArguments: [typeArg],
         arguments: [
             obj(tx, args.version),
@@ -119,9 +51,13 @@ export interface AdjustMarketInfoUserOrderSizeArgs {
     size: bigint | TransactionArgument;
 }
 
-export function adjustMarketInfoUserOrderSize(tx: Transaction, args: AdjustMarketInfoUserOrderSizeArgs) {
+export function adjustMarketInfoUserOrderSize(
+    tx: Transaction,
+    args: AdjustMarketInfoUserOrderSizeArgs,
+    published_at: string = PUBLISHED_AT
+) {
     return tx.moveCall({
-        target: `${PUBLISHED_AT}::trading::adjust_market_info_user_order_size`,
+        target: `${published_at}::trading::adjust_market_info_user_order_size`,
         arguments: [
             obj(tx, args.symbolMarket),
             pure(tx, args.long, `bool`),
@@ -138,9 +74,13 @@ export interface AdjustMarketInfoUserPositionSizeArgs {
     size: bigint | TransactionArgument;
 }
 
-export function adjustMarketInfoUserPositionSize(tx: Transaction, args: AdjustMarketInfoUserPositionSizeArgs) {
+export function adjustMarketInfoUserPositionSize(
+    tx: Transaction,
+    args: AdjustMarketInfoUserPositionSizeArgs,
+    published_at: string = PUBLISHED_AT
+) {
     return tx.moveCall({
-        target: `${PUBLISHED_AT}::trading::adjust_market_info_user_position_size`,
+        target: `${published_at}::trading::adjust_market_info_user_position_size`,
         arguments: [
             obj(tx, args.symbolMarket),
             pure(tx, args.filledOrderIsLong, `bool`),
@@ -162,9 +102,9 @@ export interface CalculateTradingFeeRateMbpArgs {
     tradingFeeConfig: Array<bigint | TransactionArgument> | TransactionArgument;
 }
 
-export function calculateTradingFeeRateMbp(tx: Transaction, args: CalculateTradingFeeRateMbpArgs) {
+export function calculateTradingFeeRateMbp(tx: Transaction, args: CalculateTradingFeeRateMbpArgs, published_at: string = PUBLISHED_AT) {
     return tx.moveCall({
-        target: `${PUBLISHED_AT}::trading::calculate_trading_fee_rate_mbp`,
+        target: `${published_at}::trading::calculate_trading_fee_rate_mbp`,
         arguments: [
             pure(tx, args.userLongPositionSize, `u64`),
             pure(tx, args.userShortPositionSize, `u64`),
@@ -188,9 +128,14 @@ export interface CancelLinkedOrdersArgs {
     user: string | TransactionArgument;
 }
 
-export function cancelLinkedOrders(tx: Transaction, typeArgs: [string, string], args: CancelLinkedOrdersArgs) {
+export function cancelLinkedOrders(
+    tx: Transaction,
+    typeArgs: [string, string],
+    args: CancelLinkedOrdersArgs,
+    published_at: string = PUBLISHED_AT
+) {
     return tx.moveCall({
-        target: `${PUBLISHED_AT}::trading::cancel_linked_orders`,
+        target: `${published_at}::trading::cancel_linked_orders`,
         typeArguments: typeArgs,
         arguments: [
             obj(tx, args.version),
@@ -212,9 +157,14 @@ export interface CancelTradingOrderArgs {
     orderUser: string | TransactionArgument | TransactionArgument | null;
 }
 
-export function cancelTradingOrder(tx: Transaction, typeArgs: [string, string], args: CancelTradingOrderArgs) {
+export function cancelTradingOrder(
+    tx: Transaction,
+    typeArgs: [string, string],
+    args: CancelTradingOrderArgs,
+    published_at: string = PUBLISHED_AT
+) {
     return tx.moveCall({
-        target: `${PUBLISHED_AT}::trading::cancel_trading_order`,
+        target: `${published_at}::trading::cancel_trading_order`,
         typeArguments: typeArgs,
         arguments: [
             obj(tx, args.version),
@@ -237,9 +187,14 @@ export interface CheckCollateralEnoughArgs {
     tradingFeeMbp: bigint | TransactionArgument;
 }
 
-export function checkCollateralEnough(tx: Transaction, typeArg: string, args: CheckCollateralEnoughArgs) {
+export function checkCollateralEnough(
+    tx: Transaction,
+    typeArg: string,
+    args: CheckCollateralEnoughArgs,
+    published_at: string = PUBLISHED_AT
+) {
     return tx.moveCall({
-        target: `${PUBLISHED_AT}::trading::check_collateral_enough`,
+        target: `${published_at}::trading::check_collateral_enough`,
         typeArguments: [typeArg],
         arguments: [
             obj(tx, args.symbolMarket),
@@ -267,9 +222,14 @@ export interface CheckOptionCollateralEnoughArgs {
     clock: TransactionObjectInput;
 }
 
-export function checkOptionCollateralEnough(tx: Transaction, typeArg: string, args: CheckOptionCollateralEnoughArgs) {
+export function checkOptionCollateralEnough(
+    tx: Transaction,
+    typeArg: string,
+    args: CheckOptionCollateralEnoughArgs,
+    published_at: string = PUBLISHED_AT
+) {
     return tx.moveCall({
-        target: `${PUBLISHED_AT}::trading::check_option_collateral_enough`,
+        target: `${published_at}::trading::check_option_collateral_enough`,
         typeArguments: [typeArg],
         arguments: [
             obj(tx, args.dovRegistry),
@@ -297,9 +257,9 @@ export interface CheckReserveEnoughArgs {
     tradingPairOraclePriceDecimal: bigint | TransactionArgument;
 }
 
-export function checkReserveEnough(tx: Transaction, typeArg: string, args: CheckReserveEnoughArgs) {
+export function checkReserveEnough(tx: Transaction, typeArg: string, args: CheckReserveEnoughArgs, published_at: string = PUBLISHED_AT) {
     return tx.moveCall({
-        target: `${PUBLISHED_AT}::trading::check_reserve_enough`,
+        target: `${published_at}::trading::check_reserve_enough`,
         typeArguments: [typeArg],
         arguments: [
             obj(tx, args.symbolMarket),
@@ -334,9 +294,14 @@ export interface CreateTradingOrderArgs {
     triggerPrice: bigint | TransactionArgument;
 }
 
-export function createTradingOrder(tx: Transaction, typeArgs: [string, string], args: CreateTradingOrderArgs) {
+export function createTradingOrder(
+    tx: Transaction,
+    typeArgs: [string, string],
+    args: CreateTradingOrderArgs,
+    published_at: string = PUBLISHED_AT
+) {
     return tx.moveCall({
-        target: `${PUBLISHED_AT}::trading::create_trading_order`,
+        target: `${published_at}::trading::create_trading_order`,
         typeArguments: typeArgs,
         arguments: [
             obj(tx, args.version),
@@ -382,10 +347,11 @@ export interface CreateTradingOrderWithBidReceiptArgs {
 export function createTradingOrderWithBidReceipt(
     tx: Transaction,
     typeArgs: [string, string, string],
-    args: CreateTradingOrderWithBidReceiptArgs
+    args: CreateTradingOrderWithBidReceiptArgs,
+    published_at: string = PUBLISHED_AT
 ) {
     return tx.moveCall({
-        target: `${PUBLISHED_AT}::trading::create_trading_order_with_bid_receipt`,
+        target: `${published_at}::trading::create_trading_order_with_bid_receipt`,
         typeArguments: typeArgs,
         arguments: [
             obj(tx, args.version),
@@ -427,9 +393,14 @@ export interface ExecuteOptionCollateralOrder_Args {
     clock: TransactionObjectInput;
 }
 
-export function executeOptionCollateralOrder_(tx: Transaction, typeArgs: [string, string], args: ExecuteOptionCollateralOrder_Args) {
+export function executeOptionCollateralOrder_(
+    tx: Transaction,
+    typeArgs: [string, string],
+    args: ExecuteOptionCollateralOrder_Args,
+    published_at: string = PUBLISHED_AT
+) {
     return tx.moveCall({
-        target: `${PUBLISHED_AT}::trading::execute_option_collateral_order_`,
+        target: `${published_at}::trading::execute_option_collateral_order_`,
         typeArguments: typeArgs,
         arguments: [
             obj(tx, args.version),
@@ -471,9 +442,9 @@ export interface ExecuteOrder_Args {
     clock: TransactionObjectInput;
 }
 
-export function executeOrder_(tx: Transaction, typeArg: string, args: ExecuteOrder_Args) {
+export function executeOrder_(tx: Transaction, typeArg: string, args: ExecuteOrder_Args, published_at: string = PUBLISHED_AT) {
     return tx.moveCall({
-        target: `${PUBLISHED_AT}::trading::execute_order_`,
+        target: `${published_at}::trading::execute_order_`,
         typeArguments: [typeArg],
         arguments: [
             obj(tx, args.version),
@@ -500,9 +471,14 @@ export interface ExerciseBidReceiptsArgs {
     bidReceipts: Array<TransactionObjectInput> | TransactionArgument;
 }
 
-export function exerciseBidReceipts(tx: Transaction, typeArgs: [string, string], args: ExerciseBidReceiptsArgs) {
+export function exerciseBidReceipts(
+    tx: Transaction,
+    typeArgs: [string, string],
+    args: ExerciseBidReceiptsArgs,
+    published_at: string = PUBLISHED_AT
+) {
     return tx.moveCall({
-        target: `${PUBLISHED_AT}::trading::exercise_bid_receipts`,
+        target: `${published_at}::trading::exercise_bid_receipts`,
         typeArguments: typeArgs,
         arguments: [obj(tx, args.dovRegistry), vector(tx, `${TypusBidReceipt.$typeName}`, args.bidReceipts)],
     });
@@ -515,9 +491,14 @@ export interface GetActiveOrdersByOrderTagArgs {
     orderTypeTag: number | TransactionArgument;
 }
 
-export function getActiveOrdersByOrderTag(tx: Transaction, typeArg: string, args: GetActiveOrdersByOrderTagArgs) {
+export function getActiveOrdersByOrderTag(
+    tx: Transaction,
+    typeArg: string,
+    args: GetActiveOrdersByOrderTagArgs,
+    published_at: string = PUBLISHED_AT
+) {
     return tx.moveCall({
-        target: `${PUBLISHED_AT}::trading::get_active_orders_by_order_tag`,
+        target: `${published_at}::trading::get_active_orders_by_order_tag`,
         typeArguments: [typeArg],
         arguments: [obj(tx, args.version), obj(tx, args.registry), pure(tx, args.marketIndex, `u64`), pure(tx, args.orderTypeTag, `u8`)],
     });
@@ -533,10 +514,11 @@ export interface GetActiveOrdersByOrderTagAndCtokenArgs {
 export function getActiveOrdersByOrderTagAndCtoken(
     tx: Transaction,
     typeArgs: [string, string],
-    args: GetActiveOrdersByOrderTagAndCtokenArgs
+    args: GetActiveOrdersByOrderTagAndCtokenArgs,
+    published_at: string = PUBLISHED_AT
 ) {
     return tx.moveCall({
-        target: `${PUBLISHED_AT}::trading::get_active_orders_by_order_tag_and_ctoken`,
+        target: `${published_at}::trading::get_active_orders_by_order_tag_and_ctoken`,
         typeArguments: typeArgs,
         arguments: [obj(tx, args.version), obj(tx, args.registry), pure(tx, args.marketIndex, `u64`), pure(tx, args.orderTypeTag, `u8`)],
     });
@@ -558,10 +540,11 @@ export interface GetEstimatedLiquidationPriceAndPnlArgs {
 export function getEstimatedLiquidationPriceAndPnl(
     tx: Transaction,
     typeArgs: [string, string],
-    args: GetEstimatedLiquidationPriceAndPnlArgs
+    args: GetEstimatedLiquidationPriceAndPnlArgs,
+    published_at: string = PUBLISHED_AT
 ) {
     return tx.moveCall({
-        target: `${PUBLISHED_AT}::trading::get_estimated_liquidation_price_and_pnl`,
+        target: `${published_at}::trading::get_estimated_liquidation_price_and_pnl`,
         typeArguments: typeArgs,
         arguments: [
             obj(tx, args.version),
@@ -587,9 +570,9 @@ export interface GetExpiredPositionInfoArgs {
     poolIndex: bigint | TransactionArgument;
 }
 
-export function getExpiredPositionInfo(tx: Transaction, args: GetExpiredPositionInfoArgs) {
+export function getExpiredPositionInfo(tx: Transaction, args: GetExpiredPositionInfoArgs, published_at: string = PUBLISHED_AT) {
     return tx.moveCall({
-        target: `${PUBLISHED_AT}::trading::get_expired_position_info`,
+        target: `${published_at}::trading::get_expired_position_info`,
         arguments: [
             obj(tx, args.version),
             obj(tx, args.registry),
@@ -607,9 +590,9 @@ export interface GetLinkedPositionArgs {
     user: string | TransactionArgument;
 }
 
-export function getLinkedPosition(tx: Transaction, args: GetLinkedPositionArgs) {
+export function getLinkedPosition(tx: Transaction, args: GetLinkedPositionArgs, published_at: string = PUBLISHED_AT) {
     return tx.moveCall({
-        target: `${PUBLISHED_AT}::trading::get_linked_position`,
+        target: `${published_at}::trading::get_linked_position`,
         arguments: [
             obj(tx, args.symbolMarket),
             pure(tx, args.linkedPositionId, `${Option.$typeName}<u64>`),
@@ -631,9 +614,14 @@ export interface GetLiquidationInfoArgs {
     getAll: boolean | TransactionArgument;
 }
 
-export function getLiquidationInfo(tx: Transaction, typeArgs: [string, string], args: GetLiquidationInfoArgs) {
+export function getLiquidationInfo(
+    tx: Transaction,
+    typeArgs: [string, string],
+    args: GetLiquidationInfoArgs,
+    published_at: string = PUBLISHED_AT
+) {
     return tx.moveCall({
-        target: `${PUBLISHED_AT}::trading::get_liquidation_info`,
+        target: `${published_at}::trading::get_liquidation_info`,
         typeArguments: typeArgs,
         arguments: [
             obj(tx, args.version),
@@ -655,9 +643,9 @@ export interface GetMarketsBcsArgs {
     indexes: Array<bigint | TransactionArgument> | TransactionArgument;
 }
 
-export function getMarketsBcs(tx: Transaction, args: GetMarketsBcsArgs) {
+export function getMarketsBcs(tx: Transaction, args: GetMarketsBcsArgs, published_at: string = PUBLISHED_AT) {
     return tx.moveCall({
-        target: `${PUBLISHED_AT}::trading::get_markets_bcs`,
+        target: `${published_at}::trading::get_markets_bcs`,
         arguments: [obj(tx, args.registry), pure(tx, args.indexes, `vector<u64>`)],
     });
 }
@@ -674,9 +662,14 @@ export interface GetMaxReleasingCollateralAmountArgs {
     positionId: bigint | TransactionArgument;
 }
 
-export function getMaxReleasingCollateralAmount(tx: Transaction, typeArgs: [string, string], args: GetMaxReleasingCollateralAmountArgs) {
+export function getMaxReleasingCollateralAmount(
+    tx: Transaction,
+    typeArgs: [string, string],
+    args: GetMaxReleasingCollateralAmountArgs,
+    published_at: string = PUBLISHED_AT
+) {
     return tx.moveCall({
-        target: `${PUBLISHED_AT}::trading::get_max_releasing_collateral_amount`,
+        target: `${published_at}::trading::get_max_releasing_collateral_amount`,
         typeArguments: typeArgs,
         arguments: [
             obj(tx, args.version),
@@ -698,9 +691,9 @@ export interface GetMutOrdersArgs {
     orderTypeTag: number | TransactionArgument;
 }
 
-export function getMutOrders(tx: Transaction, args: GetMutOrdersArgs) {
+export function getMutOrders(tx: Transaction, args: GetMutOrdersArgs, published_at: string = PUBLISHED_AT) {
     return tx.moveCall({
-        target: `${PUBLISHED_AT}::trading::get_mut_orders`,
+        target: `${published_at}::trading::get_mut_orders`,
         arguments: [obj(tx, args.symbolMarket), pure(tx, args.isTokenCollateral, `bool`), pure(tx, args.orderTypeTag, `u8`)],
     });
 }
@@ -711,9 +704,9 @@ export interface GetOrdersArgs {
     orderTypeTag: number | TransactionArgument;
 }
 
-export function getOrders(tx: Transaction, args: GetOrdersArgs) {
+export function getOrders(tx: Transaction, args: GetOrdersArgs, published_at: string = PUBLISHED_AT) {
     return tx.moveCall({
-        target: `${PUBLISHED_AT}::trading::get_orders`,
+        target: `${published_at}::trading::get_orders`,
         arguments: [obj(tx, args.symbolMarket), pure(tx, args.isTokenCollateral, `bool`), pure(tx, args.orderTypeTag, `u8`)],
     });
 }
@@ -725,9 +718,9 @@ export interface GetUserOrdersArgs {
     user: string | TransactionArgument;
 }
 
-export function getUserOrders(tx: Transaction, args: GetUserOrdersArgs) {
+export function getUserOrders(tx: Transaction, args: GetUserOrdersArgs, published_at: string = PUBLISHED_AT) {
     return tx.moveCall({
-        target: `${PUBLISHED_AT}::trading::get_user_orders`,
+        target: `${published_at}::trading::get_user_orders`,
         arguments: [obj(tx, args.version), obj(tx, args.registry), pure(tx, args.marketIndex, `u64`), pure(tx, args.user, `address`)],
     });
 }
@@ -739,11 +732,52 @@ export interface GetUserPositionsArgs {
     user: string | TransactionArgument;
 }
 
-export function getUserPositions(tx: Transaction, args: GetUserPositionsArgs) {
+export function getUserPositions(tx: Transaction, args: GetUserPositionsArgs, published_at: string = PUBLISHED_AT) {
     return tx.moveCall({
-        target: `${PUBLISHED_AT}::trading::get_user_positions`,
+        target: `${published_at}::trading::get_user_positions`,
         arguments: [obj(tx, args.version), obj(tx, args.registry), pure(tx, args.marketIndex, `u64`), pure(tx, args.user, `address`)],
     });
+}
+
+export interface IncreaseCollateralArgs {
+    version: TransactionObjectInput;
+    registry: TransactionObjectInput;
+    poolRegistry: TransactionObjectInput;
+    typusOracleCToken: TransactionObjectInput;
+    typusOracleTradingSymbol: TransactionObjectInput;
+    clock: TransactionObjectInput;
+    marketIndex: bigint | TransactionArgument;
+    poolIndex: bigint | TransactionArgument;
+    positionId: bigint | TransactionArgument;
+    collateral: TransactionObjectInput;
+}
+
+export function increaseCollateral(
+    tx: Transaction,
+    typeArgs: [string, string],
+    args: IncreaseCollateralArgs,
+    published_at: string = PUBLISHED_AT
+) {
+    return tx.moveCall({
+        target: `${published_at}::trading::increase_collateral`,
+        typeArguments: typeArgs,
+        arguments: [
+            obj(tx, args.version),
+            obj(tx, args.registry),
+            obj(tx, args.poolRegistry),
+            obj(tx, args.typusOracleCToken),
+            obj(tx, args.typusOracleTradingSymbol),
+            obj(tx, args.clock),
+            pure(tx, args.marketIndex, `u64`),
+            pure(tx, args.poolIndex, `u64`),
+            pure(tx, args.positionId, `u64`),
+            obj(tx, args.collateral),
+        ],
+    });
+}
+
+export function init(tx: Transaction, published_at: string = PUBLISHED_AT) {
+    return tx.moveCall({ target: `${published_at}::trading::init`, arguments: [] });
 }
 
 export interface LiquidateArgs {
@@ -759,9 +793,9 @@ export interface LiquidateArgs {
     positionId: bigint | TransactionArgument;
 }
 
-export function liquidate(tx: Transaction, typeArgs: [string, string, string], args: LiquidateArgs) {
+export function liquidate(tx: Transaction, typeArgs: [string, string, string], args: LiquidateArgs, published_at: string = PUBLISHED_AT) {
     return tx.moveCall({
-        target: `${PUBLISHED_AT}::trading::liquidate`,
+        target: `${published_at}::trading::liquidate`,
         typeArguments: typeArgs,
         arguments: [
             obj(tx, args.version),
@@ -794,9 +828,14 @@ export interface ManagerCloseOptionPositionArgs {
     positionId: bigint | TransactionArgument;
 }
 
-export function managerCloseOptionPosition(tx: Transaction, typeArgs: [string, string, string], args: ManagerCloseOptionPositionArgs) {
+export function managerCloseOptionPosition(
+    tx: Transaction,
+    typeArgs: [string, string, string],
+    args: ManagerCloseOptionPositionArgs,
+    published_at: string = PUBLISHED_AT
+) {
     return tx.moveCall({
-        target: `${PUBLISHED_AT}::trading::manager_close_option_position`,
+        target: `${published_at}::trading::manager_close_option_position`,
         typeArguments: typeArgs,
         arguments: [
             obj(tx, args.version),
@@ -832,9 +871,14 @@ export interface ManagerReducePositionArgs {
     reducedRatioBp: bigint | TransactionArgument;
 }
 
-export function managerReducePosition(tx: Transaction, typeArgs: [string, string], args: ManagerReducePositionArgs) {
+export function managerReducePosition(
+    tx: Transaction,
+    typeArgs: [string, string],
+    args: ManagerReducePositionArgs,
+    published_at: string = PUBLISHED_AT
+) {
     return tx.moveCall({
-        target: `${PUBLISHED_AT}::trading::manager_reduce_position`,
+        target: `${published_at}::trading::manager_reduce_position`,
         typeArguments: typeArgs,
         arguments: [
             obj(tx, args.version),
@@ -866,9 +910,14 @@ export interface ManagerRemoveOrderArgs {
     process: TransactionObjectInput;
 }
 
-export function managerRemoveOrder(tx: Transaction, typeArgs: [string, string], args: ManagerRemoveOrderArgs) {
+export function managerRemoveOrder(
+    tx: Transaction,
+    typeArgs: [string, string],
+    args: ManagerRemoveOrderArgs,
+    published_at: string = PUBLISHED_AT
+) {
     return tx.moveCall({
-        target: `${PUBLISHED_AT}::trading::manager_remove_order`,
+        target: `${published_at}::trading::manager_remove_order`,
         typeArguments: typeArgs,
         arguments: [
             obj(tx, args.version),
@@ -902,9 +951,14 @@ export interface ManagerRemovePositionArgs {
     process: TransactionObjectInput;
 }
 
-export function managerRemovePosition(tx: Transaction, typeArgs: [string, string, string], args: ManagerRemovePositionArgs) {
+export function managerRemovePosition(
+    tx: Transaction,
+    typeArgs: [string, string, string],
+    args: ManagerRemovePositionArgs,
+    published_at: string = PUBLISHED_AT
+) {
     return tx.moveCall({
-        target: `${PUBLISHED_AT}::trading::manager_remove_position`,
+        target: `${published_at}::trading::manager_remove_position`,
         typeArguments: typeArgs,
         arguments: [
             obj(tx, args.version),
@@ -938,10 +992,11 @@ export interface ManagerUpdateProcessStatusAfterOrderArgs {
 export function managerUpdateProcessStatusAfterOrder(
     tx: Transaction,
     typeArgs: [string, string],
-    args: ManagerUpdateProcessStatusAfterOrderArgs
+    args: ManagerUpdateProcessStatusAfterOrderArgs,
+    published_at: string = PUBLISHED_AT
 ) {
     return tx.moveCall({
-        target: `${PUBLISHED_AT}::trading::manager_update_process_status_after_order`,
+        target: `${published_at}::trading::manager_update_process_status_after_order`,
         typeArguments: typeArgs,
         arguments: [
             obj(tx, args.version),
@@ -970,10 +1025,11 @@ export interface ManagerUpdateProcessStatusAfterPositionArgs {
 export function managerUpdateProcessStatusAfterPosition(
     tx: Transaction,
     typeArgs: [string, string],
-    args: ManagerUpdateProcessStatusAfterPositionArgs
+    args: ManagerUpdateProcessStatusAfterPositionArgs,
+    published_at: string = PUBLISHED_AT
 ) {
     return tx.moveCall({
-        target: `${PUBLISHED_AT}::trading::manager_update_process_status_after_position`,
+        target: `${published_at}::trading::manager_update_process_status_after_position`,
         typeArguments: typeArgs,
         arguments: [
             obj(tx, args.version),
@@ -1007,9 +1063,14 @@ export interface MatchTradingOrderArgs {
     maxOperationCount: bigint | TransactionArgument;
 }
 
-export function matchTradingOrder(tx: Transaction, typeArgs: [string, string], args: MatchTradingOrderArgs) {
+export function matchTradingOrder(
+    tx: Transaction,
+    typeArgs: [string, string],
+    args: MatchTradingOrderArgs,
+    published_at: string = PUBLISHED_AT
+) {
     return tx.moveCall({
-        target: `${PUBLISHED_AT}::trading::match_trading_order`,
+        target: `${published_at}::trading::match_trading_order`,
         typeArguments: typeArgs,
         arguments: [
             obj(tx, args.version),
@@ -1036,9 +1097,9 @@ export interface NewMarketsArgs {
     protocolFeeShareBp: bigint | TransactionArgument;
 }
 
-export function newMarkets(tx: Transaction, typeArgs: [string, string], args: NewMarketsArgs) {
+export function newMarkets(tx: Transaction, typeArgs: [string, string], args: NewMarketsArgs, published_at: string = PUBLISHED_AT) {
     return tx.moveCall({
-        target: `${PUBLISHED_AT}::trading::new_markets`,
+        target: `${published_at}::trading::new_markets`,
         typeArguments: typeArgs,
         arguments: [obj(tx, args.version), obj(tx, args.registry), pure(tx, args.protocolFeeShareBp, `u64`)],
     });
@@ -1064,10 +1125,11 @@ export interface ReduceOptionCollateralPositionSizeArgs {
 export function reduceOptionCollateralPositionSize(
     tx: Transaction,
     typeArgs: [string, string, string],
-    args: ReduceOptionCollateralPositionSizeArgs
+    args: ReduceOptionCollateralPositionSizeArgs,
+    published_at: string = PUBLISHED_AT
 ) {
     return tx.moveCall({
-        target: `${PUBLISHED_AT}::trading::reduce_option_collateral_position_size`,
+        target: `${published_at}::trading::reduce_option_collateral_position_size`,
         typeArguments: typeArgs,
         arguments: [
             obj(tx, args.version),
@@ -1088,6 +1150,43 @@ export function reduceOptionCollateralPositionSize(
     });
 }
 
+export interface ReleaseCollateralArgs {
+    version: TransactionObjectInput;
+    registry: TransactionObjectInput;
+    poolRegistry: TransactionObjectInput;
+    typusOracleCToken: TransactionObjectInput;
+    typusOracleTradingSymbol: TransactionObjectInput;
+    clock: TransactionObjectInput;
+    marketIndex: bigint | TransactionArgument;
+    poolIndex: bigint | TransactionArgument;
+    positionId: bigint | TransactionArgument;
+    releaseAmount: bigint | TransactionArgument;
+}
+
+export function releaseCollateral(
+    tx: Transaction,
+    typeArgs: [string, string],
+    args: ReleaseCollateralArgs,
+    published_at: string = PUBLISHED_AT
+) {
+    return tx.moveCall({
+        target: `${published_at}::trading::release_collateral`,
+        typeArguments: typeArgs,
+        arguments: [
+            obj(tx, args.version),
+            obj(tx, args.registry),
+            obj(tx, args.poolRegistry),
+            obj(tx, args.typusOracleCToken),
+            obj(tx, args.typusOracleTradingSymbol),
+            obj(tx, args.clock),
+            pure(tx, args.marketIndex, `u64`),
+            pure(tx, args.poolIndex, `u64`),
+            pure(tx, args.positionId, `u64`),
+            pure(tx, args.releaseAmount, `u64`),
+        ],
+    });
+}
+
 export interface RemoveLinkedOrdersArgs {
     version: TransactionObjectInput;
     marketIndex: bigint | TransactionArgument;
@@ -1097,9 +1196,9 @@ export interface RemoveLinkedOrdersArgs {
     user: string | TransactionArgument;
 }
 
-export function removeLinkedOrders(tx: Transaction, typeArg: string, args: RemoveLinkedOrdersArgs) {
+export function removeLinkedOrders(tx: Transaction, typeArg: string, args: RemoveLinkedOrdersArgs, published_at: string = PUBLISHED_AT) {
     return tx.moveCall({
-        target: `${PUBLISHED_AT}::trading::remove_linked_orders`,
+        target: `${published_at}::trading::remove_linked_orders`,
         typeArguments: [typeArg],
         arguments: [
             obj(tx, args.version),
@@ -1118,9 +1217,9 @@ export interface RemoveTradingSymbolArgs {
     marketIndex: bigint | TransactionArgument;
 }
 
-export function removeTradingSymbol(tx: Transaction, typeArg: string, args: RemoveTradingSymbolArgs) {
+export function removeTradingSymbol(tx: Transaction, typeArg: string, args: RemoveTradingSymbolArgs, published_at: string = PUBLISHED_AT) {
     return tx.moveCall({
-        target: `${PUBLISHED_AT}::trading::remove_trading_symbol`,
+        target: `${published_at}::trading::remove_trading_symbol`,
         typeArguments: [typeArg],
         arguments: [obj(tx, args.version), obj(tx, args.registry), pure(tx, args.marketIndex, `u64`)],
     });
@@ -1132,9 +1231,9 @@ export interface ResumeMarketArgs {
     marketIndex: bigint | TransactionArgument;
 }
 
-export function resumeMarket(tx: Transaction, args: ResumeMarketArgs) {
+export function resumeMarket(tx: Transaction, args: ResumeMarketArgs, published_at: string = PUBLISHED_AT) {
     return tx.moveCall({
-        target: `${PUBLISHED_AT}::trading::resume_market`,
+        target: `${published_at}::trading::resume_market`,
         arguments: [obj(tx, args.version), obj(tx, args.registry), pure(tx, args.marketIndex, `u64`)],
     });
 }
@@ -1145,9 +1244,9 @@ export interface ResumeTradingSymbolArgs {
     marketIndex: bigint | TransactionArgument;
 }
 
-export function resumeTradingSymbol(tx: Transaction, typeArg: string, args: ResumeTradingSymbolArgs) {
+export function resumeTradingSymbol(tx: Transaction, typeArg: string, args: ResumeTradingSymbolArgs, published_at: string = PUBLISHED_AT) {
     return tx.moveCall({
-        target: `${PUBLISHED_AT}::trading::resume_trading_symbol`,
+        target: `${published_at}::trading::resume_trading_symbol`,
         typeArguments: [typeArg],
         arguments: [obj(tx, args.version), obj(tx, args.registry), pure(tx, args.marketIndex, `u64`)],
     });
@@ -1164,9 +1263,14 @@ export interface SettleReceiptCollateralArgs {
     poolIndex: bigint | TransactionArgument;
 }
 
-export function settleReceiptCollateral(tx: Transaction, typeArgs: [string, string], args: SettleReceiptCollateralArgs) {
+export function settleReceiptCollateral(
+    tx: Transaction,
+    typeArgs: [string, string],
+    args: SettleReceiptCollateralArgs,
+    published_at: string = PUBLISHED_AT
+) {
     return tx.moveCall({
-        target: `${PUBLISHED_AT}::trading::settle_receipt_collateral`,
+        target: `${published_at}::trading::settle_receipt_collateral`,
         typeArguments: typeArgs,
         arguments: [
             obj(tx, args.version),
@@ -1187,9 +1291,9 @@ export interface SuspendMarketArgs {
     marketIndex: bigint | TransactionArgument;
 }
 
-export function suspendMarket(tx: Transaction, args: SuspendMarketArgs) {
+export function suspendMarket(tx: Transaction, args: SuspendMarketArgs, published_at: string = PUBLISHED_AT) {
     return tx.moveCall({
-        target: `${PUBLISHED_AT}::trading::suspend_market`,
+        target: `${published_at}::trading::suspend_market`,
         arguments: [obj(tx, args.version), obj(tx, args.registry), pure(tx, args.marketIndex, `u64`)],
     });
 }
@@ -1200,9 +1304,14 @@ export interface SuspendTradingSymbolArgs {
     marketIndex: bigint | TransactionArgument;
 }
 
-export function suspendTradingSymbol(tx: Transaction, typeArg: string, args: SuspendTradingSymbolArgs) {
+export function suspendTradingSymbol(
+    tx: Transaction,
+    typeArg: string,
+    args: SuspendTradingSymbolArgs,
+    published_at: string = PUBLISHED_AT
+) {
     return tx.moveCall({
-        target: `${PUBLISHED_AT}::trading::suspend_trading_symbol`,
+        target: `${published_at}::trading::suspend_trading_symbol`,
         typeArguments: [typeArg],
         arguments: [obj(tx, args.version), obj(tx, args.registry), pure(tx, args.marketIndex, `u64`)],
     });
@@ -1216,9 +1325,9 @@ export interface TakeOrderByOrderIdAndPriceArgs {
     user: string | TransactionArgument;
 }
 
-export function takeOrderByOrderIdAndPrice(tx: Transaction, args: TakeOrderByOrderIdAndPriceArgs) {
+export function takeOrderByOrderIdAndPrice(tx: Transaction, args: TakeOrderByOrderIdAndPriceArgs, published_at: string = PUBLISHED_AT) {
     return tx.moveCall({
-        target: `${PUBLISHED_AT}::trading::take_order_by_order_id_and_price`,
+        target: `${published_at}::trading::take_order_by_order_id_and_price`,
         arguments: [
             obj(tx, args.symbolMarket),
             pure(tx, args.triggerPrice, `u64`),
@@ -1229,9 +1338,9 @@ export function takeOrderByOrderIdAndPrice(tx: Transaction, args: TakeOrderByOrd
     });
 }
 
-export function tradingSymbolExists(tx: Transaction, typeArg: string, market: TransactionObjectInput) {
+export function tradingSymbolExists(tx: Transaction, typeArg: string, market: TransactionObjectInput, published_at: string = PUBLISHED_AT) {
     return tx.moveCall({
-        target: `${PUBLISHED_AT}::trading::trading_symbol_exists`,
+        target: `${published_at}::trading::trading_symbol_exists`,
         typeArguments: [typeArg],
         arguments: [obj(tx, market)],
     });
@@ -1247,9 +1356,9 @@ export interface UpdateFundingRateArgs {
     poolIndex: bigint | TransactionArgument;
 }
 
-export function updateFundingRate(tx: Transaction, typeArg: string, args: UpdateFundingRateArgs) {
+export function updateFundingRate(tx: Transaction, typeArg: string, args: UpdateFundingRateArgs, published_at: string = PUBLISHED_AT) {
     return tx.moveCall({
-        target: `${PUBLISHED_AT}::trading::update_funding_rate`,
+        target: `${published_at}::trading::update_funding_rate`,
         typeArguments: [typeArg],
         arguments: [
             obj(tx, args.version),
@@ -1278,9 +1387,9 @@ export interface UpdateMarketConfigArgs {
     expMultiplier: bigint | TransactionArgument | TransactionArgument | null;
 }
 
-export function updateMarketConfig(tx: Transaction, typeArg: string, args: UpdateMarketConfigArgs) {
+export function updateMarketConfig(tx: Transaction, typeArg: string, args: UpdateMarketConfigArgs, published_at: string = PUBLISHED_AT) {
     return tx.moveCall({
-        target: `${PUBLISHED_AT}::trading::update_market_config`,
+        target: `${published_at}::trading::update_market_config`,
         typeArguments: [typeArg],
         arguments: [
             obj(tx, args.version),
@@ -1306,9 +1415,9 @@ export interface UpdateProtocolFeeShareBpArgs {
     protocolFeeShareBp: bigint | TransactionArgument;
 }
 
-export function updateProtocolFeeShareBp(tx: Transaction, args: UpdateProtocolFeeShareBpArgs) {
+export function updateProtocolFeeShareBp(tx: Transaction, args: UpdateProtocolFeeShareBpArgs, published_at: string = PUBLISHED_AT) {
     return tx.moveCall({
-        target: `${PUBLISHED_AT}::trading::update_protocol_fee_share_bp`,
+        target: `${published_at}::trading::update_protocol_fee_share_bp`,
         arguments: [
             obj(tx, args.version),
             obj(tx, args.registry),

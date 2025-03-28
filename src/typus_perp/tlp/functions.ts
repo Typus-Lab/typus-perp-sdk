@@ -7,12 +7,16 @@ export interface BurnArgs {
     coin: TransactionObjectInput;
 }
 
-export function burn(tx: Transaction, typeArg: string, args: BurnArgs) {
+export function burn(tx: Transaction, typeArg: string, args: BurnArgs, published_at: string = PUBLISHED_AT) {
     return tx.moveCall({
-        target: `${PUBLISHED_AT}::tlp::burn`,
+        target: `${published_at}::tlp::burn`,
         typeArguments: [typeArg],
         arguments: [obj(tx, args.treasuryCap), obj(tx, args.coin)],
     });
+}
+
+export function init(tx: Transaction, witness: TransactionObjectInput, published_at: string = PUBLISHED_AT) {
+    return tx.moveCall({ target: `${published_at}::tlp::init`, arguments: [obj(tx, witness)] });
 }
 
 export interface MintArgs {
@@ -20,20 +24,16 @@ export interface MintArgs {
     value: bigint | TransactionArgument;
 }
 
-export function mint(tx: Transaction, typeArg: string, args: MintArgs) {
+export function mint(tx: Transaction, typeArg: string, args: MintArgs, published_at: string = PUBLISHED_AT) {
     return tx.moveCall({
-        target: `${PUBLISHED_AT}::tlp::mint`,
+        target: `${published_at}::tlp::mint`,
         typeArguments: [typeArg],
         arguments: [obj(tx, args.treasuryCap), pure(tx, args.value, `u64`)],
     });
 }
 
-export function totalSupply(tx: Transaction, treasuryCap: TransactionObjectInput) {
-    return tx.moveCall({ target: `${PUBLISHED_AT}::tlp::total_supply`, arguments: [obj(tx, treasuryCap)] });
-}
-
-export function init(tx: Transaction, witness: TransactionObjectInput) {
-    return tx.moveCall({ target: `${PUBLISHED_AT}::tlp::init`, arguments: [obj(tx, witness)] });
+export function totalSupply(tx: Transaction, treasuryCap: TransactionObjectInput, published_at: string = PUBLISHED_AT) {
+    return tx.moveCall({ target: `${published_at}::tlp::total_supply`, arguments: [obj(tx, treasuryCap)] });
 }
 
 export interface TransferTreasuryCapArgs {
@@ -42,9 +42,9 @@ export interface TransferTreasuryCapArgs {
     treasuryCaps: TransactionObjectInput;
 }
 
-export function transferTreasuryCap(tx: Transaction, args: TransferTreasuryCapArgs) {
+export function transferTreasuryCap(tx: Transaction, args: TransferTreasuryCapArgs, published_at: string = PUBLISHED_AT) {
     return tx.moveCall({
-        target: `${PUBLISHED_AT}::tlp::transfer_treasury_cap`,
+        target: `${published_at}::tlp::transfer_treasury_cap`,
         arguments: [obj(tx, args.version), obj(tx, args.lpRegistry), obj(tx, args.treasuryCaps)],
     });
 }

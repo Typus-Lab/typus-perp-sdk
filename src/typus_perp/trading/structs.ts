@@ -726,6 +726,7 @@ export interface CreateTradingOrderWithBidReceiptsEventFields {
     user: ToField<"address">;
     marketIndex: ToField<"u64">;
     poolIndex: ToField<"u64">;
+    dovIndex: ToField<"u64">;
     collateralToken: ToField<TypeName>;
     baseToken: ToField<TypeName>;
     orderId: ToField<"u64">;
@@ -758,6 +759,7 @@ export class CreateTradingOrderWithBidReceiptsEvent implements StructClass {
     readonly user: ToField<"address">;
     readonly marketIndex: ToField<"u64">;
     readonly poolIndex: ToField<"u64">;
+    readonly dovIndex: ToField<"u64">;
     readonly collateralToken: ToField<TypeName>;
     readonly baseToken: ToField<TypeName>;
     readonly orderId: ToField<"u64">;
@@ -779,6 +781,7 @@ export class CreateTradingOrderWithBidReceiptsEvent implements StructClass {
         this.user = fields.user;
         this.marketIndex = fields.marketIndex;
         this.poolIndex = fields.poolIndex;
+        this.dovIndex = fields.dovIndex;
         this.collateralToken = fields.collateralToken;
         this.baseToken = fields.baseToken;
         this.orderId = fields.orderId;
@@ -833,6 +836,7 @@ export class CreateTradingOrderWithBidReceiptsEvent implements StructClass {
             user: bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
             market_index: bcs.u64(),
             pool_index: bcs.u64(),
+            dov_index: bcs.u64(),
             collateral_token: TypeName.bcs,
             base_token: TypeName.bcs,
             order_id: bcs.u64(),
@@ -851,6 +855,7 @@ export class CreateTradingOrderWithBidReceiptsEvent implements StructClass {
             user: decodeFromFields("address", fields.user),
             marketIndex: decodeFromFields("u64", fields.market_index),
             poolIndex: decodeFromFields("u64", fields.pool_index),
+            dovIndex: decodeFromFields("u64", fields.dov_index),
             collateralToken: decodeFromFields(TypeName.reified(), fields.collateral_token),
             baseToken: decodeFromFields(TypeName.reified(), fields.base_token),
             orderId: decodeFromFields("u64", fields.order_id),
@@ -873,6 +878,7 @@ export class CreateTradingOrderWithBidReceiptsEvent implements StructClass {
             user: decodeFromFieldsWithTypes("address", item.fields.user),
             marketIndex: decodeFromFieldsWithTypes("u64", item.fields.market_index),
             poolIndex: decodeFromFieldsWithTypes("u64", item.fields.pool_index),
+            dovIndex: decodeFromFieldsWithTypes("u64", item.fields.dov_index),
             collateralToken: decodeFromFieldsWithTypes(TypeName.reified(), item.fields.collateral_token),
             baseToken: decodeFromFieldsWithTypes(TypeName.reified(), item.fields.base_token),
             orderId: decodeFromFieldsWithTypes("u64", item.fields.order_id),
@@ -895,6 +901,7 @@ export class CreateTradingOrderWithBidReceiptsEvent implements StructClass {
             user: this.user,
             marketIndex: this.marketIndex.toString(),
             poolIndex: this.poolIndex.toString(),
+            dovIndex: this.dovIndex.toString(),
             collateralToken: this.collateralToken.toJSONField(),
             baseToken: this.baseToken.toJSONField(),
             orderId: this.orderId.toString(),
@@ -917,6 +924,7 @@ export class CreateTradingOrderWithBidReceiptsEvent implements StructClass {
             user: decodeFromJSONField("address", field.user),
             marketIndex: decodeFromJSONField("u64", field.marketIndex),
             poolIndex: decodeFromJSONField("u64", field.poolIndex),
+            dovIndex: decodeFromJSONField("u64", field.dovIndex),
             collateralToken: decodeFromJSONField(TypeName.reified(), field.collateralToken),
             baseToken: decodeFromJSONField(TypeName.reified(), field.baseToken),
             orderId: decodeFromJSONField("u64", field.orderId),

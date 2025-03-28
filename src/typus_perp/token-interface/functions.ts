@@ -7,9 +7,9 @@ export interface BurnArgs {
     coin: TransactionObjectInput;
 }
 
-export function burn(tx: Transaction, typeArg: string, args: BurnArgs) {
+export function burn(tx: Transaction, typeArg: string, args: BurnArgs, published_at: string = PUBLISHED_AT) {
     return tx.moveCall({
-        target: `${PUBLISHED_AT}::token_interface::burn`,
+        target: `${published_at}::token_interface::burn`,
         typeArguments: [typeArg],
         arguments: [obj(tx, args.treasuryCap), obj(tx, args.coin)],
     });
@@ -20,9 +20,9 @@ export interface MintArgs {
     value: bigint | TransactionArgument;
 }
 
-export function mint(tx: Transaction, typeArg: string, args: MintArgs) {
+export function mint(tx: Transaction, typeArg: string, args: MintArgs, published_at: string = PUBLISHED_AT) {
     return tx.moveCall({
-        target: `${PUBLISHED_AT}::token_interface::mint`,
+        target: `${published_at}::token_interface::mint`,
         typeArguments: [typeArg],
         arguments: [obj(tx, args.treasuryCap), pure(tx, args.value, `u64`)],
     });

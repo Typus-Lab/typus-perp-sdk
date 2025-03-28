@@ -18,9 +18,9 @@ export interface CreateUnsettledBidReceiptArgs {
     unrealizedLiquidatorFee: bigint | TransactionArgument;
 }
 
-export function createUnsettledBidReceipt(tx: Transaction, args: CreateUnsettledBidReceiptArgs) {
+export function createUnsettledBidReceipt(tx: Transaction, args: CreateUnsettledBidReceiptArgs, published_at: string = PUBLISHED_AT) {
     return tx.moveCall({
-        target: `${PUBLISHED_AT}::escrow::create_unsettled_bid_receipt`,
+        target: `${published_at}::escrow::create_unsettled_bid_receipt`,
         arguments: [
             vector(tx, `${TypusBidReceipt.$typeName}`, args.receipt),
             pure(tx, args.positionId, `u64`),
@@ -37,10 +37,14 @@ export function createUnsettledBidReceipt(tx: Transaction, args: CreateUnsettled
     });
 }
 
-export function destructUnsettledBidReceipt(tx: Transaction, unsettledBidReceipt: TransactionObjectInput) {
-    return tx.moveCall({ target: `${PUBLISHED_AT}::escrow::destruct_unsettled_bid_receipt`, arguments: [obj(tx, unsettledBidReceipt)] });
+export function destructUnsettledBidReceipt(
+    tx: Transaction,
+    unsettledBidReceipt: TransactionObjectInput,
+    published_at: string = PUBLISHED_AT
+) {
+    return tx.moveCall({ target: `${published_at}::escrow::destruct_unsettled_bid_receipt`, arguments: [obj(tx, unsettledBidReceipt)] });
 }
 
-export function getBidReceipts(tx: Transaction, unsettledBidReceipt: TransactionObjectInput) {
-    return tx.moveCall({ target: `${PUBLISHED_AT}::escrow::get_bid_receipts`, arguments: [obj(tx, unsettledBidReceipt)] });
+export function getBidReceipts(tx: Transaction, unsettledBidReceipt: TransactionObjectInput, published_at: string = PUBLISHED_AT) {
+    return tx.moveCall({ target: `${published_at}::escrow::get_bid_receipts`, arguments: [obj(tx, unsettledBidReceipt)] });
 }

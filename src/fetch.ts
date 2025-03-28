@@ -278,7 +278,9 @@ export async function getUserStake(config: TypusConfig, user: string): Promise<[
     }
 }
 
-/// returns [liquidationPrice, pnl(in USD)]
+/**
+ * @returns [liquidationPrice, pnl(in USD)]
+ */
 export async function getLiquidationPriceAndPnl(
     config: TypusConfig,
     pythClient: PythClient,

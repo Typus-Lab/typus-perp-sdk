@@ -5,6 +5,7 @@ import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519";
 import { TypusConfig } from "@typus/typus-sdk/dist/src/utils";
 
 import mnemonic from "mnemonic.json";
+import { NETWORK } from "src";
 
 // Get the Stable Hermes service URL from https://docs.pyth.network/price-feeds/api-instances-and-providers/hermes
 let connection = new SuiPriceServiceConnection("https://hermes-beta.pyth.network");
@@ -26,7 +27,7 @@ let wormholeStateId = "0x31358d198147da50db32eda2562951d53973a0c0ad5ed738e9b17d8
 
 (async () => {
     let keypair = Ed25519Keypair.deriveKeypair(String(mnemonic.MNEMONIC));
-    let config = await TypusConfig.default("TESTNET", null);
+    let config = await TypusConfig.default(NETWORK, null);
     let provider = new SuiClient({ url: config.rpcEndpoint });
 
     // @ts-ignore

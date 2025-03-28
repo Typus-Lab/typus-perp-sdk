@@ -3,11 +3,11 @@ import { TypusConfig } from "@typus/typus-sdk/dist/src/utils";
 import { SuiClient } from "@mysten/sui/client";
 import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519";
 import { Transaction } from "@mysten/sui/transactions";
-import { unsubscribe, getUserStake } from "src";
+import { unsubscribe, getUserStake, NETWORK } from "src";
 
 (async () => {
     let keypair = Ed25519Keypair.deriveKeypair(String(process.env.MNEMONIC));
-    let config = await TypusConfig.default("TESTNET", null);
+    let config = await TypusConfig.default(NETWORK, null);
     let provider = new SuiClient({ url: config.rpcEndpoint });
 
     let user = keypair.toSuiAddress();
@@ -16,14 +16,14 @@ import { unsubscribe, getUserStake } from "src";
     // 1. Get user's stake
     let stakes = await getUserStake(config, user);
     // console.log(stakes);
-    let stake = stakes[1];
+    let stake = stakes[0];
     console.log(stake);
 
     let tx = new Transaction();
 
     unsubscribe(config, tx, {
         userShareId: stake[0].userShareId.toString(),
-        share: "5000000",
+        share: "10000000000",
     });
 
     let dryrunRes = await provider.devInspectTransactionBlock({

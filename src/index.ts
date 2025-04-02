@@ -46,7 +46,7 @@ export const LIQUIDITY_POOL =
         : "0x8e4ad806781a50b0bed6011e97d48cc07ef23f2f6d95fd021e8625ffc1ee44f8";
 export const LIQUIDITY_POOL_0 =
     NETWORK == "MAINNET"
-        ? "0x9e1f760bebd2aab8f6e03682917efc28d0d446f3d2d3a4c1d28d385e3f325bda"
+        ? "0x98110aae0ffaf294259066380a2d35aba74e42860f1e87ee9c201f471eb3ba03"
         : "0x952fadd71b6ada8fc2e9aacc2e9de2dd3dade9813427af6a3c42a5926e371f04";
 // MarketRegistry
 export const MARKET =
@@ -77,7 +77,7 @@ export const STAKE_POOL =
         : "0xcd9b35eca5209f8abe8bd9f57b5a6cdda033cc21c3e6663418d40b38681f1d34";
 export const STAKE_POOL_0 =
     NETWORK == "MAINNET"
-        ? "0x2f2d7682e952db55a82ef56f1cfb83dc085f0a92377d55449e1fb2514798c411"
+        ? "0x5c984987380805fbaaf78f41d8ff1973807b6c85176aa87cf5a58518e0a87418"
         : "0x29f3c845641a256d13a68c8613836b13aab5bd6ed6c5542e97d8098bec40e09f";
 export const STAKE_POOL_VERSION =
     NETWORK == "MAINNET"

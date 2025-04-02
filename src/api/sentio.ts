@@ -75,7 +75,7 @@ export async function getTlpAPRFromSentio(): Promise<number> {
     });
 
     let data = await response.json();
-    console.log(data);
+    // console.log(data);
     // console.log(data.results[0].matrix.samples[0].values[0]);
 
     let first = data.results[0].matrix.samples[0].values[0];
@@ -84,7 +84,7 @@ export async function getTlpAPRFromSentio(): Promise<number> {
     let r = last.value / first.value - 1;
     // console.log(r);
     let apr = (365 / 7) * r;
-    console.log(apr);
+    // console.log(apr);
 
     return apr;
 }
@@ -144,7 +144,7 @@ export async function getVolumeFromSentio(): Promise<any[]> {
     return data.results as any[];
 }
 
-getTlpAPRFromSentio();
+// getTlpAPRFromSentio();
 // getVolumeFromSentio();
 
 export interface Volume {

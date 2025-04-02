@@ -1,10 +1,15 @@
+import { NETWORK } from "src";
+
 const headers = {
     "api-key": "vQCQ6ZvvFesph3Q8usDLKfc7Wx2D8AX5M",
     "Content-Type": "application/json",
 };
 
 export async function getFromSentio(event: string, userAddress: string, startTimestamp: string): Promise<any[]> {
-    let apiUrl = "https://app.sentio.xyz/api/v1/analytics/typus/typus_perp/sql/execute";
+    let apiUrl =
+        NETWORK == "MAINNET"
+            ? "https://app.sentio.xyz/api/v1/analytics/typus/typus_perp_mainnet/sql/execute"
+            : "https://app.sentio.xyz/api/v1/analytics/typus/typus_perp/sql/execute";
 
     let requestData = {
         sqlQuery: {
@@ -33,7 +38,10 @@ export async function getFromSentio(event: string, userAddress: string, startTim
 }
 
 export async function getTlpAPRFromSentio(): Promise<number> {
-    let apiUrl = "https://app.sentio.xyz/api/v1/insights/typus/typus_perp/query";
+    let apiUrl =
+        NETWORK == "MAINNET"
+            ? "https://app.sentio.xyz/api/v1/insights/typus/typus_perp_mainnet/query"
+            : "https://app.sentio.xyz/api/v1/insights/typus/typus_perp/query";
     let requestData = {
         timeRange: {
             start: "now-7d",
@@ -67,7 +75,7 @@ export async function getTlpAPRFromSentio(): Promise<number> {
     });
 
     let data = await response.json();
-    // console.log(data);
+    console.log(data);
     // console.log(data.results[0].matrix.samples[0].values[0]);
 
     let first = data.results[0].matrix.samples[0].values[0];
@@ -76,13 +84,16 @@ export async function getTlpAPRFromSentio(): Promise<number> {
     let r = last.value / first.value - 1;
     // console.log(r);
     let apr = (365 / 7) * r;
-    // console.log(apr);
+    console.log(apr);
 
     return apr;
 }
 
 export async function getVolumeFromSentio(): Promise<any[]> {
-    let apiUrl = "https://app.sentio.xyz/api/v1/insights/typus/typus_perp/query";
+    let apiUrl =
+        NETWORK == "MAINNET"
+            ? "https://app.sentio.xyz/api/v1/insights/typus/typus_perp_mainnet/query"
+            : "https://app.sentio.xyz/api/v1/insights/typus/typus_perp/query";
     let requestData = {
         timeRange: {
             start: "now-3d",
@@ -133,7 +144,7 @@ export async function getVolumeFromSentio(): Promise<any[]> {
     return data.results as any[];
 }
 
-// getTlpAPRFromSentio();
+getTlpAPRFromSentio();
 // getVolumeFromSentio();
 
 export interface Volume {

@@ -1,10 +1,15 @@
+import { NETWORK } from "src";
+
 const headers = {
     "api-key": "vQCQ6ZvvFesph3Q8usDLKfc7Wx2D8AX5M",
     "Content-Type": "application/json",
 };
 
 export async function getFromSentio(event: string, userAddress: string, startTimestamp: string): Promise<any[]> {
-    let apiUrl = "https://app.sentio.xyz/api/v1/analytics/typus/typus_perp/sql/execute";
+    let apiUrl =
+        NETWORK == "MAINNET"
+            ? "https://app.sentio.xyz/api/v1/analytics/typus/typus_perp_mainnet/sql/execute"
+            : "https://app.sentio.xyz/api/v1/analytics/typus/typus_perp/sql/execute";
 
     let requestData = {
         sqlQuery: {
@@ -33,7 +38,10 @@ export async function getFromSentio(event: string, userAddress: string, startTim
 }
 
 export async function getTlpAPRFromSentio(): Promise<number> {
-    let apiUrl = "https://app.sentio.xyz/api/v1/insights/typus/typus_perp/query";
+    let apiUrl =
+        NETWORK == "MAINNET"
+            ? "https://app.sentio.xyz/api/v1/insights/typus/typus_perp_mainnet/query"
+            : "https://app.sentio.xyz/api/v1/insights/typus/typus_perp/query";
     let requestData = {
         timeRange: {
             start: "now-7d",
@@ -82,7 +90,10 @@ export async function getTlpAPRFromSentio(): Promise<number> {
 }
 
 export async function getVolumeFromSentio(): Promise<any[]> {
-    let apiUrl = "https://app.sentio.xyz/api/v1/insights/typus/typus_perp/query";
+    let apiUrl =
+        NETWORK == "MAINNET"
+            ? "https://app.sentio.xyz/api/v1/insights/typus/typus_perp_mainnet/query"
+            : "https://app.sentio.xyz/api/v1/insights/typus/typus_perp/query";
     let requestData = {
         timeRange: {
             start: "now-3d",

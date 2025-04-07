@@ -306,7 +306,19 @@ export async function harvestStakeReward(
             userShareId: BigInt(input.userShareId),
             clock: CLOCK,
         });
-        tx.transferObjects([iCoin], input.user);
+        if (iToken.endsWith("TLP")) {
+            // stake
+            stake(tx, TLP_TOKEN, {
+                version: STAKE_POOL_VERSION,
+                registry: STAKE_POOL,
+                index: BigInt(0),
+                lpToken: iCoin,
+                clock: CLOCK,
+                userShareId: input.userShareId ? BigInt(input.userShareId) : null,
+            });
+        } else {
+            tx.transferObjects([iCoin], input.user);
+        }
     }
     return tx;
 }

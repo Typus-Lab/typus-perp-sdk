@@ -36,7 +36,7 @@ import { createPythClient } from "@typus/typus-sdk/dist/src/utils";
 
     let tx = new Transaction();
 
-    unstakeBurn(config, tx, pythClient, {
+    await unstakeBurn(config, tx, pythClient, {
         userShareId: stake[0].userShareId.toString(),
         lpPool,
         stakePool,

@@ -227,6 +227,9 @@ export function parseOptionBidReceipts(positions: Position[]): (TypusBidReceipt 
     });
 }
 
+/**
+ * @returns [lpShare, incentives]
+ */
 export async function getUserStake(config: TypusConfig, user: string): Promise<[LpUserShare, string[]][]> {
     let provider = new SuiClient({ url: config.rpcEndpoint });
     let tx = new Transaction();

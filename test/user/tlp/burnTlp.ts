@@ -3,7 +3,8 @@ import { TypusConfig } from "@typus/typus-sdk/dist/src/utils";
 import { SuiClient } from "@mysten/sui/client";
 import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519";
 import { Transaction } from "@mysten/sui/transactions";
-import { getStakePool, getUserStake, harvestStakeReward, NETWORK } from "src";
+import { NETWORK, getLpPools, getStakePool, getUserStake, burnTlp } from "src";
+import { createPythClient } from "@typus/typus-sdk/dist/src/utils";
 
 (async () => {
     let keypair = Ed25519Keypair.deriveKeypair(String(process.env.MNEMONIC));
@@ -13,21 +14,30 @@ import { getStakePool, getUserStake, harvestStakeReward, NETWORK } from "src";
     let user = keypair.toSuiAddress();
     console.log(user);
 
+    let lpPools = await getLpPools(config);
+    let lpPool = lpPools[0];
+    // console.log(lpPool);
+
+    let pythClient = createPythClient(provider, NETWORK);
+
     // 1. Get user's stake
     let stakes = await getUserStake(config, user);
-    // console.log(stakes);
-    let stake = stakes[0];
-    console.log(stake);
+    console.log(stakes);
 
     // 2. StakePool
     let stakePool = await getStakePool(config);
     // console.log(stakePool);
 
+    let lpCoin = "0x264b83989f2b58b0775a3dd1961270aa0eeb9371f3f9426f1d36a23c21eaf056";
+
     let tx = new Transaction();
 
-    harvestStakeReward(config, tx, {
+    await burnTlp(config, tx, pythClient, {
+        lpCoin,
+        lpPool,
         stakePool,
-        userShareId: "0",
+        cTOKEN: "SUI",
+        share: "500000000", // 55819898874
         user,
     });
 
@@ -35,16 +45,9 @@ import { getStakePool, getUserStake, harvestStakeReward, NETWORK } from "src";
         transactionBlock: tx,
         sender: user,
     });
-
-    let events = dryrunRes.events.filter((e) => e.type.endsWith("HarvestPerUserShareEvent"));
-
-    if (events.length > 0) {
-        // @ts-ignore
-        let harvest_amount = events[0].parsedJson.harvest_amount;
-        console.log(`Sui incentive amount: ${harvest_amount / 10e9}`);
-    }
+    console.log(dryrunRes.events.filter((e) => e.type.endsWith("UnstakeEvent")));
+    console.log(dryrunRes.events.filter((e) => e.type.endsWith("BurnLpEvent")));
 
     let res = await provider.signAndExecuteTransaction({ signer: keypair, transaction: tx });
     console.log(res);
-    // https://testnet.suivision.xyz/txblock/EvBgQwKFay8YMYDG9WtStsfvR7MzhPa4nu5aKMgeptzX?tab=Events
 })();

@@ -141,6 +141,15 @@ export async function unstakeBurn(
         clock: CLOCK,
     });
 
+    let burnCoin;
+
+    if (input.share) {
+        burnCoin = tx.splitCoins(lpCoin, [input.share]);
+        tx.transferObjects([lpCoin], input.user);
+    } else {
+        burnCoin = lpCoin;
+    }
+
     let cToken = tokenType[NETWORK][input.cTOKEN];
     let coin = burnLp(tx, [cToken, TLP_TOKEN], {
         version: PERP_VERSION,
@@ -148,7 +157,62 @@ export async function unstakeBurn(
         treasuryCaps: TLP_TREASURY_CAP,
         index: BigInt(0),
         oracle: oracle[NETWORK][input.cTOKEN]!,
-        coin: lpCoin,
+        coin: burnCoin,
+        clock: CLOCK,
+    });
+
+    tx.transferObjects([coin], input.user);
+
+    return tx;
+}
+
+export async function burnTlp(
+    config: TypusConfig,
+    tx: Transaction,
+    pythClient: PythClient,
+    input: {
+        lpPool: LiquidityPool;
+        stakePool: StakePool;
+        cTOKEN: TOKEN;
+        lpCoin: string;
+        share: string | null;
+        user: string;
+    }
+): Promise<Transaction> {
+    // update pyth oracle
+    let tokens = input.lpPool.tokenPools.map((p) => typeArgToAsset("0x" + p.tokenType.name));
+
+    await updatePyth(pythClient, tx, tokens);
+
+    for (let token of tokens) {
+        updateOracleWithPythUsd(pythClient, tx, config.package.oracle, token);
+        updateLiquidityValue(tx, tokenType[NETWORK][token], {
+            version: PERP_VERSION,
+            registry: LP_POOL,
+            index: BigInt(0),
+            oracle: oracle[NETWORK][token]!,
+            clock: CLOCK,
+        });
+    }
+
+    let lpCoin = tx.object(input.lpCoin);
+
+    let burnCoin;
+
+    if (input.share) {
+        burnCoin = tx.splitCoins(lpCoin, [input.share]);
+    } else {
+        burnCoin = lpCoin;
+    }
+
+    let cToken = tokenType[NETWORK][input.cTOKEN];
+    let coin = burnLp(tx, [cToken, TLP_TOKEN], {
+        version: PERP_VERSION,
+        registry: LP_POOL,
+        treasuryCaps: TLP_TREASURY_CAP,
+        index: BigInt(0),
+        oracle: oracle[NETWORK][input.cTOKEN]!,
+        coin: burnCoin,
         clock: CLOCK,
     });
 

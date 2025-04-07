@@ -54,17 +54,7 @@ export async function mintStakeLp(
 
     // console.log(iToken);
     if (input.userShareId) {
-        let iTokens = input.stakePool.incentives.map((i) => i.tokenType.name);
-        for (let iToken of iTokens) {
-            let iCoin = harvestPerUserShare(tx, iToken, {
-                version: STAKE_POOL_VERSION,
-                registry: STAKE_POOL,
-                index: BigInt(0),
-                userShareId: BigInt(input.userShareId),
-                clock: CLOCK,
-            });
-            tx.transferObjects([iCoin], input.user);
-        }
+        harvestStakeReward(config, tx, { stakePool: input.stakePool, userShareId: input.userShareId, user: input.user });
     }
 
     let cToken = tokenType[NETWORK][input.cTOKEN];
@@ -120,17 +110,7 @@ export async function unstakeBurn(
     }
 
     if (input.userShareId) {
-        let iTokens = input.stakePool.incentives.map((i) => i.tokenType.name);
-        for (let iToken of iTokens) {
-            let iCoin = harvestPerUserShare(tx, iToken, {
-                version: STAKE_POOL_VERSION,
-                registry: STAKE_POOL,
-                index: BigInt(0),
-                userShareId: BigInt(input.userShareId),
-                clock: CLOCK,
-            });
-            tx.transferObjects([iCoin], input.user);
-        }
+        harvestStakeReward(config, tx, { stakePool: input.stakePool, userShareId: input.userShareId, user: input.user });
     }
 
     let lpCoin = unstake(tx, TLP_TOKEN, {

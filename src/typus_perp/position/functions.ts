@@ -1,6 +1,6 @@
 import { PUBLISHED_AT } from "..";
 import { Option } from "../../_dependencies/source/0x1/option/structs";
-import { TypusBidReceipt } from "../../_dependencies/source/0x908a10789a1a6953e0b73a997c10e3552f7ce4e2907afd00a334ed74bd973ded/vault/structs";
+import { TypusBidReceipt } from "../../_dependencies/source/0xb4f25230ba74837d8299e92951306100c4a532e8c48cc3d8828abe9b91c8b274/vault/structs";
 import { obj, option, pure, vector } from "../../_framework/util";
 import { Position } from "./structs";
 import { Transaction, TransactionArgument, TransactionObjectInput } from "@mysten/sui/transactions";

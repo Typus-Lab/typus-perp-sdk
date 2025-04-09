@@ -3,8 +3,8 @@ import { Option } from "../../_dependencies/source/0x1/option/structs";
 import { TypeName } from "../../_dependencies/source/0x1/type-name/structs";
 import { ObjectTable } from "../../_dependencies/source/0x2/object-table/structs";
 import { UID } from "../../_dependencies/source/0x2/object/structs";
-import { KeyedBigVector } from "../../_dependencies/source/0x4213e12a2220f15f1837a76897110d2260786558169bd8d0847f21e9b551f277/keyed-big-vector/structs";
-import { LinkedObjectTable } from "../../_dependencies/source/0x4213e12a2220f15f1837a76897110d2260786558169bd8d0847f21e9b551f277/linked-object-table/structs";
+import { KeyedBigVector } from "../../_dependencies/source/0x4b0f4ee1a40ce37ec81c987cc4e76a665419e74b863319492fc7d26f708b835a/keyed-big-vector/structs";
+import { LinkedObjectTable } from "../../_dependencies/source/0x4b0f4ee1a40ce37ec81c987cc4e76a665419e74b863319492fc7d26f708b835a/linked-object-table/structs";
 import {
     PhantomReified,
     Reified,

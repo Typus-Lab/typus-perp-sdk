@@ -16,7 +16,7 @@ import {
 } from "../../_framework/reified";
 import { FieldsWithTypes, composeSuiType, compressSuiType } from "../../_framework/util";
 import { Vector } from "../../_framework/vector";
-import { PKG_V1 } from "../index";
+import { PKG_V1, PKG_V2 } from "../index";
 import { bcs } from "@mysten/sui/bcs";
 import { SuiClient, SuiObjectData, SuiParsedData } from "@mysten/sui/client";
 import { fromB64, fromHEX, toHEX } from "@mysten/sui/utils";
@@ -507,6 +507,172 @@ export class ProtocolFeeEvent implements StructClass {
         }
 
         return ProtocolFeeEvent.fromSuiObjectData(res.data);
+    }
+}
+
+/* ============================== PutInsuranceFundEvent =============================== */
+
+export function isPutInsuranceFundEvent(type: string): boolean {
+    type = compressSuiType(type);
+    return type === `${PKG_V2}::admin::PutInsuranceFundEvent`;
+}
+
+export interface PutInsuranceFundEventFields {
+    token: ToField<TypeName>;
+    amount: ToField<"u64">;
+}
+
+export type PutInsuranceFundEventReified = Reified<PutInsuranceFundEvent, PutInsuranceFundEventFields>;
+
+export class PutInsuranceFundEvent implements StructClass {
+    __StructClass = true as const;
+
+    static readonly $typeName = `${PKG_V2}::admin::PutInsuranceFundEvent`;
+    static readonly $numTypeParams = 0;
+    static readonly $isPhantom = [] as const;
+
+    readonly $typeName = PutInsuranceFundEvent.$typeName;
+    readonly $fullTypeName: `${typeof PKG_V2}::admin::PutInsuranceFundEvent`;
+    readonly $typeArgs: [];
+    readonly $isPhantom = PutInsuranceFundEvent.$isPhantom;
+
+    readonly token: ToField<TypeName>;
+    readonly amount: ToField<"u64">;
+
+    private constructor(typeArgs: [], fields: PutInsuranceFundEventFields) {
+        this.$fullTypeName = composeSuiType(
+            PutInsuranceFundEvent.$typeName,
+            ...typeArgs
+        ) as `${typeof PKG_V2}::admin::PutInsuranceFundEvent`;
+        this.$typeArgs = typeArgs;
+
+        this.token = fields.token;
+        this.amount = fields.amount;
+    }
+
+    static reified(): PutInsuranceFundEventReified {
+        return {
+            typeName: PutInsuranceFundEvent.$typeName,
+            fullTypeName: composeSuiType(PutInsuranceFundEvent.$typeName, ...[]) as `${typeof PKG_V2}::admin::PutInsuranceFundEvent`,
+            typeArgs: [] as [],
+            isPhantom: PutInsuranceFundEvent.$isPhantom,
+            reifiedTypeArgs: [],
+            fromFields: (fields: Record<string, any>) => PutInsuranceFundEvent.fromFields(fields),
+            fromFieldsWithTypes: (item: FieldsWithTypes) => PutInsuranceFundEvent.fromFieldsWithTypes(item),
+            fromBcs: (data: Uint8Array) => PutInsuranceFundEvent.fromBcs(data),
+            bcs: PutInsuranceFundEvent.bcs,
+            fromJSONField: (field: any) => PutInsuranceFundEvent.fromJSONField(field),
+            fromJSON: (json: Record<string, any>) => PutInsuranceFundEvent.fromJSON(json),
+            fromSuiParsedData: (content: SuiParsedData) => PutInsuranceFundEvent.fromSuiParsedData(content),
+            fromSuiObjectData: (content: SuiObjectData) => PutInsuranceFundEvent.fromSuiObjectData(content),
+            fetch: async (client: SuiClient, id: string) => PutInsuranceFundEvent.fetch(client, id),
+            new: (fields: PutInsuranceFundEventFields) => {
+                return new PutInsuranceFundEvent([], fields);
+            },
+            kind: "StructClassReified",
+        };
+    }
+
+    static get r() {
+        return PutInsuranceFundEvent.reified();
+    }
+
+    static phantom(): PhantomReified<ToTypeStr<PutInsuranceFundEvent>> {
+        return phantom(PutInsuranceFundEvent.reified());
+    }
+    static get p() {
+        return PutInsuranceFundEvent.phantom();
+    }
+
+    static get bcs() {
+        return bcs.struct("PutInsuranceFundEvent", {
+            token: TypeName.bcs,
+            amount: bcs.u64(),
+        });
+    }
+
+    static fromFields(fields: Record<string, any>): PutInsuranceFundEvent {
+        return PutInsuranceFundEvent.reified().new({
+            token: decodeFromFields(TypeName.reified(), fields.token),
+            amount: decodeFromFields("u64", fields.amount),
+        });
+    }
+
+    static fromFieldsWithTypes(item: FieldsWithTypes): PutInsuranceFundEvent {
+        if (!isPutInsuranceFundEvent(item.type)) {
+            throw new Error("not a PutInsuranceFundEvent type");
+        }
+
+        return PutInsuranceFundEvent.reified().new({
+            token: decodeFromFieldsWithTypes(TypeName.reified(), item.fields.token),
+            amount: decodeFromFieldsWithTypes("u64", item.fields.amount),
+        });
+    }
+
+    static fromBcs(data: Uint8Array): PutInsuranceFundEvent {
+        return PutInsuranceFundEvent.fromFields(PutInsuranceFundEvent.bcs.parse(data));
+    }
+
+    toJSONField() {
+        return {
+            token: this.token.toJSONField(),
+            amount: this.amount.toString(),
+        };
+    }
+
+    toJSON() {
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
+    }
+
+    static fromJSONField(field: any): PutInsuranceFundEvent {
+        return PutInsuranceFundEvent.reified().new({
+            token: decodeFromJSONField(TypeName.reified(), field.token),
+            amount: decodeFromJSONField("u64", field.amount),
+        });
+    }
+
+    static fromJSON(json: Record<string, any>): PutInsuranceFundEvent {
+        if (json.$typeName !== PutInsuranceFundEvent.$typeName) {
+            throw new Error("not a WithTwoGenerics json object");
+        }
+
+        return PutInsuranceFundEvent.fromJSONField(json);
+    }
+
+    static fromSuiParsedData(content: SuiParsedData): PutInsuranceFundEvent {
+        if (content.dataType !== "moveObject") {
+            throw new Error("not an object");
+        }
+        if (!isPutInsuranceFundEvent(content.type)) {
+            throw new Error(`object at ${(content.fields as any).id} is not a PutInsuranceFundEvent object`);
+        }
+        return PutInsuranceFundEvent.fromFieldsWithTypes(content);
+    }
+
+    static fromSuiObjectData(data: SuiObjectData): PutInsuranceFundEvent {
+        if (data.bcs) {
+            if (data.bcs.dataType !== "moveObject" || !isPutInsuranceFundEvent(data.bcs.type)) {
+                throw new Error(`object at is not a PutInsuranceFundEvent object`);
+            }
+
+            return PutInsuranceFundEvent.fromBcs(fromB64(data.bcs.bcsBytes));
+        }
+        if (data.content) {
+            return PutInsuranceFundEvent.fromSuiParsedData(data.content);
+        }
+        throw new Error("Both `bcs` and `content` fields are missing from the data. Include `showBcs` or `showContent` in the request.");
+    }
+
+    static async fetch(client: SuiClient, id: string): Promise<PutInsuranceFundEvent> {
+        const res = await client.getObject({ id, options: { showBcs: true } });
+        if (res.error) {
+            throw new Error(`error fetching PutInsuranceFundEvent object at id ${id}: ${res.error.code}`);
+        }
+        if (res.data?.bcs?.dataType !== "moveObject" || !isPutInsuranceFundEvent(res.data.bcs.type)) {
+            throw new Error(`object at id ${id} is not a PutInsuranceFundEvent object`);
+        }
+
+        return PutInsuranceFundEvent.fromSuiObjectData(res.data);
     }
 }
 

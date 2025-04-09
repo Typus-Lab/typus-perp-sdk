@@ -1,7 +1,7 @@
 import { NETWORK } from "src";
 
 const headers = {
-    "api-key": "vQCQ6ZvvFesph3Q8usDLKfc7Wx2D8AX5M",
+    "api-key": "ffJa6FwxeJNrQP8NZ5doEMXqdSA7XM6mT",
     "Content-Type": "application/json",
 };
 

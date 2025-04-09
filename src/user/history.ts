@@ -21,7 +21,7 @@ export type actionType =
     | "Modify Collateral"
     | "Exercise Position"
     | "Liquidation"
-    | "Force Close Position "
+    | "Force Close Position"
     | "Swap";
 
 export type sideType = "Long" | "Short";
@@ -396,4 +396,33 @@ export async function getOrderMatchFromSentio(userAddress: string, startTimestam
     });
 }
 
+export async function getRealizeOptionFromSentio(userAddress: string, startTimestamp: number) {
+    const datas = await getFromSentio("RealizeOption", userAddress, startTimestamp.toString());
+    // console.log(datas);
+    return datas.map((x) => {
+        let txHistory: Event = {
+            action: "Exercise Position",
+            typeName: undefined,
+            order_id: undefined,
+            position_id: x.position_id,
+            market: `${x.base_token}/USD`,
+            side: undefined,
+            order_type: undefined,
+            status: undefined,
+            size: undefined,
+            base_token: x.base_token,
+            collateral: Number(x.exercise_balance_value),
+            collateral_token: x.collateral_token,
+            price: undefined,
+            realized_pnl: Number(x.user_remaining_in_usd),
+            timestamp: x.timestamp,
+            tx_digest: x.transaction_hash,
+        };
+
+        // console.log(txHistory);
+        return txHistory;
+    });
+}
+
 // getOrderMatchFromSentio("0x95f26ce574fc9ace2608807648d99a4dce17f1be8964613d5b972edc82849e9e", 0);
+// getRealizeOptionFromSentio("0x95f26ce574fc9ace2608807648d99a4dce17f1be8964613d5b972edc82849e9e", 0);

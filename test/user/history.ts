@@ -11,7 +11,7 @@ import { PKG_V1 as PERP_PACKAGE_ID } from "src/typus_perp/index";
     console.log(user);
 
     // 1. pagination
-    const raw_events: any[] = [];
+    var raw_events: any[] = [];
     var beforeCursor = null;
     // get 5 pages
     for (let i = 0; i < 5; i += 1) {
@@ -25,6 +25,7 @@ import { PKG_V1 as PERP_PACKAGE_ID } from "src/typus_perp/index";
             break;
         }
     }
+    raw_events = raw_events.sort((a, b) => Number(new Date(a.timestamp)) - Number(new Date(b.timestamp)));
 
     // 2. parser events
     console.log(raw_events.length);

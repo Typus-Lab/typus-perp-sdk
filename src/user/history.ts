@@ -340,50 +340,67 @@ export async function getGraphQLEvents(module: string, sender: string, beforeCur
     }
 }
 
-export async function getLiquidateFromSentio(userAddress: string, startTimestamp: number) {
+export async function getLiquidateFromSentio(userAddress: string, startTimestamp: number, events: Event[]): Promise<Event[]> {
     const datas = await getFromSentio("Liquidate", userAddress, startTimestamp.toString());
     // console.log(datas);
-    return datas.map((x) => {
+    let liquidate = datas.map((x) => {
         let collateral = Number(x.liquidator_fee) + Number(x.value_for_lp_pool);
+        let base_token = toToken(x.trading_token);
         let txHistory: Event = {
             action: "Liquidation",
-            typeName: undefined,
+            typeName: "LiquidateEvent",
             order_id: x.order_id,
             position_id: x.position_id,
-            market: `${x.trading_token}/USD`,
+            market: `${base_token}/USD`,
             side: undefined,
             order_type: "Market",
             status: "Filled",
             size: undefined,
-            base_token: x.trading_token,
+            base_token,
             collateral,
             collateral_token: x.collateral_token,
             price: x.trading_price,
-            realized_pnl: collateral * Number(x.collateral_price),
+            realized_pnl: -collateral * Number(x.collateral_price),
             timestamp: x.timestamp,
             tx_digest: x.transaction_hash,
         };
 
         return txHistory;
     });
+
+    liquidate = liquidate.map((x) => {
+        let related = events.findLast((e) => e.position_id == x.position_id && e.market == x.market);
+        // console.log(x);
+        // console.log(related);
+        if (related) {
+            x.side = related.side == "Long" ? "Short" : "Long";
+            x.size = related.size;
+        }
+        return x;
+    });
+    // console.log(liquidate);
+    events = events.concat(liquidate);
+    events = events.sort((a, b) => Number(new Date(a.timestamp)) - Number(new Date(b.timestamp)));
+    return events;
 }
 
-export async function getOrderMatchFromSentio(userAddress: string, startTimestamp: number) {
+export async function getOrderMatchFromSentio(userAddress: string, startTimestamp: number, events: Event[]): Promise<Event[]> {
     const datas = await getFromSentio("OrderFilled", userAddress, startTimestamp.toString());
     // console.log(datas);
-    return datas.map((x) => {
+    let order_match = datas.map((x) => {
         let realized_pnl = ((x.realized_amount - x.realized_trading_fee) * x.realized_fee_in_usd) / x.realized_trading_fee;
+        let base_token = toToken(x.trading_token);
         let txHistory: Event = {
             action: x.order_type == "Open" ? "Order Filled (Open Position)" : "Order Filled (Close Position)",
-            typeName: undefined,
+            typeName: "OrderFilledEvent",
             order_id: x.order_id,
             position_id: x.position_id,
-            market: `${x.trading_token}/USD`,
+            market: `${base_token}/USD`,
             side: x.side,
             order_type: undefined,
             status: "Filled",
             size: x.filled_size,
-            base_token: x.trading_token,
+            base_token,
             collateral: undefined,
             collateral_token: x.collateral_token,
             price: x.filled_price,
@@ -394,23 +411,41 @@ export async function getOrderMatchFromSentio(userAddress: string, startTimestam
 
         return txHistory;
     });
+
+    // deduplicate
+    order_match = order_match.filter((x) => events.findIndex((y) => y.tx_digest == x.tx_digest) == -1);
+    order_match = order_match.map((x) => {
+        let related = events.findLast((e) => e.order_id == x.order_id && e.market == x.market);
+        // console.log(x, related);
+        if (related) {
+            x.order_type = related.order_type;
+            x.collateral = related.collateral;
+        }
+        return x;
+    });
+    // console.log(order_match);
+    events = events.concat(order_match);
+    events = events.sort((a, b) => Number(new Date(a.timestamp)) - Number(new Date(b.timestamp)));
+    return events;
 }
 
-export async function getRealizeOptionFromSentio(userAddress: string, startTimestamp: number) {
+export async function getRealizeOptionFromSentio(userAddress: string, startTimestamp: number, events: Event[]): Promise<Event[]> {
     const datas = await getFromSentio("RealizeOption", userAddress, startTimestamp.toString());
     // console.log(datas);
-    return datas.map((x) => {
+
+    let exercise = datas.map((x) => {
+        let base_token = toToken(x.base_token);
         let txHistory: Event = {
             action: "Exercise Position",
             typeName: "RealizeOptionPositionEvent",
             order_id: undefined,
             position_id: x.position_id,
-            market: `${x.base_token}/USD`,
+            market: `${base_token}/USD`,
             side: undefined,
             order_type: undefined,
             status: "Filled",
             size: undefined,
-            base_token: x.base_token,
+            base_token,
             collateral: Number(x.exercise_balance_value),
             collateral_token: x.collateral_token,
             price: undefined,
@@ -422,7 +457,36 @@ export async function getRealizeOptionFromSentio(userAddress: string, startTimes
         // console.log(txHistory);
         return txHistory;
     });
+
+    exercise = exercise.map((x) => {
+        let related = events.findLast((e) => e.position_id == x.position_id && e.market == x.market);
+        // console.log(x);
+        // console.log(related);
+        if (related) {
+            x.side = related.side;
+            x.size = related.size;
+        }
+        return x;
+    });
+    // console.log(exercise);
+    events = events.concat(exercise);
+    events = events.sort((a, b) => Number(new Date(a.timestamp)) - Number(new Date(b.timestamp)));
+    return events;
 }
 
 // getOrderMatchFromSentio("0x95f26ce574fc9ace2608807648d99a4dce17f1be8964613d5b972edc82849e9e", 0);
 // getRealizeOptionFromSentio("0x95f26ce574fc9ace2608807648d99a4dce17f1be8964613d5b972edc82849e9e", 0);
+
+function toToken(name: string): TOKEN {
+    switch (name) {
+        case "BTC":
+        case "ETH":
+        case "SOL":
+        case "APT":
+            return `w${name}`;
+        case "WUSDC":
+            return "wUSDC";
+        default:
+            return name as TOKEN;
+    }
+}

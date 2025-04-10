@@ -30,52 +30,13 @@ import { PKG_V1 as PERP_PACKAGE_ID } from "src/typus_perp/index";
     console.log(events.at(0)?.timestamp);
 
     // 3. order match events from sentio
-    let order_match = await getOrderMatchFromSentio(user, 0);
-    // deduplicate
-    order_match = order_match.filter((x) => events.findIndex((y) => y.tx_digest == x.tx_digest) == -1);
-    order_match = order_match.map((x) => {
-        let related = events.findLast((e) => e.order_id == x.order_id && e.market == x.market);
-        // console.log(x, related);
-        if (related) {
-            x.order_type = related.order_type;
-            x.collateral = related.collateral;
-        }
-        return x;
-    });
-    // console.log(order_match);
-    events = events.concat();
+    events = await getOrderMatchFromSentio(user, 0, events);
 
     // 4. liquidate events from sentio
-    let liquidate = await getLiquidateFromSentio(user, 0);
-    liquidate = liquidate.map((x) => {
-        let related = events.findLast((e) => e.position_id == x.position_id && e.market == x.market);
-        // console.log(x);
-        // console.log(related);
-        if (related) {
-            x.side = related.side == "Long" ? "Short" : "Long";
-            x.size = related.size;
-        }
-        return x;
-    });
-    // console.log(liquidate);
-    events = events.concat(liquidate);
+    events = await getLiquidateFromSentio(user, 0, events);
 
     // 5. exercise events from sentio
-    let exercise = await getRealizeOptionFromSentio(user, 0);
-    exercise = exercise.map((x) => {
-        let related = events.findLast((e) => e.position_id == x.position_id && e.market == x.market);
-        // console.log(x);
-        // console.log(related);
-        if (related) {
-            x.side = related.side;
-            x.size = related.size;
-        }
-        return x;
-    });
-    // console.log(exercise);
-    events = events.concat(exercise);
+    events = await getRealizeOptionFromSentio(user, 0, events);
 
-    //  6. sort events by timestamp
-    events = events.sort((a, b) => Number(new Date(a.timestamp)) - Number(new Date(b.timestamp)));
-    console.log(events);
+    console.log(events.filter((x) => x.base_token == "wBTC"));
 })();

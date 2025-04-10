@@ -402,13 +402,13 @@ export async function getRealizeOptionFromSentio(userAddress: string, startTimes
     return datas.map((x) => {
         let txHistory: Event = {
             action: "Exercise Position",
-            typeName: undefined,
+            typeName: "RealizeOptionPositionEvent",
             order_id: undefined,
             position_id: x.position_id,
             market: `${x.base_token}/USD`,
             side: undefined,
             order_type: undefined,
-            status: undefined,
+            status: "Filled",
             size: undefined,
             base_token: x.base_token,
             collateral: Number(x.exercise_balance_value),

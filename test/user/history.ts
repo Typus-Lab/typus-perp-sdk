@@ -1,13 +1,9 @@
 import "@typus/typus-sdk/dist/src/utils/load_env";
-import { TypusConfig } from "@typus/typus-sdk/dist/src/utils";
-import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519";
-import { getGraphQLEvents, getLiquidateFromSentio, getOrderMatchFromSentio, parseUserHistory } from "src";
+import { getGraphQLEvents, getLiquidateFromSentio, getOrderMatchFromSentio, getRealizeOptionFromSentio, parseUserHistory } from "src";
 import { PKG_V1 as PERP_PACKAGE_ID } from "src/typus_perp/index";
 
 (async () => {
-    let keypair = Ed25519Keypair.deriveKeypair(String(process.env.MNEMONIC));
-    let user = keypair.toSuiAddress();
-    // let user = "0x95f26ce574fc9ace2608807648d99a4dce17f1be8964613d5b972edc82849e9e";
+    let user = "0xdc72506f269feb89822c13e66b282bc52c5724c27e575a04cbec949a13671d13";
     console.log(user);
 
     // 1. pagination
@@ -64,7 +60,22 @@ import { PKG_V1 as PERP_PACKAGE_ID } from "src/typus_perp/index";
     // console.log(liquidate);
     events = events.concat(liquidate);
 
-    //  5. sort events by timestamp
+    // 5. exercise events from sentio
+    let exercise = await getRealizeOptionFromSentio(user, 0);
+    exercise = exercise.map((x) => {
+        let related = events.findLast((e) => e.position_id == x.position_id && e.market == x.market);
+        // console.log(x);
+        // console.log(related);
+        if (related) {
+            x.side = related.side;
+            x.size = related.size;
+        }
+        return x;
+    });
+    // console.log(exercise);
+    events = events.concat(exercise);
+
+    //  6. sort events by timestamp
     events = events.sort((a, b) => Number(new Date(a.timestamp)) - Number(new Date(b.timestamp)));
     console.log(events);
 })();

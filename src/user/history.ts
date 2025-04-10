@@ -442,7 +442,7 @@ export async function getRealizeOptionFromSentio(userAddress: string, startTimes
             position_id: x.position_id,
             market: `${base_token}/USD`,
             side: undefined,
-            order_type: undefined,
+            order_type: "Market",
             status: "Filled",
             size: undefined,
             base_token,

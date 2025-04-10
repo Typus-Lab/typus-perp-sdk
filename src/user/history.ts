@@ -93,13 +93,15 @@ export async function parseUserHistory(raw_events) {
                     order_type = "Stop Loss";
                 }
 
+                related = events.find((e) => e.position_id == json.linked_position_id && e.market == market);
+
                 var e: Event = {
                     action: "Place Order",
                     typeName: name,
                     order_id: json.order_id,
                     position_id: json.linked_position_id,
                     market,
-                    side: json.is_long ? "Long" : "Short",
+                    side: related ? related.side : json.is_long ? "Long" : "Short",
                     order_type,
                     status: json.filled ? "Filled" : "Open",
                     size,
@@ -184,7 +186,7 @@ export async function parseUserHistory(raw_events) {
                     action: "Cancel Order",
                     typeName: name,
                     order_id: json.order_id,
-                    position_id: undefined,
+                    position_id: related?.position_id,
                     market,
                     side: related?.side,
                     order_type: related?.order_type,
@@ -210,9 +212,9 @@ export async function parseUserHistory(raw_events) {
 
                 var collateral: number;
                 if (json.increased_collateral_amount) {
-                    collateral = Number(json.increased_collateral_amount);
+                    collateral = Number(json.increased_collateral_amount) * -1;
                 } else {
-                    collateral = Number(json.released_collateral_amount) * -1;
+                    collateral = Number(json.released_collateral_amount);
                 }
 
                 var e: Event = {

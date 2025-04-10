@@ -136,7 +136,8 @@ export async function parseUserHistory(raw_events) {
                 var realized_trading_fee = Number(json.realized_trading_fee) + Number(json.realized_borrow_fee);
                 var realized_fee_in_usd = Number(json.realized_fee_in_usd) / 10 ** 9;
                 var realized_amount = json.realized_amount_sign ? Number(json.realized_amount) : -Number(json.realized_amount);
-                var realized_pnl = ((realized_amount - realized_trading_fee) * realized_fee_in_usd) / realized_trading_fee;
+                var realized_pnl =
+                    realized_trading_fee > 0 ? ((realized_amount - realized_trading_fee) * realized_fee_in_usd) / realized_trading_fee : 0;
 
                 var e: Event = {
                     action,
@@ -388,7 +389,6 @@ export async function getOrderMatchFromSentio(userAddress: string, startTimestam
     const datas = await getFromSentio("OrderFilled", userAddress, startTimestamp.toString());
     // console.log(datas);
     let order_match = datas.map((x) => {
-        let realized_pnl = ((x.realized_amount - x.realized_trading_fee) * x.realized_fee_in_usd) / x.realized_trading_fee;
         let base_token = toToken(x.trading_token);
         let txHistory: Event = {
             action: x.order_type == "Open" ? "Order Filled (Open Position)" : "Order Filled (Close Position)",
@@ -404,7 +404,7 @@ export async function getOrderMatchFromSentio(userAddress: string, startTimestam
             collateral: undefined,
             collateral_token: x.collateral_token,
             price: x.filled_price,
-            realized_pnl,
+            realized_pnl: x.realized_pnl,
             timestamp: x.timestamp,
             tx_digest: x.transaction_hash,
         };
@@ -420,6 +420,8 @@ export async function getOrderMatchFromSentio(userAddress: string, startTimestam
         if (related) {
             x.order_type = related.order_type;
             x.collateral = related.collateral;
+        } else {
+            x.order_type = "Market";
         }
         return x;
     });

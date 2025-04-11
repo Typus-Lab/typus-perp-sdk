@@ -358,7 +358,7 @@ export async function getLiquidateFromSentio(userAddress: string, startTimestamp
             side: undefined,
             order_type: "Market",
             status: "Filled",
-            size: undefined,
+            size: x.position_size,
             base_token,
             collateral,
             collateral_token: x.collateral_token,
@@ -376,8 +376,7 @@ export async function getLiquidateFromSentio(userAddress: string, startTimestamp
         // console.log(x);
         // console.log(related);
         if (related) {
-            x.side = related.side == "Long" ? "Short" : "Long";
-            x.size = related.size;
+            x.side = related.side;
         }
         return x;
     });

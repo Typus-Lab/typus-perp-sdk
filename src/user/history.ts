@@ -202,7 +202,7 @@ export async function parseUserHistory(raw_events) {
                     realized_pnl: undefined,
                     timestamp,
                     tx_digest,
-                    dov_index: undefined,
+                    dov_index: related?.dov_index,
                 };
                 events.push(e);
                 break;
@@ -238,7 +238,7 @@ export async function parseUserHistory(raw_events) {
                     realized_pnl: undefined,
                     timestamp,
                     tx_digest,
-                    dov_index: undefined,
+                    dov_index: related?.dov_index,
                 };
                 events.push(e);
                 break;

@@ -94,7 +94,9 @@ export async function parseUserHistory(raw_events) {
                     order_type = "Stop Loss";
                 }
 
-                related = events.find((e) => e.position_id == json.linked_position_id && e.market == market);
+                if (json.linked_position_id) {
+                    related = events.find((e) => e.position_id == json.linked_position_id && e.market == market);
+                }
 
                 var e: Event = {
                     action: "Place Order",

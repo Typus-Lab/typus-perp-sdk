@@ -47,6 +47,7 @@ export interface Event {
     realized_pnl: number | undefined; // in USD
     timestamp: string;
     tx_digest: string;
+    dov_index: string | undefined; // for option collateral
 }
 
 export async function parseUserHistory(raw_events) {
@@ -112,6 +113,7 @@ export async function parseUserHistory(raw_events) {
                     realized_pnl: undefined,
                     timestamp,
                     tx_digest,
+                    dov_index: json.dov_index,
                 };
                 events.push(e);
                 break;
@@ -158,6 +160,7 @@ export async function parseUserHistory(raw_events) {
                     realized_pnl,
                     timestamp,
                     tx_digest,
+                    dov_index: related?.dov_index,
                 };
                 events.push(e);
                 break;
@@ -199,6 +202,7 @@ export async function parseUserHistory(raw_events) {
                     realized_pnl: undefined,
                     timestamp,
                     tx_digest,
+                    dov_index: undefined,
                 };
                 events.push(e);
                 break;
@@ -234,6 +238,7 @@ export async function parseUserHistory(raw_events) {
                     realized_pnl: undefined,
                     timestamp,
                     tx_digest,
+                    dov_index: undefined,
                 };
                 events.push(e);
                 break;
@@ -262,6 +267,7 @@ export async function parseUserHistory(raw_events) {
                     realized_pnl: -Number(json.fee_amount_usd) / 10 ** 9,
                     timestamp,
                     tx_digest,
+                    dov_index: undefined,
                 };
                 events.push(e);
                 break;
@@ -366,6 +372,7 @@ export async function getLiquidateFromSentio(userAddress: string, startTimestamp
             realized_pnl: -collateral * Number(x.collateral_price),
             timestamp: x.timestamp,
             tx_digest: x.transaction_hash,
+            dov_index: undefined,
         };
 
         return txHistory;
@@ -377,6 +384,7 @@ export async function getLiquidateFromSentio(userAddress: string, startTimestamp
         // console.log(related);
         if (related) {
             x.side = related.side;
+            x.dov_index = related.dov_index;
         }
         return x;
     });
@@ -408,6 +416,7 @@ export async function getOrderMatchFromSentio(userAddress: string, startTimestam
             realized_pnl: x.realized_pnl,
             timestamp: x.timestamp,
             tx_digest: x.transaction_hash,
+            dov_index: undefined,
         };
 
         return txHistory;
@@ -421,6 +430,7 @@ export async function getOrderMatchFromSentio(userAddress: string, startTimestam
         if (related) {
             x.order_type = related.order_type;
             x.collateral = related.collateral;
+            x.dov_index = related.dov_index;
         } else {
             x.order_type = "Market";
         }
@@ -455,6 +465,7 @@ export async function getRealizeOptionFromSentio(userAddress: string, startTimes
             realized_pnl: Number(x.user_remaining_in_usd),
             timestamp: x.timestamp,
             tx_digest: x.transaction_hash,
+            dov_index: undefined,
         };
 
         // console.log(txHistory);
@@ -468,6 +479,7 @@ export async function getRealizeOptionFromSentio(userAddress: string, startTimes
         if (related) {
             x.side = related.side;
             x.size = related.size;
+            x.dov_index = related.dov_index;
         }
         return x;
     });

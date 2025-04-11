@@ -34,7 +34,11 @@ export async function getFromSentio(event: string, userAddress: string, startTim
     let data = await response.json();
     // console.log(data);
 
-    return data.result.rows as any[];
+    if (data.result) {
+        return data.result.rows as any[];
+    } else {
+        return [];
+    }
 }
 
 export async function getTlpAPRFromSentio(): Promise<number> {

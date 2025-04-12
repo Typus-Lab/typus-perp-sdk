@@ -94,7 +94,9 @@ export async function parseUserHistory(raw_events) {
                     order_type = "Stop Loss";
                 }
 
-                related = events.find((e) => e.position_id == json.linked_position_id && e.market == market);
+                if (json.linked_position_id != undefined) {
+                    related = events.find((e) => e.position_id == json.linked_position_id && e.market == market);
+                }
 
                 var e: Event = {
                     action: "Place Order",
@@ -128,7 +130,7 @@ export async function parseUserHistory(raw_events) {
                 var action: actionType;
                 var related: Event | undefined;
 
-                if (json.linked_position_id) {
+                if (json.linked_position_id != undefined) {
                     action = "Order Filled (Close Position)";
                     related = events.findLast((e) => e.position_id === json.linked_position_id && e.market === market);
                     // the "Place Order" is emit after Order Filled if filled immediately

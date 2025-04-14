@@ -21,7 +21,7 @@ export type actionType =
     | "Modify Collateral"
     | "Exercise Position"
     | "Liquidation"
-    | "Force Close Position "
+    | "Force Close Position"
     | "Swap";
 
 export type sideType = "Long" | "Short";
@@ -47,6 +47,8 @@ export interface Event {
     realized_pnl: number | undefined; // in USD
     timestamp: string;
     tx_digest: string;
+    dov_index: string | undefined; // for option collateral
+    sender: "user" | "cranker";
 }
 
 export async function parseUserHistory(raw_events) {
@@ -110,6 +112,8 @@ export async function parseUserHistory(raw_events) {
                     realized_pnl: undefined,
                     timestamp,
                     tx_digest,
+                    dov_index: json.dov_index,
+                    sender: "user",
                 };
                 events.push(e);
                 break;
@@ -124,7 +128,7 @@ export async function parseUserHistory(raw_events) {
                 var action: actionType;
                 var related: Event | undefined;
 
-                if (json.linked_position_id) {
+                if (json.linked_position_id != undefined) {
                     action = "Order Filled (Close Position)";
                     related = events.findLast((e) => e.position_id === json.linked_position_id && e.market === market);
                     // the "Place Order" is emit after Order Filled if filled immediately
@@ -136,7 +140,9 @@ export async function parseUserHistory(raw_events) {
                 var realized_trading_fee = Number(json.realized_trading_fee) + Number(json.realized_borrow_fee);
                 var realized_fee_in_usd = Number(json.realized_fee_in_usd) / 10 ** 9;
                 var realized_amount = json.realized_amount_sign ? Number(json.realized_amount) : -Number(json.realized_amount);
-                var realized_pnl = ((realized_amount - realized_trading_fee) * realized_fee_in_usd) / realized_trading_fee;
+                // console.log(realized_amount);
+                var realized_pnl =
+                    realized_trading_fee > 0 ? ((realized_amount - realized_trading_fee) * realized_fee_in_usd) / realized_trading_fee : 0;
 
                 var e: Event = {
                     action,
@@ -149,19 +155,21 @@ export async function parseUserHistory(raw_events) {
                     status: "Filled",
                     size,
                     base_token,
-                    collateral: related?.collateral,
+                    collateral: related?.collateral, // TODO: check for option collateral
                     collateral_token,
                     price: Number(price) / 10 ** 8, // WARNING: fixed decimal
                     realized_pnl,
                     timestamp,
                     tx_digest,
+                    dov_index: related?.dov_index,
+                    sender: "user",
                 };
                 events.push(e);
                 break;
 
             case RealizeFundingEvent.$typeName.split("::")[2]:
                 // same tx with order filled
-                const index = events.findLastIndex((e) => e.tx_digest == tx_digest);
+                var index = events.findLastIndex((e) => e.tx_digest == tx_digest);
                 // console.log(index);
                 if (index !== -1) {
                     // true => user paid to pool
@@ -183,7 +191,7 @@ export async function parseUserHistory(raw_events) {
                     action: "Cancel Order",
                     typeName: name,
                     order_id: json.order_id,
-                    position_id: undefined,
+                    position_id: related?.position_id,
                     market,
                     side: related?.side,
                     order_type: related?.order_type,
@@ -196,6 +204,8 @@ export async function parseUserHistory(raw_events) {
                     realized_pnl: undefined,
                     timestamp,
                     tx_digest,
+                    dov_index: related?.dov_index,
+                    sender: "user",
                 };
                 events.push(e);
                 break;
@@ -209,9 +219,9 @@ export async function parseUserHistory(raw_events) {
 
                 var collateral: number;
                 if (json.increased_collateral_amount) {
-                    collateral = Number(json.increased_collateral_amount);
+                    collateral = Number(json.increased_collateral_amount) * -1;
                 } else {
-                    collateral = Number(json.released_collateral_amount) * -1;
+                    collateral = Number(json.released_collateral_amount);
                 }
 
                 var e: Event = {
@@ -231,6 +241,8 @@ export async function parseUserHistory(raw_events) {
                     realized_pnl: undefined,
                     timestamp,
                     tx_digest,
+                    dov_index: related?.dov_index,
+                    sender: "user",
                 };
                 events.push(e);
                 break;
@@ -259,6 +271,8 @@ export async function parseUserHistory(raw_events) {
                     realized_pnl: -Number(json.fee_amount_usd) / 10 ** 9,
                     timestamp,
                     tx_digest,
+                    dov_index: undefined,
+                    sender: "user",
                 };
                 events.push(e);
                 break;
@@ -340,60 +354,177 @@ export async function getGraphQLEvents(module: string, sender: string, beforeCur
     }
 }
 
-export async function getLiquidateFromSentio(userAddress: string, startTimestamp: number) {
+export async function getLiquidateFromSentio(userAddress: string, startTimestamp: number, events: Event[]): Promise<Event[]> {
     const datas = await getFromSentio("Liquidate", userAddress, startTimestamp.toString());
     // console.log(datas);
-    return datas.map((x) => {
+    let liquidate = datas.map((x) => {
         let collateral = Number(x.liquidator_fee) + Number(x.value_for_lp_pool);
+        let base_token = toToken(x.trading_token);
         let txHistory: Event = {
             action: "Liquidation",
-            typeName: undefined,
+            typeName: "LiquidateEvent",
             order_id: x.order_id,
             position_id: x.position_id,
-            market: `${x.trading_token}/USD`,
+            market: `${base_token}/USD`,
+            side: undefined,
+            order_type: "Market",
+            status: "Filled",
+            size: Number(x.position_size),
+            base_token,
+            collateral,
+            collateral_token: x.collateral_token,
+            price: Number(x.trading_price),
+            realized_pnl: -collateral * Number(x.collateral_price),
+            timestamp: x.timestamp,
+            tx_digest: x.transaction_hash,
+            dov_index: undefined,
+            sender: "cranker",
+        };
+
+        return txHistory;
+    });
+
+    liquidate = liquidate.map((x) => {
+        let related = events.findLast((e) => e.position_id == x.position_id && e.market == x.market);
+        // console.log(x);
+        // console.log(related);
+        if (related) {
+            x.side = related.side;
+            x.dov_index = related.dov_index;
+        }
+        return x;
+    });
+    // console.log(liquidate);
+    events = events.concat(liquidate);
+    events = events.sort((a, b) => Number(new Date(a.timestamp)) - Number(new Date(b.timestamp)));
+    return events;
+}
+
+export async function getOrderMatchFromSentio(userAddress: string, startTimestamp: number, events: Event[]): Promise<Event[]> {
+    const datas = await getFromSentio("OrderFilled", userAddress, startTimestamp.toString());
+    // console.log(datas);
+    let order_match = datas.map((x) => {
+        let base_token = toToken(x.trading_token);
+
+        let txHistory: Event = {
+            action: x.order_type == "Open" ? "Order Filled (Open Position)" : "Order Filled (Close Position)",
+            typeName: "OrderFilledEvent",
+            order_id: x.order_id,
+            position_id: x.position_id,
+            market: `${base_token}/USD`,
+            side: x.side,
+            order_type: undefined,
+            status: "Filled",
+            size: Number(x.filled_size),
+            base_token,
+            collateral: Number(x.realized_amount),
+            collateral_token: x.collateral_token,
+            price: Number(x.filled_price),
+            realized_pnl: Number(x.realized_pnl),
+            timestamp: x.timestamp,
+            tx_digest: x.transaction_hash,
+            dov_index: undefined,
+            sender: "cranker",
+        };
+
+        return txHistory;
+    });
+
+    // deduplicate
+    order_match = order_match.filter((x) => events.findIndex((y) => y.tx_digest == x.tx_digest) == -1);
+    order_match = order_match.map((x) => {
+        let related = events.findLast((e) => e.order_id == x.order_id && e.market == x.market);
+        // console.log(x, related);
+        if (related) {
+            x.order_type = related.order_type;
+            x.collateral = related.collateral;
+            x.dov_index = related.dov_index;
+        } else {
+            x.order_type = "Market";
+        }
+        return x;
+    });
+    // console.log(order_match);
+    events = events.concat(order_match);
+    events = events.sort((a, b) => Number(new Date(a.timestamp)) - Number(new Date(b.timestamp)));
+    return events;
+}
+
+export async function getRealizeOptionFromSentio(userAddress: string, startTimestamp: number, events: Event[]): Promise<Event[]> {
+    const datas = await getFromSentio("RealizeOption", userAddress, startTimestamp.toString());
+    // console.log(datas);
+
+    let exercise = datas.map((x) => {
+        let base_token = toToken(x.base_token);
+        let txHistory: Event = {
+            action: "Exercise Position",
+            typeName: "RealizeOptionPositionEvent",
+            order_id: undefined,
+            position_id: x.position_id,
+            market: `${base_token}/USD`,
             side: undefined,
             order_type: "Market",
             status: "Filled",
             size: undefined,
-            base_token: x.trading_token,
-            collateral,
+            base_token,
+            collateral: Number(x.exercise_balance_value),
             collateral_token: x.collateral_token,
-            price: x.trading_price,
-            realized_pnl: collateral * Number(x.collateral_price),
+            price: undefined,
+            realized_pnl: Number(x.user_remaining_in_usd),
             timestamp: x.timestamp,
             tx_digest: x.transaction_hash,
+            dov_index: undefined,
+            sender: "cranker",
         };
 
+        // console.log(txHistory);
         return txHistory;
     });
-}
 
-export async function getOrderMatchFromSentio(userAddress: string, startTimestamp: number) {
-    const datas = await getFromSentio("OrderFilled", userAddress, startTimestamp.toString());
-    // console.log(datas);
-    return datas.map((x) => {
-        let realized_pnl = ((x.realized_amount - x.realized_trading_fee) * x.realized_fee_in_usd) / x.realized_trading_fee;
-        let txHistory: Event = {
-            action: x.order_type == "Open" ? "Order Filled (Open Position)" : "Order Filled (Close Position)",
-            typeName: undefined,
-            order_id: x.order_id,
-            position_id: x.position_id,
-            market: `${x.trading_token}/USD`,
-            side: x.side,
-            order_type: undefined,
-            status: "Filled",
-            size: x.filled_size,
-            base_token: x.trading_token,
-            collateral: undefined,
-            collateral_token: x.collateral_token,
-            price: x.filled_price,
-            realized_pnl,
-            timestamp: x.timestamp,
-            tx_digest: x.transaction_hash,
-        };
+    let filter_exercise = exercise.reduce((acc, x) => {
+        let related_index = events.findLastIndex(
+            (e) => e.position_id == x.position_id && e.market == x.market && e.tx_digest == x.tx_digest
+        );
+        // console.log(x);
+        // console.log(related_index);
+        if (related_index != -1) {
+            let related = events[related_index];
+            if (related.sender == "cranker") {
+                x.side = related.side;
+                x.size = related.size;
+                x.dov_index = related.dov_index;
 
-        return txHistory;
-    });
+                // add to close event
+                related.collateral = Number(related.collateral ?? 0) + Number(x.collateral ?? 0);
+                related.realized_pnl = Number(related.realized_pnl ?? 0) + Number(x.realized_pnl ?? 0);
+                x.collateral = undefined;
+                x.realized_pnl = undefined;
+
+                acc.push(x);
+            }
+        }
+        return acc;
+    }, new Array<Event>());
+    // console.log(filter_exercise);
+
+    events = events.concat(filter_exercise);
+    events = events.sort((a, b) => Number(new Date(a.timestamp)) - Number(new Date(b.timestamp)));
+    return events;
 }
 
 // getOrderMatchFromSentio("0x95f26ce574fc9ace2608807648d99a4dce17f1be8964613d5b972edc82849e9e", 0);
+// getRealizeOptionFromSentio("0x95f26ce574fc9ace2608807648d99a4dce17f1be8964613d5b972edc82849e9e", 0);
+
+function toToken(name: string): TOKEN {
+    switch (name) {
+        case "BTC":
+        case "ETH":
+        case "SOL":
+        case "APT":
+            return `w${name}`;
+        case "WUSDC":
+            return "wUSDC";
+        default:
+            return name as TOKEN;
+    }
+}

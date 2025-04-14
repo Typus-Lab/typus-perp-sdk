@@ -215,7 +215,7 @@ export async function parseUserHistory(raw_events) {
                 var base_token = typeArgToAsset(json.base_token.name) as TOKEN;
                 var collateral_token = typeArgToAsset(json.collateral_token.name) as TOKEN;
                 var market = `${base_token}/USD`;
-                var related = events.findLast((e) => e.position_id === json.position_id && e.market === market);
+                var related = events.find((e) => e.position_id === json.position_id && e.market === market);
 
                 var collateral: number;
                 if (json.increased_collateral_amount) {
@@ -385,7 +385,7 @@ export async function getLiquidateFromSentio(userAddress: string, startTimestamp
     });
 
     liquidate = liquidate.map((x) => {
-        let related = events.findLast((e) => e.position_id == x.position_id && e.market == x.market);
+        let related = events.find((e) => e.position_id == x.position_id && e.market == x.market);
         // console.log(x);
         // console.log(related);
         if (related) {

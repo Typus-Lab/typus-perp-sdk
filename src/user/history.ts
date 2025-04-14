@@ -94,17 +94,13 @@ export async function parseUserHistory(raw_events) {
                     order_type = "Stop Loss";
                 }
 
-                if (json.linked_position_id != undefined) {
-                    related = events.find((e) => e.position_id == json.linked_position_id && e.market == market);
-                }
-
                 var e: Event = {
                     action: "Place Order",
                     typeName: name,
                     order_id: json.order_id,
                     position_id: json.linked_position_id,
                     market,
-                    side: related ? related.side : json.is_long ? "Long" : "Short",
+                    side: json.is_long ? "Long" : "Short",
                     order_type,
                     status: json.filled ? "Filled" : "Open",
                     size,
@@ -401,6 +397,9 @@ export async function getOrderMatchFromSentio(userAddress: string, startTimestam
     // console.log(datas);
     let order_match = datas.map((x) => {
         let base_token = toToken(x.trading_token);
+        if (x.transaction_hash == "ELpp2GkW6PRVCLbKqJNgRrNTch2py42rA6PG9JRJnnfm") {
+            console.log({ x });
+        }
         let txHistory: Event = {
             action: x.order_type == "Open" ? "Order Filled (Open Position)" : "Order Filled (Close Position)",
             typeName: "OrderFilledEvent",

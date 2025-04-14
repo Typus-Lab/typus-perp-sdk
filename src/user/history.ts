@@ -405,9 +405,7 @@ export async function getOrderMatchFromSentio(userAddress: string, startTimestam
     // console.log(datas);
     let order_match = datas.map((x) => {
         let base_token = toToken(x.trading_token);
-        if (x.transaction_hash == "ELpp2GkW6PRVCLbKqJNgRrNTch2py42rA6PG9JRJnnfm") {
-            console.log({ x });
-        }
+
         let txHistory: Event = {
             action: x.order_type == "Open" ? "Order Filled (Open Position)" : "Order Filled (Close Position)",
             typeName: "OrderFilledEvent",

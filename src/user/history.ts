@@ -48,6 +48,7 @@ export interface Event {
     timestamp: string;
     tx_digest: string;
     dov_index: string | undefined; // for option collateral
+    sender: "user" | "cranker";
 }
 
 export async function parseUserHistory(raw_events) {
@@ -112,6 +113,7 @@ export async function parseUserHistory(raw_events) {
                     timestamp,
                     tx_digest,
                     dov_index: json.dov_index,
+                    sender: "user",
                 };
                 events.push(e);
                 break;
@@ -138,6 +140,7 @@ export async function parseUserHistory(raw_events) {
                 var realized_trading_fee = Number(json.realized_trading_fee) + Number(json.realized_borrow_fee);
                 var realized_fee_in_usd = Number(json.realized_fee_in_usd) / 10 ** 9;
                 var realized_amount = json.realized_amount_sign ? Number(json.realized_amount) : -Number(json.realized_amount);
+                // console.log(realized_amount);
                 var realized_pnl =
                     realized_trading_fee > 0 ? ((realized_amount - realized_trading_fee) * realized_fee_in_usd) / realized_trading_fee : 0;
 
@@ -152,20 +155,21 @@ export async function parseUserHistory(raw_events) {
                     status: "Filled",
                     size,
                     base_token,
-                    collateral: related?.collateral,
+                    collateral: related?.collateral, // TODO: check for option collateral
                     collateral_token,
                     price: Number(price) / 10 ** 8, // WARNING: fixed decimal
                     realized_pnl,
                     timestamp,
                     tx_digest,
                     dov_index: related?.dov_index,
+                    sender: "user",
                 };
                 events.push(e);
                 break;
 
             case RealizeFundingEvent.$typeName.split("::")[2]:
                 // same tx with order filled
-                const index = events.findLastIndex((e) => e.tx_digest == tx_digest);
+                var index = events.findLastIndex((e) => e.tx_digest == tx_digest);
                 // console.log(index);
                 if (index !== -1) {
                     // true => user paid to pool
@@ -201,6 +205,7 @@ export async function parseUserHistory(raw_events) {
                     timestamp,
                     tx_digest,
                     dov_index: related?.dov_index,
+                    sender: "user",
                 };
                 events.push(e);
                 break;
@@ -237,6 +242,7 @@ export async function parseUserHistory(raw_events) {
                     timestamp,
                     tx_digest,
                     dov_index: related?.dov_index,
+                    sender: "user",
                 };
                 events.push(e);
                 break;
@@ -266,6 +272,7 @@ export async function parseUserHistory(raw_events) {
                     timestamp,
                     tx_digest,
                     dov_index: undefined,
+                    sender: "user",
                 };
                 events.push(e);
                 break;
@@ -362,15 +369,16 @@ export async function getLiquidateFromSentio(userAddress: string, startTimestamp
             side: undefined,
             order_type: "Market",
             status: "Filled",
-            size: x.position_size,
+            size: Number(x.position_size),
             base_token,
             collateral,
             collateral_token: x.collateral_token,
-            price: x.trading_price,
+            price: Number(x.trading_price),
             realized_pnl: -collateral * Number(x.collateral_price),
             timestamp: x.timestamp,
             tx_digest: x.transaction_hash,
             dov_index: undefined,
+            sender: "cranker",
         };
 
         return txHistory;
@@ -409,15 +417,16 @@ export async function getOrderMatchFromSentio(userAddress: string, startTimestam
             side: x.side,
             order_type: undefined,
             status: "Filled",
-            size: x.filled_size,
+            size: Number(x.filled_size),
             base_token,
-            collateral: undefined,
+            collateral: Number(x.realized_amount),
             collateral_token: x.collateral_token,
-            price: x.filled_price,
-            realized_pnl: x.realized_pnl,
+            price: Number(x.filled_price),
+            realized_pnl: Number(x.realized_pnl),
             timestamp: x.timestamp,
             tx_digest: x.transaction_hash,
             dov_index: undefined,
+            sender: "cranker",
         };
 
         return txHistory;
@@ -467,25 +476,40 @@ export async function getRealizeOptionFromSentio(userAddress: string, startTimes
             timestamp: x.timestamp,
             tx_digest: x.transaction_hash,
             dov_index: undefined,
+            sender: "cranker",
         };
 
         // console.log(txHistory);
         return txHistory;
     });
 
-    exercise = exercise.map((x) => {
-        let related = events.findLast((e) => e.position_id == x.position_id && e.market == x.market);
+    let filter_exercise = exercise.reduce((acc, x) => {
+        let related_index = events.findLastIndex(
+            (e) => e.position_id == x.position_id && e.market == x.market && e.tx_digest == x.tx_digest
+        );
         // console.log(x);
-        // console.log(related);
-        if (related) {
-            x.side = related.side;
-            x.size = related.size;
-            x.dov_index = related.dov_index;
+        // console.log(related_index);
+        if (related_index != -1) {
+            let related = events[related_index];
+            if (related.sender == "cranker") {
+                x.side = related.side;
+                x.size = related.size;
+                x.dov_index = related.dov_index;
+
+                // add to close event
+                related.collateral = Number(related.collateral ?? 0) + Number(x.collateral ?? 0);
+                related.realized_pnl = Number(related.realized_pnl ?? 0) + Number(x.realized_pnl ?? 0);
+                x.collateral = undefined;
+                x.realized_pnl = undefined;
+
+                acc.push(x);
+            }
         }
-        return x;
-    });
-    // console.log(exercise);
-    events = events.concat(exercise);
+        return acc;
+    }, new Array<Event>());
+    // console.log(filter_exercise);
+
+    events = events.concat(filter_exercise);
     events = events.sort((a, b) => Number(new Date(a.timestamp)) - Number(new Date(b.timestamp)));
     return events;
 }

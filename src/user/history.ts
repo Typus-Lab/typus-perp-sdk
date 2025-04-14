@@ -230,7 +230,13 @@ export async function parseUserHistory(raw_events) {
                     order_id: undefined,
                     position_id: json.position_id,
                     market,
-                    side: related?.side,
+                    side: !related
+                        ? undefined
+                        : related.action === "Order Filled (Open Position)"
+                          ? related.side
+                          : related.side === "Long"
+                            ? "Short"
+                            : "Long",
                     order_type: related?.order_type,
                     status: "Filled",
                     size: related?.size,

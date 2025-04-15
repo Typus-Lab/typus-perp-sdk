@@ -31,12 +31,6 @@ export async function createTradingOrder(
     let TOKEN = input.cToken;
     let BASE_TOKEN = input.tradingToken;
 
-    let tokens = Array.from(new Set([TOKEN, BASE_TOKEN]));
-    await updatePyth(pythClient, tx, tokens);
-    for (let token of tokens) {
-        updateOracleWithPythUsd(pythClient, tx, config.package.oracle, token);
-    }
-
     let cToken = tokenType[NETWORK][TOKEN];
     let baseToken = tokenType[NETWORK][BASE_TOKEN];
 
@@ -62,6 +56,12 @@ export async function createTradingOrder(
 
             [coin] = tx.splitCoins(destination, [input.amount]);
         }
+    }
+
+    let tokens = Array.from(new Set([TOKEN, BASE_TOKEN]));
+    await updatePyth(pythClient, tx, tokens);
+    for (let token of tokens) {
+        updateOracleWithPythUsd(pythClient, tx, config.package.oracle, token);
     }
 
     _createTradingOrder(tx, [cToken, baseToken], {

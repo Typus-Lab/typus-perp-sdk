@@ -44,7 +44,10 @@ export const LIQUIDITY_POOL =
     NETWORK == "MAINNET"
         ? "0x9973b7dd68ab8ba18702d913191a4c62c597847d9cd9f0b5bd97f1b938fc9a0a"
         : "0x54447a759a238f93ff847177bd87ace4b6ebc83553080611b93ac394122ecc4d";
-export const LIQUIDITY_POOL_0 = NETWORK == "MAINNET" ? "0x98110aae0ffaf294259066380a2d35aba74e42860f1e87ee9c201f471eb3ba03" : "";
+export const LIQUIDITY_POOL_0 =
+    NETWORK == "MAINNET"
+        ? "0x98110aae0ffaf294259066380a2d35aba74e42860f1e87ee9c201f471eb3ba03"
+        : "0xc7adb5c9e318690dd43802ff50071aff9ffcc51e48abfe0ee0b5323a8c02c676";
 // MarketRegistry
 export const MARKET =
     NETWORK == "MAINNET"
@@ -72,7 +75,10 @@ export const STAKE_POOL =
     NETWORK == "MAINNET"
         ? "0x2cdf93717f87a8a7aeb98b27777b3b643f0ae2b277f44e6bcda0fc655a47d3e0"
         : "0x36d3dbde4236a40464220bfee930a4267312e16120f3a3e4c714f20fb8810402";
-export const STAKE_POOL_0 = NETWORK == "MAINNET" ? "0x5c984987380805fbaaf78f41d8ff1973807b6c85176aa87cf5a58518e0a87418" : "";
+export const STAKE_POOL_0 =
+    NETWORK == "MAINNET"
+        ? "0x5c984987380805fbaaf78f41d8ff1973807b6c85176aa87cf5a58518e0a87418"
+        : "0x0288a12a5447bc2fd9bc102e7a5b31a4cc61eaa7d1d7cb2d21cbe2782a1147e6";
 export const STAKE_POOL_VERSION =
     NETWORK == "MAINNET"
         ? "0xdf3ed1599218b2415b2cd7fa06296f7f647676019b2873ec18e55a626c584f1b"

@@ -172,7 +172,10 @@ export async function getTlpFeeFromSentio(): Promise<number> {
                     alias: "",
                     id: "a",
                     labelSelector: {},
-                    aggregate: null,
+                    aggregate: {
+                        op: "SUM",
+                        grouping: [],
+                    },
                     functions: [],
                     disabled: false,
                 },

@@ -10,17 +10,17 @@ import { getLpPool, getLpPools, NETWORK } from "src";
 
     // skip dynamic field fetching
     let lpPool = await getLpPool(config);
-    console.log(lpPool);
+    console.log(lpPool.poolInfo);
 
     // avaliable token types to mint the lp tokens (3 token types supported)
-    console.log(lpPool.liquidityTokens);
+    // console.log(lpPool.liquidityTokens.map((m) => m.name));
 
     //
-    console.log(lpPool.tokenPools);
+    console.log(lpPool.tokenPools.map((m) => [m.tokenType.name, m.state]));
 
     // maxCapacity, targetWeightBp
-    console.log(lpPool.tokenPools[1].config.spotConfig);
+    // console.log(lpPool.tokenPools[1].config.spotConfig);
 
     // utilizationThresholdBp0
-    console.log(lpPool.tokenPools[1].config.marginConfig);
+    // console.log(lpPool.tokenPools[1].config.marginConfig);
 })();

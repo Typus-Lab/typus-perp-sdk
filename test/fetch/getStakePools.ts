@@ -16,6 +16,8 @@ import { getStakePool, getStakePools, NETWORK } from "src";
         stakePool.incentives.map((i) => i.tokenType.name)
     );
 
-    console.log("config: ", stakePool.incentives[0].config);
-    console.log("info: ", stakePool.incentives[0].info);
+    if (stakePool.incentives.length > 0) {
+        console.log("config: ", stakePool.incentives[0].config);
+        console.log("info: ", stakePool.incentives[0].info);
+    }
 })();

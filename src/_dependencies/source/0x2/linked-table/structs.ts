@@ -21,153 +21,153 @@ import {
 } from "../../../../_framework/reified";
 import { FieldsWithTypes, composeSuiType, compressSuiType, parseTypeName } from "../../../../_framework/util";
 import { Option } from "../../0x1/option/structs";
-import { ID } from "../../0x2/object/structs";
-import { PKG_V1 } from "../index";
+import { PKG_V26 } from "../index";
+import { UID } from "../object/structs";
 import { BcsType, bcs } from "@mysten/sui/bcs";
 import { SuiClient, SuiObjectData, SuiParsedData } from "@mysten/sui/client";
 import { fromB64 } from "@mysten/sui/utils";
 
-/* ============================== LinkedList =============================== */
+/* ============================== LinkedTable =============================== */
 
-export function isLinkedList(type: string): boolean {
+export function isLinkedTable(type: string): boolean {
     type = compressSuiType(type);
-    return type.startsWith(`${PKG_V1}::linked_list::LinkedList` + "<");
+    return type.startsWith(`${PKG_V26}::linked_table::LinkedTable` + "<");
 }
 
-export interface LinkedListFields<K extends TypeArgument, V extends PhantomTypeArgument> {
-    id: ToField<ID>;
-    first: ToField<Option<K>>;
-    last: ToField<Option<K>>;
-    length: ToField<"u64">;
+export interface LinkedTableFields<K extends TypeArgument, V extends PhantomTypeArgument> {
+    id: ToField<UID>;
+    size: ToField<"u64">;
+    head: ToField<Option<K>>;
+    tail: ToField<Option<K>>;
 }
 
-export type LinkedListReified<K extends TypeArgument, V extends PhantomTypeArgument> = Reified<LinkedList<K, V>, LinkedListFields<K, V>>;
+export type LinkedTableReified<K extends TypeArgument, V extends PhantomTypeArgument> = Reified<LinkedTable<K, V>, LinkedTableFields<K, V>>;
 
-export class LinkedList<K extends TypeArgument, V extends PhantomTypeArgument> implements StructClass {
+export class LinkedTable<K extends TypeArgument, V extends PhantomTypeArgument> implements StructClass {
     __StructClass = true as const;
 
-    static readonly $typeName = `${PKG_V1}::linked_list::LinkedList`;
+    static readonly $typeName = `${PKG_V26}::linked_table::LinkedTable`;
     static readonly $numTypeParams = 2;
     static readonly $isPhantom = [false, true] as const;
 
-    readonly $typeName = LinkedList.$typeName;
-    readonly $fullTypeName: `${typeof PKG_V1}::linked_list::LinkedList<${ToTypeStr<K>}, ${PhantomToTypeStr<V>}>`;
+    readonly $typeName = LinkedTable.$typeName;
+    readonly $fullTypeName: `${typeof PKG_V26}::linked_table::LinkedTable<${ToTypeStr<K>}, ${PhantomToTypeStr<V>}>`;
     readonly $typeArgs: [ToTypeStr<K>, PhantomToTypeStr<V>];
-    readonly $isPhantom = LinkedList.$isPhantom;
+    readonly $isPhantom = LinkedTable.$isPhantom;
 
-    readonly id: ToField<ID>;
-    readonly first: ToField<Option<K>>;
-    readonly last: ToField<Option<K>>;
-    readonly length: ToField<"u64">;
+    readonly id: ToField<UID>;
+    readonly size: ToField<"u64">;
+    readonly head: ToField<Option<K>>;
+    readonly tail: ToField<Option<K>>;
 
-    private constructor(typeArgs: [ToTypeStr<K>, PhantomToTypeStr<V>], fields: LinkedListFields<K, V>) {
+    private constructor(typeArgs: [ToTypeStr<K>, PhantomToTypeStr<V>], fields: LinkedTableFields<K, V>) {
         this.$fullTypeName = composeSuiType(
-            LinkedList.$typeName,
+            LinkedTable.$typeName,
             ...typeArgs
-        ) as `${typeof PKG_V1}::linked_list::LinkedList<${ToTypeStr<K>}, ${PhantomToTypeStr<V>}>`;
+        ) as `${typeof PKG_V26}::linked_table::LinkedTable<${ToTypeStr<K>}, ${PhantomToTypeStr<V>}>`;
         this.$typeArgs = typeArgs;
 
         this.id = fields.id;
-        this.first = fields.first;
-        this.last = fields.last;
-        this.length = fields.length;
+        this.size = fields.size;
+        this.head = fields.head;
+        this.tail = fields.tail;
     }
 
     static reified<K extends Reified<TypeArgument, any>, V extends PhantomReified<PhantomTypeArgument>>(
         K: K,
         V: V
-    ): LinkedListReified<ToTypeArgument<K>, ToPhantomTypeArgument<V>> {
+    ): LinkedTableReified<ToTypeArgument<K>, ToPhantomTypeArgument<V>> {
         return {
-            typeName: LinkedList.$typeName,
+            typeName: LinkedTable.$typeName,
             fullTypeName: composeSuiType(
-                LinkedList.$typeName,
+                LinkedTable.$typeName,
                 ...[extractType(K), extractType(V)]
-            ) as `${typeof PKG_V1}::linked_list::LinkedList<${ToTypeStr<ToTypeArgument<K>>}, ${PhantomToTypeStr<ToPhantomTypeArgument<V>>}>`,
+            ) as `${typeof PKG_V26}::linked_table::LinkedTable<${ToTypeStr<ToTypeArgument<K>>}, ${PhantomToTypeStr<ToPhantomTypeArgument<V>>}>`,
             typeArgs: [extractType(K), extractType(V)] as [ToTypeStr<ToTypeArgument<K>>, PhantomToTypeStr<ToPhantomTypeArgument<V>>],
-            isPhantom: LinkedList.$isPhantom,
+            isPhantom: LinkedTable.$isPhantom,
             reifiedTypeArgs: [K, V],
-            fromFields: (fields: Record<string, any>) => LinkedList.fromFields([K, V], fields),
-            fromFieldsWithTypes: (item: FieldsWithTypes) => LinkedList.fromFieldsWithTypes([K, V], item),
-            fromBcs: (data: Uint8Array) => LinkedList.fromBcs([K, V], data),
-            bcs: LinkedList.bcs(toBcs(K)),
-            fromJSONField: (field: any) => LinkedList.fromJSONField([K, V], field),
-            fromJSON: (json: Record<string, any>) => LinkedList.fromJSON([K, V], json),
-            fromSuiParsedData: (content: SuiParsedData) => LinkedList.fromSuiParsedData([K, V], content),
-            fromSuiObjectData: (content: SuiObjectData) => LinkedList.fromSuiObjectData([K, V], content),
-            fetch: async (client: SuiClient, id: string) => LinkedList.fetch(client, [K, V], id),
-            new: (fields: LinkedListFields<ToTypeArgument<K>, ToPhantomTypeArgument<V>>) => {
-                return new LinkedList([extractType(K), extractType(V)], fields);
+            fromFields: (fields: Record<string, any>) => LinkedTable.fromFields([K, V], fields),
+            fromFieldsWithTypes: (item: FieldsWithTypes) => LinkedTable.fromFieldsWithTypes([K, V], item),
+            fromBcs: (data: Uint8Array) => LinkedTable.fromBcs([K, V], data),
+            bcs: LinkedTable.bcs(toBcs(K)),
+            fromJSONField: (field: any) => LinkedTable.fromJSONField([K, V], field),
+            fromJSON: (json: Record<string, any>) => LinkedTable.fromJSON([K, V], json),
+            fromSuiParsedData: (content: SuiParsedData) => LinkedTable.fromSuiParsedData([K, V], content),
+            fromSuiObjectData: (content: SuiObjectData) => LinkedTable.fromSuiObjectData([K, V], content),
+            fetch: async (client: SuiClient, id: string) => LinkedTable.fetch(client, [K, V], id),
+            new: (fields: LinkedTableFields<ToTypeArgument<K>, ToPhantomTypeArgument<V>>) => {
+                return new LinkedTable([extractType(K), extractType(V)], fields);
             },
             kind: "StructClassReified",
         };
     }
 
     static get r() {
-        return LinkedList.reified;
+        return LinkedTable.reified;
     }
 
     static phantom<K extends Reified<TypeArgument, any>, V extends PhantomReified<PhantomTypeArgument>>(
         K: K,
         V: V
-    ): PhantomReified<ToTypeStr<LinkedList<ToTypeArgument<K>, ToPhantomTypeArgument<V>>>> {
-        return phantom(LinkedList.reified(K, V));
+    ): PhantomReified<ToTypeStr<LinkedTable<ToTypeArgument<K>, ToPhantomTypeArgument<V>>>> {
+        return phantom(LinkedTable.reified(K, V));
     }
     static get p() {
-        return LinkedList.phantom;
+        return LinkedTable.phantom;
     }
 
     static get bcs() {
         return <K extends BcsType<any>>(K: K) =>
-            bcs.struct(`LinkedList<${K.name}>`, {
-                id: ID.bcs,
-                first: Option.bcs(K),
-                last: Option.bcs(K),
-                length: bcs.u64(),
+            bcs.struct(`LinkedTable<${K.name}>`, {
+                id: UID.bcs,
+                size: bcs.u64(),
+                head: Option.bcs(K),
+                tail: Option.bcs(K),
             });
     }
 
     static fromFields<K extends Reified<TypeArgument, any>, V extends PhantomReified<PhantomTypeArgument>>(
         typeArgs: [K, V],
         fields: Record<string, any>
-    ): LinkedList<ToTypeArgument<K>, ToPhantomTypeArgument<V>> {
-        return LinkedList.reified(typeArgs[0], typeArgs[1]).new({
-            id: decodeFromFields(ID.reified(), fields.id),
-            first: decodeFromFields(Option.reified(typeArgs[0]), fields.first),
-            last: decodeFromFields(Option.reified(typeArgs[0]), fields.last),
-            length: decodeFromFields("u64", fields.length),
+    ): LinkedTable<ToTypeArgument<K>, ToPhantomTypeArgument<V>> {
+        return LinkedTable.reified(typeArgs[0], typeArgs[1]).new({
+            id: decodeFromFields(UID.reified(), fields.id),
+            size: decodeFromFields("u64", fields.size),
+            head: decodeFromFields(Option.reified(typeArgs[0]), fields.head),
+            tail: decodeFromFields(Option.reified(typeArgs[0]), fields.tail),
         });
     }
 
     static fromFieldsWithTypes<K extends Reified<TypeArgument, any>, V extends PhantomReified<PhantomTypeArgument>>(
         typeArgs: [K, V],
         item: FieldsWithTypes
-    ): LinkedList<ToTypeArgument<K>, ToPhantomTypeArgument<V>> {
-        if (!isLinkedList(item.type)) {
-            throw new Error("not a LinkedList type");
+    ): LinkedTable<ToTypeArgument<K>, ToPhantomTypeArgument<V>> {
+        if (!isLinkedTable(item.type)) {
+            throw new Error("not a LinkedTable type");
         }
         assertFieldsWithTypesArgsMatch(item, typeArgs);
 
-        return LinkedList.reified(typeArgs[0], typeArgs[1]).new({
-            id: decodeFromFieldsWithTypes(ID.reified(), item.fields.id),
-            first: decodeFromFieldsWithTypes(Option.reified(typeArgs[0]), item.fields.first),
-            last: decodeFromFieldsWithTypes(Option.reified(typeArgs[0]), item.fields.last),
-            length: decodeFromFieldsWithTypes("u64", item.fields.length),
+        return LinkedTable.reified(typeArgs[0], typeArgs[1]).new({
+            id: decodeFromFieldsWithTypes(UID.reified(), item.fields.id),
+            size: decodeFromFieldsWithTypes("u64", item.fields.size),
+            head: decodeFromFieldsWithTypes(Option.reified(typeArgs[0]), item.fields.head),
+            tail: decodeFromFieldsWithTypes(Option.reified(typeArgs[0]), item.fields.tail),
         });
     }
 
     static fromBcs<K extends Reified<TypeArgument, any>, V extends PhantomReified<PhantomTypeArgument>>(
         typeArgs: [K, V],
         data: Uint8Array
-    ): LinkedList<ToTypeArgument<K>, ToPhantomTypeArgument<V>> {
-        return LinkedList.fromFields(typeArgs, LinkedList.bcs(toBcs(typeArgs[0])).parse(data));
+    ): LinkedTable<ToTypeArgument<K>, ToPhantomTypeArgument<V>> {
+        return LinkedTable.fromFields(typeArgs, LinkedTable.bcs(toBcs(typeArgs[0])).parse(data));
     }
 
     toJSONField() {
         return {
             id: this.id,
-            first: fieldToJSON<Option<K>>(`${Option.$typeName}<${this.$typeArgs[0]}>`, this.first),
-            last: fieldToJSON<Option<K>>(`${Option.$typeName}<${this.$typeArgs[0]}>`, this.last),
-            length: this.length.toString(),
+            size: this.size.toString(),
+            head: fieldToJSON<Option<K>>(`${Option.$typeName}<${this.$typeArgs[0]}>`, this.head),
+            tail: fieldToJSON<Option<K>>(`${Option.$typeName}<${this.$typeArgs[0]}>`, this.tail),
         };
     }
 
@@ -178,47 +178,47 @@ export class LinkedList<K extends TypeArgument, V extends PhantomTypeArgument> i
     static fromJSONField<K extends Reified<TypeArgument, any>, V extends PhantomReified<PhantomTypeArgument>>(
         typeArgs: [K, V],
         field: any
-    ): LinkedList<ToTypeArgument<K>, ToPhantomTypeArgument<V>> {
-        return LinkedList.reified(typeArgs[0], typeArgs[1]).new({
-            id: decodeFromJSONField(ID.reified(), field.id),
-            first: decodeFromJSONField(Option.reified(typeArgs[0]), field.first),
-            last: decodeFromJSONField(Option.reified(typeArgs[0]), field.last),
-            length: decodeFromJSONField("u64", field.length),
+    ): LinkedTable<ToTypeArgument<K>, ToPhantomTypeArgument<V>> {
+        return LinkedTable.reified(typeArgs[0], typeArgs[1]).new({
+            id: decodeFromJSONField(UID.reified(), field.id),
+            size: decodeFromJSONField("u64", field.size),
+            head: decodeFromJSONField(Option.reified(typeArgs[0]), field.head),
+            tail: decodeFromJSONField(Option.reified(typeArgs[0]), field.tail),
         });
     }
 
     static fromJSON<K extends Reified<TypeArgument, any>, V extends PhantomReified<PhantomTypeArgument>>(
         typeArgs: [K, V],
         json: Record<string, any>
-    ): LinkedList<ToTypeArgument<K>, ToPhantomTypeArgument<V>> {
-        if (json.$typeName !== LinkedList.$typeName) {
+    ): LinkedTable<ToTypeArgument<K>, ToPhantomTypeArgument<V>> {
+        if (json.$typeName !== LinkedTable.$typeName) {
             throw new Error("not a WithTwoGenerics json object");
         }
-        assertReifiedTypeArgsMatch(composeSuiType(LinkedList.$typeName, ...typeArgs.map(extractType)), json.$typeArgs, typeArgs);
+        assertReifiedTypeArgsMatch(composeSuiType(LinkedTable.$typeName, ...typeArgs.map(extractType)), json.$typeArgs, typeArgs);
 
-        return LinkedList.fromJSONField(typeArgs, json);
+        return LinkedTable.fromJSONField(typeArgs, json);
     }
 
     static fromSuiParsedData<K extends Reified<TypeArgument, any>, V extends PhantomReified<PhantomTypeArgument>>(
         typeArgs: [K, V],
         content: SuiParsedData
-    ): LinkedList<ToTypeArgument<K>, ToPhantomTypeArgument<V>> {
+    ): LinkedTable<ToTypeArgument<K>, ToPhantomTypeArgument<V>> {
         if (content.dataType !== "moveObject") {
             throw new Error("not an object");
         }
-        if (!isLinkedList(content.type)) {
-            throw new Error(`object at ${(content.fields as any).id} is not a LinkedList object`);
+        if (!isLinkedTable(content.type)) {
+            throw new Error(`object at ${(content.fields as any).id} is not a LinkedTable object`);
         }
-        return LinkedList.fromFieldsWithTypes(typeArgs, content);
+        return LinkedTable.fromFieldsWithTypes(typeArgs, content);
     }
 
     static fromSuiObjectData<K extends Reified<TypeArgument, any>, V extends PhantomReified<PhantomTypeArgument>>(
         typeArgs: [K, V],
         data: SuiObjectData
-    ): LinkedList<ToTypeArgument<K>, ToPhantomTypeArgument<V>> {
+    ): LinkedTable<ToTypeArgument<K>, ToPhantomTypeArgument<V>> {
         if (data.bcs) {
-            if (data.bcs.dataType !== "moveObject" || !isLinkedList(data.bcs.type)) {
-                throw new Error(`object at is not a LinkedList object`);
+            if (data.bcs.dataType !== "moveObject" || !isLinkedTable(data.bcs.type)) {
+                throw new Error(`object at is not a LinkedTable object`);
             }
 
             const gotTypeArgs = parseTypeName(data.bcs.type).typeArgs;
@@ -233,10 +233,10 @@ export class LinkedList<K extends TypeArgument, V extends PhantomTypeArgument> i
                 }
             }
 
-            return LinkedList.fromBcs(typeArgs, fromB64(data.bcs.bcsBytes));
+            return LinkedTable.fromBcs(typeArgs, fromB64(data.bcs.bcsBytes));
         }
         if (data.content) {
-            return LinkedList.fromSuiParsedData(typeArgs, data.content);
+            return LinkedTable.fromSuiParsedData(typeArgs, data.content);
         }
         throw new Error("Both `bcs` and `content` fields are missing from the data. Include `showBcs` or `showContent` in the request.");
     }
@@ -245,16 +245,16 @@ export class LinkedList<K extends TypeArgument, V extends PhantomTypeArgument> i
         client: SuiClient,
         typeArgs: [K, V],
         id: string
-    ): Promise<LinkedList<ToTypeArgument<K>, ToPhantomTypeArgument<V>>> {
+    ): Promise<LinkedTable<ToTypeArgument<K>, ToPhantomTypeArgument<V>>> {
         const res = await client.getObject({ id, options: { showBcs: true } });
         if (res.error) {
-            throw new Error(`error fetching LinkedList object at id ${id}: ${res.error.code}`);
+            throw new Error(`error fetching LinkedTable object at id ${id}: ${res.error.code}`);
         }
-        if (res.data?.bcs?.dataType !== "moveObject" || !isLinkedList(res.data.bcs.type)) {
-            throw new Error(`object at id ${id} is not a LinkedList object`);
+        if (res.data?.bcs?.dataType !== "moveObject" || !isLinkedTable(res.data.bcs.type)) {
+            throw new Error(`object at id ${id} is not a LinkedTable object`);
         }
 
-        return LinkedList.fromSuiObjectData(typeArgs, res.data);
+        return LinkedTable.fromSuiObjectData(typeArgs, res.data);
     }
 }
 
@@ -262,14 +262,13 @@ export class LinkedList<K extends TypeArgument, V extends PhantomTypeArgument> i
 
 export function isNode(type: string): boolean {
     type = compressSuiType(type);
-    return type.startsWith(`${PKG_V1}::linked_list::Node` + "<");
+    return type.startsWith(`${PKG_V26}::linked_table::Node` + "<");
 }
 
 export interface NodeFields<K extends TypeArgument, V extends TypeArgument> {
-    value: ToField<V>;
     prev: ToField<Option<K>>;
     next: ToField<Option<K>>;
-    exists: ToField<"bool">;
+    value: ToField<V>;
 }
 
 export type NodeReified<K extends TypeArgument, V extends TypeArgument> = Reified<Node<K, V>, NodeFields<K, V>>;
@@ -277,31 +276,29 @@ export type NodeReified<K extends TypeArgument, V extends TypeArgument> = Reifie
 export class Node<K extends TypeArgument, V extends TypeArgument> implements StructClass {
     __StructClass = true as const;
 
-    static readonly $typeName = `${PKG_V1}::linked_list::Node`;
+    static readonly $typeName = `${PKG_V26}::linked_table::Node`;
     static readonly $numTypeParams = 2;
     static readonly $isPhantom = [false, false] as const;
 
     readonly $typeName = Node.$typeName;
-    readonly $fullTypeName: `${typeof PKG_V1}::linked_list::Node<${ToTypeStr<K>}, ${ToTypeStr<V>}>`;
+    readonly $fullTypeName: `${typeof PKG_V26}::linked_table::Node<${ToTypeStr<K>}, ${ToTypeStr<V>}>`;
     readonly $typeArgs: [ToTypeStr<K>, ToTypeStr<V>];
     readonly $isPhantom = Node.$isPhantom;
 
-    readonly value: ToField<V>;
     readonly prev: ToField<Option<K>>;
     readonly next: ToField<Option<K>>;
-    readonly exists: ToField<"bool">;
+    readonly value: ToField<V>;
 
     private constructor(typeArgs: [ToTypeStr<K>, ToTypeStr<V>], fields: NodeFields<K, V>) {
         this.$fullTypeName = composeSuiType(
             Node.$typeName,
             ...typeArgs
-        ) as `${typeof PKG_V1}::linked_list::Node<${ToTypeStr<K>}, ${ToTypeStr<V>}>`;
+        ) as `${typeof PKG_V26}::linked_table::Node<${ToTypeStr<K>}, ${ToTypeStr<V>}>`;
         this.$typeArgs = typeArgs;
 
-        this.value = fields.value;
         this.prev = fields.prev;
         this.next = fields.next;
-        this.exists = fields.exists;
+        this.value = fields.value;
     }
 
     static reified<K extends Reified<TypeArgument, any>, V extends Reified<TypeArgument, any>>(
@@ -313,7 +310,7 @@ export class Node<K extends TypeArgument, V extends TypeArgument> implements Str
             fullTypeName: composeSuiType(
                 Node.$typeName,
                 ...[extractType(K), extractType(V)]
-            ) as `${typeof PKG_V1}::linked_list::Node<${ToTypeStr<ToTypeArgument<K>>}, ${ToTypeStr<ToTypeArgument<V>>}>`,
+            ) as `${typeof PKG_V26}::linked_table::Node<${ToTypeStr<ToTypeArgument<K>>}, ${ToTypeStr<ToTypeArgument<V>>}>`,
             typeArgs: [extractType(K), extractType(V)] as [ToTypeStr<ToTypeArgument<K>>, ToTypeStr<ToTypeArgument<V>>],
             isPhantom: Node.$isPhantom,
             reifiedTypeArgs: [K, V],
@@ -350,10 +347,9 @@ export class Node<K extends TypeArgument, V extends TypeArgument> implements Str
     static get bcs() {
         return <K extends BcsType<any>, V extends BcsType<any>>(K: K, V: V) =>
             bcs.struct(`Node<${K.name}, ${V.name}>`, {
-                value: V,
                 prev: Option.bcs(K),
                 next: Option.bcs(K),
-                exists: bcs.bool(),
+                value: V,
             });
     }
 
@@ -362,10 +358,9 @@ export class Node<K extends TypeArgument, V extends TypeArgument> implements Str
         fields: Record<string, any>
     ): Node<ToTypeArgument<K>, ToTypeArgument<V>> {
         return Node.reified(typeArgs[0], typeArgs[1]).new({
-            value: decodeFromFields(typeArgs[1], fields.value),
             prev: decodeFromFields(Option.reified(typeArgs[0]), fields.prev),
             next: decodeFromFields(Option.reified(typeArgs[0]), fields.next),
-            exists: decodeFromFields("bool", fields.exists),
+            value: decodeFromFields(typeArgs[1], fields.value),
         });
     }
 
@@ -379,10 +374,9 @@ export class Node<K extends TypeArgument, V extends TypeArgument> implements Str
         assertFieldsWithTypesArgsMatch(item, typeArgs);
 
         return Node.reified(typeArgs[0], typeArgs[1]).new({
-            value: decodeFromFieldsWithTypes(typeArgs[1], item.fields.value),
             prev: decodeFromFieldsWithTypes(Option.reified(typeArgs[0]), item.fields.prev),
             next: decodeFromFieldsWithTypes(Option.reified(typeArgs[0]), item.fields.next),
-            exists: decodeFromFieldsWithTypes("bool", item.fields.exists),
+            value: decodeFromFieldsWithTypes(typeArgs[1], item.fields.value),
         });
     }
 
@@ -395,10 +389,9 @@ export class Node<K extends TypeArgument, V extends TypeArgument> implements Str
 
     toJSONField() {
         return {
-            value: fieldToJSON<V>(this.$typeArgs[1], this.value),
             prev: fieldToJSON<Option<K>>(`${Option.$typeName}<${this.$typeArgs[0]}>`, this.prev),
             next: fieldToJSON<Option<K>>(`${Option.$typeName}<${this.$typeArgs[0]}>`, this.next),
-            exists: this.exists,
+            value: fieldToJSON<V>(this.$typeArgs[1], this.value),
         };
     }
 
@@ -411,10 +404,9 @@ export class Node<K extends TypeArgument, V extends TypeArgument> implements Str
         field: any
     ): Node<ToTypeArgument<K>, ToTypeArgument<V>> {
         return Node.reified(typeArgs[0], typeArgs[1]).new({
-            value: decodeFromJSONField(typeArgs[1], field.value),
             prev: decodeFromJSONField(Option.reified(typeArgs[0]), field.prev),
             next: decodeFromJSONField(Option.reified(typeArgs[0]), field.next),
-            exists: decodeFromJSONField("bool", field.exists),
+            value: decodeFromJSONField(typeArgs[1], field.value),
         });
     }
 

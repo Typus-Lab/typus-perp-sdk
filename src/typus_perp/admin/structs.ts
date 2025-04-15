@@ -16,7 +16,7 @@ import {
 } from "../../_framework/reified";
 import { FieldsWithTypes, composeSuiType, compressSuiType } from "../../_framework/util";
 import { Vector } from "../../_framework/vector";
-import { PKG_V1, PKG_V2 } from "../index";
+import { PKG_V1 } from "../index";
 import { bcs } from "@mysten/sui/bcs";
 import { SuiClient, SuiObjectData, SuiParsedData } from "@mysten/sui/client";
 import { fromB64, fromHEX, toHEX } from "@mysten/sui/utils";
@@ -514,7 +514,7 @@ export class ProtocolFeeEvent implements StructClass {
 
 export function isPutInsuranceFundEvent(type: string): boolean {
     type = compressSuiType(type);
-    return type === `${PKG_V2}::admin::PutInsuranceFundEvent`;
+    return type === `${PKG_V1}::admin::PutInsuranceFundEvent`;
 }
 
 export interface PutInsuranceFundEventFields {
@@ -527,12 +527,12 @@ export type PutInsuranceFundEventReified = Reified<PutInsuranceFundEvent, PutIns
 export class PutInsuranceFundEvent implements StructClass {
     __StructClass = true as const;
 
-    static readonly $typeName = `${PKG_V2}::admin::PutInsuranceFundEvent`;
+    static readonly $typeName = `${PKG_V1}::admin::PutInsuranceFundEvent`;
     static readonly $numTypeParams = 0;
     static readonly $isPhantom = [] as const;
 
     readonly $typeName = PutInsuranceFundEvent.$typeName;
-    readonly $fullTypeName: `${typeof PKG_V2}::admin::PutInsuranceFundEvent`;
+    readonly $fullTypeName: `${typeof PKG_V1}::admin::PutInsuranceFundEvent`;
     readonly $typeArgs: [];
     readonly $isPhantom = PutInsuranceFundEvent.$isPhantom;
 
@@ -543,7 +543,7 @@ export class PutInsuranceFundEvent implements StructClass {
         this.$fullTypeName = composeSuiType(
             PutInsuranceFundEvent.$typeName,
             ...typeArgs
-        ) as `${typeof PKG_V2}::admin::PutInsuranceFundEvent`;
+        ) as `${typeof PKG_V1}::admin::PutInsuranceFundEvent`;
         this.$typeArgs = typeArgs;
 
         this.token = fields.token;
@@ -553,7 +553,7 @@ export class PutInsuranceFundEvent implements StructClass {
     static reified(): PutInsuranceFundEventReified {
         return {
             typeName: PutInsuranceFundEvent.$typeName,
-            fullTypeName: composeSuiType(PutInsuranceFundEvent.$typeName, ...[]) as `${typeof PKG_V2}::admin::PutInsuranceFundEvent`,
+            fullTypeName: composeSuiType(PutInsuranceFundEvent.$typeName, ...[]) as `${typeof PKG_V1}::admin::PutInsuranceFundEvent`,
             typeArgs: [] as [],
             isPhantom: PutInsuranceFundEvent.$isPhantom,
             reifiedTypeArgs: [],

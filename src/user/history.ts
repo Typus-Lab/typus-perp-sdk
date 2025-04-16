@@ -447,6 +447,8 @@ export async function getOrderMatchFromSentio(userAddress: string, startTimestam
             x.dov_index = related.dov_index;
         } else {
             x.order_type = "Market";
+            let related = events.findLast((e) => e.position_id == x.position_id && e.market == x.market);
+            x.dov_index = related?.dov_index;
         }
         return x;
     });

@@ -475,7 +475,7 @@ export async function getRealizeOptionFromSentio(userAddress: string, startTimes
             status: "Filled",
             size: undefined,
             base_token,
-            collateral: Number(x.exercise_balance_value),
+            collateral: Number(x.user_remaining_value),
             collateral_token: x.collateral_token,
             price: undefined,
             realized_pnl: Number(x.user_remaining_in_usd),
@@ -503,7 +503,7 @@ export async function getRealizeOptionFromSentio(userAddress: string, startTimes
                 x.dov_index = related.dov_index;
 
                 // add to close event
-                related.collateral = Number(related.collateral ?? 0) + Number(x.collateral ?? 0);
+                related.collateral = x.collateral;
                 related.realized_pnl = Number(related.realized_pnl ?? 0) + Number(x.realized_pnl ?? 0);
                 x.collateral = undefined;
                 x.realized_pnl = undefined;

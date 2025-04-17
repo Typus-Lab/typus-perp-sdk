@@ -117,7 +117,7 @@ export async function getVolumeFromSentio(): Promise<any[]> {
                     aggregation: {
                         total: {},
                     },
-                    groupBy: ["trading_token"],
+                    groupBy: ["base_token"],
                     limit: 0,
                     functions: [],
                     color: "",
@@ -139,7 +139,7 @@ export async function getVolumeFromSentio(): Promise<any[]> {
     });
 
     let data = await response.json();
-    let symbols: string[] = data.results[0].matrix.samples.map((s) => s.metric.labels.trading_token);
+    let symbols: string[] = data.results[0].matrix.samples.map((s) => s.metric.labels.base_token);
     console.log(symbols);
 
     let volume: Volume[][] = data.results[0].matrix.samples.map((s) => s.values);

@@ -365,7 +365,7 @@ export async function getLiquidateFromSentio(userAddress: string, startTimestamp
     // console.log(datas);
     let liquidate = datas.map((x) => {
         let collateral = Number(x.liquidator_fee) + Number(x.value_for_lp_pool);
-        let base_token = toToken(x.trading_token);
+        let base_token = toToken(x.base_token);
         let txHistory: Event = {
             action: "Liquidation",
             typeName: "LiquidateEvent",
@@ -410,7 +410,7 @@ export async function getOrderMatchFromSentio(userAddress: string, startTimestam
     const datas = await getFromSentio("OrderFilled", userAddress, startTimestamp.toString());
     // console.log(datas);
     let order_match = datas.map((x) => {
-        let base_token = toToken(x.trading_token);
+        let base_token = toToken(x.base_token);
 
         let txHistory: Event = {
             action: x.order_type == "Open" ? "Order Filled (Open Position)" : "Order Filled (Close Position)",

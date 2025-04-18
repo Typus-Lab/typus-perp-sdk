@@ -1,11 +1,37 @@
 import { Transaction } from "@mysten/sui/transactions";
 import { LiquidityPool } from "../typus_perp/lp-pool/structs";
 import { burnLp, mintLp, updateLiquidityValue, swap as _swap } from "../typus_perp/lp-pool/functions";
-import { harvestPerUserShare, stake, unstake, unsubscribe as _unsubscribe } from "../typus_stake_pool/stake-pool/functions";
+import {
+    harvestPerUserShare,
+    stake,
+    unstake,
+    unsubscribe as _unsubscribe,
+    snapshot as _snapshot,
+} from "../typus_stake_pool/stake-pool/functions";
 import { PythClient, TypusConfig, updateOracleWithPythUsd, updatePyth } from "@typus/typus-sdk/dist/src/utils";
 import { CLOCK, tokenType, typeArgToAsset, TOKEN, oracle } from "@typus/typus-sdk/dist/src/constants";
 import { LP_POOL, NETWORK, PERP_VERSION, STAKE_POOL, STAKE_POOL_VERSION, TLP_TOKEN, TLP_TREASURY_CAP } from "..";
 import { StakePool } from "src/typus_stake_pool/stake-pool/structs";
+
+export async function snapshot(
+    config: TypusConfig,
+    tx: Transaction,
+    input: {
+        userShareId: string;
+    }
+): Promise<Transaction> {
+    _snapshot(tx, {
+        version: STAKE_POOL_VERSION,
+        registry: STAKE_POOL,
+        index: BigInt(0),
+        clock: CLOCK,
+        userShareId: BigInt(input.userShareId),
+        typusEcosystemVersion: config.version.typus,
+        typusUserRegistry: config.registry.typus.user,
+    });
+
+    return tx;
+}
 
 export async function mintStakeLp(
     config: TypusConfig,

@@ -4,7 +4,7 @@ import { SuiClient } from "@mysten/sui/client";
 import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519";
 import { Transaction } from "@mysten/sui/transactions";
 import { NETWORK, STAKE_POOL, STAKE_POOL_VERSION } from "src";
-import { updateTlpPrice } from "src/typus_stake_pool/stake-pool/functions";
+import { updatePoolInfoU64Padding } from "src/typus_stake_pool/stake-pool/functions";
 import mne from "mnemonic.json";
 
 (async () => {
@@ -17,11 +17,12 @@ import mne from "mnemonic.json";
 
     let tx = new Transaction();
 
-    updateTlpPrice(tx, {
+    updatePoolInfoU64Padding(tx, {
         version: STAKE_POOL_VERSION,
         registry: STAKE_POOL,
         index: BigInt(0),
         tlpPrice: BigInt(10000),
+        usdPerExp: BigInt(200),
     });
 
     let res = await provider.signAndExecuteTransaction({ signer: keypair, transaction: tx });

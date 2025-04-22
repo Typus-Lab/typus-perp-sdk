@@ -61,19 +61,6 @@ export function allocateIncentive(tx: Transaction, args: AllocateIncentiveArgs, 
     });
 }
 
-export interface CalculateExpArgs {
-    userShare: TransactionObjectInput;
-    clock: TransactionObjectInput;
-    tlpPrice: bigint | TransactionArgument;
-}
-
-export function calculateExp(tx: Transaction, args: CalculateExpArgs, published_at: string = PUBLISHED_AT) {
-    return tx.moveCall({
-        target: `${published_at}::stake_pool::calculate_exp`,
-        arguments: [obj(tx, args.userShare), obj(tx, args.clock), pure(tx, args.tlpPrice, `u64`)],
-    });
-}
-
 export interface CalculateIncentiveArgs {
     stakePool: TransactionObjectInput;
     incentiveToken: TransactionObjectInput;
@@ -467,17 +454,24 @@ export function updateIncentiveConfig(
     });
 }
 
-export interface UpdateTlpPriceArgs {
+export interface UpdatePoolInfoU64PaddingArgs {
     version: TransactionObjectInput;
     registry: TransactionObjectInput;
     index: bigint | TransactionArgument;
     tlpPrice: bigint | TransactionArgument;
+    usdPerExp: bigint | TransactionArgument;
 }
 
-export function updateTlpPrice(tx: Transaction, args: UpdateTlpPriceArgs, published_at: string = PUBLISHED_AT) {
+export function updatePoolInfoU64Padding(tx: Transaction, args: UpdatePoolInfoU64PaddingArgs, published_at: string = PUBLISHED_AT) {
     return tx.moveCall({
-        target: `${published_at}::stake_pool::update_tlp_price`,
-        arguments: [obj(tx, args.version), obj(tx, args.registry), pure(tx, args.index, `u64`), pure(tx, args.tlpPrice, `u64`)],
+        target: `${published_at}::stake_pool::update_pool_info_u64_padding`,
+        arguments: [
+            obj(tx, args.version),
+            obj(tx, args.registry),
+            pure(tx, args.index, `u64`),
+            pure(tx, args.tlpPrice, `u64`),
+            pure(tx, args.usdPerExp, `u64`),
+        ],
     });
 }
 

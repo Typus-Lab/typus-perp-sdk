@@ -197,8 +197,8 @@ export async function getTotalVolumeFromSentio(): Promise<number> {
     });
 
     let data = await response.json();
-    let result = data.results[0].matrix.samples[0].values[0].value;
-    // console.log(result);
+    let result = data.results[0].matrix.samples[0].values.at(-1).value;
+    console.log(result);
 
     return result;
 }
@@ -258,7 +258,7 @@ export async function getAccumulatedUser(): Promise<number> {
     let data = await response.json();
     // console.log(data.results[0].matrix.samples[0].values[0].value);
 
-    let result = data.results[0].matrix.samples[0].values[0].value;
+    let result = data.results[0].matrix.samples[0].values.at(-1).value;
     // console.log(result);
 
     return result;

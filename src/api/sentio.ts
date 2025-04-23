@@ -198,7 +198,7 @@ export async function getTotalVolumeFromSentio(): Promise<number> {
 
     let data = await response.json();
     let result = data.results[0].matrix.samples[0].values.at(-1).value;
-    console.log(result);
+    // console.log(result);
 
     return result;
 }

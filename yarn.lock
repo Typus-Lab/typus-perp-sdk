@@ -625,10 +625,10 @@
   dependencies:
     "@types/yargs-parser" "*"
 
-"@typus/typus-sdk@1.6.16":
-  version "1.6.16"
-  resolved "https://registry.yarnpkg.com/@typus/typus-sdk/-/typus-sdk-1.6.16.tgz#1ec8d9a8c9cbd666d8ce790ef9ebcb7e6c625692"
-  integrity sha512-aETEGf0EHZtCjG4mkGqwAj5UjFmE/B6qVDrUUQKuxeBETkGKwUYsqDq+fmIGAFXYVcr8LeOSkPOhTu4oqb+syQ==
+"@typus/typus-sdk@1.6.18":
+  version "1.6.18"
+  resolved "https://registry.yarnpkg.com/@typus/typus-sdk/-/typus-sdk-1.6.18.tgz#77c96f281a0603e7fb319da65fccec94b2e79711"
+  integrity sha512-YLVLMKk7zTE8dJ2gweDuF99uxMvw5zs3fShn7x92rG3Q6jShPII6AHEvjlK2Gw28+nBsuv9y/TJwlV81wxdvHw==
   dependencies:
     "@mysten/bcs" "^0.11.1"
     "@mysten/kiosk" "0.9.34"

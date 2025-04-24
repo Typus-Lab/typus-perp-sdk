@@ -81,15 +81,6 @@ export async function mintStakeLp(
     // console.log(iToken);
     if (input.userShareId) {
         harvestStakeReward(config, tx, { stakePool: input.stakePool, userShareId: input.userShareId, user: input.user });
-        _snapshot(tx, {
-            version: STAKE_POOL_VERSION,
-            registry: STAKE_POOL,
-            index: BigInt(0),
-            clock: CLOCK,
-            userShareId: BigInt(input.userShareId),
-            typusEcosystemVersion: config.version.typus,
-            typusUserRegistry: config.registry.typus.user,
-        });
     }
 
     let cToken = tokenType[NETWORK][input.cTOKEN];
@@ -145,15 +136,6 @@ export async function unstakeBurn(
     }
 
     harvestStakeReward(config, tx, { stakePool: input.stakePool, userShareId: input.userShareId, user: input.user });
-    _snapshot(tx, {
-        version: STAKE_POOL_VERSION,
-        registry: STAKE_POOL,
-        index: BigInt(0),
-        clock: CLOCK,
-        userShareId: BigInt(input.userShareId),
-        typusEcosystemVersion: config.version.typus,
-        typusUserRegistry: config.registry.typus.user,
-    });
 
     let lpCoin = unstake(tx, TLP_TOKEN, {
         version: STAKE_POOL_VERSION,

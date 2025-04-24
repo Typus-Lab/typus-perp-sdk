@@ -328,6 +328,15 @@ export async function harvestStakeReward(
     }
 ): Promise<Transaction> {
     let iTokens = input.stakePool.incentives.map((i) => i.tokenType.name);
+    _snapshot(tx, {
+        version: STAKE_POOL_VERSION,
+        registry: STAKE_POOL,
+        index: BigInt(0),
+        clock: CLOCK,
+        userShareId: BigInt(input.userShareId),
+        typusEcosystemVersion: config.version.typus,
+        typusUserRegistry: config.registry.typus.user,
+    });
     for (let iToken of iTokens) {
         // console.log(iToken);
         let iCoin = harvestPerUserShare(tx, iToken, {

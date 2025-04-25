@@ -28,8 +28,8 @@ export const STAKE_PACKAGE_ID =
         : "0x220e7ba8923c0c30b57c0baab3bc15d781a39bb294cf7af318c0fc816b5cf7e6";
 export const STAKE_PUBLISHED_AT =
     NETWORK == "MAINNET"
-        ? "0xd50ea488da2b586c3db4e8ad805e9f8aa4891d315d6fc53517d662c3f6fd1b4c"
-        : "0x220e7ba8923c0c30b57c0baab3bc15d781a39bb294cf7af318c0fc816b5cf7e6";
+        ? "0xd9965c09d5ad7d69306b7c550b3b135d94b34f98c3adc379a7333fff2f05808b"
+        : "0x34ba6bf1893409b1a7494350189e060ee79cc2aba6f0c5e4045af9372d96fe85";
 export const STAKE_PKG_V1 =
     NETWORK == "MAINNET"
         ? "0xc427209145715a00a93d7e674a95c556a7147d79fda1bbaeb1a1cac5f9923966"

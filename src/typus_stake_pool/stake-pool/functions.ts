@@ -315,6 +315,31 @@ export function removeUserShareById(tx: Transaction, args: RemoveUserShareByIdAr
     });
 }
 
+export interface SnapshotArgs {
+    version: TransactionObjectInput;
+    registry: TransactionObjectInput;
+    typusEcosystemVersion: TransactionObjectInput;
+    typusUserRegistry: TransactionObjectInput;
+    index: bigint | TransactionArgument;
+    userShareId: bigint | TransactionArgument;
+    clock: TransactionObjectInput;
+}
+
+export function snapshot(tx: Transaction, args: SnapshotArgs, published_at: string = PUBLISHED_AT) {
+    return tx.moveCall({
+        target: `${published_at}::stake_pool::snapshot`,
+        arguments: [
+            obj(tx, args.version),
+            obj(tx, args.registry),
+            obj(tx, args.typusEcosystemVersion),
+            obj(tx, args.typusUserRegistry),
+            pure(tx, args.index, `u64`),
+            pure(tx, args.userShareId, `u64`),
+            obj(tx, args.clock),
+        ],
+    });
+}
+
 export interface StakeArgs {
     version: TransactionObjectInput;
     registry: TransactionObjectInput;
@@ -425,6 +450,27 @@ export function updateIncentiveConfig(
             pure(tx, args.periodIncentiveAmount, `${Option.$typeName}<u64>`),
             pure(tx, args.incentiveIntervalTsMs, `${Option.$typeName}<u64>`),
             pure(tx, args.u64Padding, `${Option.$typeName}<vector<u64>>`),
+        ],
+    });
+}
+
+export interface UpdatePoolInfoU64PaddingArgs {
+    version: TransactionObjectInput;
+    registry: TransactionObjectInput;
+    index: bigint | TransactionArgument;
+    tlpPrice: bigint | TransactionArgument;
+    usdPerExp: bigint | TransactionArgument;
+}
+
+export function updatePoolInfoU64Padding(tx: Transaction, args: UpdatePoolInfoU64PaddingArgs, published_at: string = PUBLISHED_AT) {
+    return tx.moveCall({
+        target: `${published_at}::stake_pool::update_pool_info_u64_padding`,
+        arguments: [
+            obj(tx, args.version),
+            obj(tx, args.registry),
+            pure(tx, args.index, `u64`),
+            pure(tx, args.tlpPrice, `u64`),
+            pure(tx, args.usdPerExp, `u64`),
         ],
     });
 }

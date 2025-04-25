@@ -2294,6 +2294,225 @@ export class RemoveIncentiveTokenEvent implements StructClass {
     }
 }
 
+/* ============================== SnapshotEvent =============================== */
+
+export function isSnapshotEvent(type: string): boolean {
+    type = compressSuiType(type);
+    return type === `${PKG_V1}::stake_pool::SnapshotEvent`;
+}
+
+export interface SnapshotEventFields {
+    sender: ToField<"address">;
+    index: ToField<"u64">;
+    userShareId: ToField<"u64">;
+    shares: ToField<"u64">;
+    tlpPrice: ToField<"u64">;
+    lastTsMs: ToField<"u64">;
+    currentTsMs: ToField<"u64">;
+    exp: ToField<"u64">;
+    u64Padding: ToField<Vector<"u64">>;
+}
+
+export type SnapshotEventReified = Reified<SnapshotEvent, SnapshotEventFields>;
+
+export class SnapshotEvent implements StructClass {
+    __StructClass = true as const;
+
+    static readonly $typeName = `${PKG_V1}::stake_pool::SnapshotEvent`;
+    static readonly $numTypeParams = 0;
+    static readonly $isPhantom = [] as const;
+
+    readonly $typeName = SnapshotEvent.$typeName;
+    readonly $fullTypeName: `${typeof PKG_V1}::stake_pool::SnapshotEvent`;
+    readonly $typeArgs: [];
+    readonly $isPhantom = SnapshotEvent.$isPhantom;
+
+    readonly sender: ToField<"address">;
+    readonly index: ToField<"u64">;
+    readonly userShareId: ToField<"u64">;
+    readonly shares: ToField<"u64">;
+    readonly tlpPrice: ToField<"u64">;
+    readonly lastTsMs: ToField<"u64">;
+    readonly currentTsMs: ToField<"u64">;
+    readonly exp: ToField<"u64">;
+    readonly u64Padding: ToField<Vector<"u64">>;
+
+    private constructor(typeArgs: [], fields: SnapshotEventFields) {
+        this.$fullTypeName = composeSuiType(SnapshotEvent.$typeName, ...typeArgs) as `${typeof PKG_V1}::stake_pool::SnapshotEvent`;
+        this.$typeArgs = typeArgs;
+
+        this.sender = fields.sender;
+        this.index = fields.index;
+        this.userShareId = fields.userShareId;
+        this.shares = fields.shares;
+        this.tlpPrice = fields.tlpPrice;
+        this.lastTsMs = fields.lastTsMs;
+        this.currentTsMs = fields.currentTsMs;
+        this.exp = fields.exp;
+        this.u64Padding = fields.u64Padding;
+    }
+
+    static reified(): SnapshotEventReified {
+        return {
+            typeName: SnapshotEvent.$typeName,
+            fullTypeName: composeSuiType(SnapshotEvent.$typeName, ...[]) as `${typeof PKG_V1}::stake_pool::SnapshotEvent`,
+            typeArgs: [] as [],
+            isPhantom: SnapshotEvent.$isPhantom,
+            reifiedTypeArgs: [],
+            fromFields: (fields: Record<string, any>) => SnapshotEvent.fromFields(fields),
+            fromFieldsWithTypes: (item: FieldsWithTypes) => SnapshotEvent.fromFieldsWithTypes(item),
+            fromBcs: (data: Uint8Array) => SnapshotEvent.fromBcs(data),
+            bcs: SnapshotEvent.bcs,
+            fromJSONField: (field: any) => SnapshotEvent.fromJSONField(field),
+            fromJSON: (json: Record<string, any>) => SnapshotEvent.fromJSON(json),
+            fromSuiParsedData: (content: SuiParsedData) => SnapshotEvent.fromSuiParsedData(content),
+            fromSuiObjectData: (content: SuiObjectData) => SnapshotEvent.fromSuiObjectData(content),
+            fetch: async (client: SuiClient, id: string) => SnapshotEvent.fetch(client, id),
+            new: (fields: SnapshotEventFields) => {
+                return new SnapshotEvent([], fields);
+            },
+            kind: "StructClassReified",
+        };
+    }
+
+    static get r() {
+        return SnapshotEvent.reified();
+    }
+
+    static phantom(): PhantomReified<ToTypeStr<SnapshotEvent>> {
+        return phantom(SnapshotEvent.reified());
+    }
+    static get p() {
+        return SnapshotEvent.phantom();
+    }
+
+    static get bcs() {
+        return bcs.struct("SnapshotEvent", {
+            sender: bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
+            index: bcs.u64(),
+            user_share_id: bcs.u64(),
+            shares: bcs.u64(),
+            tlp_price: bcs.u64(),
+            last_ts_ms: bcs.u64(),
+            current_ts_ms: bcs.u64(),
+            exp: bcs.u64(),
+            u64_padding: bcs.vector(bcs.u64()),
+        });
+    }
+
+    static fromFields(fields: Record<string, any>): SnapshotEvent {
+        return SnapshotEvent.reified().new({
+            sender: decodeFromFields("address", fields.sender),
+            index: decodeFromFields("u64", fields.index),
+            userShareId: decodeFromFields("u64", fields.user_share_id),
+            shares: decodeFromFields("u64", fields.shares),
+            tlpPrice: decodeFromFields("u64", fields.tlp_price),
+            lastTsMs: decodeFromFields("u64", fields.last_ts_ms),
+            currentTsMs: decodeFromFields("u64", fields.current_ts_ms),
+            exp: decodeFromFields("u64", fields.exp),
+            u64Padding: decodeFromFields(reified.vector("u64"), fields.u64_padding),
+        });
+    }
+
+    static fromFieldsWithTypes(item: FieldsWithTypes): SnapshotEvent {
+        if (!isSnapshotEvent(item.type)) {
+            throw new Error("not a SnapshotEvent type");
+        }
+
+        return SnapshotEvent.reified().new({
+            sender: decodeFromFieldsWithTypes("address", item.fields.sender),
+            index: decodeFromFieldsWithTypes("u64", item.fields.index),
+            userShareId: decodeFromFieldsWithTypes("u64", item.fields.user_share_id),
+            shares: decodeFromFieldsWithTypes("u64", item.fields.shares),
+            tlpPrice: decodeFromFieldsWithTypes("u64", item.fields.tlp_price),
+            lastTsMs: decodeFromFieldsWithTypes("u64", item.fields.last_ts_ms),
+            currentTsMs: decodeFromFieldsWithTypes("u64", item.fields.current_ts_ms),
+            exp: decodeFromFieldsWithTypes("u64", item.fields.exp),
+            u64Padding: decodeFromFieldsWithTypes(reified.vector("u64"), item.fields.u64_padding),
+        });
+    }
+
+    static fromBcs(data: Uint8Array): SnapshotEvent {
+        return SnapshotEvent.fromFields(SnapshotEvent.bcs.parse(data));
+    }
+
+    toJSONField() {
+        return {
+            sender: this.sender,
+            index: this.index.toString(),
+            userShareId: this.userShareId.toString(),
+            shares: this.shares.toString(),
+            tlpPrice: this.tlpPrice.toString(),
+            lastTsMs: this.lastTsMs.toString(),
+            currentTsMs: this.currentTsMs.toString(),
+            exp: this.exp.toString(),
+            u64Padding: fieldToJSON<Vector<"u64">>(`vector<u64>`, this.u64Padding),
+        };
+    }
+
+    toJSON() {
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
+    }
+
+    static fromJSONField(field: any): SnapshotEvent {
+        return SnapshotEvent.reified().new({
+            sender: decodeFromJSONField("address", field.sender),
+            index: decodeFromJSONField("u64", field.index),
+            userShareId: decodeFromJSONField("u64", field.userShareId),
+            shares: decodeFromJSONField("u64", field.shares),
+            tlpPrice: decodeFromJSONField("u64", field.tlpPrice),
+            lastTsMs: decodeFromJSONField("u64", field.lastTsMs),
+            currentTsMs: decodeFromJSONField("u64", field.currentTsMs),
+            exp: decodeFromJSONField("u64", field.exp),
+            u64Padding: decodeFromJSONField(reified.vector("u64"), field.u64Padding),
+        });
+    }
+
+    static fromJSON(json: Record<string, any>): SnapshotEvent {
+        if (json.$typeName !== SnapshotEvent.$typeName) {
+            throw new Error("not a WithTwoGenerics json object");
+        }
+
+        return SnapshotEvent.fromJSONField(json);
+    }
+
+    static fromSuiParsedData(content: SuiParsedData): SnapshotEvent {
+        if (content.dataType !== "moveObject") {
+            throw new Error("not an object");
+        }
+        if (!isSnapshotEvent(content.type)) {
+            throw new Error(`object at ${(content.fields as any).id} is not a SnapshotEvent object`);
+        }
+        return SnapshotEvent.fromFieldsWithTypes(content);
+    }
+
+    static fromSuiObjectData(data: SuiObjectData): SnapshotEvent {
+        if (data.bcs) {
+            if (data.bcs.dataType !== "moveObject" || !isSnapshotEvent(data.bcs.type)) {
+                throw new Error(`object at is not a SnapshotEvent object`);
+            }
+
+            return SnapshotEvent.fromBcs(fromB64(data.bcs.bcsBytes));
+        }
+        if (data.content) {
+            return SnapshotEvent.fromSuiParsedData(data.content);
+        }
+        throw new Error("Both `bcs` and `content` fields are missing from the data. Include `showBcs` or `showContent` in the request.");
+    }
+
+    static async fetch(client: SuiClient, id: string): Promise<SnapshotEvent> {
+        const res = await client.getObject({ id, options: { showBcs: true } });
+        if (res.error) {
+            throw new Error(`error fetching SnapshotEvent object at id ${id}: ${res.error.code}`);
+        }
+        if (res.data?.bcs?.dataType !== "moveObject" || !isSnapshotEvent(res.data.bcs.type)) {
+            throw new Error(`object at id ${id} is not a SnapshotEvent object`);
+        }
+
+        return SnapshotEvent.fromSuiObjectData(res.data);
+    }
+}
+
 /* ============================== StakeEvent =============================== */
 
 export function isStakeEvent(type: string): boolean {
@@ -3820,6 +4039,183 @@ export class UpdateIncentiveConfigEvent implements StructClass {
         }
 
         return UpdateIncentiveConfigEvent.fromSuiObjectData(res.data);
+    }
+}
+
+/* ============================== UpdatePoolInfoU64PaddingEvent =============================== */
+
+export function isUpdatePoolInfoU64PaddingEvent(type: string): boolean {
+    type = compressSuiType(type);
+    return type === `${PKG_V1}::stake_pool::UpdatePoolInfoU64PaddingEvent`;
+}
+
+export interface UpdatePoolInfoU64PaddingEventFields {
+    sender: ToField<"address">;
+    index: ToField<"u64">;
+    u64Padding: ToField<Vector<"u64">>;
+}
+
+export type UpdatePoolInfoU64PaddingEventReified = Reified<UpdatePoolInfoU64PaddingEvent, UpdatePoolInfoU64PaddingEventFields>;
+
+export class UpdatePoolInfoU64PaddingEvent implements StructClass {
+    __StructClass = true as const;
+
+    static readonly $typeName = `${PKG_V1}::stake_pool::UpdatePoolInfoU64PaddingEvent`;
+    static readonly $numTypeParams = 0;
+    static readonly $isPhantom = [] as const;
+
+    readonly $typeName = UpdatePoolInfoU64PaddingEvent.$typeName;
+    readonly $fullTypeName: `${typeof PKG_V1}::stake_pool::UpdatePoolInfoU64PaddingEvent`;
+    readonly $typeArgs: [];
+    readonly $isPhantom = UpdatePoolInfoU64PaddingEvent.$isPhantom;
+
+    readonly sender: ToField<"address">;
+    readonly index: ToField<"u64">;
+    readonly u64Padding: ToField<Vector<"u64">>;
+
+    private constructor(typeArgs: [], fields: UpdatePoolInfoU64PaddingEventFields) {
+        this.$fullTypeName = composeSuiType(
+            UpdatePoolInfoU64PaddingEvent.$typeName,
+            ...typeArgs
+        ) as `${typeof PKG_V1}::stake_pool::UpdatePoolInfoU64PaddingEvent`;
+        this.$typeArgs = typeArgs;
+
+        this.sender = fields.sender;
+        this.index = fields.index;
+        this.u64Padding = fields.u64Padding;
+    }
+
+    static reified(): UpdatePoolInfoU64PaddingEventReified {
+        return {
+            typeName: UpdatePoolInfoU64PaddingEvent.$typeName,
+            fullTypeName: composeSuiType(
+                UpdatePoolInfoU64PaddingEvent.$typeName,
+                ...[]
+            ) as `${typeof PKG_V1}::stake_pool::UpdatePoolInfoU64PaddingEvent`,
+            typeArgs: [] as [],
+            isPhantom: UpdatePoolInfoU64PaddingEvent.$isPhantom,
+            reifiedTypeArgs: [],
+            fromFields: (fields: Record<string, any>) => UpdatePoolInfoU64PaddingEvent.fromFields(fields),
+            fromFieldsWithTypes: (item: FieldsWithTypes) => UpdatePoolInfoU64PaddingEvent.fromFieldsWithTypes(item),
+            fromBcs: (data: Uint8Array) => UpdatePoolInfoU64PaddingEvent.fromBcs(data),
+            bcs: UpdatePoolInfoU64PaddingEvent.bcs,
+            fromJSONField: (field: any) => UpdatePoolInfoU64PaddingEvent.fromJSONField(field),
+            fromJSON: (json: Record<string, any>) => UpdatePoolInfoU64PaddingEvent.fromJSON(json),
+            fromSuiParsedData: (content: SuiParsedData) => UpdatePoolInfoU64PaddingEvent.fromSuiParsedData(content),
+            fromSuiObjectData: (content: SuiObjectData) => UpdatePoolInfoU64PaddingEvent.fromSuiObjectData(content),
+            fetch: async (client: SuiClient, id: string) => UpdatePoolInfoU64PaddingEvent.fetch(client, id),
+            new: (fields: UpdatePoolInfoU64PaddingEventFields) => {
+                return new UpdatePoolInfoU64PaddingEvent([], fields);
+            },
+            kind: "StructClassReified",
+        };
+    }
+
+    static get r() {
+        return UpdatePoolInfoU64PaddingEvent.reified();
+    }
+
+    static phantom(): PhantomReified<ToTypeStr<UpdatePoolInfoU64PaddingEvent>> {
+        return phantom(UpdatePoolInfoU64PaddingEvent.reified());
+    }
+    static get p() {
+        return UpdatePoolInfoU64PaddingEvent.phantom();
+    }
+
+    static get bcs() {
+        return bcs.struct("UpdatePoolInfoU64PaddingEvent", {
+            sender: bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
+            index: bcs.u64(),
+            u64_padding: bcs.vector(bcs.u64()),
+        });
+    }
+
+    static fromFields(fields: Record<string, any>): UpdatePoolInfoU64PaddingEvent {
+        return UpdatePoolInfoU64PaddingEvent.reified().new({
+            sender: decodeFromFields("address", fields.sender),
+            index: decodeFromFields("u64", fields.index),
+            u64Padding: decodeFromFields(reified.vector("u64"), fields.u64_padding),
+        });
+    }
+
+    static fromFieldsWithTypes(item: FieldsWithTypes): UpdatePoolInfoU64PaddingEvent {
+        if (!isUpdatePoolInfoU64PaddingEvent(item.type)) {
+            throw new Error("not a UpdatePoolInfoU64PaddingEvent type");
+        }
+
+        return UpdatePoolInfoU64PaddingEvent.reified().new({
+            sender: decodeFromFieldsWithTypes("address", item.fields.sender),
+            index: decodeFromFieldsWithTypes("u64", item.fields.index),
+            u64Padding: decodeFromFieldsWithTypes(reified.vector("u64"), item.fields.u64_padding),
+        });
+    }
+
+    static fromBcs(data: Uint8Array): UpdatePoolInfoU64PaddingEvent {
+        return UpdatePoolInfoU64PaddingEvent.fromFields(UpdatePoolInfoU64PaddingEvent.bcs.parse(data));
+    }
+
+    toJSONField() {
+        return {
+            sender: this.sender,
+            index: this.index.toString(),
+            u64Padding: fieldToJSON<Vector<"u64">>(`vector<u64>`, this.u64Padding),
+        };
+    }
+
+    toJSON() {
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
+    }
+
+    static fromJSONField(field: any): UpdatePoolInfoU64PaddingEvent {
+        return UpdatePoolInfoU64PaddingEvent.reified().new({
+            sender: decodeFromJSONField("address", field.sender),
+            index: decodeFromJSONField("u64", field.index),
+            u64Padding: decodeFromJSONField(reified.vector("u64"), field.u64Padding),
+        });
+    }
+
+    static fromJSON(json: Record<string, any>): UpdatePoolInfoU64PaddingEvent {
+        if (json.$typeName !== UpdatePoolInfoU64PaddingEvent.$typeName) {
+            throw new Error("not a WithTwoGenerics json object");
+        }
+
+        return UpdatePoolInfoU64PaddingEvent.fromJSONField(json);
+    }
+
+    static fromSuiParsedData(content: SuiParsedData): UpdatePoolInfoU64PaddingEvent {
+        if (content.dataType !== "moveObject") {
+            throw new Error("not an object");
+        }
+        if (!isUpdatePoolInfoU64PaddingEvent(content.type)) {
+            throw new Error(`object at ${(content.fields as any).id} is not a UpdatePoolInfoU64PaddingEvent object`);
+        }
+        return UpdatePoolInfoU64PaddingEvent.fromFieldsWithTypes(content);
+    }
+
+    static fromSuiObjectData(data: SuiObjectData): UpdatePoolInfoU64PaddingEvent {
+        if (data.bcs) {
+            if (data.bcs.dataType !== "moveObject" || !isUpdatePoolInfoU64PaddingEvent(data.bcs.type)) {
+                throw new Error(`object at is not a UpdatePoolInfoU64PaddingEvent object`);
+            }
+
+            return UpdatePoolInfoU64PaddingEvent.fromBcs(fromB64(data.bcs.bcsBytes));
+        }
+        if (data.content) {
+            return UpdatePoolInfoU64PaddingEvent.fromSuiParsedData(data.content);
+        }
+        throw new Error("Both `bcs` and `content` fields are missing from the data. Include `showBcs` or `showContent` in the request.");
+    }
+
+    static async fetch(client: SuiClient, id: string): Promise<UpdatePoolInfoU64PaddingEvent> {
+        const res = await client.getObject({ id, options: { showBcs: true } });
+        if (res.error) {
+            throw new Error(`error fetching UpdatePoolInfoU64PaddingEvent object at id ${id}: ${res.error.code}`);
+        }
+        if (res.data?.bcs?.dataType !== "moveObject" || !isUpdatePoolInfoU64PaddingEvent(res.data.bcs.type)) {
+            throw new Error(`object at id ${id} is not a UpdatePoolInfoU64PaddingEvent object`);
+        }
+
+        return UpdatePoolInfoU64PaddingEvent.fromSuiObjectData(res.data);
     }
 }
 

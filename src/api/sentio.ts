@@ -41,37 +41,55 @@ export async function getFromSentio(event: string, userAddress: string, startTim
     }
 }
 
-export async function getVolumeFromSentio(): Promise<any[]> {
+/**
+ * Inputs:
+ *  day: number (at least 1)
+ *  interval: in hour
+ *
+ * Returns Map<string, Volume[]>
+ *  key: base_token {'APT','BTC','CETUS','DEEP','ETH','NAVX','NS','SOL','SUI','WAL'}
+ *  value: Volume[]
+ */
+export async function getTradingVolumeFromSentio(fromTimestamp: number, interval: number): Promise<Map<string, Volume[]>> {
     let apiUrl =
         NETWORK == "MAINNET"
             ? "https://app.sentio.xyz/api/v1/insights/typus/typus_perp_mainnet/query"
             : "https://app.sentio.xyz/api/v1/insights/typus/typus_perp/query";
     let requestData = {
         timeRange: {
-            start: "now-3d",
+            start: `${fromTimestamp}`,
             end: "now",
-            step: 3600,
+            step: 3600 * interval,
         },
-        limit: 20,
+        limit: 30 * 24,
         queries: [
             {
-                eventsQuery: {
-                    resource: {
-                        name: "OrderFilled",
-                        type: "EVENTS",
-                    },
+                metricsQuery: {
+                    query: "trading_volume_usd",
                     alias: "",
                     id: "a",
-                    aggregation: {
-                        total: {},
+                    labelSelector: {},
+                    aggregate: {
+                        op: "SUM",
+                        grouping: ["base_token"],
                     },
-                    groupBy: ["base_token"],
-                    limit: 0,
-                    functions: [],
+                    functions: [
+                        {
+                            name: "rollup_delta",
+                            arguments: [
+                                {
+                                    durationValue: {
+                                        value: interval,
+                                        unit: "h",
+                                    },
+                                },
+                            ],
+                        },
+                    ],
                     color: "",
                     disabled: false,
                 },
-                dataSource: "EVENTS",
+                dataSource: "METRICS",
                 sourceName: "",
             },
         ],
@@ -87,13 +105,24 @@ export async function getVolumeFromSentio(): Promise<any[]> {
     });
 
     let data = await response.json();
-    let symbols: string[] = data.results[0].matrix.samples.map((s) => s.metric.labels.base_token);
-    console.log(symbols);
+    let samples = data.results[0].matrix.samples;
 
-    let volume: Volume[][] = data.results[0].matrix.samples.map((s) => s.values);
-    console.log(volume);
+    let map = new Map<string, Volume[]>();
 
-    return data.results as any[];
+    samples.forEach((sample) => {
+        // console.log(samples);
+        let base_token = sample.metric.labels.base_token;
+        let values: Volume[] = sample.values;
+        // console.log(base_token);
+        // console.log(values);
+        map.set(base_token, values);
+    });
+
+    // console.log(map);
+    // console.log(map.keys());
+    // console.log(map.get("SUI")?.length);
+
+    return map;
 }
 
 export interface Volume {
@@ -268,3 +297,4 @@ export async function getAccumulatedUser(): Promise<number> {
 // getTlpFeeFromSentio();
 // getAccumulatedUser();
 // getTotalVolumeFromSentio();
+// getTradingVolumeFromSentio(1745712000, 1);

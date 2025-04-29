@@ -14,7 +14,7 @@ import { NETWORK } from "src";
 
     let tx = new Transaction();
     let pythClient = createPythClient(provider, NETWORK);
-    let priceInfoObjectIds = await updatePyth(pythClient, tx, ["SUI", "wBTC", "wETH", "wSOL", "DEEP", "WAL", "wAPT"]);
+    let priceInfoObjectIds = await updatePyth(pythClient, tx, ["SUI", "wBTC", "wETH", "wSOL", "DEEP", "WAL", "wAPT", "JPY", "XAU"]);
     console.log(priceInfoObjectIds);
 
     let res = await provider.signAndExecuteTransaction({

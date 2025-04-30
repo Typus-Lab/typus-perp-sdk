@@ -274,8 +274,6 @@ export async function claim(
         lpPool: LiquidityPool;
         stakePool: StakePool;
         cTOKEN: TOKEN;
-        lpCoin: string;
-        share: string | null;
         user: string;
     }
 ): Promise<Transaction> {

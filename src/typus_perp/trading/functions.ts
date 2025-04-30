@@ -18,6 +18,11 @@ export interface AddTradingSymbolArgs {
     basicFundingRate: bigint | TransactionArgument;
     fundingIntervalTsMs: bigint | TransactionArgument;
     expMultiplier: bigint | TransactionArgument;
+    maxBuyOpenInterest: bigint | TransactionArgument;
+    maxSellOpenInterest: bigint | TransactionArgument;
+    maintenanceMarginRateBp: bigint | TransactionArgument;
+    optionMaintenanceMarginRateBp: bigint | TransactionArgument;
+    optionTradingFeeConfig: Array<bigint | TransactionArgument> | TransactionArgument;
     clock: TransactionObjectInput;
 }
 
@@ -39,6 +44,11 @@ export function addTradingSymbol(tx: Transaction, typeArg: string, args: AddTrad
             pure(tx, args.basicFundingRate, `u64`),
             pure(tx, args.fundingIntervalTsMs, `u64`),
             pure(tx, args.expMultiplier, `u64`),
+            pure(tx, args.maxBuyOpenInterest, `u64`),
+            pure(tx, args.maxSellOpenInterest, `u64`),
+            pure(tx, args.maintenanceMarginRateBp, `u64`),
+            pure(tx, args.optionMaintenanceMarginRateBp, `u64`),
+            pure(tx, args.optionTradingFeeConfig, `vector<u64>`),
             obj(tx, args.clock),
         ],
     });
@@ -644,6 +654,28 @@ export function getActiveOrdersByOrderTagAndCtoken(
     });
 }
 
+export interface GetAllPositionsArgs {
+    version: TransactionObjectInput;
+    registry: TransactionObjectInput;
+    marketIndex: bigint | TransactionArgument;
+    slice: bigint | TransactionArgument;
+    page: bigint | TransactionArgument;
+}
+
+export function getAllPositions(tx: Transaction, typeArg: string, args: GetAllPositionsArgs, published_at: string = PUBLISHED_AT) {
+    return tx.moveCall({
+        target: `${published_at}::trading::get_all_positions`,
+        typeArguments: [typeArg],
+        arguments: [
+            obj(tx, args.version),
+            obj(tx, args.registry),
+            pure(tx, args.marketIndex, `u64`),
+            pure(tx, args.slice, `u64`),
+            pure(tx, args.page, `u64`),
+        ],
+    });
+}
+
 export interface GetEstimatedLiquidationPriceAndPnlArgs {
     version: TransactionObjectInput;
     registry: TransactionObjectInput;
@@ -1010,50 +1042,22 @@ export function managerCloseOptionPosition(
     });
 }
 
-export interface ManagerCloseOptionPositionV2Args {
+export interface ManagerHotfixRemoveMarketSymbolArgs {
     version: TransactionObjectInput;
     registry: TransactionObjectInput;
-    poolRegistry: TransactionObjectInput;
-    dovRegistry: TransactionObjectInput;
-    typusOracleCToken: TransactionObjectInput;
-    typusOracleTradingSymbol: TransactionObjectInput;
-    clock: TransactionObjectInput;
     marketIndex: bigint | TransactionArgument;
-    poolIndex: bigint | TransactionArgument;
-    typusEcosystemVersion: TransactionObjectInput;
-    typusUserRegistry: TransactionObjectInput;
-    typusLeaderboardRegistry: TransactionObjectInput;
-    tailsStakingRegistry: TransactionObjectInput;
-    competitionConfig: TransactionObjectInput;
-    positionId: bigint | TransactionArgument;
 }
 
-export function managerCloseOptionPositionV2(
+export function managerHotfixRemoveMarketSymbol(
     tx: Transaction,
-    typeArgs: [string, string, string],
-    args: ManagerCloseOptionPositionV2Args,
+    typeArg: string,
+    args: ManagerHotfixRemoveMarketSymbolArgs,
     published_at: string = PUBLISHED_AT
 ) {
     return tx.moveCall({
-        target: `${published_at}::trading::manager_close_option_position_v2`,
-        typeArguments: typeArgs,
-        arguments: [
-            obj(tx, args.version),
-            obj(tx, args.registry),
-            obj(tx, args.poolRegistry),
-            obj(tx, args.dovRegistry),
-            obj(tx, args.typusOracleCToken),
-            obj(tx, args.typusOracleTradingSymbol),
-            obj(tx, args.clock),
-            pure(tx, args.marketIndex, `u64`),
-            pure(tx, args.poolIndex, `u64`),
-            obj(tx, args.typusEcosystemVersion),
-            obj(tx, args.typusUserRegistry),
-            obj(tx, args.typusLeaderboardRegistry),
-            obj(tx, args.tailsStakingRegistry),
-            obj(tx, args.competitionConfig),
-            pure(tx, args.positionId, `u64`),
-        ],
+        target: `${published_at}::trading::manager_hotfix_remove_market_symbol`,
+        typeArguments: [typeArg],
+        arguments: [obj(tx, args.version), obj(tx, args.registry), pure(tx, args.marketIndex, `u64`)],
     });
 }
 
@@ -1785,6 +1789,9 @@ export interface UpdateMarketConfigArgs {
     expMultiplier: bigint | TransactionArgument | TransactionArgument | null;
     maxBuyOpenInterest: bigint | TransactionArgument | TransactionArgument | null;
     maxSellOpenInterest: bigint | TransactionArgument | TransactionArgument | null;
+    maintenanceMarginRateBp: bigint | TransactionArgument | TransactionArgument | null;
+    optionCollateralMaintenanceMarginRateBp: bigint | TransactionArgument | TransactionArgument | null;
+    optionCollateralTradingFeeConfig: Array<bigint | TransactionArgument> | TransactionArgument | TransactionArgument | null;
 }
 
 export function updateMarketConfig(tx: Transaction, typeArg: string, args: UpdateMarketConfigArgs, published_at: string = PUBLISHED_AT) {
@@ -1806,6 +1813,9 @@ export function updateMarketConfig(tx: Transaction, typeArg: string, args: Updat
             pure(tx, args.expMultiplier, `${Option.$typeName}<u64>`),
             pure(tx, args.maxBuyOpenInterest, `${Option.$typeName}<u64>`),
             pure(tx, args.maxSellOpenInterest, `${Option.$typeName}<u64>`),
+            pure(tx, args.maintenanceMarginRateBp, `${Option.$typeName}<u64>`),
+            pure(tx, args.optionCollateralMaintenanceMarginRateBp, `${Option.$typeName}<u64>`),
+            pure(tx, args.optionCollateralTradingFeeConfig, `${Option.$typeName}<vector<u64>>`),
         ],
     });
 }

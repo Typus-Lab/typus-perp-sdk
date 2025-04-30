@@ -1,19 +1,26 @@
 import * as reified from "../../_framework/reified";
 import { TypeName } from "../../_dependencies/source/0x1/type-name/structs";
+import { Balance } from "../../_dependencies/source/0x2/balance/structs";
 import { UID } from "../../_dependencies/source/0x2/object/structs";
 import {
     PhantomReified,
+    PhantomToTypeStr,
+    PhantomTypeArgument,
     Reified,
     StructClass,
     ToField,
+    ToPhantomTypeArgument,
     ToTypeStr,
+    assertFieldsWithTypesArgsMatch,
+    assertReifiedTypeArgsMatch,
     decodeFromFields,
     decodeFromFieldsWithTypes,
     decodeFromJSONField,
+    extractType,
     fieldToJSON,
     phantom,
 } from "../../_framework/reified";
-import { FieldsWithTypes, composeSuiType, compressSuiType } from "../../_framework/util";
+import { FieldsWithTypes, composeSuiType, compressSuiType, parseTypeName } from "../../_framework/util";
 import { Vector } from "../../_framework/vector";
 import { UnsettledBidReceipt } from "../escrow/structs";
 import { PKG_V1 } from "../index";
@@ -821,165 +828,146 @@ export class Config implements StructClass {
     }
 }
 
-/* ============================== DepositLendingEvent =============================== */
+/* ============================== DeactivatingShares =============================== */
 
-export function isDepositLendingEvent(type: string): boolean {
+export function isDeactivatingShares(type: string): boolean {
     type = compressSuiType(type);
-    return type === `${PKG_V1}::lp_pool::DepositLendingEvent`;
+    return type.startsWith(`${PKG_V1}::lp_pool::DeactivatingShares` + "<");
 }
 
-export interface DepositLendingEventFields {
-    index: ToField<"u64">;
-    lendingIndex: ToField<"u64">;
-    cTokenType: ToField<TypeName>;
-    depositAmount: ToField<"u64">;
-    mintedMarketCoinAmount: ToField<"u64">;
-    latestLendingAmount: ToField<"u64">;
-    latestMarketCoinAmount: ToField<"u64">;
-    latestReservedAmount: ToField<"u64">;
-    latestLiquidityAmount: ToField<"u64">;
+export interface DeactivatingSharesFields<TOKEN extends PhantomTypeArgument> {
+    balance: ToField<Balance<TOKEN>>;
+    redeemTsMs: ToField<"u64">;
+    unlockTsMs: ToField<"u64">;
     u64Padding: ToField<Vector<"u64">>;
 }
 
-export type DepositLendingEventReified = Reified<DepositLendingEvent, DepositLendingEventFields>;
+export type DeactivatingSharesReified<TOKEN extends PhantomTypeArgument> = Reified<
+    DeactivatingShares<TOKEN>,
+    DeactivatingSharesFields<TOKEN>
+>;
 
-export class DepositLendingEvent implements StructClass {
+export class DeactivatingShares<TOKEN extends PhantomTypeArgument> implements StructClass {
     __StructClass = true as const;
 
-    static readonly $typeName = `${PKG_V1}::lp_pool::DepositLendingEvent`;
-    static readonly $numTypeParams = 0;
-    static readonly $isPhantom = [] as const;
+    static readonly $typeName = `${PKG_V1}::lp_pool::DeactivatingShares`;
+    static readonly $numTypeParams = 1;
+    static readonly $isPhantom = [true] as const;
 
-    readonly $typeName = DepositLendingEvent.$typeName;
-    readonly $fullTypeName: `${typeof PKG_V1}::lp_pool::DepositLendingEvent`;
-    readonly $typeArgs: [];
-    readonly $isPhantom = DepositLendingEvent.$isPhantom;
+    readonly $typeName = DeactivatingShares.$typeName;
+    readonly $fullTypeName: `${typeof PKG_V1}::lp_pool::DeactivatingShares<${PhantomToTypeStr<TOKEN>}>`;
+    readonly $typeArgs: [PhantomToTypeStr<TOKEN>];
+    readonly $isPhantom = DeactivatingShares.$isPhantom;
 
-    readonly index: ToField<"u64">;
-    readonly lendingIndex: ToField<"u64">;
-    readonly cTokenType: ToField<TypeName>;
-    readonly depositAmount: ToField<"u64">;
-    readonly mintedMarketCoinAmount: ToField<"u64">;
-    readonly latestLendingAmount: ToField<"u64">;
-    readonly latestMarketCoinAmount: ToField<"u64">;
-    readonly latestReservedAmount: ToField<"u64">;
-    readonly latestLiquidityAmount: ToField<"u64">;
+    readonly balance: ToField<Balance<TOKEN>>;
+    readonly redeemTsMs: ToField<"u64">;
+    readonly unlockTsMs: ToField<"u64">;
     readonly u64Padding: ToField<Vector<"u64">>;
 
-    private constructor(typeArgs: [], fields: DepositLendingEventFields) {
-        this.$fullTypeName = composeSuiType(DepositLendingEvent.$typeName, ...typeArgs) as `${typeof PKG_V1}::lp_pool::DepositLendingEvent`;
+    private constructor(typeArgs: [PhantomToTypeStr<TOKEN>], fields: DeactivatingSharesFields<TOKEN>) {
+        this.$fullTypeName = composeSuiType(
+            DeactivatingShares.$typeName,
+            ...typeArgs
+        ) as `${typeof PKG_V1}::lp_pool::DeactivatingShares<${PhantomToTypeStr<TOKEN>}>`;
         this.$typeArgs = typeArgs;
 
-        this.index = fields.index;
-        this.lendingIndex = fields.lendingIndex;
-        this.cTokenType = fields.cTokenType;
-        this.depositAmount = fields.depositAmount;
-        this.mintedMarketCoinAmount = fields.mintedMarketCoinAmount;
-        this.latestLendingAmount = fields.latestLendingAmount;
-        this.latestMarketCoinAmount = fields.latestMarketCoinAmount;
-        this.latestReservedAmount = fields.latestReservedAmount;
-        this.latestLiquidityAmount = fields.latestLiquidityAmount;
+        this.balance = fields.balance;
+        this.redeemTsMs = fields.redeemTsMs;
+        this.unlockTsMs = fields.unlockTsMs;
         this.u64Padding = fields.u64Padding;
     }
 
-    static reified(): DepositLendingEventReified {
+    static reified<TOKEN extends PhantomReified<PhantomTypeArgument>>(
+        TOKEN: TOKEN
+    ): DeactivatingSharesReified<ToPhantomTypeArgument<TOKEN>> {
         return {
-            typeName: DepositLendingEvent.$typeName,
-            fullTypeName: composeSuiType(DepositLendingEvent.$typeName, ...[]) as `${typeof PKG_V1}::lp_pool::DepositLendingEvent`,
-            typeArgs: [] as [],
-            isPhantom: DepositLendingEvent.$isPhantom,
-            reifiedTypeArgs: [],
-            fromFields: (fields: Record<string, any>) => DepositLendingEvent.fromFields(fields),
-            fromFieldsWithTypes: (item: FieldsWithTypes) => DepositLendingEvent.fromFieldsWithTypes(item),
-            fromBcs: (data: Uint8Array) => DepositLendingEvent.fromBcs(data),
-            bcs: DepositLendingEvent.bcs,
-            fromJSONField: (field: any) => DepositLendingEvent.fromJSONField(field),
-            fromJSON: (json: Record<string, any>) => DepositLendingEvent.fromJSON(json),
-            fromSuiParsedData: (content: SuiParsedData) => DepositLendingEvent.fromSuiParsedData(content),
-            fromSuiObjectData: (content: SuiObjectData) => DepositLendingEvent.fromSuiObjectData(content),
-            fetch: async (client: SuiClient, id: string) => DepositLendingEvent.fetch(client, id),
-            new: (fields: DepositLendingEventFields) => {
-                return new DepositLendingEvent([], fields);
+            typeName: DeactivatingShares.$typeName,
+            fullTypeName: composeSuiType(
+                DeactivatingShares.$typeName,
+                ...[extractType(TOKEN)]
+            ) as `${typeof PKG_V1}::lp_pool::DeactivatingShares<${PhantomToTypeStr<ToPhantomTypeArgument<TOKEN>>}>`,
+            typeArgs: [extractType(TOKEN)] as [PhantomToTypeStr<ToPhantomTypeArgument<TOKEN>>],
+            isPhantom: DeactivatingShares.$isPhantom,
+            reifiedTypeArgs: [TOKEN],
+            fromFields: (fields: Record<string, any>) => DeactivatingShares.fromFields(TOKEN, fields),
+            fromFieldsWithTypes: (item: FieldsWithTypes) => DeactivatingShares.fromFieldsWithTypes(TOKEN, item),
+            fromBcs: (data: Uint8Array) => DeactivatingShares.fromBcs(TOKEN, data),
+            bcs: DeactivatingShares.bcs,
+            fromJSONField: (field: any) => DeactivatingShares.fromJSONField(TOKEN, field),
+            fromJSON: (json: Record<string, any>) => DeactivatingShares.fromJSON(TOKEN, json),
+            fromSuiParsedData: (content: SuiParsedData) => DeactivatingShares.fromSuiParsedData(TOKEN, content),
+            fromSuiObjectData: (content: SuiObjectData) => DeactivatingShares.fromSuiObjectData(TOKEN, content),
+            fetch: async (client: SuiClient, id: string) => DeactivatingShares.fetch(client, TOKEN, id),
+            new: (fields: DeactivatingSharesFields<ToPhantomTypeArgument<TOKEN>>) => {
+                return new DeactivatingShares([extractType(TOKEN)], fields);
             },
             kind: "StructClassReified",
         };
     }
 
     static get r() {
-        return DepositLendingEvent.reified();
+        return DeactivatingShares.reified;
     }
 
-    static phantom(): PhantomReified<ToTypeStr<DepositLendingEvent>> {
-        return phantom(DepositLendingEvent.reified());
+    static phantom<TOKEN extends PhantomReified<PhantomTypeArgument>>(
+        TOKEN: TOKEN
+    ): PhantomReified<ToTypeStr<DeactivatingShares<ToPhantomTypeArgument<TOKEN>>>> {
+        return phantom(DeactivatingShares.reified(TOKEN));
     }
     static get p() {
-        return DepositLendingEvent.phantom();
+        return DeactivatingShares.phantom;
     }
 
     static get bcs() {
-        return bcs.struct("DepositLendingEvent", {
-            index: bcs.u64(),
-            lending_index: bcs.u64(),
-            c_token_type: TypeName.bcs,
-            deposit_amount: bcs.u64(),
-            minted_market_coin_amount: bcs.u64(),
-            latest_lending_amount: bcs.u64(),
-            latest_market_coin_amount: bcs.u64(),
-            latest_reserved_amount: bcs.u64(),
-            latest_liquidity_amount: bcs.u64(),
+        return bcs.struct("DeactivatingShares", {
+            balance: Balance.bcs,
+            redeem_ts_ms: bcs.u64(),
+            unlock_ts_ms: bcs.u64(),
             u64_padding: bcs.vector(bcs.u64()),
         });
     }
 
-    static fromFields(fields: Record<string, any>): DepositLendingEvent {
-        return DepositLendingEvent.reified().new({
-            index: decodeFromFields("u64", fields.index),
-            lendingIndex: decodeFromFields("u64", fields.lending_index),
-            cTokenType: decodeFromFields(TypeName.reified(), fields.c_token_type),
-            depositAmount: decodeFromFields("u64", fields.deposit_amount),
-            mintedMarketCoinAmount: decodeFromFields("u64", fields.minted_market_coin_amount),
-            latestLendingAmount: decodeFromFields("u64", fields.latest_lending_amount),
-            latestMarketCoinAmount: decodeFromFields("u64", fields.latest_market_coin_amount),
-            latestReservedAmount: decodeFromFields("u64", fields.latest_reserved_amount),
-            latestLiquidityAmount: decodeFromFields("u64", fields.latest_liquidity_amount),
+    static fromFields<TOKEN extends PhantomReified<PhantomTypeArgument>>(
+        typeArg: TOKEN,
+        fields: Record<string, any>
+    ): DeactivatingShares<ToPhantomTypeArgument<TOKEN>> {
+        return DeactivatingShares.reified(typeArg).new({
+            balance: decodeFromFields(Balance.reified(typeArg), fields.balance),
+            redeemTsMs: decodeFromFields("u64", fields.redeem_ts_ms),
+            unlockTsMs: decodeFromFields("u64", fields.unlock_ts_ms),
             u64Padding: decodeFromFields(reified.vector("u64"), fields.u64_padding),
         });
     }
 
-    static fromFieldsWithTypes(item: FieldsWithTypes): DepositLendingEvent {
-        if (!isDepositLendingEvent(item.type)) {
-            throw new Error("not a DepositLendingEvent type");
+    static fromFieldsWithTypes<TOKEN extends PhantomReified<PhantomTypeArgument>>(
+        typeArg: TOKEN,
+        item: FieldsWithTypes
+    ): DeactivatingShares<ToPhantomTypeArgument<TOKEN>> {
+        if (!isDeactivatingShares(item.type)) {
+            throw new Error("not a DeactivatingShares type");
         }
+        assertFieldsWithTypesArgsMatch(item, [typeArg]);
 
-        return DepositLendingEvent.reified().new({
-            index: decodeFromFieldsWithTypes("u64", item.fields.index),
-            lendingIndex: decodeFromFieldsWithTypes("u64", item.fields.lending_index),
-            cTokenType: decodeFromFieldsWithTypes(TypeName.reified(), item.fields.c_token_type),
-            depositAmount: decodeFromFieldsWithTypes("u64", item.fields.deposit_amount),
-            mintedMarketCoinAmount: decodeFromFieldsWithTypes("u64", item.fields.minted_market_coin_amount),
-            latestLendingAmount: decodeFromFieldsWithTypes("u64", item.fields.latest_lending_amount),
-            latestMarketCoinAmount: decodeFromFieldsWithTypes("u64", item.fields.latest_market_coin_amount),
-            latestReservedAmount: decodeFromFieldsWithTypes("u64", item.fields.latest_reserved_amount),
-            latestLiquidityAmount: decodeFromFieldsWithTypes("u64", item.fields.latest_liquidity_amount),
+        return DeactivatingShares.reified(typeArg).new({
+            balance: decodeFromFieldsWithTypes(Balance.reified(typeArg), item.fields.balance),
+            redeemTsMs: decodeFromFieldsWithTypes("u64", item.fields.redeem_ts_ms),
+            unlockTsMs: decodeFromFieldsWithTypes("u64", item.fields.unlock_ts_ms),
             u64Padding: decodeFromFieldsWithTypes(reified.vector("u64"), item.fields.u64_padding),
         });
     }
 
-    static fromBcs(data: Uint8Array): DepositLendingEvent {
-        return DepositLendingEvent.fromFields(DepositLendingEvent.bcs.parse(data));
+    static fromBcs<TOKEN extends PhantomReified<PhantomTypeArgument>>(
+        typeArg: TOKEN,
+        data: Uint8Array
+    ): DeactivatingShares<ToPhantomTypeArgument<TOKEN>> {
+        return DeactivatingShares.fromFields(typeArg, DeactivatingShares.bcs.parse(data));
     }
 
     toJSONField() {
         return {
-            index: this.index.toString(),
-            lendingIndex: this.lendingIndex.toString(),
-            cTokenType: this.cTokenType.toJSONField(),
-            depositAmount: this.depositAmount.toString(),
-            mintedMarketCoinAmount: this.mintedMarketCoinAmount.toString(),
-            latestLendingAmount: this.latestLendingAmount.toString(),
-            latestMarketCoinAmount: this.latestMarketCoinAmount.toString(),
-            latestReservedAmount: this.latestReservedAmount.toString(),
-            latestLiquidityAmount: this.latestLiquidityAmount.toString(),
+            balance: this.balance.toJSONField(),
+            redeemTsMs: this.redeemTsMs.toString(),
+            unlockTsMs: this.unlockTsMs.toString(),
             u64Padding: fieldToJSON<Vector<"u64">>(`vector<u64>`, this.u64Padding),
         };
     }
@@ -988,63 +976,84 @@ export class DepositLendingEvent implements StructClass {
         return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
-    static fromJSONField(field: any): DepositLendingEvent {
-        return DepositLendingEvent.reified().new({
-            index: decodeFromJSONField("u64", field.index),
-            lendingIndex: decodeFromJSONField("u64", field.lendingIndex),
-            cTokenType: decodeFromJSONField(TypeName.reified(), field.cTokenType),
-            depositAmount: decodeFromJSONField("u64", field.depositAmount),
-            mintedMarketCoinAmount: decodeFromJSONField("u64", field.mintedMarketCoinAmount),
-            latestLendingAmount: decodeFromJSONField("u64", field.latestLendingAmount),
-            latestMarketCoinAmount: decodeFromJSONField("u64", field.latestMarketCoinAmount),
-            latestReservedAmount: decodeFromJSONField("u64", field.latestReservedAmount),
-            latestLiquidityAmount: decodeFromJSONField("u64", field.latestLiquidityAmount),
+    static fromJSONField<TOKEN extends PhantomReified<PhantomTypeArgument>>(
+        typeArg: TOKEN,
+        field: any
+    ): DeactivatingShares<ToPhantomTypeArgument<TOKEN>> {
+        return DeactivatingShares.reified(typeArg).new({
+            balance: decodeFromJSONField(Balance.reified(typeArg), field.balance),
+            redeemTsMs: decodeFromJSONField("u64", field.redeemTsMs),
+            unlockTsMs: decodeFromJSONField("u64", field.unlockTsMs),
             u64Padding: decodeFromJSONField(reified.vector("u64"), field.u64Padding),
         });
     }
 
-    static fromJSON(json: Record<string, any>): DepositLendingEvent {
-        if (json.$typeName !== DepositLendingEvent.$typeName) {
+    static fromJSON<TOKEN extends PhantomReified<PhantomTypeArgument>>(
+        typeArg: TOKEN,
+        json: Record<string, any>
+    ): DeactivatingShares<ToPhantomTypeArgument<TOKEN>> {
+        if (json.$typeName !== DeactivatingShares.$typeName) {
             throw new Error("not a WithTwoGenerics json object");
         }
+        assertReifiedTypeArgsMatch(composeSuiType(DeactivatingShares.$typeName, extractType(typeArg)), json.$typeArgs, [typeArg]);
 
-        return DepositLendingEvent.fromJSONField(json);
+        return DeactivatingShares.fromJSONField(typeArg, json);
     }
 
-    static fromSuiParsedData(content: SuiParsedData): DepositLendingEvent {
+    static fromSuiParsedData<TOKEN extends PhantomReified<PhantomTypeArgument>>(
+        typeArg: TOKEN,
+        content: SuiParsedData
+    ): DeactivatingShares<ToPhantomTypeArgument<TOKEN>> {
         if (content.dataType !== "moveObject") {
             throw new Error("not an object");
         }
-        if (!isDepositLendingEvent(content.type)) {
-            throw new Error(`object at ${(content.fields as any).id} is not a DepositLendingEvent object`);
+        if (!isDeactivatingShares(content.type)) {
+            throw new Error(`object at ${(content.fields as any).id} is not a DeactivatingShares object`);
         }
-        return DepositLendingEvent.fromFieldsWithTypes(content);
+        return DeactivatingShares.fromFieldsWithTypes(typeArg, content);
     }
 
-    static fromSuiObjectData(data: SuiObjectData): DepositLendingEvent {
+    static fromSuiObjectData<TOKEN extends PhantomReified<PhantomTypeArgument>>(
+        typeArg: TOKEN,
+        data: SuiObjectData
+    ): DeactivatingShares<ToPhantomTypeArgument<TOKEN>> {
         if (data.bcs) {
-            if (data.bcs.dataType !== "moveObject" || !isDepositLendingEvent(data.bcs.type)) {
-                throw new Error(`object at is not a DepositLendingEvent object`);
+            if (data.bcs.dataType !== "moveObject" || !isDeactivatingShares(data.bcs.type)) {
+                throw new Error(`object at is not a DeactivatingShares object`);
             }
 
-            return DepositLendingEvent.fromBcs(fromB64(data.bcs.bcsBytes));
+            const gotTypeArgs = parseTypeName(data.bcs.type).typeArgs;
+            if (gotTypeArgs.length !== 1) {
+                throw new Error(`type argument mismatch: expected 1 type argument but got '${gotTypeArgs.length}'`);
+            }
+            const gotTypeArg = compressSuiType(gotTypeArgs[0]);
+            const expectedTypeArg = compressSuiType(extractType(typeArg));
+            if (gotTypeArg !== compressSuiType(extractType(typeArg))) {
+                throw new Error(`type argument mismatch: expected '${expectedTypeArg}' but got '${gotTypeArg}'`);
+            }
+
+            return DeactivatingShares.fromBcs(typeArg, fromB64(data.bcs.bcsBytes));
         }
         if (data.content) {
-            return DepositLendingEvent.fromSuiParsedData(data.content);
+            return DeactivatingShares.fromSuiParsedData(typeArg, data.content);
         }
         throw new Error("Both `bcs` and `content` fields are missing from the data. Include `showBcs` or `showContent` in the request.");
     }
 
-    static async fetch(client: SuiClient, id: string): Promise<DepositLendingEvent> {
+    static async fetch<TOKEN extends PhantomReified<PhantomTypeArgument>>(
+        client: SuiClient,
+        typeArg: TOKEN,
+        id: string
+    ): Promise<DeactivatingShares<ToPhantomTypeArgument<TOKEN>>> {
         const res = await client.getObject({ id, options: { showBcs: true } });
         if (res.error) {
-            throw new Error(`error fetching DepositLendingEvent object at id ${id}: ${res.error.code}`);
+            throw new Error(`error fetching DeactivatingShares object at id ${id}: ${res.error.code}`);
         }
-        if (res.data?.bcs?.dataType !== "moveObject" || !isDepositLendingEvent(res.data.bcs.type)) {
-            throw new Error(`object at id ${id} is not a DepositLendingEvent object`);
+        if (res.data?.bcs?.dataType !== "moveObject" || !isDeactivatingShares(res.data.bcs.type)) {
+            throw new Error(`object at id ${id} is not a DeactivatingShares object`);
         }
 
-        return DepositLendingEvent.fromSuiObjectData(res.data);
+        return DeactivatingShares.fromSuiObjectData(typeArg, res.data);
     }
 }
 
@@ -2493,6 +2502,209 @@ export class NewLiquidityPoolEvent implements StructClass {
         }
 
         return NewLiquidityPoolEvent.fromSuiObjectData(res.data);
+    }
+}
+
+/* ============================== RedeemEvent =============================== */
+
+export function isRedeemEvent(type: string): boolean {
+    type = compressSuiType(type);
+    return type === `${PKG_V1}::lp_pool::RedeemEvent`;
+}
+
+export interface RedeemEventFields {
+    sender: ToField<"address">;
+    index: ToField<"u64">;
+    share: ToField<"u64">;
+    sharePrice: ToField<"u64">;
+    timestampTsMs: ToField<"u64">;
+    unlockTsMs: ToField<"u64">;
+    u64Padding: ToField<Vector<"u64">>;
+}
+
+export type RedeemEventReified = Reified<RedeemEvent, RedeemEventFields>;
+
+export class RedeemEvent implements StructClass {
+    __StructClass = true as const;
+
+    static readonly $typeName = `${PKG_V1}::lp_pool::RedeemEvent`;
+    static readonly $numTypeParams = 0;
+    static readonly $isPhantom = [] as const;
+
+    readonly $typeName = RedeemEvent.$typeName;
+    readonly $fullTypeName: `${typeof PKG_V1}::lp_pool::RedeemEvent`;
+    readonly $typeArgs: [];
+    readonly $isPhantom = RedeemEvent.$isPhantom;
+
+    readonly sender: ToField<"address">;
+    readonly index: ToField<"u64">;
+    readonly share: ToField<"u64">;
+    readonly sharePrice: ToField<"u64">;
+    readonly timestampTsMs: ToField<"u64">;
+    readonly unlockTsMs: ToField<"u64">;
+    readonly u64Padding: ToField<Vector<"u64">>;
+
+    private constructor(typeArgs: [], fields: RedeemEventFields) {
+        this.$fullTypeName = composeSuiType(RedeemEvent.$typeName, ...typeArgs) as `${typeof PKG_V1}::lp_pool::RedeemEvent`;
+        this.$typeArgs = typeArgs;
+
+        this.sender = fields.sender;
+        this.index = fields.index;
+        this.share = fields.share;
+        this.sharePrice = fields.sharePrice;
+        this.timestampTsMs = fields.timestampTsMs;
+        this.unlockTsMs = fields.unlockTsMs;
+        this.u64Padding = fields.u64Padding;
+    }
+
+    static reified(): RedeemEventReified {
+        return {
+            typeName: RedeemEvent.$typeName,
+            fullTypeName: composeSuiType(RedeemEvent.$typeName, ...[]) as `${typeof PKG_V1}::lp_pool::RedeemEvent`,
+            typeArgs: [] as [],
+            isPhantom: RedeemEvent.$isPhantom,
+            reifiedTypeArgs: [],
+            fromFields: (fields: Record<string, any>) => RedeemEvent.fromFields(fields),
+            fromFieldsWithTypes: (item: FieldsWithTypes) => RedeemEvent.fromFieldsWithTypes(item),
+            fromBcs: (data: Uint8Array) => RedeemEvent.fromBcs(data),
+            bcs: RedeemEvent.bcs,
+            fromJSONField: (field: any) => RedeemEvent.fromJSONField(field),
+            fromJSON: (json: Record<string, any>) => RedeemEvent.fromJSON(json),
+            fromSuiParsedData: (content: SuiParsedData) => RedeemEvent.fromSuiParsedData(content),
+            fromSuiObjectData: (content: SuiObjectData) => RedeemEvent.fromSuiObjectData(content),
+            fetch: async (client: SuiClient, id: string) => RedeemEvent.fetch(client, id),
+            new: (fields: RedeemEventFields) => {
+                return new RedeemEvent([], fields);
+            },
+            kind: "StructClassReified",
+        };
+    }
+
+    static get r() {
+        return RedeemEvent.reified();
+    }
+
+    static phantom(): PhantomReified<ToTypeStr<RedeemEvent>> {
+        return phantom(RedeemEvent.reified());
+    }
+    static get p() {
+        return RedeemEvent.phantom();
+    }
+
+    static get bcs() {
+        return bcs.struct("RedeemEvent", {
+            sender: bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
+            index: bcs.u64(),
+            share: bcs.u64(),
+            share_price: bcs.u64(),
+            timestamp_ts_ms: bcs.u64(),
+            unlock_ts_ms: bcs.u64(),
+            u64_padding: bcs.vector(bcs.u64()),
+        });
+    }
+
+    static fromFields(fields: Record<string, any>): RedeemEvent {
+        return RedeemEvent.reified().new({
+            sender: decodeFromFields("address", fields.sender),
+            index: decodeFromFields("u64", fields.index),
+            share: decodeFromFields("u64", fields.share),
+            sharePrice: decodeFromFields("u64", fields.share_price),
+            timestampTsMs: decodeFromFields("u64", fields.timestamp_ts_ms),
+            unlockTsMs: decodeFromFields("u64", fields.unlock_ts_ms),
+            u64Padding: decodeFromFields(reified.vector("u64"), fields.u64_padding),
+        });
+    }
+
+    static fromFieldsWithTypes(item: FieldsWithTypes): RedeemEvent {
+        if (!isRedeemEvent(item.type)) {
+            throw new Error("not a RedeemEvent type");
+        }
+
+        return RedeemEvent.reified().new({
+            sender: decodeFromFieldsWithTypes("address", item.fields.sender),
+            index: decodeFromFieldsWithTypes("u64", item.fields.index),
+            share: decodeFromFieldsWithTypes("u64", item.fields.share),
+            sharePrice: decodeFromFieldsWithTypes("u64", item.fields.share_price),
+            timestampTsMs: decodeFromFieldsWithTypes("u64", item.fields.timestamp_ts_ms),
+            unlockTsMs: decodeFromFieldsWithTypes("u64", item.fields.unlock_ts_ms),
+            u64Padding: decodeFromFieldsWithTypes(reified.vector("u64"), item.fields.u64_padding),
+        });
+    }
+
+    static fromBcs(data: Uint8Array): RedeemEvent {
+        return RedeemEvent.fromFields(RedeemEvent.bcs.parse(data));
+    }
+
+    toJSONField() {
+        return {
+            sender: this.sender,
+            index: this.index.toString(),
+            share: this.share.toString(),
+            sharePrice: this.sharePrice.toString(),
+            timestampTsMs: this.timestampTsMs.toString(),
+            unlockTsMs: this.unlockTsMs.toString(),
+            u64Padding: fieldToJSON<Vector<"u64">>(`vector<u64>`, this.u64Padding),
+        };
+    }
+
+    toJSON() {
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
+    }
+
+    static fromJSONField(field: any): RedeemEvent {
+        return RedeemEvent.reified().new({
+            sender: decodeFromJSONField("address", field.sender),
+            index: decodeFromJSONField("u64", field.index),
+            share: decodeFromJSONField("u64", field.share),
+            sharePrice: decodeFromJSONField("u64", field.sharePrice),
+            timestampTsMs: decodeFromJSONField("u64", field.timestampTsMs),
+            unlockTsMs: decodeFromJSONField("u64", field.unlockTsMs),
+            u64Padding: decodeFromJSONField(reified.vector("u64"), field.u64Padding),
+        });
+    }
+
+    static fromJSON(json: Record<string, any>): RedeemEvent {
+        if (json.$typeName !== RedeemEvent.$typeName) {
+            throw new Error("not a WithTwoGenerics json object");
+        }
+
+        return RedeemEvent.fromJSONField(json);
+    }
+
+    static fromSuiParsedData(content: SuiParsedData): RedeemEvent {
+        if (content.dataType !== "moveObject") {
+            throw new Error("not an object");
+        }
+        if (!isRedeemEvent(content.type)) {
+            throw new Error(`object at ${(content.fields as any).id} is not a RedeemEvent object`);
+        }
+        return RedeemEvent.fromFieldsWithTypes(content);
+    }
+
+    static fromSuiObjectData(data: SuiObjectData): RedeemEvent {
+        if (data.bcs) {
+            if (data.bcs.dataType !== "moveObject" || !isRedeemEvent(data.bcs.type)) {
+                throw new Error(`object at is not a RedeemEvent object`);
+            }
+
+            return RedeemEvent.fromBcs(fromB64(data.bcs.bcsBytes));
+        }
+        if (data.content) {
+            return RedeemEvent.fromSuiParsedData(data.content);
+        }
+        throw new Error("Both `bcs` and `content` fields are missing from the data. Include `showBcs` or `showContent` in the request.");
+    }
+
+    static async fetch(client: SuiClient, id: string): Promise<RedeemEvent> {
+        const res = await client.getObject({ id, options: { showBcs: true } });
+        if (res.error) {
+            throw new Error(`error fetching RedeemEvent object at id ${id}: ${res.error.code}`);
+        }
+        if (res.data?.bcs?.dataType !== "moveObject" || !isRedeemEvent(res.data.bcs.type)) {
+            throw new Error(`object at id ${id} is not a RedeemEvent object`);
+        }
+
+        return RedeemEvent.fromSuiObjectData(res.data);
     }
 }
 
@@ -5470,203 +5682,136 @@ export class UpdateSpotConfigEvent implements StructClass {
     }
 }
 
-/* ============================== WithdrawLendingEvent =============================== */
+/* ============================== UpdateUnlockCountdownTsMsEvent =============================== */
 
-export function isWithdrawLendingEvent(type: string): boolean {
+export function isUpdateUnlockCountdownTsMsEvent(type: string): boolean {
     type = compressSuiType(type);
-    return type === `${PKG_V1}::lp_pool::WithdrawLendingEvent`;
+    return type === `${PKG_V1}::lp_pool::UpdateUnlockCountdownTsMsEvent`;
 }
 
-export interface WithdrawLendingEventFields {
+export interface UpdateUnlockCountdownTsMsEventFields {
+    sender: ToField<"address">;
     index: ToField<"u64">;
-    lendingIndex: ToField<"u64">;
-    cTokenType: ToField<TypeName>;
-    rTokenType: ToField<TypeName>;
-    withdrawAmount: ToField<"u64">;
-    withdrawnCollateralAmount: ToField<"u64">;
-    latestLendingAmount: ToField<"u64">;
-    latestMarketCoinAmount: ToField<"u64">;
-    latestReservedAmount: ToField<"u64">;
-    latestLiquidityAmount: ToField<"u64">;
-    lendingInterest: ToField<"u64">;
-    protocolShare: ToField<"u64">;
-    lendingReward: ToField<"u64">;
-    rewardProtocolShare: ToField<"u64">;
+    previousUnlockCountdownTsMs: ToField<"u64">;
+    newUnlockCountdownTsMs: ToField<"u64">;
     u64Padding: ToField<Vector<"u64">>;
 }
 
-export type WithdrawLendingEventReified = Reified<WithdrawLendingEvent, WithdrawLendingEventFields>;
+export type UpdateUnlockCountdownTsMsEventReified = Reified<UpdateUnlockCountdownTsMsEvent, UpdateUnlockCountdownTsMsEventFields>;
 
-export class WithdrawLendingEvent implements StructClass {
+export class UpdateUnlockCountdownTsMsEvent implements StructClass {
     __StructClass = true as const;
 
-    static readonly $typeName = `${PKG_V1}::lp_pool::WithdrawLendingEvent`;
+    static readonly $typeName = `${PKG_V1}::lp_pool::UpdateUnlockCountdownTsMsEvent`;
     static readonly $numTypeParams = 0;
     static readonly $isPhantom = [] as const;
 
-    readonly $typeName = WithdrawLendingEvent.$typeName;
-    readonly $fullTypeName: `${typeof PKG_V1}::lp_pool::WithdrawLendingEvent`;
+    readonly $typeName = UpdateUnlockCountdownTsMsEvent.$typeName;
+    readonly $fullTypeName: `${typeof PKG_V1}::lp_pool::UpdateUnlockCountdownTsMsEvent`;
     readonly $typeArgs: [];
-    readonly $isPhantom = WithdrawLendingEvent.$isPhantom;
+    readonly $isPhantom = UpdateUnlockCountdownTsMsEvent.$isPhantom;
 
+    readonly sender: ToField<"address">;
     readonly index: ToField<"u64">;
-    readonly lendingIndex: ToField<"u64">;
-    readonly cTokenType: ToField<TypeName>;
-    readonly rTokenType: ToField<TypeName>;
-    readonly withdrawAmount: ToField<"u64">;
-    readonly withdrawnCollateralAmount: ToField<"u64">;
-    readonly latestLendingAmount: ToField<"u64">;
-    readonly latestMarketCoinAmount: ToField<"u64">;
-    readonly latestReservedAmount: ToField<"u64">;
-    readonly latestLiquidityAmount: ToField<"u64">;
-    readonly lendingInterest: ToField<"u64">;
-    readonly protocolShare: ToField<"u64">;
-    readonly lendingReward: ToField<"u64">;
-    readonly rewardProtocolShare: ToField<"u64">;
+    readonly previousUnlockCountdownTsMs: ToField<"u64">;
+    readonly newUnlockCountdownTsMs: ToField<"u64">;
     readonly u64Padding: ToField<Vector<"u64">>;
 
-    private constructor(typeArgs: [], fields: WithdrawLendingEventFields) {
+    private constructor(typeArgs: [], fields: UpdateUnlockCountdownTsMsEventFields) {
         this.$fullTypeName = composeSuiType(
-            WithdrawLendingEvent.$typeName,
+            UpdateUnlockCountdownTsMsEvent.$typeName,
             ...typeArgs
-        ) as `${typeof PKG_V1}::lp_pool::WithdrawLendingEvent`;
+        ) as `${typeof PKG_V1}::lp_pool::UpdateUnlockCountdownTsMsEvent`;
         this.$typeArgs = typeArgs;
 
+        this.sender = fields.sender;
         this.index = fields.index;
-        this.lendingIndex = fields.lendingIndex;
-        this.cTokenType = fields.cTokenType;
-        this.rTokenType = fields.rTokenType;
-        this.withdrawAmount = fields.withdrawAmount;
-        this.withdrawnCollateralAmount = fields.withdrawnCollateralAmount;
-        this.latestLendingAmount = fields.latestLendingAmount;
-        this.latestMarketCoinAmount = fields.latestMarketCoinAmount;
-        this.latestReservedAmount = fields.latestReservedAmount;
-        this.latestLiquidityAmount = fields.latestLiquidityAmount;
-        this.lendingInterest = fields.lendingInterest;
-        this.protocolShare = fields.protocolShare;
-        this.lendingReward = fields.lendingReward;
-        this.rewardProtocolShare = fields.rewardProtocolShare;
+        this.previousUnlockCountdownTsMs = fields.previousUnlockCountdownTsMs;
+        this.newUnlockCountdownTsMs = fields.newUnlockCountdownTsMs;
         this.u64Padding = fields.u64Padding;
     }
 
-    static reified(): WithdrawLendingEventReified {
+    static reified(): UpdateUnlockCountdownTsMsEventReified {
         return {
-            typeName: WithdrawLendingEvent.$typeName,
-            fullTypeName: composeSuiType(WithdrawLendingEvent.$typeName, ...[]) as `${typeof PKG_V1}::lp_pool::WithdrawLendingEvent`,
+            typeName: UpdateUnlockCountdownTsMsEvent.$typeName,
+            fullTypeName: composeSuiType(
+                UpdateUnlockCountdownTsMsEvent.$typeName,
+                ...[]
+            ) as `${typeof PKG_V1}::lp_pool::UpdateUnlockCountdownTsMsEvent`,
             typeArgs: [] as [],
-            isPhantom: WithdrawLendingEvent.$isPhantom,
+            isPhantom: UpdateUnlockCountdownTsMsEvent.$isPhantom,
             reifiedTypeArgs: [],
-            fromFields: (fields: Record<string, any>) => WithdrawLendingEvent.fromFields(fields),
-            fromFieldsWithTypes: (item: FieldsWithTypes) => WithdrawLendingEvent.fromFieldsWithTypes(item),
-            fromBcs: (data: Uint8Array) => WithdrawLendingEvent.fromBcs(data),
-            bcs: WithdrawLendingEvent.bcs,
-            fromJSONField: (field: any) => WithdrawLendingEvent.fromJSONField(field),
-            fromJSON: (json: Record<string, any>) => WithdrawLendingEvent.fromJSON(json),
-            fromSuiParsedData: (content: SuiParsedData) => WithdrawLendingEvent.fromSuiParsedData(content),
-            fromSuiObjectData: (content: SuiObjectData) => WithdrawLendingEvent.fromSuiObjectData(content),
-            fetch: async (client: SuiClient, id: string) => WithdrawLendingEvent.fetch(client, id),
-            new: (fields: WithdrawLendingEventFields) => {
-                return new WithdrawLendingEvent([], fields);
+            fromFields: (fields: Record<string, any>) => UpdateUnlockCountdownTsMsEvent.fromFields(fields),
+            fromFieldsWithTypes: (item: FieldsWithTypes) => UpdateUnlockCountdownTsMsEvent.fromFieldsWithTypes(item),
+            fromBcs: (data: Uint8Array) => UpdateUnlockCountdownTsMsEvent.fromBcs(data),
+            bcs: UpdateUnlockCountdownTsMsEvent.bcs,
+            fromJSONField: (field: any) => UpdateUnlockCountdownTsMsEvent.fromJSONField(field),
+            fromJSON: (json: Record<string, any>) => UpdateUnlockCountdownTsMsEvent.fromJSON(json),
+            fromSuiParsedData: (content: SuiParsedData) => UpdateUnlockCountdownTsMsEvent.fromSuiParsedData(content),
+            fromSuiObjectData: (content: SuiObjectData) => UpdateUnlockCountdownTsMsEvent.fromSuiObjectData(content),
+            fetch: async (client: SuiClient, id: string) => UpdateUnlockCountdownTsMsEvent.fetch(client, id),
+            new: (fields: UpdateUnlockCountdownTsMsEventFields) => {
+                return new UpdateUnlockCountdownTsMsEvent([], fields);
             },
             kind: "StructClassReified",
         };
     }
 
     static get r() {
-        return WithdrawLendingEvent.reified();
+        return UpdateUnlockCountdownTsMsEvent.reified();
     }
 
-    static phantom(): PhantomReified<ToTypeStr<WithdrawLendingEvent>> {
-        return phantom(WithdrawLendingEvent.reified());
+    static phantom(): PhantomReified<ToTypeStr<UpdateUnlockCountdownTsMsEvent>> {
+        return phantom(UpdateUnlockCountdownTsMsEvent.reified());
     }
     static get p() {
-        return WithdrawLendingEvent.phantom();
+        return UpdateUnlockCountdownTsMsEvent.phantom();
     }
 
     static get bcs() {
-        return bcs.struct("WithdrawLendingEvent", {
+        return bcs.struct("UpdateUnlockCountdownTsMsEvent", {
+            sender: bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
             index: bcs.u64(),
-            lending_index: bcs.u64(),
-            c_token_type: TypeName.bcs,
-            r_token_type: TypeName.bcs,
-            withdraw_amount: bcs.u64(),
-            withdrawn_collateral_amount: bcs.u64(),
-            latest_lending_amount: bcs.u64(),
-            latest_market_coin_amount: bcs.u64(),
-            latest_reserved_amount: bcs.u64(),
-            latest_liquidity_amount: bcs.u64(),
-            lending_interest: bcs.u64(),
-            protocol_share: bcs.u64(),
-            lending_reward: bcs.u64(),
-            reward_protocol_share: bcs.u64(),
+            previous_unlock_countdown_ts_ms: bcs.u64(),
+            new_unlock_countdown_ts_ms: bcs.u64(),
             u64_padding: bcs.vector(bcs.u64()),
         });
     }
 
-    static fromFields(fields: Record<string, any>): WithdrawLendingEvent {
-        return WithdrawLendingEvent.reified().new({
+    static fromFields(fields: Record<string, any>): UpdateUnlockCountdownTsMsEvent {
+        return UpdateUnlockCountdownTsMsEvent.reified().new({
+            sender: decodeFromFields("address", fields.sender),
             index: decodeFromFields("u64", fields.index),
-            lendingIndex: decodeFromFields("u64", fields.lending_index),
-            cTokenType: decodeFromFields(TypeName.reified(), fields.c_token_type),
-            rTokenType: decodeFromFields(TypeName.reified(), fields.r_token_type),
-            withdrawAmount: decodeFromFields("u64", fields.withdraw_amount),
-            withdrawnCollateralAmount: decodeFromFields("u64", fields.withdrawn_collateral_amount),
-            latestLendingAmount: decodeFromFields("u64", fields.latest_lending_amount),
-            latestMarketCoinAmount: decodeFromFields("u64", fields.latest_market_coin_amount),
-            latestReservedAmount: decodeFromFields("u64", fields.latest_reserved_amount),
-            latestLiquidityAmount: decodeFromFields("u64", fields.latest_liquidity_amount),
-            lendingInterest: decodeFromFields("u64", fields.lending_interest),
-            protocolShare: decodeFromFields("u64", fields.protocol_share),
-            lendingReward: decodeFromFields("u64", fields.lending_reward),
-            rewardProtocolShare: decodeFromFields("u64", fields.reward_protocol_share),
+            previousUnlockCountdownTsMs: decodeFromFields("u64", fields.previous_unlock_countdown_ts_ms),
+            newUnlockCountdownTsMs: decodeFromFields("u64", fields.new_unlock_countdown_ts_ms),
             u64Padding: decodeFromFields(reified.vector("u64"), fields.u64_padding),
         });
     }
 
-    static fromFieldsWithTypes(item: FieldsWithTypes): WithdrawLendingEvent {
-        if (!isWithdrawLendingEvent(item.type)) {
-            throw new Error("not a WithdrawLendingEvent type");
+    static fromFieldsWithTypes(item: FieldsWithTypes): UpdateUnlockCountdownTsMsEvent {
+        if (!isUpdateUnlockCountdownTsMsEvent(item.type)) {
+            throw new Error("not a UpdateUnlockCountdownTsMsEvent type");
         }
 
-        return WithdrawLendingEvent.reified().new({
+        return UpdateUnlockCountdownTsMsEvent.reified().new({
+            sender: decodeFromFieldsWithTypes("address", item.fields.sender),
             index: decodeFromFieldsWithTypes("u64", item.fields.index),
-            lendingIndex: decodeFromFieldsWithTypes("u64", item.fields.lending_index),
-            cTokenType: decodeFromFieldsWithTypes(TypeName.reified(), item.fields.c_token_type),
-            rTokenType: decodeFromFieldsWithTypes(TypeName.reified(), item.fields.r_token_type),
-            withdrawAmount: decodeFromFieldsWithTypes("u64", item.fields.withdraw_amount),
-            withdrawnCollateralAmount: decodeFromFieldsWithTypes("u64", item.fields.withdrawn_collateral_amount),
-            latestLendingAmount: decodeFromFieldsWithTypes("u64", item.fields.latest_lending_amount),
-            latestMarketCoinAmount: decodeFromFieldsWithTypes("u64", item.fields.latest_market_coin_amount),
-            latestReservedAmount: decodeFromFieldsWithTypes("u64", item.fields.latest_reserved_amount),
-            latestLiquidityAmount: decodeFromFieldsWithTypes("u64", item.fields.latest_liquidity_amount),
-            lendingInterest: decodeFromFieldsWithTypes("u64", item.fields.lending_interest),
-            protocolShare: decodeFromFieldsWithTypes("u64", item.fields.protocol_share),
-            lendingReward: decodeFromFieldsWithTypes("u64", item.fields.lending_reward),
-            rewardProtocolShare: decodeFromFieldsWithTypes("u64", item.fields.reward_protocol_share),
+            previousUnlockCountdownTsMs: decodeFromFieldsWithTypes("u64", item.fields.previous_unlock_countdown_ts_ms),
+            newUnlockCountdownTsMs: decodeFromFieldsWithTypes("u64", item.fields.new_unlock_countdown_ts_ms),
             u64Padding: decodeFromFieldsWithTypes(reified.vector("u64"), item.fields.u64_padding),
         });
     }
 
-    static fromBcs(data: Uint8Array): WithdrawLendingEvent {
-        return WithdrawLendingEvent.fromFields(WithdrawLendingEvent.bcs.parse(data));
+    static fromBcs(data: Uint8Array): UpdateUnlockCountdownTsMsEvent {
+        return UpdateUnlockCountdownTsMsEvent.fromFields(UpdateUnlockCountdownTsMsEvent.bcs.parse(data));
     }
 
     toJSONField() {
         return {
+            sender: this.sender,
             index: this.index.toString(),
-            lendingIndex: this.lendingIndex.toString(),
-            cTokenType: this.cTokenType.toJSONField(),
-            rTokenType: this.rTokenType.toJSONField(),
-            withdrawAmount: this.withdrawAmount.toString(),
-            withdrawnCollateralAmount: this.withdrawnCollateralAmount.toString(),
-            latestLendingAmount: this.latestLendingAmount.toString(),
-            latestMarketCoinAmount: this.latestMarketCoinAmount.toString(),
-            latestReservedAmount: this.latestReservedAmount.toString(),
-            latestLiquidityAmount: this.latestLiquidityAmount.toString(),
-            lendingInterest: this.lendingInterest.toString(),
-            protocolShare: this.protocolShare.toString(),
-            lendingReward: this.lendingReward.toString(),
-            rewardProtocolShare: this.rewardProtocolShare.toString(),
+            previousUnlockCountdownTsMs: this.previousUnlockCountdownTsMs.toString(),
+            newUnlockCountdownTsMs: this.newUnlockCountdownTsMs.toString(),
             u64Padding: fieldToJSON<Vector<"u64">>(`vector<u64>`, this.u64Padding),
         };
     }
@@ -5675,67 +5820,57 @@ export class WithdrawLendingEvent implements StructClass {
         return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
     }
 
-    static fromJSONField(field: any): WithdrawLendingEvent {
-        return WithdrawLendingEvent.reified().new({
+    static fromJSONField(field: any): UpdateUnlockCountdownTsMsEvent {
+        return UpdateUnlockCountdownTsMsEvent.reified().new({
+            sender: decodeFromJSONField("address", field.sender),
             index: decodeFromJSONField("u64", field.index),
-            lendingIndex: decodeFromJSONField("u64", field.lendingIndex),
-            cTokenType: decodeFromJSONField(TypeName.reified(), field.cTokenType),
-            rTokenType: decodeFromJSONField(TypeName.reified(), field.rTokenType),
-            withdrawAmount: decodeFromJSONField("u64", field.withdrawAmount),
-            withdrawnCollateralAmount: decodeFromJSONField("u64", field.withdrawnCollateralAmount),
-            latestLendingAmount: decodeFromJSONField("u64", field.latestLendingAmount),
-            latestMarketCoinAmount: decodeFromJSONField("u64", field.latestMarketCoinAmount),
-            latestReservedAmount: decodeFromJSONField("u64", field.latestReservedAmount),
-            latestLiquidityAmount: decodeFromJSONField("u64", field.latestLiquidityAmount),
-            lendingInterest: decodeFromJSONField("u64", field.lendingInterest),
-            protocolShare: decodeFromJSONField("u64", field.protocolShare),
-            lendingReward: decodeFromJSONField("u64", field.lendingReward),
-            rewardProtocolShare: decodeFromJSONField("u64", field.rewardProtocolShare),
+            previousUnlockCountdownTsMs: decodeFromJSONField("u64", field.previousUnlockCountdownTsMs),
+            newUnlockCountdownTsMs: decodeFromJSONField("u64", field.newUnlockCountdownTsMs),
             u64Padding: decodeFromJSONField(reified.vector("u64"), field.u64Padding),
         });
     }
 
-    static fromJSON(json: Record<string, any>): WithdrawLendingEvent {
-        if (json.$typeName !== WithdrawLendingEvent.$typeName) {
+    static fromJSON(json: Record<string, any>): UpdateUnlockCountdownTsMsEvent {
+        if (json.$typeName !== UpdateUnlockCountdownTsMsEvent.$typeName) {
             throw new Error("not a WithTwoGenerics json object");
         }
 
-        return WithdrawLendingEvent.fromJSONField(json);
+        return UpdateUnlockCountdownTsMsEvent.fromJSONField(json);
     }
 
-    static fromSuiParsedData(content: SuiParsedData): WithdrawLendingEvent {
+    static fromSuiParsedData(content: SuiParsedData): UpdateUnlockCountdownTsMsEvent {
         if (content.dataType !== "moveObject") {
             throw new Error("not an object");
         }
-        if (!isWithdrawLendingEvent(content.type)) {
-            throw new Error(`object at ${(content.fields as any).id} is not a WithdrawLendingEvent object`);
+        if (!isUpdateUnlockCountdownTsMsEvent(content.type)) {
+            throw new Error(`object at ${(content.fields as any).id} is not a UpdateUnlockCountdownTsMsEvent object`);
         }
-        return WithdrawLendingEvent.fromFieldsWithTypes(content);
+        return UpdateUnlockCountdownTsMsEvent.fromFieldsWithTypes(content);
     }
 
-    static fromSuiObjectData(data: SuiObjectData): WithdrawLendingEvent {
+    static fromSuiObjectData(data: SuiObjectData): UpdateUnlockCountdownTsMsEvent {
         if (data.bcs) {
-            if (data.bcs.dataType !== "moveObject" || !isWithdrawLendingEvent(data.bcs.type)) {
-                throw new Error(`object at is not a WithdrawLendingEvent object`);
+            if (data.bcs.dataType !== "moveObject" || !isUpdateUnlockCountdownTsMsEvent(data.bcs.type)) {
+                throw new Error(`object at is not a UpdateUnlockCountdownTsMsEvent object`);
             }
 
-            return WithdrawLendingEvent.fromBcs(fromB64(data.bcs.bcsBytes));
+            return UpdateUnlockCountdownTsMsEvent.fromBcs(fromB64(data.bcs.bcsBytes));
         }
         if (data.content) {
-            return WithdrawLendingEvent.fromSuiParsedData(data.content);
+            return UpdateUnlockCountdownTsMsEvent.fromSuiParsedData(data.content);
         }
         throw new Error("Both `bcs` and `content` fields are missing from the data. Include `showBcs` or `showContent` in the request.");
     }
 
-    static async fetch(client: SuiClient, id: string): Promise<WithdrawLendingEvent> {
+    static async fetch(client: SuiClient, id: string): Promise<UpdateUnlockCountdownTsMsEvent> {
         const res = await client.getObject({ id, options: { showBcs: true } });
         if (res.error) {
-            throw new Error(`error fetching WithdrawLendingEvent object at id ${id}: ${res.error.code}`);
+            throw new Error(`error fetching UpdateUnlockCountdownTsMsEvent object at id ${id}: ${res.error.code}`);
         }
-        if (res.data?.bcs?.dataType !== "moveObject" || !isWithdrawLendingEvent(res.data.bcs.type)) {
-            throw new Error(`object at id ${id} is not a WithdrawLendingEvent object`);
+        if (res.data?.bcs?.dataType !== "moveObject" || !isUpdateUnlockCountdownTsMsEvent(res.data.bcs.type)) {
+            throw new Error(`object at id ${id} is not a UpdateUnlockCountdownTsMsEvent object`);
         }
 
-        return WithdrawLendingEvent.fromSuiObjectData(res.data);
+        return UpdateUnlockCountdownTsMsEvent.fromSuiObjectData(res.data);
     }
 }

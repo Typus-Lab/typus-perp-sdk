@@ -120,6 +120,10 @@ export function depositIncentive(tx: Transaction, typeArg: string, args: Deposit
     });
 }
 
+export function deprecated(tx: Transaction, published_at: string = PUBLISHED_AT) {
+    return tx.moveCall({ target: `${published_at}::stake_pool::deprecated`, arguments: [] });
+}
+
 export interface GetIncentiveArgs {
     stakePool: TransactionObjectInput;
     tokenType: TransactionObjectInput;
@@ -505,6 +509,28 @@ export function withdrawIncentive(tx: Transaction, typeArg: string, args: Withdr
             obj(tx, args.registry),
             pure(tx, args.index, `u64`),
             pure(tx, args.amount, `${Option.$typeName}<u64>`),
+        ],
+    });
+}
+
+export interface WithdrawIncentiveV2Args {
+    version: TransactionObjectInput;
+    registry: TransactionObjectInput;
+    index: bigint | TransactionArgument;
+    amount: bigint | TransactionArgument | TransactionArgument | null;
+    clock: TransactionObjectInput;
+}
+
+export function withdrawIncentiveV2(tx: Transaction, typeArg: string, args: WithdrawIncentiveV2Args, published_at: string = PUBLISHED_AT) {
+    return tx.moveCall({
+        target: `${published_at}::stake_pool::withdraw_incentive_v2`,
+        typeArguments: [typeArg],
+        arguments: [
+            obj(tx, args.version),
+            obj(tx, args.registry),
+            pure(tx, args.index, `u64`),
+            pure(tx, args.amount, `${Option.$typeName}<u64>`),
+            obj(tx, args.clock),
         ],
     });
 }

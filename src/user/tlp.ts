@@ -1,10 +1,10 @@
 import { Transaction } from "@mysten/sui/transactions";
 import { LiquidityPool } from "../typus_perp/lp-pool/structs";
-import { burnLp, mintLp, updateLiquidityValue, swap as _swap } from "../typus_perp/lp-pool/functions";
+import { redeem, mintLp, updateLiquidityValue, swap as _swap, claim as _claim } from "../typus_perp/lp-pool/functions";
 import {
     harvestPerUserShare,
     stake,
-    unstake,
+    unstake as _unstake,
     unsubscribe as _unsubscribe,
     snapshot as _snapshot,
 } from "../typus_stake_pool/stake-pool/functions";
@@ -45,6 +45,7 @@ export async function mintStakeLp(
         amount: string;
         userShareId: string | null;
         user: string;
+        stake: boolean;
     }
 ): Promise<Transaction> {
     // update pyth oracle
@@ -94,26 +95,64 @@ export async function mintStakeLp(
         clock: CLOCK,
     });
 
-    stake(tx, TLP_TOKEN, {
-        version: STAKE_POOL_VERSION,
-        registry: STAKE_POOL,
-        index: BigInt(0),
-        lpToken: lpCoin,
-        clock: CLOCK,
-        userShareId: input.userShareId ? BigInt(input.userShareId) : null,
-    });
+    if (input.stake) {
+        stake(tx, TLP_TOKEN, {
+            version: STAKE_POOL_VERSION,
+            registry: STAKE_POOL,
+            index: BigInt(0),
+            lpToken: lpCoin,
+            clock: CLOCK,
+            userShareId: input.userShareId ? BigInt(input.userShareId) : null,
+        });
+    } else {
+        tx.transferObjects([lpCoin], input.user);
+    }
 
     return tx;
 }
 
-export async function unstakeBurn(
+export async function unstake(
+    config: TypusConfig,
+    tx: Transaction,
+    input: {
+        lpPool: LiquidityPool;
+        stakePool: StakePool;
+        userShareId: string;
+        share: string | null;
+        user: string;
+    }
+): Promise<Transaction> {
+    harvestStakeReward(config, tx, { stakePool: input.stakePool, userShareId: input.userShareId, user: input.user });
+
+    _unsubscribe(tx, TLP_TOKEN, {
+        version: STAKE_POOL_VERSION,
+        registry: STAKE_POOL,
+        index: BigInt(0),
+        userShareId: BigInt(input.userShareId),
+        clock: CLOCK,
+        unsubscribedShares: input.share ? BigInt(input.share) : null,
+    });
+
+    let lpCoin = _unstake(tx, TLP_TOKEN, {
+        version: STAKE_POOL_VERSION,
+        registry: STAKE_POOL,
+        index: BigInt(0),
+        userShareId: BigInt(input.userShareId),
+        clock: CLOCK,
+    });
+
+    tx.transferObjects([lpCoin], input.user);
+
+    return tx;
+}
+
+export async function unstakeRedeem(
     config: TypusConfig,
     tx: Transaction,
     pythClient: PythClient,
     input: {
         lpPool: LiquidityPool;
         stakePool: StakePool;
-        cTOKEN: TOKEN;
         userShareId: string;
         share: string | null;
         user: string;
@@ -137,7 +176,16 @@ export async function unstakeBurn(
 
     harvestStakeReward(config, tx, { stakePool: input.stakePool, userShareId: input.userShareId, user: input.user });
 
-    let lpCoin = unstake(tx, TLP_TOKEN, {
+    _unsubscribe(tx, TLP_TOKEN, {
+        version: STAKE_POOL_VERSION,
+        registry: STAKE_POOL,
+        index: BigInt(0),
+        userShareId: BigInt(input.userShareId),
+        clock: CLOCK,
+        unsubscribedShares: input.share ? BigInt(input.share) : null,
+    });
+
+    let lpCoin = _unstake(tx, TLP_TOKEN, {
         version: STAKE_POOL_VERSION,
         registry: STAKE_POOL,
         index: BigInt(0),
@@ -145,32 +193,24 @@ export async function unstakeBurn(
         clock: CLOCK,
     });
 
-    let burnCoin;
-
-    if (input.share) {
-        burnCoin = tx.splitCoins(lpCoin, [input.share]);
-        tx.transferObjects([lpCoin], input.user);
-    } else {
-        burnCoin = lpCoin;
-    }
-
-    let cToken = tokenType[NETWORK][input.cTOKEN];
-    let coin = burnLp(tx, [cToken, TLP_TOKEN], {
-        version: PERP_VERSION,
-        registry: LP_POOL,
-        treasuryCaps: TLP_TREASURY_CAP,
-        index: BigInt(0),
-        oracle: oracle[NETWORK][input.cTOKEN]!,
-        coin: burnCoin,
-        clock: CLOCK,
+    let balance = tx.moveCall({
+        target: `0x2::coin::into_balance`,
+        typeArguments: [TLP_TOKEN],
+        arguments: [lpCoin],
     });
 
-    tx.transferObjects([coin], input.user);
+    redeem(tx, TLP_TOKEN, {
+        version: PERP_VERSION,
+        registry: LP_POOL,
+        index: BigInt(0),
+        clock: CLOCK,
+        balance,
+    });
 
     return tx;
 }
 
-export async function burnTlp(
+export async function redeemTlp(
     config: TypusConfig,
     tx: Transaction,
     pythClient: PythClient,
@@ -209,18 +249,63 @@ export async function burnTlp(
         burnCoin = lpCoin;
     }
 
-    let cToken = tokenType[NETWORK][input.cTOKEN];
-    let coin = burnLp(tx, [cToken, TLP_TOKEN], {
-        version: PERP_VERSION,
-        registry: LP_POOL,
-        treasuryCaps: TLP_TREASURY_CAP,
-        index: BigInt(0),
-        oracle: oracle[NETWORK][input.cTOKEN]!,
-        coin: burnCoin,
-        clock: CLOCK,
+    let balance = tx.moveCall({
+        target: `0x2::coin::into_balance`,
+        typeArguments: [TLP_TOKEN],
+        arguments: [burnCoin],
     });
 
-    tx.transferObjects([coin], input.user);
+    redeem(tx, TLP_TOKEN, {
+        version: PERP_VERSION,
+        registry: LP_POOL,
+        index: BigInt(0),
+        clock: CLOCK,
+        balance,
+    });
+
+    return tx;
+}
+
+export async function claim(
+    config: TypusConfig,
+    tx: Transaction,
+    pythClient: PythClient,
+    input: {
+        lpPool: LiquidityPool;
+        stakePool: StakePool;
+        cTOKEN: TOKEN;
+        lpCoin: string;
+        share: string | null;
+        user: string;
+    }
+): Promise<Transaction> {
+    // update pyth oracle
+    let tokens = input.lpPool.tokenPools.map((p) => typeArgToAsset("0x" + p.tokenType.name));
+
+    await updatePyth(pythClient, tx, tokens);
+
+    for (let token of tokens) {
+        updateOracleWithPythUsd(pythClient, tx, config.package.oracle, token);
+        updateLiquidityValue(tx, tokenType[NETWORK][token], {
+            version: PERP_VERSION,
+            registry: LP_POOL,
+            index: BigInt(0),
+            oracle: oracle[NETWORK][token]!,
+            clock: CLOCK,
+        });
+    }
+    let cToken = tokenType[NETWORK][input.cTOKEN];
+
+    let token = _claim(tx, [TLP_TOKEN, cToken], {
+        version: PERP_VERSION,
+        registry: LP_POOL,
+        index: BigInt(0),
+        clock: CLOCK,
+        treasuryCaps: TLP_TREASURY_CAP,
+        oracle: oracle[NETWORK][input.cTOKEN]!,
+    });
+
+    tx.transferObjects([token], input.user);
 
     return tx;
 }
@@ -269,34 +354,6 @@ export async function swap(
 
     tx.transferObjects([token], input.user);
 
-    return tx;
-}
-
-export async function unsubscribe(
-    config: TypusConfig,
-    tx: Transaction,
-    input: {
-        userShareId: string;
-        share: string | null;
-    }
-): Promise<Transaction> {
-    _snapshot(tx, {
-        version: STAKE_POOL_VERSION,
-        registry: STAKE_POOL,
-        index: BigInt(0),
-        clock: CLOCK,
-        userShareId: BigInt(input.userShareId),
-        typusEcosystemVersion: config.version.typus,
-        typusUserRegistry: config.registry.typus.user,
-    });
-    _unsubscribe(tx, TLP_TOKEN, {
-        version: STAKE_POOL_VERSION,
-        registry: STAKE_POOL,
-        index: BigInt(0),
-        userShareId: BigInt(input.userShareId),
-        clock: CLOCK,
-        unsubscribedShares: input.share ? BigInt(input.share) : null,
-    });
     return tx;
 }
 

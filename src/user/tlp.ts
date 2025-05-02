@@ -216,9 +216,7 @@ export async function redeemTlp(
     pythClient: PythClient,
     input: {
         lpPool: LiquidityPool;
-        stakePool: StakePool;
-        cTOKEN: TOKEN;
-        lpCoin: string;
+        lpCoins: string[];
         share: string | null;
         user: string;
     }
@@ -239,7 +237,13 @@ export async function redeemTlp(
         });
     }
 
-    let lpCoin = tx.object(input.lpCoin);
+    let destination = input.lpCoins.pop()!;
+
+    if (input.lpCoins.length > 0) {
+        tx.mergeCoins(destination, input.lpCoins);
+    }
+
+    let lpCoin = tx.object(destination);
 
     let burnCoin;
 

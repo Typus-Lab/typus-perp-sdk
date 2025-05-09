@@ -1,11 +1,11 @@
 import {
-    createTradingOrder as _createTradingOrder,
+    createTradingOrderV2 as _createTradingOrder,
     cancelTradingOrder as _cancelTradingOrder,
     increaseCollateral as _increaseCollateral,
     releaseCollateral as _releaseCollateral,
 } from "../typus_perp/trading/functions";
 import { Position, TradingOrder } from "../typus_perp/position/structs";
-import { LP_POOL, MARKET, NETWORK, PERP_VERSION } from "..";
+import { COMPETITION_CONFIG, LP_POOL, MARKET, NETWORK, PERP_VERSION } from "..";
 import { PythClient, updatePyth, TypusConfig, updateOracleWithPythUsd } from "@typus/typus-sdk/dist/src/utils";
 import { CLOCK, tokenType, TOKEN, typeArgToAsset, oracle } from "@typus/typus-sdk/dist/src/constants";
 import { Transaction } from "@mysten/sui/transactions";
@@ -83,6 +83,8 @@ export async function createTradingOrder(
         isStopOrder: input.isStopOrder,
         reduceOnly: input.reduceOnly,
         linkedPositionId: input.linkedPositionId ? BigInt(input.linkedPositionId) : null,
+        tailsStakingRegistry: config.registry.typus.tailsStaking,
+        competitionConfig: COMPETITION_CONFIG,
     });
 
     return tx;

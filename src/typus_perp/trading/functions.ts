@@ -326,6 +326,63 @@ export function createTradingOrder(
     });
 }
 
+export interface CreateTradingOrderV2Args {
+    version: TransactionObjectInput;
+    registry: TransactionObjectInput;
+    poolRegistry: TransactionObjectInput;
+    typusOracleCToken: TransactionObjectInput;
+    typusOracleTradingSymbol: TransactionObjectInput;
+    clock: TransactionObjectInput;
+    marketIndex: bigint | TransactionArgument;
+    poolIndex: bigint | TransactionArgument;
+    typusEcosystemVersion: TransactionObjectInput;
+    typusUserRegistry: TransactionObjectInput;
+    typusLeaderboardRegistry: TransactionObjectInput;
+    tailsStakingRegistry: TransactionObjectInput;
+    competitionConfig: TransactionObjectInput;
+    linkedPositionId: bigint | TransactionArgument | TransactionArgument | null;
+    collateral: TransactionObjectInput;
+    reduceOnly: boolean | TransactionArgument;
+    isLong: boolean | TransactionArgument;
+    isStopOrder: boolean | TransactionArgument;
+    size: bigint | TransactionArgument;
+    triggerPrice: bigint | TransactionArgument;
+}
+
+export function createTradingOrderV2(
+    tx: Transaction,
+    typeArgs: [string, string],
+    args: CreateTradingOrderV2Args,
+    published_at: string = PUBLISHED_AT
+) {
+    return tx.moveCall({
+        target: `${published_at}::trading::create_trading_order_v2`,
+        typeArguments: typeArgs,
+        arguments: [
+            obj(tx, args.version),
+            obj(tx, args.registry),
+            obj(tx, args.poolRegistry),
+            obj(tx, args.typusOracleCToken),
+            obj(tx, args.typusOracleTradingSymbol),
+            obj(tx, args.clock),
+            pure(tx, args.marketIndex, `u64`),
+            pure(tx, args.poolIndex, `u64`),
+            obj(tx, args.typusEcosystemVersion),
+            obj(tx, args.typusUserRegistry),
+            obj(tx, args.typusLeaderboardRegistry),
+            obj(tx, args.tailsStakingRegistry),
+            obj(tx, args.competitionConfig),
+            pure(tx, args.linkedPositionId, `${Option.$typeName}<u64>`),
+            obj(tx, args.collateral),
+            pure(tx, args.reduceOnly, `bool`),
+            pure(tx, args.isLong, `bool`),
+            pure(tx, args.isStopOrder, `bool`),
+            pure(tx, args.size, `u64`),
+            pure(tx, args.triggerPrice, `u64`),
+        ],
+    });
+}
+
 export interface CreateTradingOrderWithBidReceiptArgs {
     version: TransactionObjectInput;
     registry: TransactionObjectInput;
@@ -373,6 +430,61 @@ export function createTradingOrderWithBidReceipt(
     });
 }
 
+export interface CreateTradingOrderWithBidReceiptV2Args {
+    version: TransactionObjectInput;
+    registry: TransactionObjectInput;
+    poolRegistry: TransactionObjectInput;
+    dovRegistry: TransactionObjectInput;
+    typusOracleCToken: TransactionObjectInput;
+    typusOracleTradingSymbol: TransactionObjectInput;
+    clock: TransactionObjectInput;
+    marketIndex: bigint | TransactionArgument;
+    poolIndex: bigint | TransactionArgument;
+    typusEcosystemVersion: TransactionObjectInput;
+    typusUserRegistry: TransactionObjectInput;
+    typusLeaderboardRegistry: TransactionObjectInput;
+    tailsStakingRegistry: TransactionObjectInput;
+    competitionConfig: TransactionObjectInput;
+    collateralBidReceipt: TransactionObjectInput;
+    isLong: boolean | TransactionArgument;
+    user: string | TransactionArgument;
+}
+
+export function createTradingOrderWithBidReceiptV2(
+    tx: Transaction,
+    typeArgs: [string, string, string],
+    args: CreateTradingOrderWithBidReceiptV2Args,
+    published_at: string = PUBLISHED_AT
+) {
+    return tx.moveCall({
+        target: `${published_at}::trading::create_trading_order_with_bid_receipt_v2`,
+        typeArguments: typeArgs,
+        arguments: [
+            obj(tx, args.version),
+            obj(tx, args.registry),
+            obj(tx, args.poolRegistry),
+            obj(tx, args.dovRegistry),
+            obj(tx, args.typusOracleCToken),
+            obj(tx, args.typusOracleTradingSymbol),
+            obj(tx, args.clock),
+            pure(tx, args.marketIndex, `u64`),
+            pure(tx, args.poolIndex, `u64`),
+            obj(tx, args.typusEcosystemVersion),
+            obj(tx, args.typusUserRegistry),
+            obj(tx, args.typusLeaderboardRegistry),
+            obj(tx, args.tailsStakingRegistry),
+            obj(tx, args.competitionConfig),
+            obj(tx, args.collateralBidReceipt),
+            pure(tx, args.isLong, `bool`),
+            pure(tx, args.user, `address`),
+        ],
+    });
+}
+
+export function deprecated(tx: Transaction, published_at: string = PUBLISHED_AT) {
+    return tx.moveCall({ target: `${published_at}::trading::deprecated`, arguments: [] });
+}
+
 export interface ExecuteOptionCollateralOrder_Args {
     version: TransactionObjectInput;
     dovRegistry: TransactionObjectInput;
@@ -390,6 +502,8 @@ export interface ExecuteOptionCollateralOrder_Args {
     typusEcosystemVersion: TransactionObjectInput;
     typusUserRegistry: TransactionObjectInput;
     typusLeaderboardRegistry: TransactionObjectInput;
+    tailsStakingRegistry: TransactionObjectInput;
+    competitionConfig: TransactionObjectInput;
     clock: TransactionObjectInput;
 }
 
@@ -419,6 +533,8 @@ export function executeOptionCollateralOrder_(
             obj(tx, args.typusEcosystemVersion),
             obj(tx, args.typusUserRegistry),
             obj(tx, args.typusLeaderboardRegistry),
+            obj(tx, args.tailsStakingRegistry),
+            obj(tx, args.competitionConfig),
             obj(tx, args.clock),
         ],
     });
@@ -439,6 +555,8 @@ export interface ExecuteOrder_Args {
     typusEcosystemVersion: TransactionObjectInput;
     typusUserRegistry: TransactionObjectInput;
     typusLeaderboardRegistry: TransactionObjectInput;
+    tailsStakingRegistry: TransactionObjectInput;
+    competitionConfig: TransactionObjectInput;
     clock: TransactionObjectInput;
 }
 
@@ -461,6 +579,8 @@ export function executeOrder_(tx: Transaction, typeArg: string, args: ExecuteOrd
             obj(tx, args.typusEcosystemVersion),
             obj(tx, args.typusUserRegistry),
             obj(tx, args.typusLeaderboardRegistry),
+            obj(tx, args.tailsStakingRegistry),
+            obj(tx, args.competitionConfig),
             obj(tx, args.clock),
         ],
     });
@@ -812,6 +932,41 @@ export function liquidate(tx: Transaction, typeArgs: [string, string, string], a
     });
 }
 
+export interface ManagerCancelOrderByOpenInterestLimitArgs {
+    version: TransactionObjectInput;
+    registry: TransactionObjectInput;
+    poolRegistry: TransactionObjectInput;
+    clock: TransactionObjectInput;
+    marketIndex: bigint | TransactionArgument;
+    poolIndex: bigint | TransactionArgument;
+    orderTypeTag: number | TransactionArgument;
+    triggerPrice: bigint | TransactionArgument;
+    maxOperationCount: bigint | TransactionArgument;
+}
+
+export function managerCancelOrderByOpenInterestLimit(
+    tx: Transaction,
+    typeArgs: [string, string],
+    args: ManagerCancelOrderByOpenInterestLimitArgs,
+    published_at: string = PUBLISHED_AT
+) {
+    return tx.moveCall({
+        target: `${published_at}::trading::manager_cancel_order_by_open_interest_limit`,
+        typeArguments: typeArgs,
+        arguments: [
+            obj(tx, args.version),
+            obj(tx, args.registry),
+            obj(tx, args.poolRegistry),
+            obj(tx, args.clock),
+            pure(tx, args.marketIndex, `u64`),
+            pure(tx, args.poolIndex, `u64`),
+            pure(tx, args.orderTypeTag, `u8`),
+            pure(tx, args.triggerPrice, `u64`),
+            pure(tx, args.maxOperationCount, `u64`),
+        ],
+    });
+}
+
 export interface ManagerCloseOptionPositionArgs {
     version: TransactionObjectInput;
     registry: TransactionObjectInput;
@@ -855,6 +1010,53 @@ export function managerCloseOptionPosition(
     });
 }
 
+export interface ManagerCloseOptionPositionV2Args {
+    version: TransactionObjectInput;
+    registry: TransactionObjectInput;
+    poolRegistry: TransactionObjectInput;
+    dovRegistry: TransactionObjectInput;
+    typusOracleCToken: TransactionObjectInput;
+    typusOracleTradingSymbol: TransactionObjectInput;
+    clock: TransactionObjectInput;
+    marketIndex: bigint | TransactionArgument;
+    poolIndex: bigint | TransactionArgument;
+    typusEcosystemVersion: TransactionObjectInput;
+    typusUserRegistry: TransactionObjectInput;
+    typusLeaderboardRegistry: TransactionObjectInput;
+    tailsStakingRegistry: TransactionObjectInput;
+    competitionConfig: TransactionObjectInput;
+    positionId: bigint | TransactionArgument;
+}
+
+export function managerCloseOptionPositionV2(
+    tx: Transaction,
+    typeArgs: [string, string, string],
+    args: ManagerCloseOptionPositionV2Args,
+    published_at: string = PUBLISHED_AT
+) {
+    return tx.moveCall({
+        target: `${published_at}::trading::manager_close_option_position_v2`,
+        typeArguments: typeArgs,
+        arguments: [
+            obj(tx, args.version),
+            obj(tx, args.registry),
+            obj(tx, args.poolRegistry),
+            obj(tx, args.dovRegistry),
+            obj(tx, args.typusOracleCToken),
+            obj(tx, args.typusOracleTradingSymbol),
+            obj(tx, args.clock),
+            pure(tx, args.marketIndex, `u64`),
+            pure(tx, args.poolIndex, `u64`),
+            obj(tx, args.typusEcosystemVersion),
+            obj(tx, args.typusUserRegistry),
+            obj(tx, args.typusLeaderboardRegistry),
+            obj(tx, args.tailsStakingRegistry),
+            obj(tx, args.competitionConfig),
+            pure(tx, args.positionId, `u64`),
+        ],
+    });
+}
+
 export interface ManagerReducePositionArgs {
     version: TransactionObjectInput;
     registry: TransactionObjectInput;
@@ -892,6 +1094,53 @@ export function managerReducePosition(
             obj(tx, args.typusEcosystemVersion),
             obj(tx, args.typusUserRegistry),
             obj(tx, args.typusLeaderboardRegistry),
+            pure(tx, args.positionId, `u64`),
+            pure(tx, args.reducedRatioBp, `u64`),
+        ],
+    });
+}
+
+export interface ManagerReducePositionV2Args {
+    version: TransactionObjectInput;
+    registry: TransactionObjectInput;
+    poolRegistry: TransactionObjectInput;
+    typusOracleCToken: TransactionObjectInput;
+    typusOracleTradingSymbol: TransactionObjectInput;
+    clock: TransactionObjectInput;
+    marketIndex: bigint | TransactionArgument;
+    poolIndex: bigint | TransactionArgument;
+    typusEcosystemVersion: TransactionObjectInput;
+    typusUserRegistry: TransactionObjectInput;
+    typusLeaderboardRegistry: TransactionObjectInput;
+    tailsStakingRegistry: TransactionObjectInput;
+    competitionConfig: TransactionObjectInput;
+    positionId: bigint | TransactionArgument;
+    reducedRatioBp: bigint | TransactionArgument;
+}
+
+export function managerReducePositionV2(
+    tx: Transaction,
+    typeArgs: [string, string],
+    args: ManagerReducePositionV2Args,
+    published_at: string = PUBLISHED_AT
+) {
+    return tx.moveCall({
+        target: `${published_at}::trading::manager_reduce_position_v2`,
+        typeArguments: typeArgs,
+        arguments: [
+            obj(tx, args.version),
+            obj(tx, args.registry),
+            obj(tx, args.poolRegistry),
+            obj(tx, args.typusOracleCToken),
+            obj(tx, args.typusOracleTradingSymbol),
+            obj(tx, args.clock),
+            pure(tx, args.marketIndex, `u64`),
+            pure(tx, args.poolIndex, `u64`),
+            obj(tx, args.typusEcosystemVersion),
+            obj(tx, args.typusUserRegistry),
+            obj(tx, args.typusLeaderboardRegistry),
+            obj(tx, args.tailsStakingRegistry),
+            obj(tx, args.competitionConfig),
             pure(tx, args.positionId, `u64`),
             pure(tx, args.reducedRatioBp, `u64`),
         ],
@@ -973,6 +1222,57 @@ export function managerRemovePosition(
             obj(tx, args.typusEcosystemVersion),
             obj(tx, args.typusUserRegistry),
             obj(tx, args.typusLeaderboardRegistry),
+            pure(tx, args.positionId, `u64`),
+            pure(tx, args.isOptionPosition, `bool`),
+            obj(tx, args.process),
+        ],
+    });
+}
+
+export interface ManagerRemovePositionV2Args {
+    version: TransactionObjectInput;
+    registry: TransactionObjectInput;
+    poolRegistry: TransactionObjectInput;
+    dovRegistry: TransactionObjectInput;
+    typusOracleCToken: TransactionObjectInput;
+    typusOracleTradingSymbol: TransactionObjectInput;
+    clock: TransactionObjectInput;
+    marketIndex: bigint | TransactionArgument;
+    poolIndex: bigint | TransactionArgument;
+    typusEcosystemVersion: TransactionObjectInput;
+    typusUserRegistry: TransactionObjectInput;
+    typusLeaderboardRegistry: TransactionObjectInput;
+    tailsStakingRegistry: TransactionObjectInput;
+    competitionConfig: TransactionObjectInput;
+    positionId: bigint | TransactionArgument;
+    isOptionPosition: boolean | TransactionArgument;
+    process: TransactionObjectInput;
+}
+
+export function managerRemovePositionV2(
+    tx: Transaction,
+    typeArgs: [string, string, string],
+    args: ManagerRemovePositionV2Args,
+    published_at: string = PUBLISHED_AT
+) {
+    return tx.moveCall({
+        target: `${published_at}::trading::manager_remove_position_v2`,
+        typeArguments: typeArgs,
+        arguments: [
+            obj(tx, args.version),
+            obj(tx, args.registry),
+            obj(tx, args.poolRegistry),
+            obj(tx, args.dovRegistry),
+            obj(tx, args.typusOracleCToken),
+            obj(tx, args.typusOracleTradingSymbol),
+            obj(tx, args.clock),
+            pure(tx, args.marketIndex, `u64`),
+            pure(tx, args.poolIndex, `u64`),
+            obj(tx, args.typusEcosystemVersion),
+            obj(tx, args.typusUserRegistry),
+            obj(tx, args.typusLeaderboardRegistry),
+            obj(tx, args.tailsStakingRegistry),
+            obj(tx, args.competitionConfig),
             pure(tx, args.positionId, `u64`),
             pure(tx, args.isOptionPosition, `bool`),
             obj(tx, args.process),
@@ -1091,6 +1391,55 @@ export function matchTradingOrder(
     });
 }
 
+export interface MatchTradingOrderV2Args {
+    version: TransactionObjectInput;
+    registry: TransactionObjectInput;
+    poolRegistry: TransactionObjectInput;
+    typusOracleCToken: TransactionObjectInput;
+    typusOracleTradingSymbol: TransactionObjectInput;
+    clock: TransactionObjectInput;
+    marketIndex: bigint | TransactionArgument;
+    poolIndex: bigint | TransactionArgument;
+    typusEcosystemVersion: TransactionObjectInput;
+    typusUserRegistry: TransactionObjectInput;
+    typusLeaderboardRegistry: TransactionObjectInput;
+    tailsStakingRegistry: TransactionObjectInput;
+    competitionConfig: TransactionObjectInput;
+    orderTypeTag: number | TransactionArgument;
+    triggerPrice: bigint | TransactionArgument;
+    maxOperationCount: bigint | TransactionArgument;
+}
+
+export function matchTradingOrderV2(
+    tx: Transaction,
+    typeArgs: [string, string],
+    args: MatchTradingOrderV2Args,
+    published_at: string = PUBLISHED_AT
+) {
+    return tx.moveCall({
+        target: `${published_at}::trading::match_trading_order_v2`,
+        typeArguments: typeArgs,
+        arguments: [
+            obj(tx, args.version),
+            obj(tx, args.registry),
+            obj(tx, args.poolRegistry),
+            obj(tx, args.typusOracleCToken),
+            obj(tx, args.typusOracleTradingSymbol),
+            obj(tx, args.clock),
+            pure(tx, args.marketIndex, `u64`),
+            pure(tx, args.poolIndex, `u64`),
+            obj(tx, args.typusEcosystemVersion),
+            obj(tx, args.typusUserRegistry),
+            obj(tx, args.typusLeaderboardRegistry),
+            obj(tx, args.tailsStakingRegistry),
+            obj(tx, args.competitionConfig),
+            pure(tx, args.orderTypeTag, `u8`),
+            pure(tx, args.triggerPrice, `u64`),
+            pure(tx, args.maxOperationCount, `u64`),
+        ],
+    });
+}
+
 export interface NewMarketsArgs {
     version: TransactionObjectInput;
     registry: TransactionObjectInput;
@@ -1144,6 +1493,55 @@ export function reduceOptionCollateralPositionSize(
             obj(tx, args.typusEcosystemVersion),
             obj(tx, args.typusUserRegistry),
             obj(tx, args.typusLeaderboardRegistry),
+            pure(tx, args.positionId, `u64`),
+            pure(tx, args.orderSize, `${Option.$typeName}<u64>`),
+        ],
+    });
+}
+
+export interface ReduceOptionCollateralPositionSizeV2Args {
+    version: TransactionObjectInput;
+    registry: TransactionObjectInput;
+    poolRegistry: TransactionObjectInput;
+    dovRegistry: TransactionObjectInput;
+    typusOracleCToken: TransactionObjectInput;
+    typusOracleTradingSymbol: TransactionObjectInput;
+    clock: TransactionObjectInput;
+    marketIndex: bigint | TransactionArgument;
+    poolIndex: bigint | TransactionArgument;
+    typusEcosystemVersion: TransactionObjectInput;
+    typusUserRegistry: TransactionObjectInput;
+    typusLeaderboardRegistry: TransactionObjectInput;
+    tailsStakingRegistry: TransactionObjectInput;
+    competitionConfig: TransactionObjectInput;
+    positionId: bigint | TransactionArgument;
+    orderSize: bigint | TransactionArgument | TransactionArgument | null;
+}
+
+export function reduceOptionCollateralPositionSizeV2(
+    tx: Transaction,
+    typeArgs: [string, string, string],
+    args: ReduceOptionCollateralPositionSizeV2Args,
+    published_at: string = PUBLISHED_AT
+) {
+    return tx.moveCall({
+        target: `${published_at}::trading::reduce_option_collateral_position_size_v2`,
+        typeArguments: typeArgs,
+        arguments: [
+            obj(tx, args.version),
+            obj(tx, args.registry),
+            obj(tx, args.poolRegistry),
+            obj(tx, args.dovRegistry),
+            obj(tx, args.typusOracleCToken),
+            obj(tx, args.typusOracleTradingSymbol),
+            obj(tx, args.clock),
+            pure(tx, args.marketIndex, `u64`),
+            pure(tx, args.poolIndex, `u64`),
+            obj(tx, args.typusEcosystemVersion),
+            obj(tx, args.typusUserRegistry),
+            obj(tx, args.typusLeaderboardRegistry),
+            obj(tx, args.tailsStakingRegistry),
+            obj(tx, args.competitionConfig),
             pure(tx, args.positionId, `u64`),
             pure(tx, args.orderSize, `${Option.$typeName}<u64>`),
         ],
@@ -1385,6 +1783,8 @@ export interface UpdateMarketConfigArgs {
     basicFundingRate: bigint | TransactionArgument | TransactionArgument | null;
     fundingIntervalTsMs: bigint | TransactionArgument | TransactionArgument | null;
     expMultiplier: bigint | TransactionArgument | TransactionArgument | null;
+    maxBuyOpenInterest: bigint | TransactionArgument | TransactionArgument | null;
+    maxSellOpenInterest: bigint | TransactionArgument | TransactionArgument | null;
 }
 
 export function updateMarketConfig(tx: Transaction, typeArg: string, args: UpdateMarketConfigArgs, published_at: string = PUBLISHED_AT) {
@@ -1404,6 +1804,8 @@ export function updateMarketConfig(tx: Transaction, typeArg: string, args: Updat
             pure(tx, args.basicFundingRate, `${Option.$typeName}<u64>`),
             pure(tx, args.fundingIntervalTsMs, `${Option.$typeName}<u64>`),
             pure(tx, args.expMultiplier, `${Option.$typeName}<u64>`),
+            pure(tx, args.maxBuyOpenInterest, `${Option.$typeName}<u64>`),
+            pure(tx, args.maxSellOpenInterest, `${Option.$typeName}<u64>`),
         ],
     });
 }

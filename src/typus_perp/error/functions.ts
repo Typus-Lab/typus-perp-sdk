@@ -65,6 +65,10 @@ export function exceedMaxLeverage(tx: Transaction, published_at: string = PUBLIS
     return tx.moveCall({ target: `${published_at}::error::exceed_max_leverage`, arguments: [] });
 }
 
+export function exceedMaxOpenInterest(tx: Transaction, published_at: string = PUBLISHED_AT) {
+    return tx.moveCall({ target: `${published_at}::error::exceed_max_open_interest`, arguments: [] });
+}
+
 export function frictionTooLarge(tx: Transaction, published_at: string = PUBLISHED_AT) {
     return tx.moveCall({ target: `${published_at}::error::friction_too_large`, arguments: [] });
 }
@@ -77,12 +81,20 @@ export function invalidBidReceiptsInput(tx: Transaction, published_at: string = 
     return tx.moveCall({ target: `${published_at}::error::invalid_bid_receipts_input`, arguments: [] });
 }
 
+export function invalidBoostBpArrayLength(tx: Transaction, published_at: string = PUBLISHED_AT) {
+    return tx.moveCall({ target: `${published_at}::error::invalid_boost_bp_array_length`, arguments: [] });
+}
+
 export function invalidOrderSide(tx: Transaction, published_at: string = PUBLISHED_AT) {
     return tx.moveCall({ target: `${published_at}::error::invalid_order_side`, arguments: [] });
 }
 
 export function invalidOrderSize(tx: Transaction, published_at: string = PUBLISHED_AT) {
     return tx.moveCall({ target: `${published_at}::error::invalid_order_size`, arguments: [] });
+}
+
+export function invalidTokenType(tx: Transaction, published_at: string = PUBLISHED_AT) {
+    return tx.moveCall({ target: `${published_at}::error::invalid_token_type`, arguments: [] });
 }
 
 export function invalidTradingFeeConfig(tx: Transaction, published_at: string = PUBLISHED_AT) {

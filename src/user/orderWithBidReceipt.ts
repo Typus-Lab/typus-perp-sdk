@@ -1,16 +1,12 @@
 import {
-    createTradingOrder as _createTradingOrder,
-    cancelTradingOrder as _cancelTradingOrder,
-    increaseCollateral as _increaseCollateral,
-    releaseCollateral as _releaseCollateral,
-    createTradingOrderWithBidReceipt as _createTradingOrderWithBidReceipt,
-    reduceOptionCollateralPositionSize as _reduceOptionCollateralPositionSize,
+    createTradingOrderWithBidReceiptV2 as _createTradingOrderWithBidReceipt,
+    reduceOptionCollateralPositionSizeV2 as _reduceOptionCollateralPositionSize,
 } from "../typus_perp/trading/functions";
 import { Transaction } from "@mysten/sui/transactions";
 import { PythClient, updatePyth, TypusConfig, updateOracleWithPythUsd } from "@typus/typus-sdk/dist/src/utils";
 import { tokenType, TOKEN, CLOCK, oracle } from "@typus/typus-sdk/dist/src/constants";
 import { getSplitBidReceiptTx } from "@typus/typus-sdk/dist/src/typus-dov-single-v2";
-import { LP_POOL, MARKET, NETWORK, PERP_VERSION } from "..";
+import { COMPETITION_CONFIG, LP_POOL, MARKET, NETWORK, PERP_VERSION } from "..";
 
 export async function createTradingOrderWithBidReceipt(
     config: TypusConfig,
@@ -64,6 +60,8 @@ export async function createTradingOrderWithBidReceipt(
         dovRegistry: config.registry.dov.dovSingle,
         collateralBidReceipt,
         user: input.user,
+        tailsStakingRegistry: config.registry.typus.tailsStaking,
+        competitionConfig: COMPETITION_CONFIG,
     });
 
     return tx;
@@ -108,6 +106,8 @@ export async function reduceOptionCollateralPositionSize(
         dovRegistry: config.registry.dov.dovSingle,
         positionId: BigInt(input.positionId),
         orderSize: input.orderSize ? BigInt(input.orderSize) : null,
+        tailsStakingRegistry: config.registry.typus.tailsStaking,
+        competitionConfig: COMPETITION_CONFIG,
     });
 
     return tx;

@@ -50,7 +50,11 @@ export async function getFromSentio(event: string, userAddress: string, startTim
  *  key: base_token {'APT','BTC','CETUS','DEEP','ETH','NAVX','NS','SOL','SUI','WAL'}
  *  value: Volume[]
  */
-export async function getTradingVolumeFromSentio(fromTimestamp: number, interval: number): Promise<Map<string, Volume[]>> {
+export async function getTradingVolumeFromSentio(
+    fromTimestamp: number,
+    interval: number,
+    toTimestamp?: number
+): Promise<Map<string, Volume[]>> {
     let apiUrl =
         NETWORK == "MAINNET"
             ? "https://app.sentio.xyz/api/v1/insights/typus/typus_perp_mainnet/query"
@@ -58,7 +62,7 @@ export async function getTradingVolumeFromSentio(fromTimestamp: number, interval
     let requestData = {
         timeRange: {
             start: `${fromTimestamp}`,
-            end: "now",
+            end: `${toTimestamp ?? "now"}`,
             step: 3600 * interval,
         },
         limit: 30 * 24,
@@ -297,4 +301,4 @@ export async function getAccumulatedUser(): Promise<number> {
 // getTlpFeeFromSentio();
 // getAccumulatedUser();
 // getTotalVolumeFromSentio();
-// getTradingVolumeFromSentio(1745712000, 1);
+// getTradingVolumeFromSentio(1747008000, 1, 1747011600);

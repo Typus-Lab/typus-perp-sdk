@@ -8,6 +8,7 @@ import { TradingOrder, Position } from "./typus_perp/position/structs";
 import {
     getUserOrders as _getUserOrders,
     getUserPositions as _getUserPositions,
+    getAllPositions as _getAllPositions,
     getEstimatedLiquidationPriceAndPnl,
 } from "./typus_perp/trading/functions";
 
@@ -345,4 +346,57 @@ export async function getLiquidationPriceAndPnl(
     });
     // console.log(results);
     return results;
+}
+
+export async function getAllPositions(
+    config: TypusConfig,
+    input: {
+        baseToken: TOKEN;
+        slice: string;
+        page: string;
+    }
+) {
+    let provider = new SuiClient({ url: config.rpcEndpoint });
+    let tx = new Transaction();
+
+    _getAllPositions(tx, tokenType[NETWORK][input.baseToken], {
+        version: PERP_VERSION,
+        registry: MARKET,
+        marketIndex: BigInt(0),
+        slice: BigInt(input.slice),
+        page: BigInt(input.page),
+    });
+    let res = await provider.devInspectTransactionBlock({
+        sender: "0x0000000000000000000000000000000000000000000000000000000000000000",
+        transactionBlock: tx,
+    });
+    console.log(res);
+
+    if (!res.results?.[0]?.returnValues?.[0]?.[0]) {
+        return [];
+    }
+
+    // -- 解析回傳值 -------------------------------------------------
+    const raw = new Uint8Array(res.results![0].returnValues![0][0]);
+
+    // 1) 至少要有 8 bytes 的 max_page
+    if (raw.length < 8) return [];
+
+    const withoutMaxPage = raw.slice(0, raw.length - 8);
+    const reader = new BcsReader(withoutMaxPage);
+
+    // 2) 第一個 u8 = user_positions_len + 1
+    const userPositionsLen = reader.read8() - 1;
+
+    const positions: Position[] = [];
+    for (let i = 0; i < userPositionsLen; i++) {
+        reader.read16();
+
+        const fields = Position.bcs.read(reader);
+        const pos = Position.fromFields(fields);
+
+        positions.push(pos);
+    }
+
+    return positions;
 }

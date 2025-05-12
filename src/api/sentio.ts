@@ -187,15 +187,15 @@ export async function getTlpFeeFromSentio(): Promise<number> {
     return fee;
 }
 
-export async function getTotalVolumeFromSentio(): Promise<number> {
+export async function getTotalVolumeFromSentio(fromTimestamp: number, toTimestamp: number): Promise<number> {
     let apiUrl =
         NETWORK == "MAINNET"
             ? "https://app.sentio.xyz/api/v1/insights/typus/typus_perp_mainnet/query"
             : "https://app.sentio.xyz/api/v1/insights/typus/typus_perp/query";
     let requestData = {
         timeRange: {
-            start: "now-1h",
-            end: "now",
+            start: `${fromTimestamp}`,
+            end: `${toTimestamp}`,
             step: 3600,
         },
         limit: 1,
@@ -230,7 +230,8 @@ export async function getTotalVolumeFromSentio(): Promise<number> {
     });
 
     let data = await response.json();
-    let result = data.results[0].matrix.samples[0].values.at(-1).value;
+    // console.log(data.results[0].matrix.samples[0].values);
+    let result = data.results[0].matrix.samples[0].values.at(-1).value - data.results[0].matrix.samples[0].values.at(0).value;
     // console.log(result);
 
     return result;
@@ -300,5 +301,5 @@ export async function getAccumulatedUser(): Promise<number> {
 // getVolumeFromSentio();
 // getTlpFeeFromSentio();
 // getAccumulatedUser();
-// getTotalVolumeFromSentio();
 // getTradingVolumeFromSentio(1747008000, 1, 1747011600);
+// getTotalVolumeFromSentio(1747008000, 1747011600);

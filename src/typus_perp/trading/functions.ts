@@ -1042,6 +1042,53 @@ export function managerCloseOptionPosition(
     });
 }
 
+export interface ManagerCloseOptionPositionV2Args {
+    version: TransactionObjectInput;
+    registry: TransactionObjectInput;
+    poolRegistry: TransactionObjectInput;
+    dovRegistry: TransactionObjectInput;
+    typusOracleCToken: TransactionObjectInput;
+    typusOracleTradingSymbol: TransactionObjectInput;
+    clock: TransactionObjectInput;
+    marketIndex: bigint | TransactionArgument;
+    poolIndex: bigint | TransactionArgument;
+    typusEcosystemVersion: TransactionObjectInput;
+    typusUserRegistry: TransactionObjectInput;
+    typusLeaderboardRegistry: TransactionObjectInput;
+    tailsStakingRegistry: TransactionObjectInput;
+    competitionConfig: TransactionObjectInput;
+    positionId: bigint | TransactionArgument;
+}
+
+export function managerCloseOptionPositionV2(
+    tx: Transaction,
+    typeArgs: [string, string, string],
+    args: ManagerCloseOptionPositionV2Args,
+    published_at: string = PUBLISHED_AT
+) {
+    return tx.moveCall({
+        target: `${published_at}::trading::manager_close_option_position_v2`,
+        typeArguments: typeArgs,
+        arguments: [
+            obj(tx, args.version),
+            obj(tx, args.registry),
+            obj(tx, args.poolRegistry),
+            obj(tx, args.dovRegistry),
+            obj(tx, args.typusOracleCToken),
+            obj(tx, args.typusOracleTradingSymbol),
+            obj(tx, args.clock),
+            pure(tx, args.marketIndex, `u64`),
+            pure(tx, args.poolIndex, `u64`),
+            obj(tx, args.typusEcosystemVersion),
+            obj(tx, args.typusUserRegistry),
+            obj(tx, args.typusLeaderboardRegistry),
+            obj(tx, args.tailsStakingRegistry),
+            obj(tx, args.competitionConfig),
+            pure(tx, args.positionId, `u64`),
+        ],
+    });
+}
+
 export interface ManagerHotfixRemoveMarketSymbolArgs {
     version: TransactionObjectInput;
     registry: TransactionObjectInput;
@@ -1585,6 +1632,28 @@ export function releaseCollateral(
             pure(tx, args.poolIndex, `u64`),
             pure(tx, args.positionId, `u64`),
             pure(tx, args.releaseAmount, `u64`),
+        ],
+    });
+}
+
+export interface RemoveLinkedOrder_Args {
+    version: TransactionObjectInput;
+    marketIndex: bigint | TransactionArgument;
+    symbolMarket: TransactionObjectInput;
+    order: TransactionObjectInput;
+    user: string | TransactionArgument;
+}
+
+export function removeLinkedOrder_(tx: Transaction, typeArg: string, args: RemoveLinkedOrder_Args, published_at: string = PUBLISHED_AT) {
+    return tx.moveCall({
+        target: `${published_at}::trading::remove_linked_order_`,
+        typeArguments: [typeArg],
+        arguments: [
+            obj(tx, args.version),
+            pure(tx, args.marketIndex, `u64`),
+            obj(tx, args.symbolMarket),
+            obj(tx, args.order),
+            pure(tx, args.user, `address`),
         ],
     });
 }

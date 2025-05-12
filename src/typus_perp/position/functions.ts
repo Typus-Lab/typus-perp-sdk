@@ -768,6 +768,10 @@ export function optionPositionBidReceiptsExpired(
 
 export interface OrderFilledArgs {
     version: TransactionObjectInput;
+    ecosystemVersion: TransactionObjectInput;
+    typusLeaderboardRegistry: TransactionObjectInput;
+    tailsStakingRegistry: TransactionObjectInput;
+    competitionConfig: TransactionObjectInput;
     order: TransactionObjectInput;
     originalPosition: TransactionObjectInput | TransactionArgument | null;
     nextPositionId: bigint | TransactionArgument;
@@ -788,6 +792,10 @@ export function orderFilled(tx: Transaction, typeArg: string, args: OrderFilledA
         typeArguments: [typeArg],
         arguments: [
             obj(tx, args.version),
+            obj(tx, args.ecosystemVersion),
+            obj(tx, args.typusLeaderboardRegistry),
+            obj(tx, args.tailsStakingRegistry),
+            obj(tx, args.competitionConfig),
             obj(tx, args.order),
             option(tx, `${Position.$typeName}`, args.originalPosition),
             pure(tx, args.nextPositionId, `u64`),
@@ -806,6 +814,10 @@ export function orderFilled(tx: Transaction, typeArg: string, args: OrderFilledA
 
 export interface OrderFilledWithBidReceiptsCollateralArgs {
     version: TransactionObjectInput;
+    ecosystemVersion: TransactionObjectInput;
+    typusLeaderboardRegistry: TransactionObjectInput;
+    tailsStakingRegistry: TransactionObjectInput;
+    competitionConfig: TransactionObjectInput;
     liquidityPool: TransactionObjectInput;
     dovRegistry: TransactionObjectInput;
     typusOracleTradingSymbol: TransactionObjectInput;
@@ -836,6 +848,10 @@ export function orderFilledWithBidReceiptsCollateral(
         typeArguments: typeArgs,
         arguments: [
             obj(tx, args.version),
+            obj(tx, args.ecosystemVersion),
+            obj(tx, args.typusLeaderboardRegistry),
+            obj(tx, args.tailsStakingRegistry),
+            obj(tx, args.competitionConfig),
             obj(tx, args.liquidityPool),
             obj(tx, args.dovRegistry),
             obj(tx, args.typusOracleTradingSymbol),

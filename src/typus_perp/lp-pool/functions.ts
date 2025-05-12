@@ -560,6 +560,22 @@ export function managerFlashRepayLiquidity(
     });
 }
 
+export interface ManagerHotfixBurnLpArgs {
+    version: TransactionObjectInput;
+    registry: TransactionObjectInput;
+    index: bigint | TransactionArgument;
+    oracle: TransactionObjectInput;
+    clock: TransactionObjectInput;
+}
+
+export function managerHotfixBurnLp(tx: Transaction, typeArg: string, args: ManagerHotfixBurnLpArgs, published_at: string = PUBLISHED_AT) {
+    return tx.moveCall({
+        target: `${published_at}::lp_pool::manager_hotfix_burn_lp`,
+        typeArguments: [typeArg],
+        arguments: [obj(tx, args.version), obj(tx, args.registry), pure(tx, args.index, `u64`), obj(tx, args.oracle), obj(tx, args.clock)],
+    });
+}
+
 export interface MintLpArgs {
     version: TransactionObjectInput;
     registry: TransactionObjectInput;

@@ -16,7 +16,7 @@ export const PERP_PACKAGE_ID =
 export const PERP_PUBLISHED_AT =
     NETWORK == "MAINNET"
         ? "0xeb018055af198e99a368ccda030e9aef07ffb86aa5de83e98734913064b0cff4"
-        : "0xba715d67f61d6748e4cc888a939edabdff9a0c770878304d8a49691af116b6cd";
+        : "0xc6a0b5c9646c418152f2d11d7917d796a038a227565bdfb52fe81e0d6dcb8e0f";
 export const PERP_PKG_V1 =
     NETWORK == "MAINNET"
         ? "0xe27969a70f93034de9ce16e6ad661b480324574e68d15a64b513fd90eb2423e5"
@@ -29,7 +29,7 @@ export const STAKE_PACKAGE_ID =
 export const STAKE_PUBLISHED_AT =
     NETWORK == "MAINNET"
         ? "0xd9965c09d5ad7d69306b7c550b3b135d94b34f98c3adc379a7333fff2f05808b"
-        : "0x855f1a831eb69c5d8964fb203d5420f204e0d395e3f5b4659339ece8c3d4bda0";
+        : "0xf8fa4a303118328de2fb53f49a043fa5bf58b84f372db0d1e7cf7b1f1a47d10e";
 export const STAKE_PKG_V1 =
     NETWORK == "MAINNET"
         ? "0xc427209145715a00a93d7e674a95c556a7147d79fda1bbaeb1a1cac5f9923966"

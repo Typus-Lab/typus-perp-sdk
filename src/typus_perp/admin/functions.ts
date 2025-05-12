@@ -1,4 +1,5 @@
 import { PUBLISHED_AT } from "..";
+import { String } from "../../_dependencies/source/0x1/ascii/structs";
 import { obj, pure } from "../../_framework/util";
 import { Transaction, TransactionArgument, TransactionObjectInput } from "@mysten/sui/transactions";
 
@@ -11,6 +12,31 @@ export function addAuthorizedUser(tx: Transaction, args: AddAuthorizedUserArgs, 
     return tx.moveCall({
         target: `${published_at}::admin::add_authorized_user`,
         arguments: [obj(tx, args.version), pure(tx, args.userAddress, `address`)],
+    });
+}
+
+export interface AddCompetitionLeaderboardArgs {
+    version: TransactionObjectInput;
+    typusEcosystemVersion: TransactionObjectInput;
+    typusLeaderboardRegistry: TransactionObjectInput;
+    leaderboardKey: string | TransactionArgument;
+    user: string | TransactionArgument;
+    score: bigint | TransactionArgument;
+    clock: TransactionObjectInput;
+}
+
+export function addCompetitionLeaderboard(tx: Transaction, args: AddCompetitionLeaderboardArgs, published_at: string = PUBLISHED_AT) {
+    return tx.moveCall({
+        target: `${published_at}::admin::add_competition_leaderboard`,
+        arguments: [
+            obj(tx, args.version),
+            obj(tx, args.typusEcosystemVersion),
+            obj(tx, args.typusLeaderboardRegistry),
+            pure(tx, args.leaderboardKey, `${String.$typeName}`),
+            pure(tx, args.user, `address`),
+            pure(tx, args.score, `u64`),
+            obj(tx, args.clock),
+        ],
     });
 }
 

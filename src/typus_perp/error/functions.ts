@@ -85,6 +85,10 @@ export function invalidBidReceiptsInput(tx: Transaction, published_at: string = 
     return tx.moveCall({ target: `${published_at}::error::invalid_bid_receipts_input`, arguments: [] });
 }
 
+export function invalidBoostBpArrayLength(tx: Transaction, published_at: string = PUBLISHED_AT) {
+    return tx.moveCall({ target: `${published_at}::error::invalid_boost_bp_array_length`, arguments: [] });
+}
+
 export function invalidOrderSide(tx: Transaction, published_at: string = PUBLISHED_AT) {
     return tx.moveCall({ target: `${published_at}::error::invalid_order_side`, arguments: [] });
 }

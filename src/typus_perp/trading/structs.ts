@@ -1,5 +1,6 @@
 import * as reified from "../../_framework/reified";
 import { Option } from "../../_dependencies/source/0x1/option/structs";
+import { String } from "../../_dependencies/source/0x1/string/structs";
 import { TypeName } from "../../_dependencies/source/0x1/type-name/structs";
 import { ObjectTable } from "../../_dependencies/source/0x2/object-table/structs";
 import { UID } from "../../_dependencies/source/0x2/object/structs";
@@ -1779,6 +1780,223 @@ export class LiquidationInfo implements StructClass {
         }
 
         return LiquidationInfo.fromSuiObjectData(res.data);
+    }
+}
+
+/* ============================== ManagerCancelOrdersEvent =============================== */
+
+export function isManagerCancelOrdersEvent(type: string): boolean {
+    type = compressSuiType(type);
+    return type === `${PKG_V1}::trading::ManagerCancelOrdersEvent`;
+}
+
+export interface ManagerCancelOrdersEventFields {
+    reason: ToField<String>;
+    collateralToken: ToField<TypeName>;
+    baseToken: ToField<TypeName>;
+    orderTypeTag: ToField<"u8">;
+    orderIds: ToField<Vector<"u64">>;
+    orderSizes: ToField<Vector<"u64">>;
+    orderPrices: ToField<Vector<"u64">>;
+    u64Padding: ToField<Vector<"u64">>;
+}
+
+export type ManagerCancelOrdersEventReified = Reified<ManagerCancelOrdersEvent, ManagerCancelOrdersEventFields>;
+
+export class ManagerCancelOrdersEvent implements StructClass {
+    __StructClass = true as const;
+
+    static readonly $typeName = `${PKG_V1}::trading::ManagerCancelOrdersEvent`;
+    static readonly $numTypeParams = 0;
+    static readonly $isPhantom = [] as const;
+
+    readonly $typeName = ManagerCancelOrdersEvent.$typeName;
+    readonly $fullTypeName: `${typeof PKG_V1}::trading::ManagerCancelOrdersEvent`;
+    readonly $typeArgs: [];
+    readonly $isPhantom = ManagerCancelOrdersEvent.$isPhantom;
+
+    readonly reason: ToField<String>;
+    readonly collateralToken: ToField<TypeName>;
+    readonly baseToken: ToField<TypeName>;
+    readonly orderTypeTag: ToField<"u8">;
+    readonly orderIds: ToField<Vector<"u64">>;
+    readonly orderSizes: ToField<Vector<"u64">>;
+    readonly orderPrices: ToField<Vector<"u64">>;
+    readonly u64Padding: ToField<Vector<"u64">>;
+
+    private constructor(typeArgs: [], fields: ManagerCancelOrdersEventFields) {
+        this.$fullTypeName = composeSuiType(
+            ManagerCancelOrdersEvent.$typeName,
+            ...typeArgs
+        ) as `${typeof PKG_V1}::trading::ManagerCancelOrdersEvent`;
+        this.$typeArgs = typeArgs;
+
+        this.reason = fields.reason;
+        this.collateralToken = fields.collateralToken;
+        this.baseToken = fields.baseToken;
+        this.orderTypeTag = fields.orderTypeTag;
+        this.orderIds = fields.orderIds;
+        this.orderSizes = fields.orderSizes;
+        this.orderPrices = fields.orderPrices;
+        this.u64Padding = fields.u64Padding;
+    }
+
+    static reified(): ManagerCancelOrdersEventReified {
+        return {
+            typeName: ManagerCancelOrdersEvent.$typeName,
+            fullTypeName: composeSuiType(
+                ManagerCancelOrdersEvent.$typeName,
+                ...[]
+            ) as `${typeof PKG_V1}::trading::ManagerCancelOrdersEvent`,
+            typeArgs: [] as [],
+            isPhantom: ManagerCancelOrdersEvent.$isPhantom,
+            reifiedTypeArgs: [],
+            fromFields: (fields: Record<string, any>) => ManagerCancelOrdersEvent.fromFields(fields),
+            fromFieldsWithTypes: (item: FieldsWithTypes) => ManagerCancelOrdersEvent.fromFieldsWithTypes(item),
+            fromBcs: (data: Uint8Array) => ManagerCancelOrdersEvent.fromBcs(data),
+            bcs: ManagerCancelOrdersEvent.bcs,
+            fromJSONField: (field: any) => ManagerCancelOrdersEvent.fromJSONField(field),
+            fromJSON: (json: Record<string, any>) => ManagerCancelOrdersEvent.fromJSON(json),
+            fromSuiParsedData: (content: SuiParsedData) => ManagerCancelOrdersEvent.fromSuiParsedData(content),
+            fromSuiObjectData: (content: SuiObjectData) => ManagerCancelOrdersEvent.fromSuiObjectData(content),
+            fetch: async (client: SuiClient, id: string) => ManagerCancelOrdersEvent.fetch(client, id),
+            new: (fields: ManagerCancelOrdersEventFields) => {
+                return new ManagerCancelOrdersEvent([], fields);
+            },
+            kind: "StructClassReified",
+        };
+    }
+
+    static get r() {
+        return ManagerCancelOrdersEvent.reified();
+    }
+
+    static phantom(): PhantomReified<ToTypeStr<ManagerCancelOrdersEvent>> {
+        return phantom(ManagerCancelOrdersEvent.reified());
+    }
+    static get p() {
+        return ManagerCancelOrdersEvent.phantom();
+    }
+
+    static get bcs() {
+        return bcs.struct("ManagerCancelOrdersEvent", {
+            reason: String.bcs,
+            collateral_token: TypeName.bcs,
+            base_token: TypeName.bcs,
+            order_type_tag: bcs.u8(),
+            order_ids: bcs.vector(bcs.u64()),
+            order_sizes: bcs.vector(bcs.u64()),
+            order_prices: bcs.vector(bcs.u64()),
+            u64_padding: bcs.vector(bcs.u64()),
+        });
+    }
+
+    static fromFields(fields: Record<string, any>): ManagerCancelOrdersEvent {
+        return ManagerCancelOrdersEvent.reified().new({
+            reason: decodeFromFields(String.reified(), fields.reason),
+            collateralToken: decodeFromFields(TypeName.reified(), fields.collateral_token),
+            baseToken: decodeFromFields(TypeName.reified(), fields.base_token),
+            orderTypeTag: decodeFromFields("u8", fields.order_type_tag),
+            orderIds: decodeFromFields(reified.vector("u64"), fields.order_ids),
+            orderSizes: decodeFromFields(reified.vector("u64"), fields.order_sizes),
+            orderPrices: decodeFromFields(reified.vector("u64"), fields.order_prices),
+            u64Padding: decodeFromFields(reified.vector("u64"), fields.u64_padding),
+        });
+    }
+
+    static fromFieldsWithTypes(item: FieldsWithTypes): ManagerCancelOrdersEvent {
+        if (!isManagerCancelOrdersEvent(item.type)) {
+            throw new Error("not a ManagerCancelOrdersEvent type");
+        }
+
+        return ManagerCancelOrdersEvent.reified().new({
+            reason: decodeFromFieldsWithTypes(String.reified(), item.fields.reason),
+            collateralToken: decodeFromFieldsWithTypes(TypeName.reified(), item.fields.collateral_token),
+            baseToken: decodeFromFieldsWithTypes(TypeName.reified(), item.fields.base_token),
+            orderTypeTag: decodeFromFieldsWithTypes("u8", item.fields.order_type_tag),
+            orderIds: decodeFromFieldsWithTypes(reified.vector("u64"), item.fields.order_ids),
+            orderSizes: decodeFromFieldsWithTypes(reified.vector("u64"), item.fields.order_sizes),
+            orderPrices: decodeFromFieldsWithTypes(reified.vector("u64"), item.fields.order_prices),
+            u64Padding: decodeFromFieldsWithTypes(reified.vector("u64"), item.fields.u64_padding),
+        });
+    }
+
+    static fromBcs(data: Uint8Array): ManagerCancelOrdersEvent {
+        return ManagerCancelOrdersEvent.fromFields(ManagerCancelOrdersEvent.bcs.parse(data));
+    }
+
+    toJSONField() {
+        return {
+            reason: this.reason,
+            collateralToken: this.collateralToken.toJSONField(),
+            baseToken: this.baseToken.toJSONField(),
+            orderTypeTag: this.orderTypeTag,
+            orderIds: fieldToJSON<Vector<"u64">>(`vector<u64>`, this.orderIds),
+            orderSizes: fieldToJSON<Vector<"u64">>(`vector<u64>`, this.orderSizes),
+            orderPrices: fieldToJSON<Vector<"u64">>(`vector<u64>`, this.orderPrices),
+            u64Padding: fieldToJSON<Vector<"u64">>(`vector<u64>`, this.u64Padding),
+        };
+    }
+
+    toJSON() {
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
+    }
+
+    static fromJSONField(field: any): ManagerCancelOrdersEvent {
+        return ManagerCancelOrdersEvent.reified().new({
+            reason: decodeFromJSONField(String.reified(), field.reason),
+            collateralToken: decodeFromJSONField(TypeName.reified(), field.collateralToken),
+            baseToken: decodeFromJSONField(TypeName.reified(), field.baseToken),
+            orderTypeTag: decodeFromJSONField("u8", field.orderTypeTag),
+            orderIds: decodeFromJSONField(reified.vector("u64"), field.orderIds),
+            orderSizes: decodeFromJSONField(reified.vector("u64"), field.orderSizes),
+            orderPrices: decodeFromJSONField(reified.vector("u64"), field.orderPrices),
+            u64Padding: decodeFromJSONField(reified.vector("u64"), field.u64Padding),
+        });
+    }
+
+    static fromJSON(json: Record<string, any>): ManagerCancelOrdersEvent {
+        if (json.$typeName !== ManagerCancelOrdersEvent.$typeName) {
+            throw new Error("not a WithTwoGenerics json object");
+        }
+
+        return ManagerCancelOrdersEvent.fromJSONField(json);
+    }
+
+    static fromSuiParsedData(content: SuiParsedData): ManagerCancelOrdersEvent {
+        if (content.dataType !== "moveObject") {
+            throw new Error("not an object");
+        }
+        if (!isManagerCancelOrdersEvent(content.type)) {
+            throw new Error(`object at ${(content.fields as any).id} is not a ManagerCancelOrdersEvent object`);
+        }
+        return ManagerCancelOrdersEvent.fromFieldsWithTypes(content);
+    }
+
+    static fromSuiObjectData(data: SuiObjectData): ManagerCancelOrdersEvent {
+        if (data.bcs) {
+            if (data.bcs.dataType !== "moveObject" || !isManagerCancelOrdersEvent(data.bcs.type)) {
+                throw new Error(`object at is not a ManagerCancelOrdersEvent object`);
+            }
+
+            return ManagerCancelOrdersEvent.fromBcs(fromB64(data.bcs.bcsBytes));
+        }
+        if (data.content) {
+            return ManagerCancelOrdersEvent.fromSuiParsedData(data.content);
+        }
+        throw new Error("Both `bcs` and `content` fields are missing from the data. Include `showBcs` or `showContent` in the request.");
+    }
+
+    static async fetch(client: SuiClient, id: string): Promise<ManagerCancelOrdersEvent> {
+        const res = await client.getObject({ id, options: { showBcs: true } });
+        if (res.error) {
+            throw new Error(`error fetching ManagerCancelOrdersEvent object at id ${id}: ${res.error.code}`);
+        }
+        if (res.data?.bcs?.dataType !== "moveObject" || !isManagerCancelOrdersEvent(res.data.bcs.type)) {
+            throw new Error(`object at id ${id} is not a ManagerCancelOrdersEvent object`);
+        }
+
+        return ManagerCancelOrdersEvent.fromSuiObjectData(res.data);
     }
 }
 

@@ -15,7 +15,7 @@ export const PERP_PACKAGE_ID =
         : "0x585924f160f83ef16f8927ec117e4d740abb6f4e571ecfa89ff3e973042cb1b9";
 export const PERP_PUBLISHED_AT =
     NETWORK == "MAINNET"
-        ? "0xeb018055af198e99a368ccda030e9aef07ffb86aa5de83e98734913064b0cff4"
+        ? "0x347b833859a487218737de4a5e6b0fb861d37e653a10f44d420279c984badf9c"
         : "0x15844f80fb085bb8fd7cc688ade6282cd6991209eae78934ca001dced8b1b7de";
 export const PERP_PKG_V1 =
     NETWORK == "MAINNET"
@@ -83,3 +83,5 @@ export const STAKE_POOL_VERSION =
     NETWORK == "MAINNET"
         ? "0xdf3ed1599218b2415b2cd7fa06296f7f647676019b2873ec18e55a626c584f1b"
         : "0xafb81680b9ac3d627eb733154c43d34e3ec758cf8e00a55c384df2c8150f7881";
+
+export const COMPETITION_CONFIG = NETWORK == "MAINNET" ? "0x36056abf9adde86f81667dad680a8ac98868c9fc1cb4d519fd2222d5d4522906" : "";

@@ -16,7 +16,7 @@ export const PERP_PACKAGE_ID =
 export const PERP_PUBLISHED_AT =
     NETWORK == "MAINNET"
         ? "0xeb018055af198e99a368ccda030e9aef07ffb86aa5de83e98734913064b0cff4"
-        : "0xc6a0b5c9646c418152f2d11d7917d796a038a227565bdfb52fe81e0d6dcb8e0f";
+        : "0x102c88cd633046520d1a5bc77f7e90bcf466e5a74660cead86710d60696eb997";
 export const PERP_PKG_V1 =
     NETWORK == "MAINNET"
         ? "0xe27969a70f93034de9ce16e6ad661b480324574e68d15a64b513fd90eb2423e5"

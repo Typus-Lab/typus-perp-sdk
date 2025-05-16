@@ -442,3 +442,39 @@ export async function getAllPositions(
 
     return positions;
 }
+
+export async function getAllPositionsWithTradingSymbol(
+    config: TypusConfig,
+    input: {
+        baseToken: TOKEN;
+    }
+): Promise<Position[]> {
+    // 1) 取得該 trading symbol 的倉位總數
+    const total = await getPositionCount(config, { baseToken: input.baseToken });
+
+    // 2) 若無倉位直接回傳 []
+    if (total === 0) {
+        return [];
+    }
+
+    // 3) 每頁最多 100 筆
+    const slice = Math.min(total, 100);
+    const pages = Math.ceil(total / slice);
+
+    // 4) 依頁數批次抓取
+    const pagePromises: Promise<Position[]>[] = [];
+    for (let page = 1; page <= pages; page++) {
+        pagePromises.push(
+            getAllPositions(config, {
+                baseToken: input.baseToken,
+                slice: slice.toString(),
+                page: page.toString(),
+            })
+        );
+    }
+
+    const results = await Promise.all(pagePromises);
+
+    // 5) 扁平化後回傳
+    return results.flat();
+}

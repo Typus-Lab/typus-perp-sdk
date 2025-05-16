@@ -348,6 +348,48 @@ export async function getLiquidationPriceAndPnl(
     return results;
 }
 
+export async function getPositionCount(
+    config: TypusConfig,
+    input: {
+        baseToken: TOKEN;
+    }
+) {
+    const provider = new SuiClient({ url: config.rpcEndpoint });
+    const tx = new Transaction();
+
+    // Rust 實作是呼叫 get_all_positions(slice = 1, page = 1) 然後取最後 8 bytes。
+    // 這裡直接複用相同邏輯，只需要 max_page。
+    _getAllPositions(tx, tokenType[NETWORK][input.baseToken], {
+        version: PERP_VERSION,
+        registry: MARKET,
+        marketIndex: BigInt(0),
+        slice: BigInt(1),
+        page: BigInt(1),
+    });
+
+    const res = await provider.devInspectTransactionBlock({
+        sender: "0x0000000000000000000000000000000000000000000000000000000000000000",
+        transactionBlock: tx,
+    });
+
+    // 沒有資料時，回傳 0
+    if (!res.results?.[0]?.returnValues?.[0]?.[0]) {
+        return 0;
+    }
+
+    const raw = new Uint8Array(res.results![0].returnValues![0][0]);
+
+    // 至少要含 8 bytes 的 max_page；不足代表無 Position
+    if (raw.length < 8) return 0;
+
+    // 取最後 8 bytes (little‑endian) 解析成 number
+    const maxPageBytes = raw.slice(raw.length - 8);
+    const view = new DataView(maxPageBytes.buffer, maxPageBytes.byteOffset, 8);
+    const maxPage = Number(view.getBigUint64(0, true)); // little‑endian
+
+    return maxPage;
+}
+
 export async function getAllPositions(
     config: TypusConfig,
     input: {

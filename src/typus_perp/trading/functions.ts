@@ -18,6 +18,11 @@ export interface AddTradingSymbolArgs {
     basicFundingRate: bigint | TransactionArgument;
     fundingIntervalTsMs: bigint | TransactionArgument;
     expMultiplier: bigint | TransactionArgument;
+    maxBuyOpenInterest: bigint | TransactionArgument;
+    maxSellOpenInterest: bigint | TransactionArgument;
+    maintenanceMarginRateBp: bigint | TransactionArgument;
+    optionMaintenanceMarginRateBp: bigint | TransactionArgument;
+    optionTradingFeeConfig: Array<bigint | TransactionArgument> | TransactionArgument;
     clock: TransactionObjectInput;
 }
 
@@ -39,6 +44,11 @@ export function addTradingSymbol(tx: Transaction, typeArg: string, args: AddTrad
             pure(tx, args.basicFundingRate, `u64`),
             pure(tx, args.fundingIntervalTsMs, `u64`),
             pure(tx, args.expMultiplier, `u64`),
+            pure(tx, args.maxBuyOpenInterest, `u64`),
+            pure(tx, args.maxSellOpenInterest, `u64`),
+            pure(tx, args.maintenanceMarginRateBp, `u64`),
+            pure(tx, args.optionMaintenanceMarginRateBp, `u64`),
+            pure(tx, args.optionTradingFeeConfig, `vector<u64>`),
             obj(tx, args.clock),
         ],
     });
@@ -641,6 +651,28 @@ export function getActiveOrdersByOrderTagAndCtoken(
         target: `${published_at}::trading::get_active_orders_by_order_tag_and_ctoken`,
         typeArguments: typeArgs,
         arguments: [obj(tx, args.version), obj(tx, args.registry), pure(tx, args.marketIndex, `u64`), pure(tx, args.orderTypeTag, `u8`)],
+    });
+}
+
+export interface GetAllPositionsArgs {
+    version: TransactionObjectInput;
+    registry: TransactionObjectInput;
+    marketIndex: bigint | TransactionArgument;
+    slice: bigint | TransactionArgument;
+    page: bigint | TransactionArgument;
+}
+
+export function getAllPositions(tx: Transaction, typeArg: string, args: GetAllPositionsArgs, published_at: string = PUBLISHED_AT) {
+    return tx.moveCall({
+        target: `${published_at}::trading::get_all_positions`,
+        typeArguments: [typeArg],
+        arguments: [
+            obj(tx, args.version),
+            obj(tx, args.registry),
+            pure(tx, args.marketIndex, `u64`),
+            pure(tx, args.slice, `u64`),
+            pure(tx, args.page, `u64`),
+        ],
     });
 }
 
@@ -1585,6 +1617,28 @@ export function releaseCollateral(
     });
 }
 
+export interface RemoveLinkedOrder_Args {
+    version: TransactionObjectInput;
+    marketIndex: bigint | TransactionArgument;
+    symbolMarket: TransactionObjectInput;
+    order: TransactionObjectInput;
+    user: string | TransactionArgument;
+}
+
+export function removeLinkedOrder_(tx: Transaction, typeArg: string, args: RemoveLinkedOrder_Args, published_at: string = PUBLISHED_AT) {
+    return tx.moveCall({
+        target: `${published_at}::trading::remove_linked_order_`,
+        typeArguments: [typeArg],
+        arguments: [
+            obj(tx, args.version),
+            pure(tx, args.marketIndex, `u64`),
+            obj(tx, args.symbolMarket),
+            obj(tx, args.order),
+            pure(tx, args.user, `address`),
+        ],
+    });
+}
+
 export interface RemoveLinkedOrdersArgs {
     version: TransactionObjectInput;
     marketIndex: bigint | TransactionArgument;
@@ -1785,6 +1839,9 @@ export interface UpdateMarketConfigArgs {
     expMultiplier: bigint | TransactionArgument | TransactionArgument | null;
     maxBuyOpenInterest: bigint | TransactionArgument | TransactionArgument | null;
     maxSellOpenInterest: bigint | TransactionArgument | TransactionArgument | null;
+    maintenanceMarginRateBp: bigint | TransactionArgument | TransactionArgument | null;
+    optionCollateralMaintenanceMarginRateBp: bigint | TransactionArgument | TransactionArgument | null;
+    optionCollateralTradingFeeConfig: Array<bigint | TransactionArgument> | TransactionArgument | TransactionArgument | null;
 }
 
 export function updateMarketConfig(tx: Transaction, typeArg: string, args: UpdateMarketConfigArgs, published_at: string = PUBLISHED_AT) {
@@ -1806,6 +1863,9 @@ export function updateMarketConfig(tx: Transaction, typeArg: string, args: Updat
             pure(tx, args.expMultiplier, `${Option.$typeName}<u64>`),
             pure(tx, args.maxBuyOpenInterest, `${Option.$typeName}<u64>`),
             pure(tx, args.maxSellOpenInterest, `${Option.$typeName}<u64>`),
+            pure(tx, args.maintenanceMarginRateBp, `${Option.$typeName}<u64>`),
+            pure(tx, args.optionCollateralMaintenanceMarginRateBp, `${Option.$typeName}<u64>`),
+            pure(tx, args.optionCollateralTradingFeeConfig, `${Option.$typeName}<vector<u64>>`),
         ],
     });
 }

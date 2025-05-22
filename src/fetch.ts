@@ -412,7 +412,6 @@ export async function getAllPositions(
         sender: "0x0000000000000000000000000000000000000000000000000000000000000000",
         transactionBlock: tx,
     });
-    console.log(res);
 
     if (!res.results?.[0]?.returnValues?.[0]?.[0]) {
         return [];

@@ -260,9 +260,8 @@ export async function getUserStake(config: TypusConfig, user: string): Promise<[
         let lpShares: [LpUserShare, string[]][] = [];
         reader.readVec((reader) => {
             let length = reader.readULEB();
-            // let bytes = reader.readBytes(length);
-            // let lpShare = LpUserShare.fromBcs(Uint8Array.from(Array.from(bytes)));
-            let lpShare = LpUserShare.fromFields(LpUserShare.bcs.read(reader));
+            let bytes = reader.readBytes(length);
+            let lpShare = LpUserShare.fromBcs(Uint8Array.from(Array.from(bytes)));
             let incentives: string[] = [];
             reader.readVec((reader) => {
                 let incentive = reader.read64();
@@ -419,27 +418,43 @@ export async function getAllPositions(
 
     // -- 解析回傳值 -------------------------------------------------
     const raw = new Uint8Array(res.results![0].returnValues![0][0]);
+    console.log("Raw data length:", raw.length);
 
     // 1) 至少要有 8 bytes 的 max_page
     if (raw.length < 8) return [];
 
     const withoutMaxPage = raw.slice(0, raw.length - 8);
-    const reader = new BcsReader(withoutMaxPage);
+    console.log("Data without max page length:", withoutMaxPage.length);
 
-    // 2) 第一個 u8 = user_positions_len + 1
-    const userPositionsLen = reader.read8() - 1;
+    // Create a new ArrayBuffer and copy the data
+    const buffer = new ArrayBuffer(withoutMaxPage.length);
+    const view = new Uint8Array(buffer);
+    view.set(withoutMaxPage);
+    const reader = new BcsReader(view);
 
-    const positions: Position[] = [];
-    for (let i = 0; i < userPositionsLen; i++) {
-        reader.read16();
+    try {
+        // 2) 第一個 u8 = user_positions_len + 1
+        const userPositionsLen = reader.read8() - 1;
+        console.log("User positions length:", userPositionsLen);
 
-        const fields = Position.bcs.read(reader);
-        const pos = Position.fromFields(fields);
+        const positions: Position[] = [];
+        for (let i = 0; i < userPositionsLen; i++) {
+            try {
+                // Read the position data directly using bytes
+                const bytes = reader.readBytes(reader.readULEB());
+                const pos = Position.fromBcs(Uint8Array.from(Array.from(bytes)));
+                positions.push(pos);
+            } catch (e) {
+                console.error(`Error parsing position ${i}:`, e);
+                break;
+            }
+        }
 
-        positions.push(pos);
+        return positions;
+    } catch (e) {
+        console.error("Error parsing positions:", e);
+        return [];
     }
-
-    return positions;
 }
 
 export async function getAllPositionsWithTradingSymbol(

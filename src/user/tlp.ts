@@ -111,6 +111,44 @@ export async function mintStakeLp(
     return tx;
 }
 
+export async function stakeLp(
+    config: TypusConfig,
+    tx: Transaction,
+    input: {
+        stakePool: StakePool;
+        lpCoins: string[];
+        amount: string;
+        userShareId: string | null;
+        user: string;
+    }
+): Promise<Transaction> {
+    var coin;
+
+    let destination = input.lpCoins.pop()!;
+
+    if (input.lpCoins.length > 0) {
+        tx.mergeCoins(destination, input.lpCoins);
+    }
+
+    [coin] = tx.splitCoins(destination, [input.amount]);
+
+    // console.log(iToken);
+    if (input.userShareId) {
+        harvestStakeReward(config, tx, { stakePool: input.stakePool, userShareId: input.userShareId, user: input.user });
+    }
+
+    stake(tx, TLP_TOKEN, {
+        version: STAKE_POOL_VERSION,
+        registry: STAKE_POOL,
+        index: BigInt(0),
+        lpToken: coin,
+        clock: CLOCK,
+        userShareId: input.userShareId ? BigInt(input.userShareId) : null,
+    });
+
+    return tx;
+}
+
 export async function unstake(
     config: TypusConfig,
     tx: Transaction,

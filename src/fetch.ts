@@ -259,6 +259,7 @@ export async function getUserStake(config: TypusConfig, user: string): Promise<[
         let reader = new BcsReader(new Uint8Array(returnValues));
         let lpShares: [LpUserShare, string[]][] = [];
         reader.readVec((reader) => {
+            let length = reader.readULEB();
             let lpShare = LpUserShare.fromFields(LpUserShare.bcs.read(reader));
             let incentives: string[] = [];
             reader.readVec((reader) => {

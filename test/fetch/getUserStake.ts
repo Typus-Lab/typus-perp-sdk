@@ -8,6 +8,5 @@ import { getUserStake, NETWORK } from "src";
     console.log(user);
 
     let stakes = await getUserStake(config, user);
-    console.log(JSON.stringify(stakes, (_, v) => (typeof v === "bigint" ? `${v}` : v), 2));
-    // unsubscribedTsMs, unlockedTsMs in deactivatingShares
+    console.dir(stakes, { depth: null });
 })();

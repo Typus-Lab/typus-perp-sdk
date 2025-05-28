@@ -3,7 +3,7 @@ import { Transaction } from "@mysten/sui/transactions";
 import { bcs, BcsReader } from "@mysten/bcs";
 
 import { MarketRegistry, Markets, SymbolMarket } from "./typus_perp/trading/structs";
-import { LiquidityPool, Registry } from "./typus_perp/lp-pool/structs";
+import { DeactivatingShares, LiquidityPool, Registry } from "./typus_perp/lp-pool/structs";
 import { TradingOrder, Position } from "./typus_perp/position/structs";
 import {
     getUserOrders as _getUserOrders,
@@ -18,9 +18,40 @@ import { LpUserShare, StakePool } from "./typus_stake_pool/stake-pool/structs";
 import { CLOCK, oracle, SENDER, TOKEN, tokenType, typeArgToAsset } from "@typus/typus-sdk/dist/src/constants";
 import { pythStateId, PythClient, updatePyth, TypusConfig, updateOracleWithPythUsd } from "@typus/typus-sdk/dist/src/utils";
 
-import { LIQUIDITY_POOL, LIQUIDITY_POOL_0, LP_POOL, MARKET, NETWORK, PERP_VERSION, STAKE_POOL, STAKE_POOL_0, STAKE_POOL_VERSION } from ".";
+import {
+    LIQUIDITY_POOL,
+    LIQUIDITY_POOL_0,
+    LP_POOL,
+    MARKET,
+    NETWORK,
+    PERP_VERSION,
+    STAKE_POOL,
+    STAKE_POOL_0,
+    STAKE_POOL_VERSION,
+    TLP_TOKEN,
+} from ".";
 import { TypusBidReceipt } from "./_dependencies/source/0xb4f25230ba74837d8299e92951306100c4a532e8c48cc3d8828abe9b91c8b274/vault/structs";
 import { PUBLISHED_AT } from "./typus_perp";
+import { getUserDeactivatingShares } from "./typus_perp/lp-pool/functions";
+
+import {
+    PhantomReified,
+    PhantomToTypeStr,
+    PhantomTypeArgument,
+    Reified,
+    StructClass,
+    ToField,
+    ToPhantomTypeArgument,
+    ToTypeStr,
+    assertFieldsWithTypesArgsMatch,
+    assertReifiedTypeArgsMatch,
+    decodeFromFields,
+    decodeFromFieldsWithTypes,
+    decodeFromJSONField,
+    extractType,
+    phantom,
+} from "./_framework/reified";
+import { TLP as TlpStruct } from "./typus_perp/tlp/structs";
 
 export async function getLpPools(config: TypusConfig): Promise<LiquidityPool[]> {
     let provider = new SuiClient({ url: config.rpcEndpoint });
@@ -229,9 +260,12 @@ export function parseOptionBidReceipts(positions: Position[]): (TypusBidReceipt 
 }
 
 /**
- * @returns [lpShare, incentives]
+ * @returns [[lpShare, incentives][], deactivatingShares[]]
  */
-export async function getUserStake(config: TypusConfig, user: string): Promise<[LpUserShare, string[]][]> {
+export async function getUserStake(
+    config: TypusConfig,
+    user: string
+): Promise<[[LpUserShare, string[]][], DeactivatingShares<typeof TLP_TOKEN>[]]> {
     let provider = new SuiClient({ url: config.rpcEndpoint });
     let tx = new Transaction();
 
@@ -248,15 +282,21 @@ export async function getUserStake(config: TypusConfig, user: string): Promise<[
         user,
     });
 
+    getUserDeactivatingShares(tx, TLP_TOKEN, {
+        registry: LP_POOL,
+        index: BigInt(0),
+        user,
+    });
+
     let res = await provider.devInspectTransactionBlock({ sender: user, transactionBlock: tx });
     // console.log(res);
 
     if (res.results) {
         // @ts-ignore
-        let returnValues = res.results[1].returnValues[0][0];
+        var returnValues = res.results[1].returnValues[0][0];
         // console.log(returnValues);
 
-        let reader = new BcsReader(new Uint8Array(returnValues));
+        var reader = new BcsReader(new Uint8Array(returnValues));
         let lpShares: [LpUserShare, string[]][] = [];
         reader.readVec((reader) => {
             let length = reader.readULEB();
@@ -272,13 +312,24 @@ export async function getUserStake(config: TypusConfig, user: string): Promise<[
             lpShares.push([lpShare, incentives]);
         });
 
-        // let lpShares: LpUserShare[] = readVecShares(Uint8Array.from(returnValues));
-        // console.log(lpShares);
-        // console.log(lpShares[0].deactivatingShares);
-        // console.log(lpShares[0].lastIncentivePriceIndex);
-        return lpShares;
+        // @ts-ignore
+        var returnValues = res.results[2].returnValues[0][0];
+        // console.log(returnValues);
+
+        var reader = new BcsReader(new Uint8Array(returnValues));
+        let deactivatingShares: DeactivatingShares<typeof TLP_TOKEN>[] = [];
+        reader.readVec((reader) => {
+            let length = reader.readULEB();
+            let lpShare = DeactivatingShares.bcs.read(reader);
+
+            // @ts-ignore
+            deactivatingShares.push(lpShare);
+        });
+        // console.log(deactivatingShares);
+
+        return [lpShares, deactivatingShares];
     } else {
-        return [];
+        return [[], []];
     }
 }
 

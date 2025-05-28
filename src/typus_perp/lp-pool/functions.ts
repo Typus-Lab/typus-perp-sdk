@@ -496,8 +496,67 @@ export function getTvlUsd(tx: Transaction, liquidityPool: TransactionObjectInput
     return tx.moveCall({ target: `${published_at}::lp_pool::get_tvl_usd`, arguments: [obj(tx, liquidityPool)] });
 }
 
+export interface GetUserDeactivatingSharesArgs {
+    registry: TransactionObjectInput;
+    index: bigint | TransactionArgument;
+    user: string | TransactionArgument;
+}
+
+export function getUserDeactivatingShares(
+    tx: Transaction,
+    typeArg: string,
+    args: GetUserDeactivatingSharesArgs,
+    published_at: string = PUBLISHED_AT
+) {
+    return tx.moveCall({
+        target: `${published_at}::lp_pool::get_user_deactivating_shares`,
+        typeArguments: [typeArg],
+        arguments: [obj(tx, args.registry), pure(tx, args.index, `u64`), pure(tx, args.user, `address`)],
+    });
+}
+
 export function init(tx: Transaction, published_at: string = PUBLISHED_AT) {
     return tx.moveCall({ target: `${published_at}::lp_pool::init`, arguments: [] });
+}
+
+export interface ManagerEmergencyDepositArgs {
+    version: TransactionObjectInput;
+    registry: TransactionObjectInput;
+    index: bigint | TransactionArgument;
+    coin: TransactionObjectInput;
+}
+
+export function managerEmergencyDeposit(
+    tx: Transaction,
+    typeArgs: [string, string],
+    args: ManagerEmergencyDepositArgs,
+    published_at: string = PUBLISHED_AT
+) {
+    return tx.moveCall({
+        target: `${published_at}::lp_pool::manager_emergency_deposit`,
+        typeArguments: typeArgs,
+        arguments: [obj(tx, args.version), obj(tx, args.registry), pure(tx, args.index, `u64`), obj(tx, args.coin)],
+    });
+}
+
+export interface ManagerEmergencyWithdrawArgs {
+    version: TransactionObjectInput;
+    registry: TransactionObjectInput;
+    index: bigint | TransactionArgument;
+    receipt: TransactionObjectInput;
+}
+
+export function managerEmergencyWithdraw(
+    tx: Transaction,
+    typeArgs: [string, string],
+    args: ManagerEmergencyWithdrawArgs,
+    published_at: string = PUBLISHED_AT
+) {
+    return tx.moveCall({
+        target: `${published_at}::lp_pool::manager_emergency_withdraw`,
+        typeArguments: typeArgs,
+        arguments: [obj(tx, args.version), obj(tx, args.registry), pure(tx, args.index, `u64`), obj(tx, args.receipt)],
+    });
 }
 
 export interface ManagerFlashRemoveLiquidityArgs {

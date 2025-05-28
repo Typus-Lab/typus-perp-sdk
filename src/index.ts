@@ -15,8 +15,8 @@ export const PERP_PACKAGE_ID =
         : "0x585924f160f83ef16f8927ec117e4d740abb6f4e571ecfa89ff3e973042cb1b9";
 export const PERP_PUBLISHED_AT =
     NETWORK == "MAINNET"
-        ? "0xeb018055af198e99a368ccda030e9aef07ffb86aa5de83e98734913064b0cff4"
-        : "0x102c88cd633046520d1a5bc77f7e90bcf466e5a74660cead86710d60696eb997";
+        ? "0xb7e4416296bb3629547b5a0ab24dec17851760eca393c58fb62edbab71c76fa2"
+        : "0x910c7a8acc7e91be7a1e3952ce4ee2d443d8ef30236b08fbebcb6cf1ce9f3737";
 export const PERP_PKG_V1 =
     NETWORK == "MAINNET"
         ? "0xe27969a70f93034de9ce16e6ad661b480324574e68d15a64b513fd90eb2423e5"
@@ -53,6 +53,8 @@ export const MARKET =
     NETWORK == "MAINNET"
         ? "0xc969d946a2b6b917a83b5fb71765793c4a52149e50d2c8cf5c01d7421fc7cd73"
         : "0xed48f046dc88c49eb01d59669e29eb3006173b66445facb88de277bec2913687";
+// MARKET_0 = 0x442cc2c27cadaf287a5f4413967b4dacc6532bc9063875efbc7b178e5add3e4e
+
 export const PERP_VERSION =
     NETWORK == "MAINNET"
         ? "0xa12c282a068328833ec4a9109fc77803ec1f523f8da1bb0f82bac8450335f0c9"

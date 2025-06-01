@@ -1,12 +1,12 @@
 {
     "name": "@typus/typus-perp-sdk",
-    "version": "1.0.61-ut-upgrade-d",
+    "version": "1.0.61-ui-upgrade-e",
     "repository": "https://github.com/Typus-Lab/typus-perp-sdk.git",
     "author": "Typus",
     "description": "typus perp sdk",
     "license": "MIT",
     "dependencies": {
-        "@typus/typus-sdk": "1.7.1"
+        "@typus/typus-sdk": "1.6.30"
     },
     "devDependencies": {
         "@types/bs58": "^4.0.1",

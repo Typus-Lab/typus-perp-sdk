@@ -55,10 +55,7 @@ export async function getTradingVolumeFromSentio(
     interval: number,
     toTimestamp?: number
 ): Promise<Map<string, Volume[]>> {
-    let apiUrl =
-        NETWORK == "MAINNET"
-            ? "https://app.sentio.xyz/api/v1/insights/typus/typus_perp_mainnet/query"
-            : "https://app.sentio.xyz/api/v1/insights/typus/typus_perp/query";
+    let apiUrl = "https://app.sentio.xyz/api/v1/insights/typus/typus_perp_mainnet/query";
     let requestData = {
         timeRange: {
             start: `${fromTimestamp}`,
@@ -135,10 +132,7 @@ export interface Volume {
 }
 
 export async function getTlpFeeFromSentio(): Promise<number> {
-    let apiUrl =
-        NETWORK == "MAINNET"
-            ? "https://app.sentio.xyz/api/v1/insights/typus/typus_perp_mainnet/query"
-            : "https://app.sentio.xyz/api/v1/insights/typus/typus_perp/query";
+    let apiUrl = "https://app.sentio.xyz/api/v1/insights/typus/typus_perp_mainnet/query";
     let requestData = {
         timeRange: {
             start: "now-7d",
@@ -188,10 +182,7 @@ export async function getTlpFeeFromSentio(): Promise<number> {
 }
 
 export async function getTotalVolumeFromSentio(fromTimestamp: number, toTimestamp: number): Promise<number> {
-    let apiUrl =
-        NETWORK == "MAINNET"
-            ? "https://app.sentio.xyz/api/v1/insights/typus/typus_perp_mainnet/query"
-            : "https://app.sentio.xyz/api/v1/insights/typus/typus_perp/query";
+    let apiUrl = "https://app.sentio.xyz/api/v1/insights/typus/typus_perp_mainnet/query";
     let requestData = {
         timeRange: {
             start: `${fromTimestamp}`,
@@ -239,10 +230,7 @@ export async function getTotalVolumeFromSentio(fromTimestamp: number, toTimestam
 
 /** Returns Accumulated Users */
 export async function getAccumulatedUser(): Promise<number> {
-    let apiUrl =
-        NETWORK == "MAINNET"
-            ? "https://app.sentio.xyz/api/v1/insights/typus/typus_perp_mainnet/query"
-            : "https://app.sentio.xyz/api/v1/insights/typus/typus_perp/query";
+    let apiUrl = "https://app.sentio.xyz/api/v1/insights/typus/typus_perp_mainnet/query";
 
     let requestData = {
         timeRange: {
@@ -298,8 +286,61 @@ export async function getAccumulatedUser(): Promise<number> {
     return result;
 }
 
+/**
+ * Inputs:
+ *   fromTimestamp: number, toTimestamp?: number
+ *
+ * Returns
+ *   { timestamp: string, value: number }[]
+ */
+export async function getTlpPriceFromSentio(fromTimestamp: number, toTimestamp?: number): Promise<{ timestamp: string; value: number }[]> {
+    let apiUrl = "https://app.sentio.xyz/api/v1/insights/typus/typus_perp_mainnet/query";
+    let requestData = {
+        timeRange: {
+            start: `${fromTimestamp}`,
+            end: `${toTimestamp ?? "now"}`,
+            step: 3600,
+        },
+        limit: 30 * 24,
+        queries: [
+            {
+                metricsQuery: {
+                    query: "tlp_price",
+                    alias: "",
+                    id: "a",
+                    labelSelector: {},
+                    aggregate: null,
+                    functions: [],
+                    color: "",
+                    disabled: false,
+                },
+                dataSource: "METRICS",
+                sourceName: "",
+            },
+        ],
+        formulas: [],
+    };
+
+    let jsonData = JSON.stringify(requestData);
+
+    let response = await fetch(apiUrl, {
+        method: "POST",
+        headers,
+        body: jsonData,
+    });
+
+    let data = await response.json();
+    // console.log(data);
+
+    let samples = data.results[0].matrix.samples;
+    // console.log(samples[0].values);
+
+    return samples;
+}
+
 // getVolumeFromSentio();
 // getTlpFeeFromSentio();
 // getAccumulatedUser();
 // getTradingVolumeFromSentio(1747008000, 1, 1747011600);
 // getTotalVolumeFromSentio(1747008000, 1747011600);
+// getTlpPriceFromSentio(1747008000);

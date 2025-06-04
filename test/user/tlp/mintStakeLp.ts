@@ -27,7 +27,7 @@ import { TOKEN, tokenType } from "@typus/typus-sdk/dist/src/constants";
     // console.log(stakes);
 
     // INPUT
-    let cTOKEN: TOKEN = "SUI";
+    let cTOKEN: TOKEN = "wUSDT";
     let cToken = tokenType[NETWORK][cTOKEN];
 
     // coins
@@ -47,8 +47,9 @@ import { TOKEN, tokenType } from "@typus/typus-sdk/dist/src/constants";
         coins,
         cTOKEN,
         amount: "10000000000",
-        userShareId: stakes.length > 0 ? stakes[0][0].userShareId.toString() : null,
+        userShareId: stakes.length > 0 ? stakes[0][0][0].userShareId.toString() : null,
         user,
+        stake: false,
     });
 
     // console.log(tx.getData());

@@ -417,7 +417,6 @@ export async function getAllPositions(
 
     // -- 解析回傳值 -------------------------------------------------
     const raw = new Uint8Array(res.results![0].returnValues![0][0]);
-    console.debug("Raw data length:", raw.length);
 
     // 1) 至少要有 8 bytes 的 max_page
     if (raw.length < 8) return [];
@@ -434,7 +433,6 @@ export async function getAllPositions(
     try {
         // 2) 第一個 u8 = user_positions_len + 1
         const userPositionsLen = reader.read8() - 1;
-        console.debug("User positions length:", userPositionsLen);
 
         const positions: Position[] = [];
         for (let i = 0; i < userPositionsLen; i++) {

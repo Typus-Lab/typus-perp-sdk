@@ -4,9 +4,11 @@ export * from "./user";
 import dotenv from "dotenv";
 // import .env file if exists
 dotenv.config();
-export const NETWORK = process.env.NEXT_PUBLIC_CLUSTER == "mainnet" ? "MAINNET" : "TESTNET";
 
-console.log(`Load .env NEXT_PUBLIC_CLUSTER: ${process.env.NEXT_PUBLIC_CLUSTER}`);
+// default MAINNET
+export const NETWORK = process.env.NEXT_PUBLIC_CLUSTER == "testnet" ? "TESTNET" : "MAINNET";
+
+// console.log(`Load .env NEXT_PUBLIC_CLUSTER: ${process.env.NEXT_PUBLIC_CLUSTER}`);
 console.log(`Initializing Typus Perp SDK for ${NETWORK}`);
 
 export const PERP_PACKAGE_ID =

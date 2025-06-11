@@ -659,10 +659,10 @@
   dependencies:
     "@types/yargs-parser" "*"
 
-"@typus/typus-sdk@1.7.0":
-  version "1.7.0"
-  resolved "https://registry.yarnpkg.com/@typus/typus-sdk/-/typus-sdk-1.7.0.tgz#86c496c34d3e3abd6d99cca2a27b714797a38915"
-  integrity sha512-mksXBwaCEwU2jLDOKlELj2hmJyZFccLWbNw2wvV72AOFZXmJDNepV7BHm6WbYfXFjiQCTiAEN9+b5ZpPnr3VOw==
+"@typus/typus-sdk@1.7.2":
+  version "1.7.2"
+  resolved "https://registry.yarnpkg.com/@typus/typus-sdk/-/typus-sdk-1.7.2.tgz#0fdbea91a87f8c0cb379e8980a4a8070701a16d1"
+  integrity sha512-cU4pXnagqBlvRBZ+M/5NjFpHvkz8ziwLPu5YXUqZGX+OluuwlN8R06dVtWl/l7xIdDNIdimOTZG72Q4n8KHYxw==
   dependencies:
     "@mysten/bcs" "1.6.1"
     "@mysten/kiosk" "0.12.6"

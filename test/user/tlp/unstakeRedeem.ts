@@ -34,7 +34,7 @@ import { createPythClient } from "@typus/typus-sdk/dist/src/utils";
     let tx = new Transaction();
 
     await unstakeRedeem(config, tx, pythClient, {
-        userShareId: stake[0].userShareId.toString(),
+        userShareId: stake[0][0].userShareId.toString(),
         lpPool,
         stakePool,
         share: "100000000000",

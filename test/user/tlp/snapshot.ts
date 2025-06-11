@@ -19,7 +19,7 @@ import { TypusConfig, createPythClient } from "@typus/typus-sdk/dist/src/utils";
     let tx = new Transaction();
 
     tx = await snapshot(config, tx, {
-        userShareId: stakes[0][0].userShareId.toString(),
+        userShareId: stakes[0][0][0].userShareId.toString(),
     });
 
     // console.log(tx.getData());

@@ -1089,6 +1089,25 @@ export function managerCloseOptionPositionV2(
     });
 }
 
+export interface ManagerHotfixRemoveMarketSymbolArgs {
+    version: TransactionObjectInput;
+    registry: TransactionObjectInput;
+    marketIndex: bigint | TransactionArgument;
+}
+
+export function managerHotfixRemoveMarketSymbol(
+    tx: Transaction,
+    typeArg: string,
+    args: ManagerHotfixRemoveMarketSymbolArgs,
+    published_at: string = PUBLISHED_AT
+) {
+    return tx.moveCall({
+        target: `${published_at}::trading::manager_hotfix_remove_market_symbol`,
+        typeArguments: [typeArg],
+        arguments: [obj(tx, args.version), obj(tx, args.registry), pure(tx, args.marketIndex, `u64`)],
+    });
+}
+
 export interface ManagerReducePositionArgs {
     version: TransactionObjectInput;
     registry: TransactionObjectInput;

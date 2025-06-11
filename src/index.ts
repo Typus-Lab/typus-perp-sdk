@@ -11,14 +11,23 @@ export const NETWORK = process.env.NEXT_PUBLIC_CLUSTER == "testnet" ? "TESTNET" 
 // console.log(`Load .env NEXT_PUBLIC_CLUSTER: ${process.env.NEXT_PUBLIC_CLUSTER}`);
 console.log(`Initializing Typus Perp SDK for ${NETWORK}`);
 
+/** Register the MVR plugin globally */
+
+import { namedPackagesPlugin, Transaction } from "@mysten/sui/transactions";
+
+const mvrPlugin = NETWORK == "MAINNET" ? "https://mainnet.mvr.mystenlabs.com" : "https://testnet.mvr.mystenlabs.com";
+
+const plugin = namedPackagesPlugin({ url: mvrPlugin });
+
+/** Register the MVR plugin globally (once) for our PTB construction */
+Transaction.registerGlobalSerializationPlugin("namedPackagesPlugin", plugin);
+
 export const PERP_PACKAGE_ID =
     NETWORK == "MAINNET"
         ? "0xe27969a70f93034de9ce16e6ad661b480324574e68d15a64b513fd90eb2423e5"
         : "0x585924f160f83ef16f8927ec117e4d740abb6f4e571ecfa89ff3e973042cb1b9";
 export const PERP_PUBLISHED_AT =
-    NETWORK == "MAINNET"
-        ? "0xb7e4416296bb3629547b5a0ab24dec17851760eca393c58fb62edbab71c76fa2"
-        : "0x15844f80fb085bb8fd7cc688ade6282cd6991209eae78934ca001dced8b1b7de";
+    NETWORK == "MAINNET" ? "0xb7e4416296bb3629547b5a0ab24dec17851760eca393c58fb62edbab71c76fa2" : "@typus/perp";
 export const PERP_PKG_V1 =
     NETWORK == "MAINNET"
         ? "0xe27969a70f93034de9ce16e6ad661b480324574e68d15a64b513fd90eb2423e5"
@@ -30,8 +39,8 @@ export const STAKE_PACKAGE_ID =
         : "0x220e7ba8923c0c30b57c0baab3bc15d781a39bb294cf7af318c0fc816b5cf7e6";
 export const STAKE_PUBLISHED_AT =
     NETWORK == "MAINNET"
-        ? "0x758c5a79d4f788364303cc547f44a46a1622318073006937451e817c0e682c00"
-        : "0x34ba6bf1893409b1a7494350189e060ee79cc2aba6f0c5e4045af9372d96fe85";
+        ? "0xd9965c09d5ad7d69306b7c550b3b135d94b34f98c3adc379a7333fff2f05808b"
+        : "0xf8fa4a303118328de2fb53f49a043fa5bf58b84f372db0d1e7cf7b1f1a47d10e";
 export const STAKE_PKG_V1 =
     NETWORK == "MAINNET"
         ? "0xc427209145715a00a93d7e674a95c556a7147d79fda1bbaeb1a1cac5f9923966"
@@ -55,6 +64,8 @@ export const MARKET =
     NETWORK == "MAINNET"
         ? "0xc969d946a2b6b917a83b5fb71765793c4a52149e50d2c8cf5c01d7421fc7cd73"
         : "0xed48f046dc88c49eb01d59669e29eb3006173b66445facb88de277bec2913687";
+// MARKET_0 = 0x442cc2c27cadaf287a5f4413967b4dacc6532bc9063875efbc7b178e5add3e4e
+
 export const PERP_VERSION =
     NETWORK == "MAINNET"
         ? "0xa12c282a068328833ec4a9109fc77803ec1f523f8da1bb0f82bac8450335f0c9"
@@ -86,4 +97,7 @@ export const STAKE_POOL_VERSION =
         ? "0xdf3ed1599218b2415b2cd7fa06296f7f647676019b2873ec18e55a626c584f1b"
         : "0xafb81680b9ac3d627eb733154c43d34e3ec758cf8e00a55c384df2c8150f7881";
 
-export const COMPETITION_CONFIG = NETWORK == "MAINNET" ? "0x36056abf9adde86f81667dad680a8ac98868c9fc1cb4d519fd2222d5d4522906" : "";
+export const COMPETITION_CONFIG =
+    NETWORK == "MAINNET"
+        ? "0x36056abf9adde86f81667dad680a8ac98868c9fc1cb4d519fd2222d5d4522906"
+        : "0xbc3914cd777d009afc05e81cd6d006428ce742569c795b0bac493c1b0ef58559";

@@ -88,6 +88,32 @@ export function burnLp(tx: Transaction, typeArgs: [string, string], args: BurnLp
     });
 }
 
+export interface BurnLp_Args {
+    version: TransactionObjectInput;
+    registry: TransactionObjectInput;
+    index: bigint | TransactionArgument;
+    treasuryCaps: TransactionObjectInput;
+    oracle: TransactionObjectInput;
+    burnLpBalance: TransactionObjectInput;
+    clock: TransactionObjectInput;
+}
+
+export function burnLp_(tx: Transaction, typeArgs: [string, string], args: BurnLp_Args, published_at: string = PUBLISHED_AT) {
+    return tx.moveCall({
+        target: `${published_at}::lp_pool::burn_lp_`,
+        typeArguments: typeArgs,
+        arguments: [
+            obj(tx, args.version),
+            obj(tx, args.registry),
+            pure(tx, args.index, `u64`),
+            obj(tx, args.treasuryCaps),
+            obj(tx, args.oracle),
+            obj(tx, args.burnLpBalance),
+            obj(tx, args.clock),
+        ],
+    });
+}
+
 export interface CalculateBurnLpArgs {
     registry: TransactionObjectInput;
     index: bigint | TransactionArgument;
@@ -236,6 +262,30 @@ export function checkTvlUpdated(tx: Transaction, args: CheckTvlUpdatedArgs, publ
     });
 }
 
+export interface ClaimArgs {
+    version: TransactionObjectInput;
+    registry: TransactionObjectInput;
+    index: bigint | TransactionArgument;
+    treasuryCaps: TransactionObjectInput;
+    oracle: TransactionObjectInput;
+    clock: TransactionObjectInput;
+}
+
+export function claim(tx: Transaction, typeArgs: [string, string], args: ClaimArgs, published_at: string = PUBLISHED_AT) {
+    return tx.moveCall({
+        target: `${published_at}::lp_pool::claim`,
+        typeArguments: typeArgs,
+        arguments: [
+            obj(tx, args.version),
+            obj(tx, args.registry),
+            pure(tx, args.index, `u64`),
+            obj(tx, args.treasuryCaps),
+            obj(tx, args.oracle),
+            obj(tx, args.clock),
+        ],
+    });
+}
+
 export interface CompleteRemoveLiquidityTokenProcessArgs {
     version: TransactionObjectInput;
     registry: TransactionObjectInput;
@@ -256,26 +306,27 @@ export function completeRemoveLiquidityTokenProcess(
     });
 }
 
-export interface DepositScallopBasicArgs {
-    liquidityPool: TransactionObjectInput;
-    scallopVersion: TransactionObjectInput;
-    scallopMarket: TransactionObjectInput;
-    clock: TransactionObjectInput;
-    depositAmount: bigint | TransactionArgument;
+export interface CreateDeactivatingSharesArgs {
+    version: TransactionObjectInput;
+    registry: TransactionObjectInput;
+    index: bigint | TransactionArgument;
 }
 
-export function depositScallopBasic(tx: Transaction, typeArg: string, args: DepositScallopBasicArgs, published_at: string = PUBLISHED_AT) {
+export function createDeactivatingShares(
+    tx: Transaction,
+    typeArg: string,
+    args: CreateDeactivatingSharesArgs,
+    published_at: string = PUBLISHED_AT
+) {
     return tx.moveCall({
-        target: `${published_at}::lp_pool::deposit_scallop_basic`,
+        target: `${published_at}::lp_pool::create_deactivating_shares`,
         typeArguments: [typeArg],
-        arguments: [
-            obj(tx, args.liquidityPool),
-            obj(tx, args.scallopVersion),
-            obj(tx, args.scallopMarket),
-            obj(tx, args.clock),
-            pure(tx, args.depositAmount, `u64`),
-        ],
+        arguments: [obj(tx, args.version), obj(tx, args.registry), pure(tx, args.index, `u64`)],
     });
+}
+
+export function deprecated(tx: Transaction, published_at: string = PUBLISHED_AT) {
+    return tx.moveCall({ target: `${published_at}::lp_pool::deprecated`, arguments: [] });
 }
 
 export function getBorrowRateDecimal(tx: Transaction, published_at: string = PUBLISHED_AT) {
@@ -445,38 +496,66 @@ export function getTvlUsd(tx: Transaction, liquidityPool: TransactionObjectInput
     return tx.moveCall({ target: `${published_at}::lp_pool::get_tvl_usd`, arguments: [obj(tx, liquidityPool)] });
 }
 
+export interface GetUserDeactivatingSharesArgs {
+    registry: TransactionObjectInput;
+    index: bigint | TransactionArgument;
+    user: string | TransactionArgument;
+}
+
+export function getUserDeactivatingShares(
+    tx: Transaction,
+    typeArg: string,
+    args: GetUserDeactivatingSharesArgs,
+    published_at: string = PUBLISHED_AT
+) {
+    return tx.moveCall({
+        target: `${published_at}::lp_pool::get_user_deactivating_shares`,
+        typeArguments: [typeArg],
+        arguments: [obj(tx, args.registry), pure(tx, args.index, `u64`), pure(tx, args.user, `address`)],
+    });
+}
+
 export function init(tx: Transaction, published_at: string = PUBLISHED_AT) {
     return tx.moveCall({ target: `${published_at}::lp_pool::init`, arguments: [] });
 }
 
-export interface ManagerDepositScallopArgs {
+export interface ManagerEmergencyDepositArgs {
     version: TransactionObjectInput;
     registry: TransactionObjectInput;
     index: bigint | TransactionArgument;
-    scallopVersion: TransactionObjectInput;
-    scallopMarket: TransactionObjectInput;
-    clock: TransactionObjectInput;
-    lendingAmount: bigint | TransactionArgument | TransactionArgument | null;
+    coin: TransactionObjectInput;
 }
 
-export function managerDepositScallop(
+export function managerEmergencyDeposit(
     tx: Transaction,
-    typeArg: string,
-    args: ManagerDepositScallopArgs,
+    typeArgs: [string, string],
+    args: ManagerEmergencyDepositArgs,
     published_at: string = PUBLISHED_AT
 ) {
     return tx.moveCall({
-        target: `${published_at}::lp_pool::manager_deposit_scallop`,
-        typeArguments: [typeArg],
-        arguments: [
-            obj(tx, args.version),
-            obj(tx, args.registry),
-            pure(tx, args.index, `u64`),
-            obj(tx, args.scallopVersion),
-            obj(tx, args.scallopMarket),
-            obj(tx, args.clock),
-            pure(tx, args.lendingAmount, `${Option.$typeName}<u64>`),
-        ],
+        target: `${published_at}::lp_pool::manager_emergency_deposit`,
+        typeArguments: typeArgs,
+        arguments: [obj(tx, args.version), obj(tx, args.registry), pure(tx, args.index, `u64`), obj(tx, args.coin)],
+    });
+}
+
+export interface ManagerEmergencyWithdrawArgs {
+    version: TransactionObjectInput;
+    registry: TransactionObjectInput;
+    index: bigint | TransactionArgument;
+    receipt: TransactionObjectInput;
+}
+
+export function managerEmergencyWithdraw(
+    tx: Transaction,
+    typeArgs: [string, string],
+    args: ManagerEmergencyWithdrawArgs,
+    published_at: string = PUBLISHED_AT
+) {
+    return tx.moveCall({
+        target: `${published_at}::lp_pool::manager_emergency_withdraw`,
+        typeArguments: typeArgs,
+        arguments: [obj(tx, args.version), obj(tx, args.registry), pure(tx, args.index, `u64`), obj(tx, args.receipt)],
     });
 }
 
@@ -540,34 +619,19 @@ export function managerFlashRepayLiquidity(
     });
 }
 
-export interface ManagerWithdrawScallopArgs {
+export interface ManagerHotfixBurnLpArgs {
     version: TransactionObjectInput;
     registry: TransactionObjectInput;
     index: bigint | TransactionArgument;
-    scallopVersion: TransactionObjectInput;
-    scallopMarket: TransactionObjectInput;
+    oracle: TransactionObjectInput;
     clock: TransactionObjectInput;
-    withdrawAmount: bigint | TransactionArgument | TransactionArgument | null;
 }
 
-export function managerWithdrawScallop(
-    tx: Transaction,
-    typeArg: string,
-    args: ManagerWithdrawScallopArgs,
-    published_at: string = PUBLISHED_AT
-) {
+export function managerHotfixBurnLp(tx: Transaction, typeArg: string, args: ManagerHotfixBurnLpArgs, published_at: string = PUBLISHED_AT) {
     return tx.moveCall({
-        target: `${published_at}::lp_pool::manager_withdraw_scallop`,
+        target: `${published_at}::lp_pool::manager_hotfix_burn_lp`,
         typeArguments: [typeArg],
-        arguments: [
-            obj(tx, args.version),
-            obj(tx, args.registry),
-            pure(tx, args.index, `u64`),
-            obj(tx, args.scallopVersion),
-            obj(tx, args.scallopMarket),
-            obj(tx, args.clock),
-            pure(tx, args.withdrawAmount, `${Option.$typeName}<u64>`),
-        ],
+        arguments: [obj(tx, args.version), obj(tx, args.registry), pure(tx, args.index, `u64`), obj(tx, args.oracle), obj(tx, args.clock)],
     });
 }
 
@@ -601,13 +665,19 @@ export interface NewLiquidityPoolArgs {
     version: TransactionObjectInput;
     registry: TransactionObjectInput;
     lpTokenDecimal: bigint | TransactionArgument;
+    unlockCountdownTsMs: bigint | TransactionArgument;
 }
 
 export function newLiquidityPool(tx: Transaction, typeArg: string, args: NewLiquidityPoolArgs, published_at: string = PUBLISHED_AT) {
     return tx.moveCall({
         target: `${published_at}::lp_pool::new_liquidity_pool`,
         typeArguments: [typeArg],
-        arguments: [obj(tx, args.version), obj(tx, args.registry), pure(tx, args.lpTokenDecimal, `u64`)],
+        arguments: [
+            obj(tx, args.version),
+            obj(tx, args.registry),
+            pure(tx, args.lpTokenDecimal, `u64`),
+            pure(tx, args.unlockCountdownTsMs, `u64`),
+        ],
     });
 }
 
@@ -673,6 +743,22 @@ export function putReceiptCollaterals(tx: Transaction, args: PutReceiptCollatera
     return tx.moveCall({
         target: `${published_at}::lp_pool::put_receipt_collaterals`,
         arguments: [obj(tx, args.liquidityPool), vector(tx, `${UnsettledBidReceipt.$typeName}`, args.unsettledBidReceipts)],
+    });
+}
+
+export interface RedeemArgs {
+    version: TransactionObjectInput;
+    registry: TransactionObjectInput;
+    index: bigint | TransactionArgument;
+    balance: TransactionObjectInput;
+    clock: TransactionObjectInput;
+}
+
+export function redeem(tx: Transaction, typeArg: string, args: RedeemArgs, published_at: string = PUBLISHED_AT) {
+    return tx.moveCall({
+        target: `${published_at}::lp_pool::redeem`,
+        typeArguments: [typeArg],
+        arguments: [obj(tx, args.version), obj(tx, args.registry), pure(tx, args.index, `u64`), obj(tx, args.balance), obj(tx, args.clock)],
     });
 }
 
@@ -974,6 +1060,20 @@ export function updateTvl(tx: Transaction, args: UpdateTvlArgs, published_at: st
     });
 }
 
+export interface UpdateUnlockCountdownTsMsArgs {
+    version: TransactionObjectInput;
+    registry: TransactionObjectInput;
+    index: bigint | TransactionArgument;
+    unlockCountdownTsMs: bigint | TransactionArgument;
+}
+
+export function updateUnlockCountdownTsMs(tx: Transaction, args: UpdateUnlockCountdownTsMsArgs, published_at: string = PUBLISHED_AT) {
+    return tx.moveCall({
+        target: `${published_at}::lp_pool::update_unlock_countdown_ts_ms`,
+        arguments: [obj(tx, args.version), obj(tx, args.registry), pure(tx, args.index, `u64`), pure(tx, args.unlockCountdownTsMs, `u64`)],
+    });
+}
+
 export interface ViewSwapResultArgs {
     version: TransactionObjectInput;
     registry: TransactionObjectInput;
@@ -996,35 +1096,6 @@ export function viewSwapResult(tx: Transaction, typeArgs: [string, string], args
             obj(tx, args.oracleToToken),
             pure(tx, args.fromAmount, `u64`),
             obj(tx, args.clock),
-        ],
-    });
-}
-
-export interface WithdrawScallopBasicArgs {
-    version: TransactionObjectInput;
-    liquidityPool: TransactionObjectInput;
-    scallopVersion: TransactionObjectInput;
-    scallopMarket: TransactionObjectInput;
-    clock: TransactionObjectInput;
-    withdrawAmount: bigint | TransactionArgument;
-}
-
-export function withdrawScallopBasic(
-    tx: Transaction,
-    typeArg: string,
-    args: WithdrawScallopBasicArgs,
-    published_at: string = PUBLISHED_AT
-) {
-    return tx.moveCall({
-        target: `${published_at}::lp_pool::withdraw_scallop_basic`,
-        typeArguments: [typeArg],
-        arguments: [
-            obj(tx, args.version),
-            obj(tx, args.liquidityPool),
-            obj(tx, args.scallopVersion),
-            obj(tx, args.scallopMarket),
-            obj(tx, args.clock),
-            pure(tx, args.withdrawAmount, `u64`),
         ],
     });
 }

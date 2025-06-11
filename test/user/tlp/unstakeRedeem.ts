@@ -3,7 +3,8 @@ import { TypusConfig } from "@typus/typus-sdk/dist/src/utils";
 import { SuiClient } from "@mysten/sui/client";
 import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519";
 import { Transaction } from "@mysten/sui/transactions";
-import { unsubscribe, getUserStake, NETWORK } from "src";
+import { NETWORK, getLpPools, getStakePool, getUserStake, unstakeRedeem } from "src";
+import { createPythClient } from "@typus/typus-sdk/dist/src/utils";
 
 (async () => {
     let keypair = Ed25519Keypair.deriveKeypair(String(process.env.MNEMONIC));
@@ -13,24 +14,38 @@ import { unsubscribe, getUserStake, NETWORK } from "src";
     let user = keypair.toSuiAddress();
     console.log(user);
 
+    let lpPools = await getLpPools(config);
+    let lpPool = lpPools[0];
+    // console.log(lpPool);
+
+    let pythClient = createPythClient(provider, NETWORK);
+
     // 1. Get user's stake
     let stakes = await getUserStake(config, user);
-    // console.log(stakes);
+    console.log(stakes);
+
+    // 2. StakePool
+    let stakePool = await getStakePool(config);
+    // console.log(stakePool);
+
     let stake = stakes[0];
     console.log(stake);
 
     let tx = new Transaction();
 
-    unsubscribe(config, tx, {
+    await unstakeRedeem(config, tx, pythClient, {
         userShareId: stake[0].userShareId.toString(),
-        share: "10000000000",
+        lpPool,
+        stakePool,
+        share: "100000000000",
+        user,
     });
 
     let dryrunRes = await provider.devInspectTransactionBlock({
         transactionBlock: tx,
         sender: user,
     });
-    console.log(dryrunRes.events.filter((e) => e.type.endsWith("UnsubscribeEvent")));
+    console.log(dryrunRes.events.filter((e) => e.type.endsWith("UnstakeEvent")));
 
     let res = await provider.signAndExecuteTransaction({ signer: keypair, transaction: tx });
     console.log(res);

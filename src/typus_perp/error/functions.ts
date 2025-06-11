@@ -53,6 +53,10 @@ export function collateralTokenTypeMismatched(tx: Transaction, published_at: str
     return tx.moveCall({ target: `${published_at}::error::collateral_token_type_mismatched`, arguments: [] });
 }
 
+export function deactivatingSharesAlreadyExisted(tx: Transaction, published_at: string = PUBLISHED_AT) {
+    return tx.moveCall({ target: `${published_at}::error::deactivating_shares_already_existed`, arguments: [] });
+}
+
 export function depositAmountInsufficient(tx: Transaction, published_at: string = PUBLISHED_AT) {
     return tx.moveCall({ target: `${published_at}::error::deposit_amount_insufficient`, arguments: [] });
 }
@@ -263,6 +267,10 @@ export function unsupportedOrderTypeTag(tx: Transaction, published_at: string = 
 
 export function unsupportedProcessStatusCode(tx: Transaction, published_at: string = PUBLISHED_AT) {
     return tx.moveCall({ target: `${published_at}::error::unsupported_process_status_code`, arguments: [] });
+}
+
+export function userDeactivatingSharesNotExisted(tx: Transaction, published_at: string = PUBLISHED_AT) {
+    return tx.moveCall({ target: `${published_at}::error::user_deactivating_shares_not_existed`, arguments: [] });
 }
 
 export function userMismatched(tx: Transaction, published_at: string = PUBLISHED_AT) {

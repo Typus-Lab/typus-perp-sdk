@@ -4,6 +4,20 @@ import { TypusBidReceipt } from "../../_dependencies/source/0xb4f25230ba74837d82
 import { obj, pure, vector } from "../../_framework/util";
 import { Transaction, TransactionArgument, TransactionObjectInput } from "@mysten/sui/transactions";
 
+export interface AddDelegateUserArgs {
+    version: TransactionObjectInput;
+    registry: TransactionObjectInput;
+    marketIndex: bigint | TransactionArgument;
+    user: string | TransactionArgument;
+}
+
+export function addDelegateUser(tx: Transaction, args: AddDelegateUserArgs, published_at: string = PUBLISHED_AT) {
+    return tx.moveCall({
+        target: `${published_at}::trading::add_delegate_user`,
+        arguments: [obj(tx, args.version), obj(tx, args.registry), pure(tx, args.marketIndex, `u64`), pure(tx, args.user, `address`)],
+    });
+}
+
 export interface AddTradingSymbolArgs {
     version: TransactionObjectInput;
     registry: TransactionObjectInput;
@@ -187,7 +201,7 @@ export function cancelTradingOrder(
     });
 }
 
-export interface CheckCollateralEnoughArgs {
+export interface CheckCollateralEnoughWhenAddingPositionArgs {
     symbolMarket: TransactionObjectInput;
     order: TransactionObjectInput;
     collateralOraclePrice: bigint | TransactionArgument;
@@ -197,14 +211,45 @@ export interface CheckCollateralEnoughArgs {
     tradingFeeMbp: bigint | TransactionArgument;
 }
 
-export function checkCollateralEnough(
+export function checkCollateralEnoughWhenAddingPosition(
     tx: Transaction,
     typeArg: string,
-    args: CheckCollateralEnoughArgs,
+    args: CheckCollateralEnoughWhenAddingPositionArgs,
     published_at: string = PUBLISHED_AT
 ) {
     return tx.moveCall({
-        target: `${published_at}::trading::check_collateral_enough`,
+        target: `${published_at}::trading::check_collateral_enough_when_adding_position`,
+        typeArguments: [typeArg],
+        arguments: [
+            obj(tx, args.symbolMarket),
+            obj(tx, args.order),
+            pure(tx, args.collateralOraclePrice, `u64`),
+            pure(tx, args.collateralOraclePriceDecimal, `u64`),
+            pure(tx, args.tradingPairOraclePrice, `u64`),
+            pure(tx, args.tradingPairOraclePriceDecimal, `u64`),
+            pure(tx, args.tradingFeeMbp, `u64`),
+        ],
+    });
+}
+
+export interface CheckCollateralEnoughWhenReducingPositionArgs {
+    symbolMarket: TransactionObjectInput;
+    order: TransactionObjectInput;
+    collateralOraclePrice: bigint | TransactionArgument;
+    collateralOraclePriceDecimal: bigint | TransactionArgument;
+    tradingPairOraclePrice: bigint | TransactionArgument;
+    tradingPairOraclePriceDecimal: bigint | TransactionArgument;
+    tradingFeeMbp: bigint | TransactionArgument;
+}
+
+export function checkCollateralEnoughWhenReducingPosition(
+    tx: Transaction,
+    typeArg: string,
+    args: CheckCollateralEnoughWhenReducingPositionArgs,
+    published_at: string = PUBLISHED_AT
+) {
+    return tx.moveCall({
+        target: `${published_at}::trading::check_collateral_enough_when_reducing_position`,
         typeArguments: [typeArg],
         arguments: [
             obj(tx, args.symbolMarket),
@@ -488,6 +533,34 @@ export function createTradingOrderWithBidReceiptV2(
             pure(tx, args.isLong, `bool`),
             pure(tx, args.user, `address`),
         ],
+    });
+}
+
+export interface CreateUserAccountArgs {
+    version: TransactionObjectInput;
+    registry: TransactionObjectInput;
+    marketIndex: bigint | TransactionArgument;
+}
+
+export function createUserAccount(tx: Transaction, args: CreateUserAccountArgs, published_at: string = PUBLISHED_AT) {
+    return tx.moveCall({
+        target: `${published_at}::trading::create_user_account`,
+        arguments: [obj(tx, args.version), obj(tx, args.registry), pure(tx, args.marketIndex, `u64`)],
+    });
+}
+
+export interface DepositUserAccountArgs {
+    version: TransactionObjectInput;
+    registry: TransactionObjectInput;
+    marketIndex: bigint | TransactionArgument;
+    collateral: TransactionObjectInput;
+}
+
+export function depositUserAccount(tx: Transaction, typeArg: string, args: DepositUserAccountArgs, published_at: string = PUBLISHED_AT) {
+    return tx.moveCall({
+        target: `${published_at}::trading::deposit_user_account`,
+        typeArguments: [typeArg],
+        arguments: [obj(tx, args.version), obj(tx, args.registry), pure(tx, args.marketIndex, `u64`), obj(tx, args.collateral)],
     });
 }
 
@@ -837,6 +910,18 @@ export function getMaxReleasingCollateralAmount(
     });
 }
 
+export interface GetMutMarketIdArgs {
+    registry: TransactionObjectInput;
+    marketIndex: bigint | TransactionArgument;
+}
+
+export function getMutMarketId(tx: Transaction, args: GetMutMarketIdArgs, published_at: string = PUBLISHED_AT) {
+    return tx.moveCall({
+        target: `${published_at}::trading::get_mut_market_id`,
+        arguments: [obj(tx, args.registry), pure(tx, args.marketIndex, `u64`)],
+    });
+}
+
 export interface GetMutOrdersArgs {
     symbolMarket: TransactionObjectInput;
     isTokenCollateral: boolean | TransactionArgument;
@@ -930,6 +1015,19 @@ export function increaseCollateral(
 
 export function init(tx: Transaction, published_at: string = PUBLISHED_AT) {
     return tx.moveCall({ target: `${published_at}::trading::init`, arguments: [] });
+}
+
+export interface InitUserAccountTableArgs {
+    version: TransactionObjectInput;
+    registry: TransactionObjectInput;
+    marketIndex: bigint | TransactionArgument;
+}
+
+export function initUserAccountTable(tx: Transaction, args: InitUserAccountTableArgs, published_at: string = PUBLISHED_AT) {
+    return tx.moveCall({
+        target: `${published_at}::trading::init_user_account_table`,
+        arguments: [obj(tx, args.version), obj(tx, args.registry), pure(tx, args.marketIndex, `u64`)],
+    });
 }
 
 export interface LiquidateArgs {
@@ -1696,6 +1794,20 @@ export function removeTradingSymbol(tx: Transaction, typeArg: string, args: Remo
     });
 }
 
+export interface RemoveUserAccountArgs {
+    version: TransactionObjectInput;
+    registry: TransactionObjectInput;
+    marketIndex: bigint | TransactionArgument;
+    userAccountCap: TransactionObjectInput;
+}
+
+export function removeUserAccount(tx: Transaction, args: RemoveUserAccountArgs, published_at: string = PUBLISHED_AT) {
+    return tx.moveCall({
+        target: `${published_at}::trading::remove_user_account`,
+        arguments: [obj(tx, args.version), obj(tx, args.registry), pure(tx, args.marketIndex, `u64`), obj(tx, args.userAccountCap)],
+    });
+}
+
 export interface ResumeMarketArgs {
     version: TransactionObjectInput;
     registry: TransactionObjectInput;
@@ -1720,6 +1832,20 @@ export function resumeTradingSymbol(tx: Transaction, typeArg: string, args: Resu
         target: `${published_at}::trading::resume_trading_symbol`,
         typeArguments: [typeArg],
         arguments: [obj(tx, args.version), obj(tx, args.registry), pure(tx, args.marketIndex, `u64`)],
+    });
+}
+
+export interface ReturnToUserArgs {
+    marketId: TransactionObjectInput;
+    balance: TransactionObjectInput;
+    user: string | TransactionArgument;
+}
+
+export function returnToUser(tx: Transaction, typeArg: string, args: ReturnToUserArgs, published_at: string = PUBLISHED_AT) {
+    return tx.moveCall({
+        target: `${published_at}::trading::return_to_user`,
+        typeArguments: [typeArg],
+        arguments: [obj(tx, args.marketId), obj(tx, args.balance), pure(tx, args.user, `address`)],
     });
 }
 
@@ -1904,6 +2030,28 @@ export function updateProtocolFeeShareBp(tx: Transaction, args: UpdateProtocolFe
             obj(tx, args.registry),
             pure(tx, args.marketIndex, `u64`),
             pure(tx, args.protocolFeeShareBp, `u64`),
+        ],
+    });
+}
+
+export interface WithdrawUserAccountArgs {
+    version: TransactionObjectInput;
+    registry: TransactionObjectInput;
+    marketIndex: bigint | TransactionArgument;
+    amount: bigint | TransactionArgument | TransactionArgument | null;
+    userAccountCap: TransactionObjectInput;
+}
+
+export function withdrawUserAccount(tx: Transaction, typeArg: string, args: WithdrawUserAccountArgs, published_at: string = PUBLISHED_AT) {
+    return tx.moveCall({
+        target: `${published_at}::trading::withdraw_user_account`,
+        typeArguments: [typeArg],
+        arguments: [
+            obj(tx, args.version),
+            obj(tx, args.registry),
+            pure(tx, args.marketIndex, `u64`),
+            pure(tx, args.amount, `${Option.$typeName}<u64>`),
+            obj(tx, args.userAccountCap),
         ],
     });
 }

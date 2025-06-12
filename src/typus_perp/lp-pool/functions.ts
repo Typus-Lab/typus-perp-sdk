@@ -286,6 +286,39 @@ export function claim(tx: Transaction, typeArgs: [string, string], args: ClaimAr
     });
 }
 
+export interface CompleteRebalancingArgs {
+    version: TransactionObjectInput;
+    registry: TransactionObjectInput;
+    index: bigint | TransactionArgument;
+    oracleTokenA: TransactionObjectInput;
+    oracleTokenB: TransactionObjectInput;
+    swappedBackBalance: TransactionObjectInput;
+    rebalanceProcess: TransactionObjectInput;
+    clock: TransactionObjectInput;
+}
+
+export function completeRebalancing(
+    tx: Transaction,
+    typeArgs: [string, string],
+    args: CompleteRebalancingArgs,
+    published_at: string = PUBLISHED_AT
+) {
+    return tx.moveCall({
+        target: `${published_at}::lp_pool::complete_rebalancing`,
+        typeArguments: typeArgs,
+        arguments: [
+            obj(tx, args.version),
+            obj(tx, args.registry),
+            pure(tx, args.index, `u64`),
+            obj(tx, args.oracleTokenA),
+            obj(tx, args.oracleTokenB),
+            obj(tx, args.swappedBackBalance),
+            obj(tx, args.rebalanceProcess),
+            obj(tx, args.clock),
+        ],
+    });
+}
+
 export interface CompleteRemoveLiquidityTokenProcessArgs {
     version: TransactionObjectInput;
     registry: TransactionObjectInput;
@@ -433,6 +466,19 @@ export function getMutTokenPool(tx: Transaction, args: GetMutTokenPoolArgs, publ
     return tx.moveCall({
         target: `${published_at}::lp_pool::get_mut_token_pool`,
         arguments: [obj(tx, args.liquidityPool), obj(tx, args.tokenType)],
+    });
+}
+
+export interface GetPoolLiquidityArgs {
+    version: TransactionObjectInput;
+    registry: TransactionObjectInput;
+    index: bigint | TransactionArgument;
+}
+
+export function getPoolLiquidity(tx: Transaction, args: GetPoolLiquidityArgs, published_at: string = PUBLISHED_AT) {
+    return tx.moveCall({
+        target: `${published_at}::lp_pool::get_pool_liquidity`,
+        arguments: [obj(tx, args.version), obj(tx, args.registry), pure(tx, args.index, `u64`)],
     });
 }
 
@@ -746,6 +792,32 @@ export function putReceiptCollaterals(tx: Transaction, args: PutReceiptCollatera
     });
 }
 
+export interface RebalanceArgs {
+    version: TransactionObjectInput;
+    registry: TransactionObjectInput;
+    index: bigint | TransactionArgument;
+    oracleTokenA: TransactionObjectInput;
+    oracleTokenB: TransactionObjectInput;
+    rebalanceAmount: bigint | TransactionArgument;
+    clock: TransactionObjectInput;
+}
+
+export function rebalance(tx: Transaction, typeArgs: [string, string], args: RebalanceArgs, published_at: string = PUBLISHED_AT) {
+    return tx.moveCall({
+        target: `${published_at}::lp_pool::rebalance`,
+        typeArguments: typeArgs,
+        arguments: [
+            obj(tx, args.version),
+            obj(tx, args.registry),
+            pure(tx, args.index, `u64`),
+            obj(tx, args.oracleTokenA),
+            obj(tx, args.oracleTokenB),
+            pure(tx, args.rebalanceAmount, `u64`),
+            obj(tx, args.clock),
+        ],
+    });
+}
+
 export interface RedeemArgs {
     version: TransactionObjectInput;
     registry: TransactionObjectInput;
@@ -955,6 +1027,29 @@ export function updateMarginConfig(tx: Transaction, typeArg: string, args: Updat
             pure(tx, args.utilizationThresholdBp1, `${Option.$typeName}<u64>`),
             pure(tx, args.borrowIntervalTsMs, `${Option.$typeName}<u64>`),
             pure(tx, args.maxOrderReserveRatioBp, `${Option.$typeName}<u64>`),
+        ],
+    });
+}
+
+export interface UpdateRebalanceCostThresholdBpArgs {
+    version: TransactionObjectInput;
+    registry: TransactionObjectInput;
+    index: bigint | TransactionArgument;
+    rebalanceCostThresholdBp: bigint | TransactionArgument;
+}
+
+export function updateRebalanceCostThresholdBp(
+    tx: Transaction,
+    args: UpdateRebalanceCostThresholdBpArgs,
+    published_at: string = PUBLISHED_AT
+) {
+    return tx.moveCall({
+        target: `${published_at}::lp_pool::update_rebalance_cost_threshold_bp`,
+        arguments: [
+            obj(tx, args.version),
+            obj(tx, args.registry),
+            pure(tx, args.index, `u64`),
+            pure(tx, args.rebalanceCostThresholdBp, `u64`),
         ],
     });
 }

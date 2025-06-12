@@ -59,7 +59,7 @@ export async function getTradingVolumeFromSentio(
     let requestData = {
         timeRange: {
             start: `${fromTimestamp}`,
-            end: `${toTimestamp ?? Date.now()}`,
+            end: `${toTimestamp ?? now()}`,
             step: 3600 * interval,
         },
         limit: 30 * 24,
@@ -131,12 +131,16 @@ export interface Volume {
     value: number;
 }
 
+function now() {
+    return Math.round(Date.now() / 1000);
+}
+
 export async function getTlpFeeFromSentio(fromTimestamp: number, toTimestamp?: number): Promise<number> {
     let apiUrl = "https://app.sentio.xyz/api/v1/insights/typus/typus_perp_mainnet/query";
     let requestData = {
         timeRange: {
             start: `${fromTimestamp}`,
-            end: `${toTimestamp ?? Date.now()}`,
+            end: `${toTimestamp ?? now()}`,
             step: 3600,
         },
         limit: 20,
@@ -170,7 +174,7 @@ export async function getTlpFeeFromSentio(fromTimestamp: number, toTimestamp?: n
 
     let data = await response.json();
     // console.log(data);
-    // console.log(data.results[0].matrix.samples[0].values[0]);
+    // console.log(data.results[0].matrix.samples[0].values);
 
     let first = data.results[0].matrix.samples[0].values[0];
     let last = data.results[0].matrix.samples[0].values.at(-1);
@@ -186,7 +190,7 @@ export async function getTotalVolumeFromSentio(fromTimestamp: number, toTimestam
     let requestData = {
         timeRange: {
             start: `${fromTimestamp}`,
-            end: `${toTimestamp ?? Date.now()}`,
+            end: `${toTimestamp ?? now()}`,
             step: 3600,
         },
         limit: 1,
@@ -235,7 +239,7 @@ export async function getAccumulatedUser(): Promise<number> {
     let requestData = {
         timeRange: {
             start: "now-1h",
-            end: Date.now(),
+            end: now(),
             step: 3600,
             timezone: "Asia/Taipei",
         },
@@ -298,7 +302,7 @@ export async function getTlpPriceFromSentio(fromTimestamp: number, toTimestamp?:
     let requestData = {
         timeRange: {
             start: `${fromTimestamp}`,
-            end: `${toTimestamp ?? Date.now()}`,
+            end: `${toTimestamp ?? now()}`,
             step: 3600,
         },
         limit: 30 * 24,
@@ -335,12 +339,12 @@ export async function getTlpPriceFromSentio(fromTimestamp: number, toTimestamp?:
     let samples = data.results[0].matrix.samples;
     // console.log(samples[0].values);
 
-    return samples;
+    return samples[0].values;
 }
 
 // getVolumeFromSentio();
 // getAccumulatedUser();
 // getTradingVolumeFromSentio(1747008000, 1, 1747011600);
-// getTlpPriceFromSentio(0);
-// getTotalVolumeFromSentio(0).then((x) => console.log(x));
-// getTlpFeeFromSentio(0).then((x) => console.log(x));
+// getTlpPriceFromSentio(now() - 3600 * 24 * 30).then((x) => console.dir(x, { depth: null }));
+// getTotalVolumeFromSentio(now() - 3600 * 24 * 30).then((x) => console.log(x));
+// getTlpFeeFromSentio(now() - 3600 * 24 * 30).then((x) => console.log(x));

@@ -59,7 +59,7 @@ export async function getTradingVolumeFromSentio(
     let requestData = {
         timeRange: {
             start: `${fromTimestamp}`,
-            end: `${toTimestamp ?? "now"}`,
+            end: `${toTimestamp ?? Date.now()}`,
             step: 3600 * interval,
         },
         limit: 30 * 24,
@@ -136,7 +136,7 @@ export async function getTlpFeeFromSentio(fromTimestamp: number, toTimestamp?: n
     let requestData = {
         timeRange: {
             start: `${fromTimestamp}`,
-            end: `${toTimestamp ?? "now"}`,
+            end: `${toTimestamp ?? Date.now()}`,
             step: 3600,
         },
         limit: 20,
@@ -186,7 +186,7 @@ export async function getTotalVolumeFromSentio(fromTimestamp: number, toTimestam
     let requestData = {
         timeRange: {
             start: `${fromTimestamp}`,
-            end: `${toTimestamp ?? "now"}`,
+            end: `${toTimestamp ?? Date.now()}`,
             step: 3600,
         },
         limit: 1,
@@ -235,7 +235,7 @@ export async function getAccumulatedUser(): Promise<number> {
     let requestData = {
         timeRange: {
             start: "now-1h",
-            end: "now",
+            end: Date.now(),
             step: 3600,
             timezone: "Asia/Taipei",
         },
@@ -298,7 +298,7 @@ export async function getTlpPriceFromSentio(fromTimestamp: number, toTimestamp?:
     let requestData = {
         timeRange: {
             start: `${fromTimestamp}`,
-            end: `${toTimestamp ?? "now"}`,
+            end: `${toTimestamp ?? Date.now()}`,
             step: 3600,
         },
         limit: 30 * 24,
@@ -341,6 +341,6 @@ export async function getTlpPriceFromSentio(fromTimestamp: number, toTimestamp?:
 // getVolumeFromSentio();
 // getAccumulatedUser();
 // getTradingVolumeFromSentio(1747008000, 1, 1747011600);
-// getTotalVolumeFromSentio(1748995200);
-// getTlpPriceFromSentio(1748995200);
-// getTlpFeeFromSentio(1748995200);
+// getTlpPriceFromSentio(0);
+// getTotalVolumeFromSentio(0).then((x) => console.log(x));
+// getTlpFeeFromSentio(0).then((x) => console.log(x));

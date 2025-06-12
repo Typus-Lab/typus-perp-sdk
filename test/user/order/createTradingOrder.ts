@@ -18,7 +18,7 @@ import { TOKEN, tokenType } from "@typus/typus-sdk/dist/src/constants";
     var tx = new Transaction();
 
     // INPUTS
-    let cToken: TOKEN = "SUI";
+    let cToken: TOKEN = "wUSDT";
     let tradingToken: TOKEN = "SUI";
 
     let pythClient = createPythClient(provider, NETWORK);
@@ -33,10 +33,10 @@ import { TOKEN, tokenType } from "@typus/typus-sdk/dist/src/constants";
     tx = await createTradingOrder(config, tx, pythClient, {
         coins,
         cToken,
-        amount: "100000000",
+        amount: "100000000", // 100 USDT
         tradingToken,
-        size: "1000000000",
-        triggerPrice: "500000000",
+        size: "10000000000", // 10 SUI
+        triggerPrice: "100000000", // $1
         isLong: true,
         isStopOrder: false,
         reduceOnly: false,

@@ -239,7 +239,7 @@ export async function getAccumulatedUser(): Promise<number> {
     let requestData = {
         timeRange: {
             start: "now-1h",
-            end: now(),
+            end: "now",
             step: 3600,
             timezone: "Asia/Taipei",
         },
@@ -343,7 +343,7 @@ export async function getTlpPriceFromSentio(fromTimestamp: number, toTimestamp?:
 }
 
 // getVolumeFromSentio();
-// getAccumulatedUser();
+// getAccumulatedUser().then((x) => console.log(x));
 // getTradingVolumeFromSentio(1747008000, 1, 1747011600);
 // getTlpPriceFromSentio(now() - 3600 * 24 * 30).then((x) => console.dir(x, { depth: null }));
 // getTotalVolumeFromSentio(now() - 3600 * 24 * 30).then((x) => console.log(x));

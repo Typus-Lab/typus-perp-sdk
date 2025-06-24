@@ -233,10 +233,10 @@ export async function parseUserHistory(raw_events) {
                     side: !related
                         ? undefined
                         : related.action === "Order Filled (Open Position)"
-                          ? related.side
-                          : related.side === "Long"
-                            ? "Short"
-                            : "Long",
+                            ? related.side
+                            : related.side === "Long"
+                                ? "Short"
+                                : "Long",
                     order_type: related?.order_type,
                     status: "Filled",
                     size: related?.size,
@@ -529,7 +529,7 @@ function toToken(name: string): TOKEN {
         case "ETH":
         case "SOL":
         case "APT":
-            return `w${name}`;
+            return `w${name}` as TOKEN;
         case "WUSDC":
             return "wUSDC";
         default:

@@ -233,10 +233,10 @@ export async function parseUserHistory(raw_events) {
                     side: !related
                         ? undefined
                         : related.action === "Order Filled (Open Position)"
-                            ? related.side
-                            : related.side === "Long"
-                                ? "Short"
-                                : "Long",
+                          ? related.side
+                          : related.side === "Long"
+                            ? "Short"
+                            : "Long",
                     order_type: related?.order_type,
                     status: "Filled",
                     size: related?.size,
@@ -305,10 +305,14 @@ export async function parseUserHistory(raw_events) {
     // SwapEvent => Swap
 }
 
-export async function getGraphQLEvents(module: string, sender: string, beforeCursor: string | null = null) {
+export async function getGraphQLEvents(module: string, sender: string | null, beforeCursor: string | null = null) {
     let before = "";
     if (beforeCursor) {
         before = `before: "${beforeCursor}",`;
+    }
+    let senderFilter = "";
+    if (sender) {
+        senderFilter = `sender: "${sender}"`;
     }
     var graphql = JSON.stringify({
         query: `
@@ -318,7 +322,7 @@ export async function getGraphQLEvents(module: string, sender: string, beforeCur
           ${before}
           filter: {
             eventType: "${module}",
-            sender: "${sender}"
+            ${senderFilter}
             }
         ) {
           pageInfo {

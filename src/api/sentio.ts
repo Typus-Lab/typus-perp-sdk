@@ -6,10 +6,7 @@ const headers = {
 };
 
 export async function getFromSentio(event: string, userAddress: string, startTimestamp: string): Promise<any[]> {
-    let apiUrl =
-        NETWORK == "MAINNET"
-            ? "https://app.sentio.xyz/api/v1/analytics/typus/typus_perp_mainnet/sql/execute"
-            : "https://app.sentio.xyz/api/v1/analytics/typus/typus_perp/sql/execute";
+    let apiUrl = "https://app.sentio.xyz/api/v1/analytics/typus/typus_perp_mainnet/sql/execute";
 
     let requestData = {
         sqlQuery: {
@@ -347,7 +344,6 @@ export async function getTlpPriceFromSentio(fromTimestamp?: number, toTimestamp?
     return samples[0].values;
 }
 
-// getVolumeFromSentio();
 // getAccumulatedUser().then((x) => console.log(x));
 // getTradingVolumeFromSentio(1747008000, 1, 1747011600);
 // getTlpPriceFromSentio(0).then((x) => console.dir(x, { depth: null }));

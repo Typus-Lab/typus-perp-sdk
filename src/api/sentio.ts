@@ -1,4 +1,5 @@
-import { NETWORK } from "src";
+import { TOKEN } from "@typus/typus-sdk/dist/src/constants";
+import { Event, NETWORK, toSentioToken } from "src";
 
 const headers = {
     "api-key": "ffJa6FwxeJNrQP8NZ5doEMXqdSA7XM6mT",
@@ -17,6 +18,58 @@ export async function getFromSentio(event: string, userAddress: string, startTim
                 ORDER BY timestamp DESC;
             `,
             size: 1000,
+        },
+    };
+
+    let jsonData = JSON.stringify(requestData);
+
+    let response = await fetch(apiUrl, {
+        method: "POST",
+        headers,
+        body: jsonData,
+    });
+
+    let data = await response.json();
+    // console.log(data);
+
+    if (data.result) {
+        return data.result.rows as any[];
+    } else {
+        return [];
+    }
+}
+
+export async function getRecentTradesFromSentio(base_token?: TOKEN): Promise<any[]> {
+    let apiUrl = "https://app.sentio.xyz/api/v1/analytics/typus/typus_perp_mainnet/sql/execute";
+
+    let tokenFilter = "";
+    if (base_token) {
+        tokenFilter = `WHERE base_token = '${toSentioToken(base_token)}'`;
+    }
+
+    let requestData = {
+        sqlQuery: {
+            sql: `
+                SELECT
+                timestamp,
+                base_token,
+                collateral_token,
+                order_type,
+                side,
+                status,
+                distinct_id,
+                price,
+                size,
+                size_usd,
+                realized_fee,
+                realized_fee_in_usd,
+                realized_pnl
+                FROM PlaceOrder
+                LEFT JOIN OrderFilled ON OrderFilled.transaction_hash == PlaceOrder.transaction_hash AND OrderFilled.position_id == PlaceOrder.position_id
+                ${tokenFilter}
+                ORDER BY timestamp DESC;
+            `,
+            size: 100,
         },
     };
 
@@ -344,6 +397,7 @@ export async function getTlpPriceFromSentio(fromTimestamp?: number, toTimestamp?
     return samples[0].values;
 }
 
+// getRecentTradesFromSentio().then((x) => console.log(x));
 // getAccumulatedUser().then((x) => console.log(x));
 // getTradingVolumeFromSentio(1747008000, 1, 1747011600);
 // getTlpPriceFromSentio(0).then((x) => console.dir(x, { depth: null }));

@@ -10,7 +10,7 @@ import {
 import { PKG_V1 as PERP_PACKAGE_ID } from "src/typus_perp/index";
 
 (async () => {
-    let user = null; // get recent trades
+    let user = "0xdc72506f269feb89822c13e66b282bc52c5724c27e575a04cbec949a13671d13";
     console.log(user);
 
     // 1. pagination
@@ -20,7 +20,7 @@ import { PKG_V1 as PERP_PACKAGE_ID } from "src/typus_perp/index";
     for (let i = 0; i < 5; i += 1) {
         let result = await getGraphQLEvents(PERP_PACKAGE_ID, user, beforeCursor);
         let pageInfo = result.pageInfo;
-        console.log(pageInfo);
+        // console.log(pageInfo);
         beforeCursor = pageInfo.startCursor;
         raw_events.push(...result.nodes);
         if (!pageInfo.hasPreviousPage) {
@@ -39,8 +39,6 @@ import { PKG_V1 as PERP_PACKAGE_ID } from "src/typus_perp/index";
     console.log(events.length);
     console.log(events.at(0)?.timestamp);
 
-    saveToFile(events, "recentTrades.csv");
-
     // // 3. order match events from sentio
     // events = await getOrderMatchFromSentio(user, 0, events);
 
@@ -52,14 +50,3 @@ import { PKG_V1 as PERP_PACKAGE_ID } from "src/typus_perp/index";
 
     // console.log(events.filter((x) => x.base_token == "wBTC"));
 })();
-
-import * as fs from "fs";
-
-function saveToFile(data: any[], filename: string) {
-    const headers = Object.keys(data[0]);
-
-    const csvRows = [headers.join(","), ...data.map((d) => Object.values(d).join(","))];
-
-    const csvContent = csvRows.join("\n");
-    fs.writeFileSync(filename, csvContent);
-}

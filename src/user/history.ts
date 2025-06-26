@@ -524,6 +524,22 @@ export async function getRealizeOptionFromSentio(userAddress: string, startTimes
     return events;
 }
 
+// export function toRecentTrades(events: Event[]): Event[] {
+//     let trades: Event[] = [];
+
+//     for (let event of events) {
+//         if (event.action == "Place Order") {
+//             trades.push(event);
+//         } else if (event.action == "Order Filled (Close Position)") {
+//             if (trades[trades.length - 1].tx_digest == event.tx_digest) {
+//                 trades[trades.length - 1].realized_pnl = event.realized_pnl;
+//             }
+//         }
+//     }
+
+//     return trades;
+// }
+
 // getOrderMatchFromSentio("0x95f26ce574fc9ace2608807648d99a4dce17f1be8964613d5b972edc82849e9e", 0);
 // getRealizeOptionFromSentio("0x95f26ce574fc9ace2608807648d99a4dce17f1be8964613d5b972edc82849e9e", 0);
 
@@ -538,5 +554,22 @@ function toToken(name: string): TOKEN {
             return "wUSDC";
         default:
             return name as TOKEN;
+    }
+}
+
+export function toSentioToken(name: TOKEN): string {
+    switch (name) {
+        case "WBTC":
+            return "BTC";
+        case "wETH":
+            return "ETH";
+        case "wSOL":
+            return "SOL";
+        case "wAPT":
+            return "APT";
+        case "wUSDC":
+            return "USDC";
+        default:
+            return name;
     }
 }

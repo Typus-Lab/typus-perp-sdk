@@ -27,7 +27,7 @@ export const PERP_PACKAGE_ID =
         ? "0xe27969a70f93034de9ce16e6ad661b480324574e68d15a64b513fd90eb2423e5"
         : "0x585924f160f83ef16f8927ec117e4d740abb6f4e571ecfa89ff3e973042cb1b9";
 export const PERP_PUBLISHED_AT =
-    NETWORK == "MAINNET" ? "0x555c19db27f48d6392423061d445e82e308818195e0f041279ffdb2e5df62007" : "@typus/perp";
+    NETWORK == "MAINNET" ? "0xb52138bfce4e79d0d25c69b1d9dfe6ec81a821ed3ef03cdb1c077cb4ac9c9b9d" : "@typus/perp";
 export const PERP_PKG_V1 =
     NETWORK == "MAINNET"
         ? "0xe27969a70f93034de9ce16e6ad661b480324574e68d15a64b513fd90eb2423e5"

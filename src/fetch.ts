@@ -11,6 +11,7 @@ import {
     getAllPositions as _getAllPositions,
     getEstimatedLiquidationPriceAndPnl,
 } from "./typus_perp/trading/functions";
+import { getReferralInfo as _getReferralInfo } from "./typus_move/referral/functions";
 
 import { allocateIncentive, getUserShares } from "./typus_stake_pool/stake-pool/functions";
 import { LpUserShare, StakePool } from "./typus_stake_pool/stake-pool/structs";
@@ -30,6 +31,7 @@ import {
     STAKE_POOL_VERSION,
     TLP_TOKEN,
 } from ".";
+
 import { TypusBidReceipt } from "./_dependencies/source/0xb4f25230ba74837d8299e92951306100c4a532e8c48cc3d8828abe9b91c8b274/vault/structs";
 import { PUBLISHED_AT } from "./typus_perp";
 import { getUserDeactivatingShares } from "./typus_perp/lp-pool/functions";
@@ -52,6 +54,7 @@ import {
     phantom,
 } from "./_framework/reified";
 import { TLP as TlpStruct } from "./typus_perp/tlp/structs";
+import { Referrer } from "./typus_move/referral/structs";
 
 export async function getLpPools(config: TypusConfig): Promise<LiquidityPool[]> {
     let provider = new SuiClient({ url: config.rpcEndpoint });
@@ -525,4 +528,45 @@ export async function getAllPositionsWithTradingSymbol(
 
     // 5) 扁平化後回傳
     return results.flat();
+}
+
+export async function getReferralInfo(config: TypusConfig, referralCode: string, sumFeeUsd: boolean) {
+    let provider = new SuiClient({ url: config.rpcEndpoint });
+    let tx = new Transaction();
+
+    _getReferralInfo(
+        tx,
+        {
+            version: config.version.typus,
+            // @ts-ignore
+            referralRegistry: config.registry.typus.referral,
+            typusUserRegistry: config.registry.typus.user,
+            referralCode,
+            sumFeeUsd,
+        },
+        config.package.typus
+    );
+
+    let res = await provider.devInspectTransactionBlock({ sender: SENDER, transactionBlock: tx });
+    // console.log(res);
+
+    // @ts-ignore
+    let returnValues = res.results[0].returnValues[0][0];
+    // console.log(returnValues);
+
+    let reader = new BcsReader(new Uint8Array(returnValues));
+
+    let _length = reader.readULEB();
+    // console.log(_length);
+
+    let bytes = reader.readBytes(reader.readULEB());
+    let referrer = Referrer.fromBcs(Uint8Array.from(Array.from(bytes)));
+
+    reader.readULEB();
+    let sum: string | undefined = undefined;
+    if (sumFeeUsd) {
+        sum = reader.read64();
+    }
+
+    return [referrer, sum];
 }

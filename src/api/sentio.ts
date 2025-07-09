@@ -415,55 +415,60 @@ export async function getUserPnlFromSentio(startTimestamp: number, endTimestamp:
             sql: `
             WITH
             Pnl_history as (
-                SELECT
+            SELECT
                 timestamp as time,
                 CAST( realized_pnl AS Float64 ) as Trader_PnlUSD,
+                filled_size * filled_price as volumeUSD,
                 distinct_id as address
                 from OrderFilled
-                WHERE timestamp >= ${startTimestamp} and timestamp < ${endTimestamp}
-                UNION ALL
+                    WHERE timestamp >= ${startTimestamp} and timestamp < ${endTimestamp}
+            UNION ALL
                 SELECT
-                timestamp as time,
-                CAST(value_for_lp_pool_usd + liquidator_fee_usd AS Float64) * (-1) as Trader_PnlUSD,
-                distinct_id as address
-                from Liquidate -- collateral liquidate, liquidate fee不算
-                WHERE timestamp >= ${startTimestamp} and timestamp < ${endTimestamp}
-                UNION ALL
+                    timestamp as time,
+                    CAST(value_for_lp_pool_usd + liquidator_fee_usd AS Float64) * (-1) as Trader_PnlUSD,
+                    0 as volumeUSD,
+                    distinct_id as address
+                    from Liquidate -- collateral liquidate, liquidate fee不算
+                        WHERE timestamp >= ${startTimestamp} and timestamp < ${endTimestamp}
+            UNION ALL
                 SELECT
-                timestamp as time,
-                CAST(realized_funding_fee_usd AS Float64) * (-1) as Trader_PnlUSD,
-                distinct_id as address
-                from 'RealizeFunding' -- funding fee 正的是 user paid to pool
-                WHERE timestamp >= ${startTimestamp} and timestamp < ${endTimestamp}
-                UNION ALL
+                    timestamp as time,
+                    CAST(realized_funding_fee_usd AS Float64) * (-1) as Trader_PnlUSD,
+                    0 as volumeUSD,
+                    distinct_id as address
+                    from 'RealizeFunding' -- funding fee 正的是 user paid to pool
+                        WHERE timestamp >= ${startTimestamp} and timestamp < ${endTimestamp}
+            UNION ALL
                 SELECT
-                timestamp as time,
-                CAST(
-                    user_remaining_in_usd + (realized_loss_value - exercise_balance_value) * (user_remaining_in_usd / user_remaining_value) AS Float64
-                ) as Trader_PnlUSD,
-                distinct_id as address
-                from 'RealizeOption'
-                WHERE timestamp >= ${startTimestamp} and timestamp < ${endTimestamp}
+                    timestamp as time,
+                    CAST(
+                        user_remaining_in_usd + (realized_loss_value - exercise_balance_value) * (user_remaining_in_usd / user_remaining_value) AS Float64
+                    ) as Trader_PnlUSD,
+                    0 as volumeUSD,
+                    distinct_id as address
+                    from 'RealizeOption'
+                        WHERE timestamp >= ${startTimestamp} and timestamp < ${endTimestamp}
             ),
             sum_Trader_PnlUSD as (
                 SELECT
                 sum(Trader_PnlUSD) as Trader_PnlUSD,
+                sum(volumeUSD) as volumeUSD,
                 address
                 from Pnl_history
                 GROUP BY address
             )
             SELECT
             *
-            from sum_Trader_PnlUSD
-            where address not in (
-                '0xc9ea1b9c3542551189cf26a08f5ca5ed7964aef34c14d06c888d30c8d91867e4',
-                '0x83d2cb640ee252bae6b01bd6104c4afc69071e67b688db85a029ce452c61f11c',
-                '0x39770d149a9bc9d9639314fca2c380e9061c0d230737635762c5bcc61dee13d0',
-                '0x834d17f7b2e167cae224325a17b49babffe168182c418caa0c63a92d6f70b83a',
-                '0xd35ae21660aee607ee21e104d093d03643d36efbf79df669092c4411308ed2e2',
-                '0xe6cbba68c446f52cf8211c12ae79179233c8f9cec5e0b5008418ec339ca72fea'
-                )
-            ${userFilter}
+                from sum_Trader_PnlUSD
+                    where address not in (
+                        '0xc9ea1b9c3542551189cf26a08f5ca5ed7964aef34c14d06c888d30c8d91867e4',
+                        '0x83d2cb640ee252bae6b01bd6104c4afc69071e67b688db85a029ce452c61f11c',
+                        '0x39770d149a9bc9d9639314fca2c380e9061c0d230737635762c5bcc61dee13d0',
+                        '0x834d17f7b2e167cae224325a17b49babffe168182c418caa0c63a92d6f70b83a',
+                        '0xd35ae21660aee607ee21e104d093d03643d36efbf79df669092c4411308ed2e2',
+                        '0xe6cbba68c446f52cf8211c12ae79179233c8f9cec5e0b5008418ec339ca72fea'
+                        )
+                    ${userFilter}
             order by Trader_PnlUSD desc
             `,
             size: 100,
@@ -479,7 +484,7 @@ export async function getUserPnlFromSentio(startTimestamp: number, endTimestamp:
     });
 
     let data = await response.json();
-    console.log(data);
+    // console.log(data);
 
     if (data.result) {
         return data.result.rows as any[];

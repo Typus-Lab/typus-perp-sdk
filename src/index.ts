@@ -9,7 +9,7 @@ dotenv.config();
 export const NETWORK = process.env.NEXT_PUBLIC_CLUSTER == "testnet" ? "TESTNET" : "MAINNET";
 
 // console.log(`Load .env NEXT_PUBLIC_CLUSTER: ${process.env.NEXT_PUBLIC_CLUSTER}`);
-console.log(`Initializing Typus Perp SDK for ${NETWORK}`);
+// console.log(`Initializing Typus Perp SDK for ${NETWORK}`);
 
 /** Register the MVR plugin globally */
 

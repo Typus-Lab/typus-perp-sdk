@@ -50,24 +50,49 @@ export async function getRecentTradesFromSentio(base_token?: TOKEN): Promise<any
     let requestData = {
         sqlQuery: {
             sql: `
-                SELECT
-                timestamp,
-                base_token,
-                collateral_token,
-                order_type,
-                side,
-                status,
-                distinct_id,
-                price,
-                size,
-                size_usd,
-                realized_fee,
-                realized_fee_in_usd,
-                realized_pnl
-                FROM PlaceOrder
-                LEFT JOIN OrderFilled ON OrderFilled.transaction_hash == PlaceOrder.transaction_hash AND OrderFilled.position_id == PlaceOrder.position_id
-                ${tokenFilter}
-                ORDER BY timestamp DESC;
+                SELECT * FROM (
+                    SELECT
+                    PlaceOrder.timestamp as timestamp,
+                    PlaceOrder.base_token as base_token,
+                    PlaceOrder.collateral_token as collateral_token,
+                    PlaceOrder.order_type as order_type,
+                    OrderFilled.order_type as status,
+                    PlaceOrder.side as side,
+                    PlaceOrder.distinct_id as distinct_id,
+                    price,
+                    size,
+                    realized_amount-realized_fee-RealizeFunding.realized_funding_fee as realized_pnl,
+                    OrderFilled.realized_pnl-RealizeFunding.realized_funding_fee_usd as realized_pnl_usd,
+                    RemovePosition.remaining_collateral_amount - realized_pnl as collateral_amount,
+                    PlaceOrder.transaction_hash as transaction_hash
+                    FROM PlaceOrder
+                    LEFT JOIN OrderFilled ON OrderFilled.order_id == PlaceOrder.order_id AND OrderFilled.base_token == PlaceOrder.base_token
+                    LEFT JOIN RealizeFunding ON RealizeFunding.position_id == OrderFilled.position_id AND RealizeFunding.base_token == OrderFilled.base_token
+                    LEFT JOIN RealizeOption ON RealizeOption.position_id == OrderFilled.position_id AND RealizeOption.base_token == OrderFilled.base_token AND RealizeOption.transaction_hash == OrderFilled.transaction_hash
+                    LEFT JOIN RemovePosition ON RemovePosition.transaction_hash == OrderFilled.transaction_hash
+                    ${tokenFilter}
+                    UNION ALL
+                    SELECT
+                    PlaceOrderWithBidReceipt.timestamp as timestamp,
+                    PlaceOrderWithBidReceipt.base_token as base_token,
+                    PlaceOrderWithBidReceipt.collateral_token as collateral_token,
+                    PlaceOrderWithBidReceipt.order_type as order_type,
+                    OrderFilled.order_type as status,
+                    PlaceOrderWithBidReceipt.side as side,
+                    PlaceOrderWithBidReceipt.distinct_id as distinct_id,
+                    price,
+                    size,
+                    realized_amount-realized_fee-RealizeFunding.realized_funding_fee as realized_pnl,
+                    OrderFilled.realized_pnl-RealizeFunding.realized_funding_fee_usd as realized_pnl_usd,
+                    RealizeOption.exercise_balance_value as collateral_amount,
+                    PlaceOrderWithBidReceipt.transaction_hash as transaction_hash
+                    FROM PlaceOrderWithBidReceipt
+                    JOIN OrderFilled ON OrderFilled.order_id == PlaceOrderWithBidReceipt.order_id AND OrderFilled.base_token == PlaceOrderWithBidReceipt.base_token
+                    LEFT JOIN RealizeFunding ON RealizeFunding.position_id == OrderFilled.position_id AND RealizeFunding.base_token == OrderFilled.base_token
+                    LEFT JOIN RealizeOption ON RealizeOption.position_id == OrderFilled.position_id AND RealizeOption.base_token == OrderFilled.base_token AND RealizeOption.transaction_hash == OrderFilled.transaction_hash
+                    ${tokenFilter}
+                ) AS combined
+                    ORDER BY timestamp DESC
             `,
             size: 100,
         },

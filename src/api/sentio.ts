@@ -220,6 +220,7 @@ export async function getMinuteTradingVolumeFromSentio(base_token: TOKEN, minute
             break;
     }
 
+    // toDateTime(intDiv(toUnixTimestamp(timestamp), 60 * 15) * 60 * 15) as ts_start,
     let requestData = {
         sqlQuery: {
             sql: `

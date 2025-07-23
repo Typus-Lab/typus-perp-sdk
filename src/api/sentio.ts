@@ -201,34 +201,17 @@ export async function getTradingVolumeFromSentio(
     return map;
 }
 
-export async function getMinuteTradingVolumeFromSentio(base_token: TOKEN, minute: "1m" | "5m" | "15m", size: number): Promise<any[]> {
+export async function getMinuteTradingVolumeFromSentio(base_token: TOKEN, minute: number, size: number): Promise<any[]> {
     let apiUrl = "https://app.sentio.xyz/api/v1/analytics/typus/typus_perp_mainnet/sql/execute";
 
-    let tokenFilter = `WHERE base_token = '${toSentioToken(base_token)}'`;
-
-    let toStartOfXXX;
-
-    switch (minute) {
-        case "1m":
-            toStartOfXXX = "toStartOfMinute";
-            break;
-        case "5m":
-            toStartOfXXX = "toStartOfFiveMinute";
-            break;
-        case "15m":
-            toStartOfXXX = "toStartOfFifteenMinutes";
-            break;
-    }
-
-    // toDateTime(intDiv(toUnixTimestamp(timestamp), 60 * 15) * 60 * 15) as ts_start,
     let requestData = {
         sqlQuery: {
             sql: `
                 SELECT
-                ${toStartOfXXX}(timestamp) AS ts_start,
+                toDateTime(intDiv(toUnixTimestamp(timestamp), 60 * ${minute}) * 60 * ${minute}) as ts_start,
                 sum(filled_size) AS total_filled_size
                 FROM OrderFilled
-                ${tokenFilter}
+                WHERE base_token = '${toSentioToken(base_token)}'
                 GROUP BY ts_start
                 ORDER BY ts_start DESC;
             `,
@@ -657,5 +640,5 @@ export async function getLeaderboardFromSentio(size: number): Promise<any[]> {
 // getTotalVolumeFromSentio(0).then((x) => console.log(x));
 // getTlpFeeFromSentio(0).then((x) => console.log(x));
 // getUserPnlFromSentio(parseTimestamp("2025-06-24 11:00:00"), parseTimestamp("2025-07-08 11:00:00")).then((x) => console.log(x));
-// getMinuteTradingVolumeFromSentio("SUI", "5m", 10).then((x) => console.log(x));
+// getMinuteTradingVolumeFromSentio("SUI", 30, 10).then((x) => console.log(x));
 // getLeaderboardFromSentio(10).then((x) => console.log(x));

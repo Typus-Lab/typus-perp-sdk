@@ -570,6 +570,85 @@ export async function getUserPnlFromSentio(startTimestamp: number, endTimestamp:
     }
 }
 
+export async function getLeaderboardFromSentio(size: number): Promise<any[]> {
+    let apiUrl = "https://app.sentio.xyz/api/v1/analytics/typus/typus_perp_mainnet/sql/execute";
+
+    let requestData = {
+        version: 25,
+        sqlQuery: {
+            sql: `
+                WITH
+                event AS (
+                    SELECT
+                        timestamp,
+                        toDate(timestamp - INTERVAL 3 HOUR) AS logical_date,
+                        toDate(timestamp - INTERVAL 3 HOUR) AS date,
+                        filled_price * filled_size AS volume,
+                        distinct_id
+                    FROM OrderFilled
+                ),
+                sum_vol AS (
+                    SELECT
+                        logical_date,
+                        distinct_id,
+                        sum(volume) AS total_volume
+                    FROM event
+                    GROUP BY logical_date, distinct_id
+                ),
+                ranked AS (
+                    SELECT
+                        *,
+                        row_number() OVER (PARTITION BY logical_date ORDER BY total_volume DESC) AS rk
+                    FROM sum_vol
+                ),
+                top10 AS (
+                    SELECT *
+                    FROM ranked
+                    WHERE rk <= 10
+                ),
+                top10_sum AS (
+                    SELECT
+                        logical_date,
+                        sum(total_volume) AS top10_total_volume
+                    FROM top10
+                    GROUP BY logical_date
+                )
+                SELECT
+                    toDateTime(logical_date + INTERVAL 3 HOUR) AS Date,
+                    t.distinct_id as Address,
+                    t.total_volume as Trading_Vol,
+                    cast(t.total_volume AS Decimal256(18)) / cast(s.top10_total_volume AS Decimal256(18)) AS Volume_Share_Top10,
+                    Volume_Share_Top10 * 150 as PrizePool_Share
+                FROM top10 t
+                JOIN top10_sum s ON t.logical_date = s.logical_date
+                ORDER BY
+                    Date DESC,
+                    t.rk ASC,
+                    Volume_Share_Top10
+
+            `,
+            size,
+        },
+    };
+
+    let jsonData = JSON.stringify(requestData);
+
+    let response = await fetch(apiUrl, {
+        method: "POST",
+        headers,
+        body: jsonData,
+    });
+
+    let data = await response.json();
+    // console.log(data);
+
+    if (data.result) {
+        return data.result.rows as any[];
+    } else {
+        return [];
+    }
+}
+
 // getRecentTradesFromSentio().then((x) => console.log(x));
 // getAccumulatedUser().then((x) => console.log(x));
 // getTradingVolumeFromSentio(1747008000, 1, 1747011600);
@@ -578,3 +657,4 @@ export async function getUserPnlFromSentio(startTimestamp: number, endTimestamp:
 // getTlpFeeFromSentio(0).then((x) => console.log(x));
 // getUserPnlFromSentio(parseTimestamp("2025-06-24 11:00:00"), parseTimestamp("2025-07-08 11:00:00")).then((x) => console.log(x));
 // getMinuteTradingVolumeFromSentio("SUI", "5m", 10).then((x) => console.log(x));
+// getLeaderboardFromSentio(10).then((x) => console.log(x));

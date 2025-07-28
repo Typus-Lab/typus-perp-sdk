@@ -554,8 +554,10 @@ export async function getUserPnlFromSentio(startTimestamp: number, endTimestamp:
     }
 }
 
-export async function getLeaderboardFromSentio(size: number): Promise<any[]> {
+export async function getLeaderboardFromSentio(startTs: number, endTs: number): Promise<any[]> {
     let apiUrl = "https://app.sentio.xyz/api/v1/analytics/typus/typus_perp_mainnet/sql/execute";
+
+    let size = (10 * (endTs - startTs)) / 60 / 60 / 24; // day * 10
 
     let requestData = {
         version: 25,
@@ -605,6 +607,7 @@ export async function getLeaderboardFromSentio(size: number): Promise<any[]> {
                     Volume_Share_Top10 * 150 as PrizePool_Share
                 FROM top10 t
                 JOIN top10_sum s ON t.logical_date = s.logical_date
+                WHERE Date >= ${startTs} AND Date < ${endTs}
                 ORDER BY
                     Date DESC,
                     t.rk ASC,
@@ -641,4 +644,4 @@ export async function getLeaderboardFromSentio(size: number): Promise<any[]> {
 // getTlpFeeFromSentio(0).then((x) => console.log(x));
 // getUserPnlFromSentio(parseTimestamp("2025-06-24 11:00:00"), parseTimestamp("2025-07-08 11:00:00")).then((x) => console.log(x));
 // getMinuteTradingVolumeFromSentio("SUI", 30, 10).then((x) => console.log(x));
-// getLeaderboardFromSentio(10).then((x) => console.log(x));
+// getLeaderboardFromSentio(1753142400, 1753401600).then((x) => console.log(x, x.length));

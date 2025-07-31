@@ -39,7 +39,7 @@ export async function createTradingOrder(
     let coin;
     let suiCoin;
 
-    if (TOKEN == tokenType.MAINNET.SUI && config.sponsored) {
+    if (TOKEN == "SUI" && config.sponsored) {
         // split together
         [coin, suiCoin] = splitCoins(tx, tokenType.MAINNET.SUI, input.coins, [input.amount, tokens.length.toString()], config.sponsored);
     } else if (config.sponsored) {
@@ -136,7 +136,7 @@ export async function increaseCollateral(
     let coin;
     let suiCoin;
 
-    if (TOKEN == tokenType.MAINNET.SUI && config.sponsored) {
+    if (TOKEN == "SUI" && config.sponsored) {
         // split together
         [coin, suiCoin] = splitCoins(tx, tokenType.MAINNET.SUI, input.coins, [input.amount, tokens.length.toString()], config.sponsored);
     } else if (config.sponsored) {

@@ -57,7 +57,7 @@ export async function mintStakeLp(
     let coin;
     let suiCoin;
 
-    if (input.cTOKEN == tokenType.MAINNET.SUI && config.sponsored) {
+    if (input.cTOKEN == "SUI" && config.sponsored) {
         // split together
         [coin, suiCoin] = splitCoins(tx, tokenType.MAINNET.SUI, input.coins, [input.amount, tokens.length.toString()], config.sponsored);
     } else if (config.sponsored) {
@@ -388,7 +388,7 @@ export async function swap(
     let coin;
     let suiCoin;
 
-    if (input.FROM_TOKEN == tokenType.MAINNET.SUI && config.sponsored) {
+    if (input.FROM_TOKEN == "SUI" && config.sponsored) {
         // split together
         [coin, suiCoin] = splitCoins(tx, tokenType.MAINNET.SUI, input.coins, [input.amount, "2"], config.sponsored);
     } else if (config.sponsored) {

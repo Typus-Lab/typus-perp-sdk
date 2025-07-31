@@ -8,7 +8,7 @@ import {
     unsubscribe as _unsubscribe,
     snapshot as _snapshot,
 } from "../typus_stake_pool/stake-pool/functions";
-import { PythClient, TypusConfig, updateOracleWithPythUsd, updatePyth } from "@typus/typus-sdk/dist/src/utils";
+import { PythClient, splitCoins, TypusConfig, updateOracleWithPythUsd, updatePyth } from "@typus/typus-sdk/dist/src/utils";
 import { CLOCK, tokenType, typeArgToAsset, TOKEN, oracle } from "@typus/typus-sdk/dist/src/constants";
 import { LP_POOL, NETWORK, PERP_VERSION, STAKE_POOL, STAKE_POOL_VERSION, TLP_TOKEN, TLP_TREASURY_CAP } from "..";
 import { StakePool } from "src/typus_stake_pool/stake-pool/structs";
@@ -65,26 +65,14 @@ export async function mintStakeLp(
         });
     }
 
-    var coin;
-
-    if (input.cTOKEN == "SUI") {
-        [coin] = tx.splitCoins(tx.gas, [input.amount]);
-    } else {
-        let destination = input.coins.pop()!;
-
-        if (input.coins.length > 0) {
-            tx.mergeCoins(destination, input.coins);
-        }
-
-        [coin] = tx.splitCoins(destination, [input.amount]);
-    }
+    let cToken = tokenType[NETWORK][input.cTOKEN];
+    let coin = splitCoins(tx, cToken, input.coins, input.amount, config.sponsored);
 
     // console.log(iToken);
     if (input.userShareId) {
         harvestStakeReward(config, tx, { stakePool: input.stakePool, userShareId: input.userShareId, user: input.user });
     }
 
-    let cToken = tokenType[NETWORK][input.cTOKEN];
     let lpCoin = mintLp(tx, [cToken, TLP_TOKEN], {
         version: PERP_VERSION,
         registry: LP_POOL,
@@ -366,20 +354,9 @@ export async function swap(
     updateOracleWithPythUsd(pythClient, tx, config.package.oracle, input.FROM_TOKEN);
     updateOracleWithPythUsd(pythClient, tx, config.package.oracle, input.TO_TOKEN);
 
-    var coin;
-    if (input.FROM_TOKEN == "SUI") {
-        [coin] = tx.splitCoins(tx.gas, [input.amount]);
-    } else {
-        let destination = input.coins.pop()!;
-
-        if (input.coins.length > 0) {
-            tx.mergeCoins(destination, input.coins);
-        }
-
-        [coin] = tx.splitCoins(destination, [input.amount]);
-    }
-
     let fromToken = tokenType[NETWORK][input.FROM_TOKEN];
+    let coin = splitCoins(tx, fromToken, input.coins, input.amount, config.sponsored);
+
     let toToken = tokenType[NETWORK][input.TO_TOKEN];
     let token = _swap(tx, [fromToken, toToken], {
         version: PERP_VERSION,

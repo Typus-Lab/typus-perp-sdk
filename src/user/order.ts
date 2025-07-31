@@ -6,7 +6,7 @@ import {
 } from "../typus_perp/trading/functions";
 import { Position, TradingOrder } from "../typus_perp/position/structs";
 import { COMPETITION_CONFIG, LP_POOL, MARKET, NETWORK, PERP_VERSION } from "..";
-import { PythClient, updatePyth, TypusConfig, updateOracleWithPythUsd } from "@typus/typus-sdk/dist/src/utils";
+import { PythClient, updatePyth, TypusConfig, updateOracleWithPythUsd, splitCoins } from "@typus/typus-sdk/dist/src/utils";
 import { CLOCK, tokenType, TOKEN, typeArgToAsset, oracle } from "@typus/typus-sdk/dist/src/constants";
 import { Transaction } from "@mysten/sui/transactions";
 
@@ -34,29 +34,7 @@ export async function createTradingOrder(
     let cToken = tokenType[NETWORK][TOKEN];
     let baseToken = tokenType[NETWORK][BASE_TOKEN];
 
-    var coin;
-
-    if (TOKEN == "SUI") {
-        if (input.coins.length == 0) {
-            // support zero coin input for closing position
-            [coin] = zeroCoin(tx, [cToken]);
-        } else {
-            [coin] = tx.splitCoins(tx.gas, [input.amount]);
-        }
-    } else {
-        if (input.coins.length == 0) {
-            // support zero coin input for closing position
-            [coin] = zeroCoin(tx, [cToken]);
-        } else {
-            let destination = input.coins.pop()!;
-
-            if (input.coins.length > 0) {
-                tx.mergeCoins(destination, input.coins);
-            }
-
-            [coin] = tx.splitCoins(destination, [input.amount]);
-        }
-    }
+    let coin = splitCoins(tx, cToken, input.coins, input.amount, config.sponsored);
 
     let tokens = Array.from(new Set([TOKEN, BASE_TOKEN]));
     await updatePyth(pythClient, tx, tokens);
@@ -146,19 +124,7 @@ export async function increaseCollateral(
     let cToken = tokenType[NETWORK][TOKEN];
     let baseToken = tokenType[NETWORK][BASE_TOKEN];
 
-    var coin;
-
-    if (TOKEN == "SUI") {
-        [coin] = tx.splitCoins(tx.gas, [input.amount]);
-    } else {
-        let destination = input.coins.pop()!;
-
-        if (input.coins.length > 0) {
-            tx.mergeCoins(destination, input.coins);
-        }
-
-        [coin] = tx.splitCoins(destination, [input.amount]);
-    }
+    let coin = splitCoins(tx, cToken, input.coins, input.amount, config.sponsored);
 
     _increaseCollateral(tx, [cToken, baseToken], {
         version: PERP_VERSION,

@@ -275,10 +275,10 @@
   dependencies:
     bn.js "^5.2.1"
 
-"@pythnetwork/pyth-sui-js@^2.1.0":
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/@pythnetwork/pyth-sui-js/-/pyth-sui-js-2.1.0.tgz#a8ea299fa5aa21a26aca16fd8f4cdca82041e9d9"
-  integrity sha512-oSfpqtLATTEVaac/YbaRQBvOI7DM+Qds5O0GJjEcky7UQRtz/tlU9tjQ6VRn3vm8IXw8P1mKzJcaTIO134X9Sw==
+"@pythnetwork/pyth-sui-js@^2.2.0":
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/@pythnetwork/pyth-sui-js/-/pyth-sui-js-2.2.0.tgz#6e85ddbf0273180c410ec6afd9fabfd52f325380"
+  integrity sha512-BH9oLZchSPXOBK1cmvT4foFELaOcAJJ6lAYXarnVeuBNZxTULBKPYLHuljbz0mqxrKZIVVT6FqqML2A78SlTSg==
   dependencies:
     "@mysten/sui" "^1.3.0"
     "@pythnetwork/price-service-client" "1.9.0"
@@ -573,15 +573,14 @@
   dependencies:
     "@types/yargs-parser" "*"
 
-"@typus/typus-sdk@1.7.14":
-  version "1.7.14"
-  resolved "https://registry.yarnpkg.com/@typus/typus-sdk/-/typus-sdk-1.7.14.tgz#c8bd75630d3f846fe9c298afd104e60f0e87e38c"
-  integrity sha512-u874ro/Qn4bZFgnu/w17HZZm9ncSGq4ESoQzDCEdvnniXv5AuFFFC97Cwe6W+Q2KywdnKR+0Z8xUfNhaoP3Hxg==
+"@typus/typus-sdk@1.7.17":
+  version "1.7.17"
+  resolved "https://registry.yarnpkg.com/@typus/typus-sdk/-/typus-sdk-1.7.17.tgz#00663f4590cf84318df5716809ebf1735824d374"
+  integrity sha512-GOfA8admt/HP4ykUsSCjhL5VhcXmDL3wGP4+5u3/iu2ddMPBQ9dEoB4RHWqmpxZOmrgEkSQw4QNAjw+aIA9a3Q==
   dependencies:
     "@mysten/bcs" "1.6.1"
     "@mysten/kiosk" "0.12.6"
-    "@mysten/sui" "1.30.0"
-    "@pythnetwork/pyth-sui-js" "^2.1.0"
+    "@pythnetwork/pyth-sui-js" "^2.2.0"
     "@shinami/clients" "^0.9.6"
     "@typemove/sui" "^1.6.1"
     "@types/node" "^20.5.7"

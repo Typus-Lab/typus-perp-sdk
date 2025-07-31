@@ -3,7 +3,7 @@ import {
     reduceOptionCollateralPositionSizeV2 as _reduceOptionCollateralPositionSize,
 } from "../typus_perp/trading/functions";
 import { Transaction } from "@mysten/sui/transactions";
-import { PythClient, updatePyth, TypusConfig, updateOracleWithPythUsd } from "@typus/typus-sdk/dist/src/utils";
+import { PythClient, updatePyth, TypusConfig, updateOracleWithPythUsd, splitCoin } from "@typus/typus-sdk/dist/src/utils";
 import { tokenType, TOKEN, CLOCK, oracle } from "@typus/typus-sdk/dist/src/constants";
 import { getSplitBidReceiptTx } from "@typus/typus-sdk/dist/src/typus-dov-single-v2";
 import { COMPETITION_CONFIG, LP_POOL, MARKET, NETWORK, PERP_VERSION } from "..";
@@ -21,14 +21,20 @@ export async function createTradingOrderWithBidReceipt(
         bToken: TOKEN;
         bidReceipts: string[];
         share?: string; // if undefined, merge all receipts
+        suiCoins?: string[]; // for sponsored tx
     }
 ): Promise<Transaction> {
     // INPUTS
     let TOKEN = input.cToken;
     let BASE_TOKEN = input.tradingToken;
-
     let tokens = Array.from(new Set([TOKEN, BASE_TOKEN]));
-    await updatePyth(pythClient, tx, tokens);
+
+    let suiCoin;
+    if (config.sponsored) {
+        suiCoin = splitCoin(tx, tokenType.MAINNET.SUI, input.suiCoins!, tokens.length.toString(), config.sponsored);
+    }
+
+    await updatePyth(pythClient, tx, tokens, suiCoin);
     for (let token of tokens) {
         updateOracleWithPythUsd(pythClient, tx, config.package.oracle, token);
     }
@@ -77,13 +83,19 @@ export async function reduceOptionCollateralPositionSize(
         bToken: string;
         positionId: string;
         orderSize: string | null;
+        suiCoins?: string[]; // for sponsored tx
     }
 ): Promise<Transaction> {
     let TOKEN = input.cToken;
     let BASE_TOKEN = input.tradingToken;
-
     let tokens = Array.from(new Set([TOKEN, BASE_TOKEN]));
-    await updatePyth(pythClient, tx, tokens);
+
+    let suiCoin;
+    if (config.sponsored) {
+        suiCoin = splitCoin(tx, tokenType.MAINNET.SUI, input.suiCoins!, tokens.length.toString(), config.sponsored);
+    }
+
+    await updatePyth(pythClient, tx, tokens, suiCoin);
     for (let token of tokens) {
         updateOracleWithPythUsd(pythClient, tx, config.package.oracle, token);
     }

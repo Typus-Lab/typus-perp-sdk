@@ -63,11 +63,11 @@ export async function getRecentTradesFromSentio(base_token?: TOKEN): Promise<any
                     size,
                     realized_amount-realized_fee-RealizeFunding.realized_funding_fee as realized_pnl,
                     OrderFilled.realized_pnl-RealizeFunding.realized_funding_fee_usd as realized_pnl_usd,
-                    RemovePosition.remaining_collateral_amount - realized_pnl as collateral_amount,
+                    GREATEST(PlaceOrder.collateral, RemovePosition.remaining_collateral_amount) as collateral_amount,
                     PlaceOrder.transaction_hash as transaction_hash
                     FROM PlaceOrder
                     LEFT JOIN OrderFilled ON OrderFilled.order_id == PlaceOrder.order_id AND OrderFilled.base_token == PlaceOrder.base_token
-                    LEFT JOIN RealizeFunding ON RealizeFunding.position_id == OrderFilled.position_id AND RealizeFunding.base_token == OrderFilled.base_token
+                    LEFT JOIN RealizeFunding ON RealizeFunding.position_id == OrderFilled.position_id AND RealizeFunding.base_token == OrderFilled.base_token AND RealizeFunding.transaction_hash == OrderFilled.transaction_hash
                     LEFT JOIN RealizeOption ON RealizeOption.position_id == OrderFilled.position_id AND RealizeOption.base_token == OrderFilled.base_token AND RealizeOption.transaction_hash == OrderFilled.transaction_hash
                     LEFT JOIN RemovePosition ON RemovePosition.transaction_hash == OrderFilled.transaction_hash
                     ${tokenFilter}
@@ -88,7 +88,7 @@ export async function getRecentTradesFromSentio(base_token?: TOKEN): Promise<any
                     PlaceOrderWithBidReceipt.transaction_hash as transaction_hash
                     FROM PlaceOrderWithBidReceipt
                     JOIN OrderFilled ON OrderFilled.order_id == PlaceOrderWithBidReceipt.order_id AND OrderFilled.base_token == PlaceOrderWithBidReceipt.base_token
-                    LEFT JOIN RealizeFunding ON RealizeFunding.position_id == OrderFilled.position_id AND RealizeFunding.base_token == OrderFilled.base_token
+                    LEFT JOIN RealizeFunding ON RealizeFunding.position_id == OrderFilled.position_id AND RealizeFunding.base_token == OrderFilled.base_token AND RealizeFunding.transaction_hash == OrderFilled.transaction_hash
                     LEFT JOIN RealizeOption ON RealizeOption.position_id == OrderFilled.position_id AND RealizeOption.base_token == OrderFilled.base_token AND RealizeOption.transaction_hash == OrderFilled.transaction_hash
                     ${tokenFilter}
                 ) AS combined

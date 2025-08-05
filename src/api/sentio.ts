@@ -569,9 +569,9 @@ export async function getLeaderboardFromSentio(startTs: number, endTs: number): 
                         timestamp,
                         toDate(timestamp - INTERVAL 3 HOUR) AS logical_date,
                         toDate(timestamp - INTERVAL 3 HOUR) AS date,
-                        filled_price * filled_size AS volume,
+                        score/power(10, 9) AS volume,
                         distinct_id
-                    FROM OrderFilled
+                    FROM Score
                 ),
                 sum_vol AS (
                     SELECT
@@ -644,4 +644,4 @@ export async function getLeaderboardFromSentio(startTs: number, endTs: number): 
 // getTlpFeeFromSentio(0).then((x) => console.log(x));
 // getUserPnlFromSentio(parseTimestamp("2025-06-24 11:00:00"), parseTimestamp("2025-07-08 11:00:00")).then((x) => console.log(x));
 // getMinuteTradingVolumeFromSentio("SUI", 30, 10).then((x) => console.log(x));
-// getLeaderboardFromSentio(1753142400, 1753401600).then((x) => console.log(x, x.length));
+// getLeaderboardFromSentio(1754362800, 1754362800 + 60 * 60 * 24 * 14).then((x) => console.log(x, x.length));

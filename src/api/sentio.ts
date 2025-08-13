@@ -65,8 +65,8 @@ export async function getRecentTradesFromSentio(base_token?: TOKEN): Promise<any
                     OrderFilled.realized_pnl-RealizeFunding.realized_funding_fee_usd as realized_pnl_usd,
                     CASE
                         WHEN PlaceOrder.collateral > 0 THEN PlaceOrder.collateral
-                        WHEN RemovePosition.remaining_collateral_amount > 0 AND realized_pnl_usd >= 0 THEN RemovePosition.remaining_collateral_amount
-                        WHEN RemovePosition.remaining_collateral_amount > 0 AND realized_pnl_usd < 0 THEN RemovePosition.remaining_collateral_amount - realized_pnl_usd
+                        WHEN RemovePosition.remaining_collateral_amount > 0 AND realized_pnl >= 0 THEN RemovePosition.remaining_collateral_amount
+                        WHEN RemovePosition.remaining_collateral_amount > 0 AND realized_pnl < 0 THEN RemovePosition.remaining_collateral_amount - realized_pnl
                         ELSE 0
                     END AS collateral_amount,
                     PlaceOrder.transaction_hash as transaction_hash

@@ -23,7 +23,10 @@ import { getTlpFeeFromSentio } from "src/api/sentio";
 
     let lpPool = await getLpPool(config);
     let tvl_usd = Number(lpPool.poolInfo.tvlUsd) / 10 ** 9;
+    let tlp_amount = Number(lpPool.poolInfo.totalShareSupply) / 10 ** 9;
+    let tlp_price = tvl_usd / tlp_amount;
     // console.log(tvl_usd);
+    console.log(tlp_price);
 
     let fee_apr = (value * 365) / 7 / tvl_usd;
     // console.log(fee_apr);

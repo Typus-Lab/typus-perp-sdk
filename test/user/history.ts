@@ -48,5 +48,16 @@ import { PKG_V1 as PERP_PACKAGE_ID } from "src/typus_perp/index";
     // // 5. exercise events from sentio
     // events = await getRealizeOptionFromSentio(user, 0, events);
 
-    // console.log(events.filter((x) => x.base_token == "wBTC"));
+    saveToFile(events, "userHistory.csv");
 })();
+
+import * as fs from "fs";
+
+function saveToFile(data: any[], filename: string) {
+    const headers = Object.keys(data[0]);
+
+    const csvRows = [headers.join(","), ...data.map((d) => Object.values(d).join(","))];
+
+    const csvContent = csvRows.join("\n");
+    fs.writeFileSync(filename, csvContent);
+}

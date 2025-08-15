@@ -51,6 +51,17 @@ export async function getRecentTradesFromSentio(base_token?: TOKEN): Promise<any
         sqlQuery: {
             sql: `
                 SELECT * FROM (
+                    WITH
+                    OpenOrder AS (
+                        SELECT
+                        PlaceOrder.collateral AS collateral,
+                        OrderFilled.position_id AS position_id,
+                        OrderFilled.base_token AS base_token,
+                        PlaceOrder.transaction_hash as transaction_hash
+                        FROM PlaceOrder
+                        JOIN OrderFilled ON OrderFilled.order_id == PlaceOrder.order_id AND OrderFilled.base_token == PlaceOrder.base_token
+                        WHERE OrderFilled.order_type == 'Open'
+                    )
                     SELECT
                     PlaceOrder.timestamp as timestamp,
                     PlaceOrder.base_token as base_token,
@@ -63,18 +74,14 @@ export async function getRecentTradesFromSentio(base_token?: TOKEN): Promise<any
                     size,
                     realized_amount-realized_fee-RealizeFunding.realized_funding_fee as realized_pnl,
                     OrderFilled.realized_pnl-RealizeFunding.realized_funding_fee_usd as realized_pnl_usd,
-                    CASE
-                        WHEN PlaceOrder.collateral > 0 THEN PlaceOrder.collateral
-                        WHEN RemovePosition.remaining_collateral_amount > 0 AND realized_pnl >= 0 THEN RemovePosition.remaining_collateral_amount
-                        WHEN RemovePosition.remaining_collateral_amount > 0 AND realized_pnl < 0 THEN RemovePosition.remaining_collateral_amount - realized_pnl
-                        ELSE 0
-                    END AS collateral_amount,
+                    OpenOrder.collateral as collateral,
                     PlaceOrder.transaction_hash as transaction_hash
                     FROM PlaceOrder
                     LEFT JOIN OrderFilled ON OrderFilled.order_id == PlaceOrder.order_id AND OrderFilled.base_token == PlaceOrder.base_token
                     LEFT JOIN RealizeFunding ON RealizeFunding.position_id == OrderFilled.position_id AND RealizeFunding.base_token == OrderFilled.base_token AND RealizeFunding.transaction_hash == OrderFilled.transaction_hash
                     LEFT JOIN RealizeOption ON RealizeOption.position_id == OrderFilled.position_id AND RealizeOption.base_token == OrderFilled.base_token AND RealizeOption.transaction_hash == OrderFilled.transaction_hash
                     LEFT JOIN RemovePosition ON RemovePosition.transaction_hash == OrderFilled.transaction_hash
+                    LEFT JOIN OpenOrder ON OpenOrder.position_id == OrderFilled.position_id  AND OpenOrder.base_token == PlaceOrder.base_token
                     ${tokenFilter}
                     UNION ALL
                     SELECT

@@ -21,7 +21,7 @@ import { getSponsoredTx } from "@typus/typus-sdk/dist/src/utils/sponsoredTx";
     var tx = new Transaction();
 
     // INPUTS
-    let cToken: TOKEN = "SUI";
+    let cToken: TOKEN = "wUSDT";
     let tradingToken: TOKEN = "SUI";
 
     let pythClient = createPythClient(provider, NETWORK);

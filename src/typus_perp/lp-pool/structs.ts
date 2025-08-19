@@ -445,6 +445,239 @@ export class BurnLpEvent implements StructClass {
     }
 }
 
+/* ============================== CompleteRebalancingEvent =============================== */
+
+export function isCompleteRebalancingEvent(type: string): boolean {
+    type = compressSuiType(type);
+    return type === `${PKG_V1}::lp_pool::CompleteRebalancingEvent`;
+}
+
+export interface CompleteRebalancingEventFields {
+    index: ToField<"u64">;
+    fromToken: ToField<TypeName>;
+    toToken: ToField<TypeName>;
+    fromTokenOraclePrice: ToField<"u64">;
+    toTokenOraclePrice: ToField<"u64">;
+    swappedBackUsd: ToField<"u64">;
+    tvlUsd: ToField<"u64">;
+    fromTokenLiquidityAmount: ToField<"u64">;
+    toTokenLiquidityAmount: ToField<"u64">;
+    u64Padding: ToField<Vector<"u64">>;
+}
+
+export type CompleteRebalancingEventReified = Reified<CompleteRebalancingEvent, CompleteRebalancingEventFields>;
+
+export class CompleteRebalancingEvent implements StructClass {
+    __StructClass = true as const;
+
+    static readonly $typeName = `${PKG_V1}::lp_pool::CompleteRebalancingEvent`;
+    static readonly $numTypeParams = 0;
+    static readonly $isPhantom = [] as const;
+
+    readonly $typeName = CompleteRebalancingEvent.$typeName;
+    readonly $fullTypeName: `${typeof PKG_V1}::lp_pool::CompleteRebalancingEvent`;
+    readonly $typeArgs: [];
+    readonly $isPhantom = CompleteRebalancingEvent.$isPhantom;
+
+    readonly index: ToField<"u64">;
+    readonly fromToken: ToField<TypeName>;
+    readonly toToken: ToField<TypeName>;
+    readonly fromTokenOraclePrice: ToField<"u64">;
+    readonly toTokenOraclePrice: ToField<"u64">;
+    readonly swappedBackUsd: ToField<"u64">;
+    readonly tvlUsd: ToField<"u64">;
+    readonly fromTokenLiquidityAmount: ToField<"u64">;
+    readonly toTokenLiquidityAmount: ToField<"u64">;
+    readonly u64Padding: ToField<Vector<"u64">>;
+
+    private constructor(typeArgs: [], fields: CompleteRebalancingEventFields) {
+        this.$fullTypeName = composeSuiType(
+            CompleteRebalancingEvent.$typeName,
+            ...typeArgs
+        ) as `${typeof PKG_V1}::lp_pool::CompleteRebalancingEvent`;
+        this.$typeArgs = typeArgs;
+
+        this.index = fields.index;
+        this.fromToken = fields.fromToken;
+        this.toToken = fields.toToken;
+        this.fromTokenOraclePrice = fields.fromTokenOraclePrice;
+        this.toTokenOraclePrice = fields.toTokenOraclePrice;
+        this.swappedBackUsd = fields.swappedBackUsd;
+        this.tvlUsd = fields.tvlUsd;
+        this.fromTokenLiquidityAmount = fields.fromTokenLiquidityAmount;
+        this.toTokenLiquidityAmount = fields.toTokenLiquidityAmount;
+        this.u64Padding = fields.u64Padding;
+    }
+
+    static reified(): CompleteRebalancingEventReified {
+        return {
+            typeName: CompleteRebalancingEvent.$typeName,
+            fullTypeName: composeSuiType(
+                CompleteRebalancingEvent.$typeName,
+                ...[]
+            ) as `${typeof PKG_V1}::lp_pool::CompleteRebalancingEvent`,
+            typeArgs: [] as [],
+            isPhantom: CompleteRebalancingEvent.$isPhantom,
+            reifiedTypeArgs: [],
+            fromFields: (fields: Record<string, any>) => CompleteRebalancingEvent.fromFields(fields),
+            fromFieldsWithTypes: (item: FieldsWithTypes) => CompleteRebalancingEvent.fromFieldsWithTypes(item),
+            fromBcs: (data: Uint8Array) => CompleteRebalancingEvent.fromBcs(data),
+            bcs: CompleteRebalancingEvent.bcs,
+            fromJSONField: (field: any) => CompleteRebalancingEvent.fromJSONField(field),
+            fromJSON: (json: Record<string, any>) => CompleteRebalancingEvent.fromJSON(json),
+            fromSuiParsedData: (content: SuiParsedData) => CompleteRebalancingEvent.fromSuiParsedData(content),
+            fromSuiObjectData: (content: SuiObjectData) => CompleteRebalancingEvent.fromSuiObjectData(content),
+            fetch: async (client: SuiClient, id: string) => CompleteRebalancingEvent.fetch(client, id),
+            new: (fields: CompleteRebalancingEventFields) => {
+                return new CompleteRebalancingEvent([], fields);
+            },
+            kind: "StructClassReified",
+        };
+    }
+
+    static get r() {
+        return CompleteRebalancingEvent.reified();
+    }
+
+    static phantom(): PhantomReified<ToTypeStr<CompleteRebalancingEvent>> {
+        return phantom(CompleteRebalancingEvent.reified());
+    }
+    static get p() {
+        return CompleteRebalancingEvent.phantom();
+    }
+
+    static get bcs() {
+        return bcs.struct("CompleteRebalancingEvent", {
+            index: bcs.u64(),
+            from_token: TypeName.bcs,
+            to_token: TypeName.bcs,
+            from_token_oracle_price: bcs.u64(),
+            to_token_oracle_price: bcs.u64(),
+            swapped_back_usd: bcs.u64(),
+            tvl_usd: bcs.u64(),
+            from_token_liquidity_amount: bcs.u64(),
+            to_token_liquidity_amount: bcs.u64(),
+            u64_padding: bcs.vector(bcs.u64()),
+        });
+    }
+
+    static fromFields(fields: Record<string, any>): CompleteRebalancingEvent {
+        return CompleteRebalancingEvent.reified().new({
+            index: decodeFromFields("u64", fields.index),
+            fromToken: decodeFromFields(TypeName.reified(), fields.from_token),
+            toToken: decodeFromFields(TypeName.reified(), fields.to_token),
+            fromTokenOraclePrice: decodeFromFields("u64", fields.from_token_oracle_price),
+            toTokenOraclePrice: decodeFromFields("u64", fields.to_token_oracle_price),
+            swappedBackUsd: decodeFromFields("u64", fields.swapped_back_usd),
+            tvlUsd: decodeFromFields("u64", fields.tvl_usd),
+            fromTokenLiquidityAmount: decodeFromFields("u64", fields.from_token_liquidity_amount),
+            toTokenLiquidityAmount: decodeFromFields("u64", fields.to_token_liquidity_amount),
+            u64Padding: decodeFromFields(reified.vector("u64"), fields.u64_padding),
+        });
+    }
+
+    static fromFieldsWithTypes(item: FieldsWithTypes): CompleteRebalancingEvent {
+        if (!isCompleteRebalancingEvent(item.type)) {
+            throw new Error("not a CompleteRebalancingEvent type");
+        }
+
+        return CompleteRebalancingEvent.reified().new({
+            index: decodeFromFieldsWithTypes("u64", item.fields.index),
+            fromToken: decodeFromFieldsWithTypes(TypeName.reified(), item.fields.from_token),
+            toToken: decodeFromFieldsWithTypes(TypeName.reified(), item.fields.to_token),
+            fromTokenOraclePrice: decodeFromFieldsWithTypes("u64", item.fields.from_token_oracle_price),
+            toTokenOraclePrice: decodeFromFieldsWithTypes("u64", item.fields.to_token_oracle_price),
+            swappedBackUsd: decodeFromFieldsWithTypes("u64", item.fields.swapped_back_usd),
+            tvlUsd: decodeFromFieldsWithTypes("u64", item.fields.tvl_usd),
+            fromTokenLiquidityAmount: decodeFromFieldsWithTypes("u64", item.fields.from_token_liquidity_amount),
+            toTokenLiquidityAmount: decodeFromFieldsWithTypes("u64", item.fields.to_token_liquidity_amount),
+            u64Padding: decodeFromFieldsWithTypes(reified.vector("u64"), item.fields.u64_padding),
+        });
+    }
+
+    static fromBcs(data: Uint8Array): CompleteRebalancingEvent {
+        return CompleteRebalancingEvent.fromFields(CompleteRebalancingEvent.bcs.parse(data));
+    }
+
+    toJSONField() {
+        return {
+            index: this.index.toString(),
+            fromToken: this.fromToken.toJSONField(),
+            toToken: this.toToken.toJSONField(),
+            fromTokenOraclePrice: this.fromTokenOraclePrice.toString(),
+            toTokenOraclePrice: this.toTokenOraclePrice.toString(),
+            swappedBackUsd: this.swappedBackUsd.toString(),
+            tvlUsd: this.tvlUsd.toString(),
+            fromTokenLiquidityAmount: this.fromTokenLiquidityAmount.toString(),
+            toTokenLiquidityAmount: this.toTokenLiquidityAmount.toString(),
+            u64Padding: fieldToJSON<Vector<"u64">>(`vector<u64>`, this.u64Padding),
+        };
+    }
+
+    toJSON() {
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
+    }
+
+    static fromJSONField(field: any): CompleteRebalancingEvent {
+        return CompleteRebalancingEvent.reified().new({
+            index: decodeFromJSONField("u64", field.index),
+            fromToken: decodeFromJSONField(TypeName.reified(), field.fromToken),
+            toToken: decodeFromJSONField(TypeName.reified(), field.toToken),
+            fromTokenOraclePrice: decodeFromJSONField("u64", field.fromTokenOraclePrice),
+            toTokenOraclePrice: decodeFromJSONField("u64", field.toTokenOraclePrice),
+            swappedBackUsd: decodeFromJSONField("u64", field.swappedBackUsd),
+            tvlUsd: decodeFromJSONField("u64", field.tvlUsd),
+            fromTokenLiquidityAmount: decodeFromJSONField("u64", field.fromTokenLiquidityAmount),
+            toTokenLiquidityAmount: decodeFromJSONField("u64", field.toTokenLiquidityAmount),
+            u64Padding: decodeFromJSONField(reified.vector("u64"), field.u64Padding),
+        });
+    }
+
+    static fromJSON(json: Record<string, any>): CompleteRebalancingEvent {
+        if (json.$typeName !== CompleteRebalancingEvent.$typeName) {
+            throw new Error("not a WithTwoGenerics json object");
+        }
+
+        return CompleteRebalancingEvent.fromJSONField(json);
+    }
+
+    static fromSuiParsedData(content: SuiParsedData): CompleteRebalancingEvent {
+        if (content.dataType !== "moveObject") {
+            throw new Error("not an object");
+        }
+        if (!isCompleteRebalancingEvent(content.type)) {
+            throw new Error(`object at ${(content.fields as any).id} is not a CompleteRebalancingEvent object`);
+        }
+        return CompleteRebalancingEvent.fromFieldsWithTypes(content);
+    }
+
+    static fromSuiObjectData(data: SuiObjectData): CompleteRebalancingEvent {
+        if (data.bcs) {
+            if (data.bcs.dataType !== "moveObject" || !isCompleteRebalancingEvent(data.bcs.type)) {
+                throw new Error(`object at is not a CompleteRebalancingEvent object`);
+            }
+
+            return CompleteRebalancingEvent.fromBcs(fromB64(data.bcs.bcsBytes));
+        }
+        if (data.content) {
+            return CompleteRebalancingEvent.fromSuiParsedData(data.content);
+        }
+        throw new Error("Both `bcs` and `content` fields are missing from the data. Include `showBcs` or `showContent` in the request.");
+    }
+
+    static async fetch(client: SuiClient, id: string): Promise<CompleteRebalancingEvent> {
+        const res = await client.getObject({ id, options: { showBcs: true } });
+        if (res.error) {
+            throw new Error(`error fetching CompleteRebalancingEvent object at id ${id}: ${res.error.code}`);
+        }
+        if (res.data?.bcs?.dataType !== "moveObject" || !isCompleteRebalancingEvent(res.data.bcs.type)) {
+            throw new Error(`object at id ${id} is not a CompleteRebalancingEvent object`);
+        }
+
+        return CompleteRebalancingEvent.fromSuiObjectData(res.data);
+    }
+}
+
 /* ============================== CompleteRemoveLiquidityTokenProcessEvent =============================== */
 
 export function isCompleteRemoveLiquidityTokenProcessEvent(type: string): boolean {
@@ -1464,6 +1697,756 @@ export class LiquidityPoolInfo implements StructClass {
         }
 
         return LiquidityPoolInfo.fromSuiObjectData(res.data);
+    }
+}
+
+/* ============================== ManagerDepositReceipt =============================== */
+
+export function isManagerDepositReceipt(type: string): boolean {
+    type = compressSuiType(type);
+    return type === `${PKG_V1}::lp_pool::ManagerDepositReceipt`;
+}
+
+export interface ManagerDepositReceiptFields {
+    id: ToField<UID>;
+    tokenType: ToField<TypeName>;
+    amount: ToField<"u64">;
+}
+
+export type ManagerDepositReceiptReified = Reified<ManagerDepositReceipt, ManagerDepositReceiptFields>;
+
+export class ManagerDepositReceipt implements StructClass {
+    __StructClass = true as const;
+
+    static readonly $typeName = `${PKG_V1}::lp_pool::ManagerDepositReceipt`;
+    static readonly $numTypeParams = 0;
+    static readonly $isPhantom = [] as const;
+
+    readonly $typeName = ManagerDepositReceipt.$typeName;
+    readonly $fullTypeName: `${typeof PKG_V1}::lp_pool::ManagerDepositReceipt`;
+    readonly $typeArgs: [];
+    readonly $isPhantom = ManagerDepositReceipt.$isPhantom;
+
+    readonly id: ToField<UID>;
+    readonly tokenType: ToField<TypeName>;
+    readonly amount: ToField<"u64">;
+
+    private constructor(typeArgs: [], fields: ManagerDepositReceiptFields) {
+        this.$fullTypeName = composeSuiType(
+            ManagerDepositReceipt.$typeName,
+            ...typeArgs
+        ) as `${typeof PKG_V1}::lp_pool::ManagerDepositReceipt`;
+        this.$typeArgs = typeArgs;
+
+        this.id = fields.id;
+        this.tokenType = fields.tokenType;
+        this.amount = fields.amount;
+    }
+
+    static reified(): ManagerDepositReceiptReified {
+        return {
+            typeName: ManagerDepositReceipt.$typeName,
+            fullTypeName: composeSuiType(ManagerDepositReceipt.$typeName, ...[]) as `${typeof PKG_V1}::lp_pool::ManagerDepositReceipt`,
+            typeArgs: [] as [],
+            isPhantom: ManagerDepositReceipt.$isPhantom,
+            reifiedTypeArgs: [],
+            fromFields: (fields: Record<string, any>) => ManagerDepositReceipt.fromFields(fields),
+            fromFieldsWithTypes: (item: FieldsWithTypes) => ManagerDepositReceipt.fromFieldsWithTypes(item),
+            fromBcs: (data: Uint8Array) => ManagerDepositReceipt.fromBcs(data),
+            bcs: ManagerDepositReceipt.bcs,
+            fromJSONField: (field: any) => ManagerDepositReceipt.fromJSONField(field),
+            fromJSON: (json: Record<string, any>) => ManagerDepositReceipt.fromJSON(json),
+            fromSuiParsedData: (content: SuiParsedData) => ManagerDepositReceipt.fromSuiParsedData(content),
+            fromSuiObjectData: (content: SuiObjectData) => ManagerDepositReceipt.fromSuiObjectData(content),
+            fetch: async (client: SuiClient, id: string) => ManagerDepositReceipt.fetch(client, id),
+            new: (fields: ManagerDepositReceiptFields) => {
+                return new ManagerDepositReceipt([], fields);
+            },
+            kind: "StructClassReified",
+        };
+    }
+
+    static get r() {
+        return ManagerDepositReceipt.reified();
+    }
+
+    static phantom(): PhantomReified<ToTypeStr<ManagerDepositReceipt>> {
+        return phantom(ManagerDepositReceipt.reified());
+    }
+    static get p() {
+        return ManagerDepositReceipt.phantom();
+    }
+
+    static get bcs() {
+        return bcs.struct("ManagerDepositReceipt", {
+            id: UID.bcs,
+            token_type: TypeName.bcs,
+            amount: bcs.u64(),
+        });
+    }
+
+    static fromFields(fields: Record<string, any>): ManagerDepositReceipt {
+        return ManagerDepositReceipt.reified().new({
+            id: decodeFromFields(UID.reified(), fields.id),
+            tokenType: decodeFromFields(TypeName.reified(), fields.token_type),
+            amount: decodeFromFields("u64", fields.amount),
+        });
+    }
+
+    static fromFieldsWithTypes(item: FieldsWithTypes): ManagerDepositReceipt {
+        if (!isManagerDepositReceipt(item.type)) {
+            throw new Error("not a ManagerDepositReceipt type");
+        }
+
+        return ManagerDepositReceipt.reified().new({
+            id: decodeFromFieldsWithTypes(UID.reified(), item.fields.id),
+            tokenType: decodeFromFieldsWithTypes(TypeName.reified(), item.fields.token_type),
+            amount: decodeFromFieldsWithTypes("u64", item.fields.amount),
+        });
+    }
+
+    static fromBcs(data: Uint8Array): ManagerDepositReceipt {
+        return ManagerDepositReceipt.fromFields(ManagerDepositReceipt.bcs.parse(data));
+    }
+
+    toJSONField() {
+        return {
+            id: this.id,
+            tokenType: this.tokenType.toJSONField(),
+            amount: this.amount.toString(),
+        };
+    }
+
+    toJSON() {
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
+    }
+
+    static fromJSONField(field: any): ManagerDepositReceipt {
+        return ManagerDepositReceipt.reified().new({
+            id: decodeFromJSONField(UID.reified(), field.id),
+            tokenType: decodeFromJSONField(TypeName.reified(), field.tokenType),
+            amount: decodeFromJSONField("u64", field.amount),
+        });
+    }
+
+    static fromJSON(json: Record<string, any>): ManagerDepositReceipt {
+        if (json.$typeName !== ManagerDepositReceipt.$typeName) {
+            throw new Error("not a WithTwoGenerics json object");
+        }
+
+        return ManagerDepositReceipt.fromJSONField(json);
+    }
+
+    static fromSuiParsedData(content: SuiParsedData): ManagerDepositReceipt {
+        if (content.dataType !== "moveObject") {
+            throw new Error("not an object");
+        }
+        if (!isManagerDepositReceipt(content.type)) {
+            throw new Error(`object at ${(content.fields as any).id} is not a ManagerDepositReceipt object`);
+        }
+        return ManagerDepositReceipt.fromFieldsWithTypes(content);
+    }
+
+    static fromSuiObjectData(data: SuiObjectData): ManagerDepositReceipt {
+        if (data.bcs) {
+            if (data.bcs.dataType !== "moveObject" || !isManagerDepositReceipt(data.bcs.type)) {
+                throw new Error(`object at is not a ManagerDepositReceipt object`);
+            }
+
+            return ManagerDepositReceipt.fromBcs(fromB64(data.bcs.bcsBytes));
+        }
+        if (data.content) {
+            return ManagerDepositReceipt.fromSuiParsedData(data.content);
+        }
+        throw new Error("Both `bcs` and `content` fields are missing from the data. Include `showBcs` or `showContent` in the request.");
+    }
+
+    static async fetch(client: SuiClient, id: string): Promise<ManagerDepositReceipt> {
+        const res = await client.getObject({ id, options: { showBcs: true } });
+        if (res.error) {
+            throw new Error(`error fetching ManagerDepositReceipt object at id ${id}: ${res.error.code}`);
+        }
+        if (res.data?.bcs?.dataType !== "moveObject" || !isManagerDepositReceipt(res.data.bcs.type)) {
+            throw new Error(`object at id ${id} is not a ManagerDepositReceipt object`);
+        }
+
+        return ManagerDepositReceipt.fromSuiObjectData(res.data);
+    }
+}
+
+/* ============================== ManagerDepositReceiptV2 =============================== */
+
+export function isManagerDepositReceiptV2(type: string): boolean {
+    type = compressSuiType(type);
+    return type === `${PKG_V1}::lp_pool::ManagerDepositReceiptV2`;
+}
+
+export interface ManagerDepositReceiptV2Fields {
+    id: ToField<UID>;
+    index: ToField<"u64">;
+    tokenType: ToField<TypeName>;
+    amount: ToField<"u64">;
+    u64Padding: ToField<Vector<"u64">>;
+}
+
+export type ManagerDepositReceiptV2Reified = Reified<ManagerDepositReceiptV2, ManagerDepositReceiptV2Fields>;
+
+export class ManagerDepositReceiptV2 implements StructClass {
+    __StructClass = true as const;
+
+    static readonly $typeName = `${PKG_V1}::lp_pool::ManagerDepositReceiptV2`;
+    static readonly $numTypeParams = 0;
+    static readonly $isPhantom = [] as const;
+
+    readonly $typeName = ManagerDepositReceiptV2.$typeName;
+    readonly $fullTypeName: `${typeof PKG_V1}::lp_pool::ManagerDepositReceiptV2`;
+    readonly $typeArgs: [];
+    readonly $isPhantom = ManagerDepositReceiptV2.$isPhantom;
+
+    readonly id: ToField<UID>;
+    readonly index: ToField<"u64">;
+    readonly tokenType: ToField<TypeName>;
+    readonly amount: ToField<"u64">;
+    readonly u64Padding: ToField<Vector<"u64">>;
+
+    private constructor(typeArgs: [], fields: ManagerDepositReceiptV2Fields) {
+        this.$fullTypeName = composeSuiType(
+            ManagerDepositReceiptV2.$typeName,
+            ...typeArgs
+        ) as `${typeof PKG_V1}::lp_pool::ManagerDepositReceiptV2`;
+        this.$typeArgs = typeArgs;
+
+        this.id = fields.id;
+        this.index = fields.index;
+        this.tokenType = fields.tokenType;
+        this.amount = fields.amount;
+        this.u64Padding = fields.u64Padding;
+    }
+
+    static reified(): ManagerDepositReceiptV2Reified {
+        return {
+            typeName: ManagerDepositReceiptV2.$typeName,
+            fullTypeName: composeSuiType(ManagerDepositReceiptV2.$typeName, ...[]) as `${typeof PKG_V1}::lp_pool::ManagerDepositReceiptV2`,
+            typeArgs: [] as [],
+            isPhantom: ManagerDepositReceiptV2.$isPhantom,
+            reifiedTypeArgs: [],
+            fromFields: (fields: Record<string, any>) => ManagerDepositReceiptV2.fromFields(fields),
+            fromFieldsWithTypes: (item: FieldsWithTypes) => ManagerDepositReceiptV2.fromFieldsWithTypes(item),
+            fromBcs: (data: Uint8Array) => ManagerDepositReceiptV2.fromBcs(data),
+            bcs: ManagerDepositReceiptV2.bcs,
+            fromJSONField: (field: any) => ManagerDepositReceiptV2.fromJSONField(field),
+            fromJSON: (json: Record<string, any>) => ManagerDepositReceiptV2.fromJSON(json),
+            fromSuiParsedData: (content: SuiParsedData) => ManagerDepositReceiptV2.fromSuiParsedData(content),
+            fromSuiObjectData: (content: SuiObjectData) => ManagerDepositReceiptV2.fromSuiObjectData(content),
+            fetch: async (client: SuiClient, id: string) => ManagerDepositReceiptV2.fetch(client, id),
+            new: (fields: ManagerDepositReceiptV2Fields) => {
+                return new ManagerDepositReceiptV2([], fields);
+            },
+            kind: "StructClassReified",
+        };
+    }
+
+    static get r() {
+        return ManagerDepositReceiptV2.reified();
+    }
+
+    static phantom(): PhantomReified<ToTypeStr<ManagerDepositReceiptV2>> {
+        return phantom(ManagerDepositReceiptV2.reified());
+    }
+    static get p() {
+        return ManagerDepositReceiptV2.phantom();
+    }
+
+    static get bcs() {
+        return bcs.struct("ManagerDepositReceiptV2", {
+            id: UID.bcs,
+            index: bcs.u64(),
+            token_type: TypeName.bcs,
+            amount: bcs.u64(),
+            u64_padding: bcs.vector(bcs.u64()),
+        });
+    }
+
+    static fromFields(fields: Record<string, any>): ManagerDepositReceiptV2 {
+        return ManagerDepositReceiptV2.reified().new({
+            id: decodeFromFields(UID.reified(), fields.id),
+            index: decodeFromFields("u64", fields.index),
+            tokenType: decodeFromFields(TypeName.reified(), fields.token_type),
+            amount: decodeFromFields("u64", fields.amount),
+            u64Padding: decodeFromFields(reified.vector("u64"), fields.u64_padding),
+        });
+    }
+
+    static fromFieldsWithTypes(item: FieldsWithTypes): ManagerDepositReceiptV2 {
+        if (!isManagerDepositReceiptV2(item.type)) {
+            throw new Error("not a ManagerDepositReceiptV2 type");
+        }
+
+        return ManagerDepositReceiptV2.reified().new({
+            id: decodeFromFieldsWithTypes(UID.reified(), item.fields.id),
+            index: decodeFromFieldsWithTypes("u64", item.fields.index),
+            tokenType: decodeFromFieldsWithTypes(TypeName.reified(), item.fields.token_type),
+            amount: decodeFromFieldsWithTypes("u64", item.fields.amount),
+            u64Padding: decodeFromFieldsWithTypes(reified.vector("u64"), item.fields.u64_padding),
+        });
+    }
+
+    static fromBcs(data: Uint8Array): ManagerDepositReceiptV2 {
+        return ManagerDepositReceiptV2.fromFields(ManagerDepositReceiptV2.bcs.parse(data));
+    }
+
+    toJSONField() {
+        return {
+            id: this.id,
+            index: this.index.toString(),
+            tokenType: this.tokenType.toJSONField(),
+            amount: this.amount.toString(),
+            u64Padding: fieldToJSON<Vector<"u64">>(`vector<u64>`, this.u64Padding),
+        };
+    }
+
+    toJSON() {
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
+    }
+
+    static fromJSONField(field: any): ManagerDepositReceiptV2 {
+        return ManagerDepositReceiptV2.reified().new({
+            id: decodeFromJSONField(UID.reified(), field.id),
+            index: decodeFromJSONField("u64", field.index),
+            tokenType: decodeFromJSONField(TypeName.reified(), field.tokenType),
+            amount: decodeFromJSONField("u64", field.amount),
+            u64Padding: decodeFromJSONField(reified.vector("u64"), field.u64Padding),
+        });
+    }
+
+    static fromJSON(json: Record<string, any>): ManagerDepositReceiptV2 {
+        if (json.$typeName !== ManagerDepositReceiptV2.$typeName) {
+            throw new Error("not a WithTwoGenerics json object");
+        }
+
+        return ManagerDepositReceiptV2.fromJSONField(json);
+    }
+
+    static fromSuiParsedData(content: SuiParsedData): ManagerDepositReceiptV2 {
+        if (content.dataType !== "moveObject") {
+            throw new Error("not an object");
+        }
+        if (!isManagerDepositReceiptV2(content.type)) {
+            throw new Error(`object at ${(content.fields as any).id} is not a ManagerDepositReceiptV2 object`);
+        }
+        return ManagerDepositReceiptV2.fromFieldsWithTypes(content);
+    }
+
+    static fromSuiObjectData(data: SuiObjectData): ManagerDepositReceiptV2 {
+        if (data.bcs) {
+            if (data.bcs.dataType !== "moveObject" || !isManagerDepositReceiptV2(data.bcs.type)) {
+                throw new Error(`object at is not a ManagerDepositReceiptV2 object`);
+            }
+
+            return ManagerDepositReceiptV2.fromBcs(fromB64(data.bcs.bcsBytes));
+        }
+        if (data.content) {
+            return ManagerDepositReceiptV2.fromSuiParsedData(data.content);
+        }
+        throw new Error("Both `bcs` and `content` fields are missing from the data. Include `showBcs` or `showContent` in the request.");
+    }
+
+    static async fetch(client: SuiClient, id: string): Promise<ManagerDepositReceiptV2> {
+        const res = await client.getObject({ id, options: { showBcs: true } });
+        if (res.error) {
+            throw new Error(`error fetching ManagerDepositReceiptV2 object at id ${id}: ${res.error.code}`);
+        }
+        if (res.data?.bcs?.dataType !== "moveObject" || !isManagerDepositReceiptV2(res.data.bcs.type)) {
+            throw new Error(`object at id ${id} is not a ManagerDepositReceiptV2 object`);
+        }
+
+        return ManagerDepositReceiptV2.fromSuiObjectData(res.data);
+    }
+}
+
+/* ============================== ManagerEmergencyDepositEvent =============================== */
+
+export function isManagerEmergencyDepositEvent(type: string): boolean {
+    type = compressSuiType(type);
+    return type === `${PKG_V1}::lp_pool::ManagerEmergencyDepositEvent`;
+}
+
+export interface ManagerEmergencyDepositEventFields {
+    sender: ToField<"address">;
+    index: ToField<"u64">;
+    liquidityTokenType: ToField<TypeName>;
+    amount: ToField<"u64">;
+    u64Padding: ToField<Vector<"u64">>;
+}
+
+export type ManagerEmergencyDepositEventReified = Reified<ManagerEmergencyDepositEvent, ManagerEmergencyDepositEventFields>;
+
+export class ManagerEmergencyDepositEvent implements StructClass {
+    __StructClass = true as const;
+
+    static readonly $typeName = `${PKG_V1}::lp_pool::ManagerEmergencyDepositEvent`;
+    static readonly $numTypeParams = 0;
+    static readonly $isPhantom = [] as const;
+
+    readonly $typeName = ManagerEmergencyDepositEvent.$typeName;
+    readonly $fullTypeName: `${typeof PKG_V1}::lp_pool::ManagerEmergencyDepositEvent`;
+    readonly $typeArgs: [];
+    readonly $isPhantom = ManagerEmergencyDepositEvent.$isPhantom;
+
+    readonly sender: ToField<"address">;
+    readonly index: ToField<"u64">;
+    readonly liquidityTokenType: ToField<TypeName>;
+    readonly amount: ToField<"u64">;
+    readonly u64Padding: ToField<Vector<"u64">>;
+
+    private constructor(typeArgs: [], fields: ManagerEmergencyDepositEventFields) {
+        this.$fullTypeName = composeSuiType(
+            ManagerEmergencyDepositEvent.$typeName,
+            ...typeArgs
+        ) as `${typeof PKG_V1}::lp_pool::ManagerEmergencyDepositEvent`;
+        this.$typeArgs = typeArgs;
+
+        this.sender = fields.sender;
+        this.index = fields.index;
+        this.liquidityTokenType = fields.liquidityTokenType;
+        this.amount = fields.amount;
+        this.u64Padding = fields.u64Padding;
+    }
+
+    static reified(): ManagerEmergencyDepositEventReified {
+        return {
+            typeName: ManagerEmergencyDepositEvent.$typeName,
+            fullTypeName: composeSuiType(
+                ManagerEmergencyDepositEvent.$typeName,
+                ...[]
+            ) as `${typeof PKG_V1}::lp_pool::ManagerEmergencyDepositEvent`,
+            typeArgs: [] as [],
+            isPhantom: ManagerEmergencyDepositEvent.$isPhantom,
+            reifiedTypeArgs: [],
+            fromFields: (fields: Record<string, any>) => ManagerEmergencyDepositEvent.fromFields(fields),
+            fromFieldsWithTypes: (item: FieldsWithTypes) => ManagerEmergencyDepositEvent.fromFieldsWithTypes(item),
+            fromBcs: (data: Uint8Array) => ManagerEmergencyDepositEvent.fromBcs(data),
+            bcs: ManagerEmergencyDepositEvent.bcs,
+            fromJSONField: (field: any) => ManagerEmergencyDepositEvent.fromJSONField(field),
+            fromJSON: (json: Record<string, any>) => ManagerEmergencyDepositEvent.fromJSON(json),
+            fromSuiParsedData: (content: SuiParsedData) => ManagerEmergencyDepositEvent.fromSuiParsedData(content),
+            fromSuiObjectData: (content: SuiObjectData) => ManagerEmergencyDepositEvent.fromSuiObjectData(content),
+            fetch: async (client: SuiClient, id: string) => ManagerEmergencyDepositEvent.fetch(client, id),
+            new: (fields: ManagerEmergencyDepositEventFields) => {
+                return new ManagerEmergencyDepositEvent([], fields);
+            },
+            kind: "StructClassReified",
+        };
+    }
+
+    static get r() {
+        return ManagerEmergencyDepositEvent.reified();
+    }
+
+    static phantom(): PhantomReified<ToTypeStr<ManagerEmergencyDepositEvent>> {
+        return phantom(ManagerEmergencyDepositEvent.reified());
+    }
+    static get p() {
+        return ManagerEmergencyDepositEvent.phantom();
+    }
+
+    static get bcs() {
+        return bcs.struct("ManagerEmergencyDepositEvent", {
+            sender: bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
+            index: bcs.u64(),
+            liquidity_token_type: TypeName.bcs,
+            amount: bcs.u64(),
+            u64_padding: bcs.vector(bcs.u64()),
+        });
+    }
+
+    static fromFields(fields: Record<string, any>): ManagerEmergencyDepositEvent {
+        return ManagerEmergencyDepositEvent.reified().new({
+            sender: decodeFromFields("address", fields.sender),
+            index: decodeFromFields("u64", fields.index),
+            liquidityTokenType: decodeFromFields(TypeName.reified(), fields.liquidity_token_type),
+            amount: decodeFromFields("u64", fields.amount),
+            u64Padding: decodeFromFields(reified.vector("u64"), fields.u64_padding),
+        });
+    }
+
+    static fromFieldsWithTypes(item: FieldsWithTypes): ManagerEmergencyDepositEvent {
+        if (!isManagerEmergencyDepositEvent(item.type)) {
+            throw new Error("not a ManagerEmergencyDepositEvent type");
+        }
+
+        return ManagerEmergencyDepositEvent.reified().new({
+            sender: decodeFromFieldsWithTypes("address", item.fields.sender),
+            index: decodeFromFieldsWithTypes("u64", item.fields.index),
+            liquidityTokenType: decodeFromFieldsWithTypes(TypeName.reified(), item.fields.liquidity_token_type),
+            amount: decodeFromFieldsWithTypes("u64", item.fields.amount),
+            u64Padding: decodeFromFieldsWithTypes(reified.vector("u64"), item.fields.u64_padding),
+        });
+    }
+
+    static fromBcs(data: Uint8Array): ManagerEmergencyDepositEvent {
+        return ManagerEmergencyDepositEvent.fromFields(ManagerEmergencyDepositEvent.bcs.parse(data));
+    }
+
+    toJSONField() {
+        return {
+            sender: this.sender,
+            index: this.index.toString(),
+            liquidityTokenType: this.liquidityTokenType.toJSONField(),
+            amount: this.amount.toString(),
+            u64Padding: fieldToJSON<Vector<"u64">>(`vector<u64>`, this.u64Padding),
+        };
+    }
+
+    toJSON() {
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
+    }
+
+    static fromJSONField(field: any): ManagerEmergencyDepositEvent {
+        return ManagerEmergencyDepositEvent.reified().new({
+            sender: decodeFromJSONField("address", field.sender),
+            index: decodeFromJSONField("u64", field.index),
+            liquidityTokenType: decodeFromJSONField(TypeName.reified(), field.liquidityTokenType),
+            amount: decodeFromJSONField("u64", field.amount),
+            u64Padding: decodeFromJSONField(reified.vector("u64"), field.u64Padding),
+        });
+    }
+
+    static fromJSON(json: Record<string, any>): ManagerEmergencyDepositEvent {
+        if (json.$typeName !== ManagerEmergencyDepositEvent.$typeName) {
+            throw new Error("not a WithTwoGenerics json object");
+        }
+
+        return ManagerEmergencyDepositEvent.fromJSONField(json);
+    }
+
+    static fromSuiParsedData(content: SuiParsedData): ManagerEmergencyDepositEvent {
+        if (content.dataType !== "moveObject") {
+            throw new Error("not an object");
+        }
+        if (!isManagerEmergencyDepositEvent(content.type)) {
+            throw new Error(`object at ${(content.fields as any).id} is not a ManagerEmergencyDepositEvent object`);
+        }
+        return ManagerEmergencyDepositEvent.fromFieldsWithTypes(content);
+    }
+
+    static fromSuiObjectData(data: SuiObjectData): ManagerEmergencyDepositEvent {
+        if (data.bcs) {
+            if (data.bcs.dataType !== "moveObject" || !isManagerEmergencyDepositEvent(data.bcs.type)) {
+                throw new Error(`object at is not a ManagerEmergencyDepositEvent object`);
+            }
+
+            return ManagerEmergencyDepositEvent.fromBcs(fromB64(data.bcs.bcsBytes));
+        }
+        if (data.content) {
+            return ManagerEmergencyDepositEvent.fromSuiParsedData(data.content);
+        }
+        throw new Error("Both `bcs` and `content` fields are missing from the data. Include `showBcs` or `showContent` in the request.");
+    }
+
+    static async fetch(client: SuiClient, id: string): Promise<ManagerEmergencyDepositEvent> {
+        const res = await client.getObject({ id, options: { showBcs: true } });
+        if (res.error) {
+            throw new Error(`error fetching ManagerEmergencyDepositEvent object at id ${id}: ${res.error.code}`);
+        }
+        if (res.data?.bcs?.dataType !== "moveObject" || !isManagerEmergencyDepositEvent(res.data.bcs.type)) {
+            throw new Error(`object at id ${id} is not a ManagerEmergencyDepositEvent object`);
+        }
+
+        return ManagerEmergencyDepositEvent.fromSuiObjectData(res.data);
+    }
+}
+
+/* ============================== ManagerEmergencyWithdrawEvent =============================== */
+
+export function isManagerEmergencyWithdrawEvent(type: string): boolean {
+    type = compressSuiType(type);
+    return type === `${PKG_V1}::lp_pool::ManagerEmergencyWithdrawEvent`;
+}
+
+export interface ManagerEmergencyWithdrawEventFields {
+    sender: ToField<"address">;
+    index: ToField<"u64">;
+    liquidityTokenType: ToField<TypeName>;
+    amount: ToField<"u64">;
+    u64Padding: ToField<Vector<"u64">>;
+}
+
+export type ManagerEmergencyWithdrawEventReified = Reified<ManagerEmergencyWithdrawEvent, ManagerEmergencyWithdrawEventFields>;
+
+export class ManagerEmergencyWithdrawEvent implements StructClass {
+    __StructClass = true as const;
+
+    static readonly $typeName = `${PKG_V1}::lp_pool::ManagerEmergencyWithdrawEvent`;
+    static readonly $numTypeParams = 0;
+    static readonly $isPhantom = [] as const;
+
+    readonly $typeName = ManagerEmergencyWithdrawEvent.$typeName;
+    readonly $fullTypeName: `${typeof PKG_V1}::lp_pool::ManagerEmergencyWithdrawEvent`;
+    readonly $typeArgs: [];
+    readonly $isPhantom = ManagerEmergencyWithdrawEvent.$isPhantom;
+
+    readonly sender: ToField<"address">;
+    readonly index: ToField<"u64">;
+    readonly liquidityTokenType: ToField<TypeName>;
+    readonly amount: ToField<"u64">;
+    readonly u64Padding: ToField<Vector<"u64">>;
+
+    private constructor(typeArgs: [], fields: ManagerEmergencyWithdrawEventFields) {
+        this.$fullTypeName = composeSuiType(
+            ManagerEmergencyWithdrawEvent.$typeName,
+            ...typeArgs
+        ) as `${typeof PKG_V1}::lp_pool::ManagerEmergencyWithdrawEvent`;
+        this.$typeArgs = typeArgs;
+
+        this.sender = fields.sender;
+        this.index = fields.index;
+        this.liquidityTokenType = fields.liquidityTokenType;
+        this.amount = fields.amount;
+        this.u64Padding = fields.u64Padding;
+    }
+
+    static reified(): ManagerEmergencyWithdrawEventReified {
+        return {
+            typeName: ManagerEmergencyWithdrawEvent.$typeName,
+            fullTypeName: composeSuiType(
+                ManagerEmergencyWithdrawEvent.$typeName,
+                ...[]
+            ) as `${typeof PKG_V1}::lp_pool::ManagerEmergencyWithdrawEvent`,
+            typeArgs: [] as [],
+            isPhantom: ManagerEmergencyWithdrawEvent.$isPhantom,
+            reifiedTypeArgs: [],
+            fromFields: (fields: Record<string, any>) => ManagerEmergencyWithdrawEvent.fromFields(fields),
+            fromFieldsWithTypes: (item: FieldsWithTypes) => ManagerEmergencyWithdrawEvent.fromFieldsWithTypes(item),
+            fromBcs: (data: Uint8Array) => ManagerEmergencyWithdrawEvent.fromBcs(data),
+            bcs: ManagerEmergencyWithdrawEvent.bcs,
+            fromJSONField: (field: any) => ManagerEmergencyWithdrawEvent.fromJSONField(field),
+            fromJSON: (json: Record<string, any>) => ManagerEmergencyWithdrawEvent.fromJSON(json),
+            fromSuiParsedData: (content: SuiParsedData) => ManagerEmergencyWithdrawEvent.fromSuiParsedData(content),
+            fromSuiObjectData: (content: SuiObjectData) => ManagerEmergencyWithdrawEvent.fromSuiObjectData(content),
+            fetch: async (client: SuiClient, id: string) => ManagerEmergencyWithdrawEvent.fetch(client, id),
+            new: (fields: ManagerEmergencyWithdrawEventFields) => {
+                return new ManagerEmergencyWithdrawEvent([], fields);
+            },
+            kind: "StructClassReified",
+        };
+    }
+
+    static get r() {
+        return ManagerEmergencyWithdrawEvent.reified();
+    }
+
+    static phantom(): PhantomReified<ToTypeStr<ManagerEmergencyWithdrawEvent>> {
+        return phantom(ManagerEmergencyWithdrawEvent.reified());
+    }
+    static get p() {
+        return ManagerEmergencyWithdrawEvent.phantom();
+    }
+
+    static get bcs() {
+        return bcs.struct("ManagerEmergencyWithdrawEvent", {
+            sender: bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
+            index: bcs.u64(),
+            liquidity_token_type: TypeName.bcs,
+            amount: bcs.u64(),
+            u64_padding: bcs.vector(bcs.u64()),
+        });
+    }
+
+    static fromFields(fields: Record<string, any>): ManagerEmergencyWithdrawEvent {
+        return ManagerEmergencyWithdrawEvent.reified().new({
+            sender: decodeFromFields("address", fields.sender),
+            index: decodeFromFields("u64", fields.index),
+            liquidityTokenType: decodeFromFields(TypeName.reified(), fields.liquidity_token_type),
+            amount: decodeFromFields("u64", fields.amount),
+            u64Padding: decodeFromFields(reified.vector("u64"), fields.u64_padding),
+        });
+    }
+
+    static fromFieldsWithTypes(item: FieldsWithTypes): ManagerEmergencyWithdrawEvent {
+        if (!isManagerEmergencyWithdrawEvent(item.type)) {
+            throw new Error("not a ManagerEmergencyWithdrawEvent type");
+        }
+
+        return ManagerEmergencyWithdrawEvent.reified().new({
+            sender: decodeFromFieldsWithTypes("address", item.fields.sender),
+            index: decodeFromFieldsWithTypes("u64", item.fields.index),
+            liquidityTokenType: decodeFromFieldsWithTypes(TypeName.reified(), item.fields.liquidity_token_type),
+            amount: decodeFromFieldsWithTypes("u64", item.fields.amount),
+            u64Padding: decodeFromFieldsWithTypes(reified.vector("u64"), item.fields.u64_padding),
+        });
+    }
+
+    static fromBcs(data: Uint8Array): ManagerEmergencyWithdrawEvent {
+        return ManagerEmergencyWithdrawEvent.fromFields(ManagerEmergencyWithdrawEvent.bcs.parse(data));
+    }
+
+    toJSONField() {
+        return {
+            sender: this.sender,
+            index: this.index.toString(),
+            liquidityTokenType: this.liquidityTokenType.toJSONField(),
+            amount: this.amount.toString(),
+            u64Padding: fieldToJSON<Vector<"u64">>(`vector<u64>`, this.u64Padding),
+        };
+    }
+
+    toJSON() {
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
+    }
+
+    static fromJSONField(field: any): ManagerEmergencyWithdrawEvent {
+        return ManagerEmergencyWithdrawEvent.reified().new({
+            sender: decodeFromJSONField("address", field.sender),
+            index: decodeFromJSONField("u64", field.index),
+            liquidityTokenType: decodeFromJSONField(TypeName.reified(), field.liquidityTokenType),
+            amount: decodeFromJSONField("u64", field.amount),
+            u64Padding: decodeFromJSONField(reified.vector("u64"), field.u64Padding),
+        });
+    }
+
+    static fromJSON(json: Record<string, any>): ManagerEmergencyWithdrawEvent {
+        if (json.$typeName !== ManagerEmergencyWithdrawEvent.$typeName) {
+            throw new Error("not a WithTwoGenerics json object");
+        }
+
+        return ManagerEmergencyWithdrawEvent.fromJSONField(json);
+    }
+
+    static fromSuiParsedData(content: SuiParsedData): ManagerEmergencyWithdrawEvent {
+        if (content.dataType !== "moveObject") {
+            throw new Error("not an object");
+        }
+        if (!isManagerEmergencyWithdrawEvent(content.type)) {
+            throw new Error(`object at ${(content.fields as any).id} is not a ManagerEmergencyWithdrawEvent object`);
+        }
+        return ManagerEmergencyWithdrawEvent.fromFieldsWithTypes(content);
+    }
+
+    static fromSuiObjectData(data: SuiObjectData): ManagerEmergencyWithdrawEvent {
+        if (data.bcs) {
+            if (data.bcs.dataType !== "moveObject" || !isManagerEmergencyWithdrawEvent(data.bcs.type)) {
+                throw new Error(`object at is not a ManagerEmergencyWithdrawEvent object`);
+            }
+
+            return ManagerEmergencyWithdrawEvent.fromBcs(fromB64(data.bcs.bcsBytes));
+        }
+        if (data.content) {
+            return ManagerEmergencyWithdrawEvent.fromSuiParsedData(data.content);
+        }
+        throw new Error("Both `bcs` and `content` fields are missing from the data. Include `showBcs` or `showContent` in the request.");
+    }
+
+    static async fetch(client: SuiClient, id: string): Promise<ManagerEmergencyWithdrawEvent> {
+        const res = await client.getObject({ id, options: { showBcs: true } });
+        if (res.error) {
+            throw new Error(`error fetching ManagerEmergencyWithdrawEvent object at id ${id}: ${res.error.code}`);
+        }
+        if (res.data?.bcs?.dataType !== "moveObject" || !isManagerEmergencyWithdrawEvent(res.data.bcs.type)) {
+            throw new Error(`object at id ${id} is not a ManagerEmergencyWithdrawEvent object`);
+        }
+
+        return ManagerEmergencyWithdrawEvent.fromSuiObjectData(res.data);
     }
 }
 
@@ -2502,6 +3485,460 @@ export class NewLiquidityPoolEvent implements StructClass {
         }
 
         return NewLiquidityPoolEvent.fromSuiObjectData(res.data);
+    }
+}
+
+/* ============================== RebalanceEvent =============================== */
+
+export function isRebalanceEvent(type: string): boolean {
+    type = compressSuiType(type);
+    return type === `${PKG_V1}::lp_pool::RebalanceEvent`;
+}
+
+export interface RebalanceEventFields {
+    index: ToField<"u64">;
+    fromToken: ToField<TypeName>;
+    toToken: ToField<TypeName>;
+    rebalanceAmount: ToField<"u64">;
+    fromTokenOraclePrice: ToField<"u64">;
+    toTokenOraclePrice: ToField<"u64">;
+    reducedUsd: ToField<"u64">;
+    tvlUsd: ToField<"u64">;
+    fromTokenLiquidityAmount: ToField<"u64">;
+    toTokenLiquidityAmount: ToField<"u64">;
+    u64Padding: ToField<Vector<"u64">>;
+}
+
+export type RebalanceEventReified = Reified<RebalanceEvent, RebalanceEventFields>;
+
+export class RebalanceEvent implements StructClass {
+    __StructClass = true as const;
+
+    static readonly $typeName = `${PKG_V1}::lp_pool::RebalanceEvent`;
+    static readonly $numTypeParams = 0;
+    static readonly $isPhantom = [] as const;
+
+    readonly $typeName = RebalanceEvent.$typeName;
+    readonly $fullTypeName: `${typeof PKG_V1}::lp_pool::RebalanceEvent`;
+    readonly $typeArgs: [];
+    readonly $isPhantom = RebalanceEvent.$isPhantom;
+
+    readonly index: ToField<"u64">;
+    readonly fromToken: ToField<TypeName>;
+    readonly toToken: ToField<TypeName>;
+    readonly rebalanceAmount: ToField<"u64">;
+    readonly fromTokenOraclePrice: ToField<"u64">;
+    readonly toTokenOraclePrice: ToField<"u64">;
+    readonly reducedUsd: ToField<"u64">;
+    readonly tvlUsd: ToField<"u64">;
+    readonly fromTokenLiquidityAmount: ToField<"u64">;
+    readonly toTokenLiquidityAmount: ToField<"u64">;
+    readonly u64Padding: ToField<Vector<"u64">>;
+
+    private constructor(typeArgs: [], fields: RebalanceEventFields) {
+        this.$fullTypeName = composeSuiType(RebalanceEvent.$typeName, ...typeArgs) as `${typeof PKG_V1}::lp_pool::RebalanceEvent`;
+        this.$typeArgs = typeArgs;
+
+        this.index = fields.index;
+        this.fromToken = fields.fromToken;
+        this.toToken = fields.toToken;
+        this.rebalanceAmount = fields.rebalanceAmount;
+        this.fromTokenOraclePrice = fields.fromTokenOraclePrice;
+        this.toTokenOraclePrice = fields.toTokenOraclePrice;
+        this.reducedUsd = fields.reducedUsd;
+        this.tvlUsd = fields.tvlUsd;
+        this.fromTokenLiquidityAmount = fields.fromTokenLiquidityAmount;
+        this.toTokenLiquidityAmount = fields.toTokenLiquidityAmount;
+        this.u64Padding = fields.u64Padding;
+    }
+
+    static reified(): RebalanceEventReified {
+        return {
+            typeName: RebalanceEvent.$typeName,
+            fullTypeName: composeSuiType(RebalanceEvent.$typeName, ...[]) as `${typeof PKG_V1}::lp_pool::RebalanceEvent`,
+            typeArgs: [] as [],
+            isPhantom: RebalanceEvent.$isPhantom,
+            reifiedTypeArgs: [],
+            fromFields: (fields: Record<string, any>) => RebalanceEvent.fromFields(fields),
+            fromFieldsWithTypes: (item: FieldsWithTypes) => RebalanceEvent.fromFieldsWithTypes(item),
+            fromBcs: (data: Uint8Array) => RebalanceEvent.fromBcs(data),
+            bcs: RebalanceEvent.bcs,
+            fromJSONField: (field: any) => RebalanceEvent.fromJSONField(field),
+            fromJSON: (json: Record<string, any>) => RebalanceEvent.fromJSON(json),
+            fromSuiParsedData: (content: SuiParsedData) => RebalanceEvent.fromSuiParsedData(content),
+            fromSuiObjectData: (content: SuiObjectData) => RebalanceEvent.fromSuiObjectData(content),
+            fetch: async (client: SuiClient, id: string) => RebalanceEvent.fetch(client, id),
+            new: (fields: RebalanceEventFields) => {
+                return new RebalanceEvent([], fields);
+            },
+            kind: "StructClassReified",
+        };
+    }
+
+    static get r() {
+        return RebalanceEvent.reified();
+    }
+
+    static phantom(): PhantomReified<ToTypeStr<RebalanceEvent>> {
+        return phantom(RebalanceEvent.reified());
+    }
+    static get p() {
+        return RebalanceEvent.phantom();
+    }
+
+    static get bcs() {
+        return bcs.struct("RebalanceEvent", {
+            index: bcs.u64(),
+            from_token: TypeName.bcs,
+            to_token: TypeName.bcs,
+            rebalance_amount: bcs.u64(),
+            from_token_oracle_price: bcs.u64(),
+            to_token_oracle_price: bcs.u64(),
+            reduced_usd: bcs.u64(),
+            tvl_usd: bcs.u64(),
+            from_token_liquidity_amount: bcs.u64(),
+            to_token_liquidity_amount: bcs.u64(),
+            u64_padding: bcs.vector(bcs.u64()),
+        });
+    }
+
+    static fromFields(fields: Record<string, any>): RebalanceEvent {
+        return RebalanceEvent.reified().new({
+            index: decodeFromFields("u64", fields.index),
+            fromToken: decodeFromFields(TypeName.reified(), fields.from_token),
+            toToken: decodeFromFields(TypeName.reified(), fields.to_token),
+            rebalanceAmount: decodeFromFields("u64", fields.rebalance_amount),
+            fromTokenOraclePrice: decodeFromFields("u64", fields.from_token_oracle_price),
+            toTokenOraclePrice: decodeFromFields("u64", fields.to_token_oracle_price),
+            reducedUsd: decodeFromFields("u64", fields.reduced_usd),
+            tvlUsd: decodeFromFields("u64", fields.tvl_usd),
+            fromTokenLiquidityAmount: decodeFromFields("u64", fields.from_token_liquidity_amount),
+            toTokenLiquidityAmount: decodeFromFields("u64", fields.to_token_liquidity_amount),
+            u64Padding: decodeFromFields(reified.vector("u64"), fields.u64_padding),
+        });
+    }
+
+    static fromFieldsWithTypes(item: FieldsWithTypes): RebalanceEvent {
+        if (!isRebalanceEvent(item.type)) {
+            throw new Error("not a RebalanceEvent type");
+        }
+
+        return RebalanceEvent.reified().new({
+            index: decodeFromFieldsWithTypes("u64", item.fields.index),
+            fromToken: decodeFromFieldsWithTypes(TypeName.reified(), item.fields.from_token),
+            toToken: decodeFromFieldsWithTypes(TypeName.reified(), item.fields.to_token),
+            rebalanceAmount: decodeFromFieldsWithTypes("u64", item.fields.rebalance_amount),
+            fromTokenOraclePrice: decodeFromFieldsWithTypes("u64", item.fields.from_token_oracle_price),
+            toTokenOraclePrice: decodeFromFieldsWithTypes("u64", item.fields.to_token_oracle_price),
+            reducedUsd: decodeFromFieldsWithTypes("u64", item.fields.reduced_usd),
+            tvlUsd: decodeFromFieldsWithTypes("u64", item.fields.tvl_usd),
+            fromTokenLiquidityAmount: decodeFromFieldsWithTypes("u64", item.fields.from_token_liquidity_amount),
+            toTokenLiquidityAmount: decodeFromFieldsWithTypes("u64", item.fields.to_token_liquidity_amount),
+            u64Padding: decodeFromFieldsWithTypes(reified.vector("u64"), item.fields.u64_padding),
+        });
+    }
+
+    static fromBcs(data: Uint8Array): RebalanceEvent {
+        return RebalanceEvent.fromFields(RebalanceEvent.bcs.parse(data));
+    }
+
+    toJSONField() {
+        return {
+            index: this.index.toString(),
+            fromToken: this.fromToken.toJSONField(),
+            toToken: this.toToken.toJSONField(),
+            rebalanceAmount: this.rebalanceAmount.toString(),
+            fromTokenOraclePrice: this.fromTokenOraclePrice.toString(),
+            toTokenOraclePrice: this.toTokenOraclePrice.toString(),
+            reducedUsd: this.reducedUsd.toString(),
+            tvlUsd: this.tvlUsd.toString(),
+            fromTokenLiquidityAmount: this.fromTokenLiquidityAmount.toString(),
+            toTokenLiquidityAmount: this.toTokenLiquidityAmount.toString(),
+            u64Padding: fieldToJSON<Vector<"u64">>(`vector<u64>`, this.u64Padding),
+        };
+    }
+
+    toJSON() {
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
+    }
+
+    static fromJSONField(field: any): RebalanceEvent {
+        return RebalanceEvent.reified().new({
+            index: decodeFromJSONField("u64", field.index),
+            fromToken: decodeFromJSONField(TypeName.reified(), field.fromToken),
+            toToken: decodeFromJSONField(TypeName.reified(), field.toToken),
+            rebalanceAmount: decodeFromJSONField("u64", field.rebalanceAmount),
+            fromTokenOraclePrice: decodeFromJSONField("u64", field.fromTokenOraclePrice),
+            toTokenOraclePrice: decodeFromJSONField("u64", field.toTokenOraclePrice),
+            reducedUsd: decodeFromJSONField("u64", field.reducedUsd),
+            tvlUsd: decodeFromJSONField("u64", field.tvlUsd),
+            fromTokenLiquidityAmount: decodeFromJSONField("u64", field.fromTokenLiquidityAmount),
+            toTokenLiquidityAmount: decodeFromJSONField("u64", field.toTokenLiquidityAmount),
+            u64Padding: decodeFromJSONField(reified.vector("u64"), field.u64Padding),
+        });
+    }
+
+    static fromJSON(json: Record<string, any>): RebalanceEvent {
+        if (json.$typeName !== RebalanceEvent.$typeName) {
+            throw new Error("not a WithTwoGenerics json object");
+        }
+
+        return RebalanceEvent.fromJSONField(json);
+    }
+
+    static fromSuiParsedData(content: SuiParsedData): RebalanceEvent {
+        if (content.dataType !== "moveObject") {
+            throw new Error("not an object");
+        }
+        if (!isRebalanceEvent(content.type)) {
+            throw new Error(`object at ${(content.fields as any).id} is not a RebalanceEvent object`);
+        }
+        return RebalanceEvent.fromFieldsWithTypes(content);
+    }
+
+    static fromSuiObjectData(data: SuiObjectData): RebalanceEvent {
+        if (data.bcs) {
+            if (data.bcs.dataType !== "moveObject" || !isRebalanceEvent(data.bcs.type)) {
+                throw new Error(`object at is not a RebalanceEvent object`);
+            }
+
+            return RebalanceEvent.fromBcs(fromB64(data.bcs.bcsBytes));
+        }
+        if (data.content) {
+            return RebalanceEvent.fromSuiParsedData(data.content);
+        }
+        throw new Error("Both `bcs` and `content` fields are missing from the data. Include `showBcs` or `showContent` in the request.");
+    }
+
+    static async fetch(client: SuiClient, id: string): Promise<RebalanceEvent> {
+        const res = await client.getObject({ id, options: { showBcs: true } });
+        if (res.error) {
+            throw new Error(`error fetching RebalanceEvent object at id ${id}: ${res.error.code}`);
+        }
+        if (res.data?.bcs?.dataType !== "moveObject" || !isRebalanceEvent(res.data.bcs.type)) {
+            throw new Error(`object at id ${id} is not a RebalanceEvent object`);
+        }
+
+        return RebalanceEvent.fromSuiObjectData(res.data);
+    }
+}
+
+/* ============================== RebalanceProcess =============================== */
+
+export function isRebalanceProcess(type: string): boolean {
+    type = compressSuiType(type);
+    return type === `${PKG_V1}::lp_pool::RebalanceProcess`;
+}
+
+export interface RebalanceProcessFields {
+    index: ToField<"u64">;
+    tokenTypeA: ToField<TypeName>;
+    tokenDecimalA: ToField<"u64">;
+    tokenAmountA: ToField<"u64">;
+    oraclePriceA: ToField<"u64">;
+    reducedUsd: ToField<"u64">;
+    tokenTypeB: ToField<TypeName>;
+    tokenDecimalB: ToField<"u64">;
+    oraclePriceB: ToField<"u64">;
+}
+
+export type RebalanceProcessReified = Reified<RebalanceProcess, RebalanceProcessFields>;
+
+export class RebalanceProcess implements StructClass {
+    __StructClass = true as const;
+
+    static readonly $typeName = `${PKG_V1}::lp_pool::RebalanceProcess`;
+    static readonly $numTypeParams = 0;
+    static readonly $isPhantom = [] as const;
+
+    readonly $typeName = RebalanceProcess.$typeName;
+    readonly $fullTypeName: `${typeof PKG_V1}::lp_pool::RebalanceProcess`;
+    readonly $typeArgs: [];
+    readonly $isPhantom = RebalanceProcess.$isPhantom;
+
+    readonly index: ToField<"u64">;
+    readonly tokenTypeA: ToField<TypeName>;
+    readonly tokenDecimalA: ToField<"u64">;
+    readonly tokenAmountA: ToField<"u64">;
+    readonly oraclePriceA: ToField<"u64">;
+    readonly reducedUsd: ToField<"u64">;
+    readonly tokenTypeB: ToField<TypeName>;
+    readonly tokenDecimalB: ToField<"u64">;
+    readonly oraclePriceB: ToField<"u64">;
+
+    private constructor(typeArgs: [], fields: RebalanceProcessFields) {
+        this.$fullTypeName = composeSuiType(RebalanceProcess.$typeName, ...typeArgs) as `${typeof PKG_V1}::lp_pool::RebalanceProcess`;
+        this.$typeArgs = typeArgs;
+
+        this.index = fields.index;
+        this.tokenTypeA = fields.tokenTypeA;
+        this.tokenDecimalA = fields.tokenDecimalA;
+        this.tokenAmountA = fields.tokenAmountA;
+        this.oraclePriceA = fields.oraclePriceA;
+        this.reducedUsd = fields.reducedUsd;
+        this.tokenTypeB = fields.tokenTypeB;
+        this.tokenDecimalB = fields.tokenDecimalB;
+        this.oraclePriceB = fields.oraclePriceB;
+    }
+
+    static reified(): RebalanceProcessReified {
+        return {
+            typeName: RebalanceProcess.$typeName,
+            fullTypeName: composeSuiType(RebalanceProcess.$typeName, ...[]) as `${typeof PKG_V1}::lp_pool::RebalanceProcess`,
+            typeArgs: [] as [],
+            isPhantom: RebalanceProcess.$isPhantom,
+            reifiedTypeArgs: [],
+            fromFields: (fields: Record<string, any>) => RebalanceProcess.fromFields(fields),
+            fromFieldsWithTypes: (item: FieldsWithTypes) => RebalanceProcess.fromFieldsWithTypes(item),
+            fromBcs: (data: Uint8Array) => RebalanceProcess.fromBcs(data),
+            bcs: RebalanceProcess.bcs,
+            fromJSONField: (field: any) => RebalanceProcess.fromJSONField(field),
+            fromJSON: (json: Record<string, any>) => RebalanceProcess.fromJSON(json),
+            fromSuiParsedData: (content: SuiParsedData) => RebalanceProcess.fromSuiParsedData(content),
+            fromSuiObjectData: (content: SuiObjectData) => RebalanceProcess.fromSuiObjectData(content),
+            fetch: async (client: SuiClient, id: string) => RebalanceProcess.fetch(client, id),
+            new: (fields: RebalanceProcessFields) => {
+                return new RebalanceProcess([], fields);
+            },
+            kind: "StructClassReified",
+        };
+    }
+
+    static get r() {
+        return RebalanceProcess.reified();
+    }
+
+    static phantom(): PhantomReified<ToTypeStr<RebalanceProcess>> {
+        return phantom(RebalanceProcess.reified());
+    }
+    static get p() {
+        return RebalanceProcess.phantom();
+    }
+
+    static get bcs() {
+        return bcs.struct("RebalanceProcess", {
+            index: bcs.u64(),
+            token_type_a: TypeName.bcs,
+            token_decimal_a: bcs.u64(),
+            token_amount_a: bcs.u64(),
+            oracle_price_a: bcs.u64(),
+            reduced_usd: bcs.u64(),
+            token_type_b: TypeName.bcs,
+            token_decimal_b: bcs.u64(),
+            oracle_price_b: bcs.u64(),
+        });
+    }
+
+    static fromFields(fields: Record<string, any>): RebalanceProcess {
+        return RebalanceProcess.reified().new({
+            index: decodeFromFields("u64", fields.index),
+            tokenTypeA: decodeFromFields(TypeName.reified(), fields.token_type_a),
+            tokenDecimalA: decodeFromFields("u64", fields.token_decimal_a),
+            tokenAmountA: decodeFromFields("u64", fields.token_amount_a),
+            oraclePriceA: decodeFromFields("u64", fields.oracle_price_a),
+            reducedUsd: decodeFromFields("u64", fields.reduced_usd),
+            tokenTypeB: decodeFromFields(TypeName.reified(), fields.token_type_b),
+            tokenDecimalB: decodeFromFields("u64", fields.token_decimal_b),
+            oraclePriceB: decodeFromFields("u64", fields.oracle_price_b),
+        });
+    }
+
+    static fromFieldsWithTypes(item: FieldsWithTypes): RebalanceProcess {
+        if (!isRebalanceProcess(item.type)) {
+            throw new Error("not a RebalanceProcess type");
+        }
+
+        return RebalanceProcess.reified().new({
+            index: decodeFromFieldsWithTypes("u64", item.fields.index),
+            tokenTypeA: decodeFromFieldsWithTypes(TypeName.reified(), item.fields.token_type_a),
+            tokenDecimalA: decodeFromFieldsWithTypes("u64", item.fields.token_decimal_a),
+            tokenAmountA: decodeFromFieldsWithTypes("u64", item.fields.token_amount_a),
+            oraclePriceA: decodeFromFieldsWithTypes("u64", item.fields.oracle_price_a),
+            reducedUsd: decodeFromFieldsWithTypes("u64", item.fields.reduced_usd),
+            tokenTypeB: decodeFromFieldsWithTypes(TypeName.reified(), item.fields.token_type_b),
+            tokenDecimalB: decodeFromFieldsWithTypes("u64", item.fields.token_decimal_b),
+            oraclePriceB: decodeFromFieldsWithTypes("u64", item.fields.oracle_price_b),
+        });
+    }
+
+    static fromBcs(data: Uint8Array): RebalanceProcess {
+        return RebalanceProcess.fromFields(RebalanceProcess.bcs.parse(data));
+    }
+
+    toJSONField() {
+        return {
+            index: this.index.toString(),
+            tokenTypeA: this.tokenTypeA.toJSONField(),
+            tokenDecimalA: this.tokenDecimalA.toString(),
+            tokenAmountA: this.tokenAmountA.toString(),
+            oraclePriceA: this.oraclePriceA.toString(),
+            reducedUsd: this.reducedUsd.toString(),
+            tokenTypeB: this.tokenTypeB.toJSONField(),
+            tokenDecimalB: this.tokenDecimalB.toString(),
+            oraclePriceB: this.oraclePriceB.toString(),
+        };
+    }
+
+    toJSON() {
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
+    }
+
+    static fromJSONField(field: any): RebalanceProcess {
+        return RebalanceProcess.reified().new({
+            index: decodeFromJSONField("u64", field.index),
+            tokenTypeA: decodeFromJSONField(TypeName.reified(), field.tokenTypeA),
+            tokenDecimalA: decodeFromJSONField("u64", field.tokenDecimalA),
+            tokenAmountA: decodeFromJSONField("u64", field.tokenAmountA),
+            oraclePriceA: decodeFromJSONField("u64", field.oraclePriceA),
+            reducedUsd: decodeFromJSONField("u64", field.reducedUsd),
+            tokenTypeB: decodeFromJSONField(TypeName.reified(), field.tokenTypeB),
+            tokenDecimalB: decodeFromJSONField("u64", field.tokenDecimalB),
+            oraclePriceB: decodeFromJSONField("u64", field.oraclePriceB),
+        });
+    }
+
+    static fromJSON(json: Record<string, any>): RebalanceProcess {
+        if (json.$typeName !== RebalanceProcess.$typeName) {
+            throw new Error("not a WithTwoGenerics json object");
+        }
+
+        return RebalanceProcess.fromJSONField(json);
+    }
+
+    static fromSuiParsedData(content: SuiParsedData): RebalanceProcess {
+        if (content.dataType !== "moveObject") {
+            throw new Error("not an object");
+        }
+        if (!isRebalanceProcess(content.type)) {
+            throw new Error(`object at ${(content.fields as any).id} is not a RebalanceProcess object`);
+        }
+        return RebalanceProcess.fromFieldsWithTypes(content);
+    }
+
+    static fromSuiObjectData(data: SuiObjectData): RebalanceProcess {
+        if (data.bcs) {
+            if (data.bcs.dataType !== "moveObject" || !isRebalanceProcess(data.bcs.type)) {
+                throw new Error(`object at is not a RebalanceProcess object`);
+            }
+
+            return RebalanceProcess.fromBcs(fromB64(data.bcs.bcsBytes));
+        }
+        if (data.content) {
+            return RebalanceProcess.fromSuiParsedData(data.content);
+        }
+        throw new Error("Both `bcs` and `content` fields are missing from the data. Include `showBcs` or `showContent` in the request.");
+    }
+
+    static async fetch(client: SuiClient, id: string): Promise<RebalanceProcess> {
+        const res = await client.getObject({ id, options: { showBcs: true } });
+        if (res.error) {
+            throw new Error(`error fetching RebalanceProcess object at id ${id}: ${res.error.code}`);
+        }
+        if (res.data?.bcs?.dataType !== "moveObject" || !isRebalanceProcess(res.data.bcs.type)) {
+            throw new Error(`object at id ${id} is not a RebalanceProcess object`);
+        }
+
+        return RebalanceProcess.fromSuiObjectData(res.data);
     }
 }
 
@@ -5481,6 +6918,202 @@ export class UpdateMarginConfigEvent implements StructClass {
         }
 
         return UpdateMarginConfigEvent.fromSuiObjectData(res.data);
+    }
+}
+
+/* ============================== UpdateRebalanceCostThresholdBpEvent =============================== */
+
+export function isUpdateRebalanceCostThresholdBpEvent(type: string): boolean {
+    type = compressSuiType(type);
+    return type === `${PKG_V1}::lp_pool::UpdateRebalanceCostThresholdBpEvent`;
+}
+
+export interface UpdateRebalanceCostThresholdBpEventFields {
+    sender: ToField<"address">;
+    index: ToField<"u64">;
+    previousRebalanceCostThresholdBp: ToField<"u64">;
+    newRebalanceCostThresholdBp: ToField<"u64">;
+    u64Padding: ToField<Vector<"u64">>;
+}
+
+export type UpdateRebalanceCostThresholdBpEventReified = Reified<
+    UpdateRebalanceCostThresholdBpEvent,
+    UpdateRebalanceCostThresholdBpEventFields
+>;
+
+export class UpdateRebalanceCostThresholdBpEvent implements StructClass {
+    __StructClass = true as const;
+
+    static readonly $typeName = `${PKG_V1}::lp_pool::UpdateRebalanceCostThresholdBpEvent`;
+    static readonly $numTypeParams = 0;
+    static readonly $isPhantom = [] as const;
+
+    readonly $typeName = UpdateRebalanceCostThresholdBpEvent.$typeName;
+    readonly $fullTypeName: `${typeof PKG_V1}::lp_pool::UpdateRebalanceCostThresholdBpEvent`;
+    readonly $typeArgs: [];
+    readonly $isPhantom = UpdateRebalanceCostThresholdBpEvent.$isPhantom;
+
+    readonly sender: ToField<"address">;
+    readonly index: ToField<"u64">;
+    readonly previousRebalanceCostThresholdBp: ToField<"u64">;
+    readonly newRebalanceCostThresholdBp: ToField<"u64">;
+    readonly u64Padding: ToField<Vector<"u64">>;
+
+    private constructor(typeArgs: [], fields: UpdateRebalanceCostThresholdBpEventFields) {
+        this.$fullTypeName = composeSuiType(
+            UpdateRebalanceCostThresholdBpEvent.$typeName,
+            ...typeArgs
+        ) as `${typeof PKG_V1}::lp_pool::UpdateRebalanceCostThresholdBpEvent`;
+        this.$typeArgs = typeArgs;
+
+        this.sender = fields.sender;
+        this.index = fields.index;
+        this.previousRebalanceCostThresholdBp = fields.previousRebalanceCostThresholdBp;
+        this.newRebalanceCostThresholdBp = fields.newRebalanceCostThresholdBp;
+        this.u64Padding = fields.u64Padding;
+    }
+
+    static reified(): UpdateRebalanceCostThresholdBpEventReified {
+        return {
+            typeName: UpdateRebalanceCostThresholdBpEvent.$typeName,
+            fullTypeName: composeSuiType(
+                UpdateRebalanceCostThresholdBpEvent.$typeName,
+                ...[]
+            ) as `${typeof PKG_V1}::lp_pool::UpdateRebalanceCostThresholdBpEvent`,
+            typeArgs: [] as [],
+            isPhantom: UpdateRebalanceCostThresholdBpEvent.$isPhantom,
+            reifiedTypeArgs: [],
+            fromFields: (fields: Record<string, any>) => UpdateRebalanceCostThresholdBpEvent.fromFields(fields),
+            fromFieldsWithTypes: (item: FieldsWithTypes) => UpdateRebalanceCostThresholdBpEvent.fromFieldsWithTypes(item),
+            fromBcs: (data: Uint8Array) => UpdateRebalanceCostThresholdBpEvent.fromBcs(data),
+            bcs: UpdateRebalanceCostThresholdBpEvent.bcs,
+            fromJSONField: (field: any) => UpdateRebalanceCostThresholdBpEvent.fromJSONField(field),
+            fromJSON: (json: Record<string, any>) => UpdateRebalanceCostThresholdBpEvent.fromJSON(json),
+            fromSuiParsedData: (content: SuiParsedData) => UpdateRebalanceCostThresholdBpEvent.fromSuiParsedData(content),
+            fromSuiObjectData: (content: SuiObjectData) => UpdateRebalanceCostThresholdBpEvent.fromSuiObjectData(content),
+            fetch: async (client: SuiClient, id: string) => UpdateRebalanceCostThresholdBpEvent.fetch(client, id),
+            new: (fields: UpdateRebalanceCostThresholdBpEventFields) => {
+                return new UpdateRebalanceCostThresholdBpEvent([], fields);
+            },
+            kind: "StructClassReified",
+        };
+    }
+
+    static get r() {
+        return UpdateRebalanceCostThresholdBpEvent.reified();
+    }
+
+    static phantom(): PhantomReified<ToTypeStr<UpdateRebalanceCostThresholdBpEvent>> {
+        return phantom(UpdateRebalanceCostThresholdBpEvent.reified());
+    }
+    static get p() {
+        return UpdateRebalanceCostThresholdBpEvent.phantom();
+    }
+
+    static get bcs() {
+        return bcs.struct("UpdateRebalanceCostThresholdBpEvent", {
+            sender: bcs.bytes(32).transform({ input: (val: string) => fromHEX(val), output: (val: Uint8Array) => toHEX(val) }),
+            index: bcs.u64(),
+            previous_rebalance_cost_threshold_bp: bcs.u64(),
+            new_rebalance_cost_threshold_bp: bcs.u64(),
+            u64_padding: bcs.vector(bcs.u64()),
+        });
+    }
+
+    static fromFields(fields: Record<string, any>): UpdateRebalanceCostThresholdBpEvent {
+        return UpdateRebalanceCostThresholdBpEvent.reified().new({
+            sender: decodeFromFields("address", fields.sender),
+            index: decodeFromFields("u64", fields.index),
+            previousRebalanceCostThresholdBp: decodeFromFields("u64", fields.previous_rebalance_cost_threshold_bp),
+            newRebalanceCostThresholdBp: decodeFromFields("u64", fields.new_rebalance_cost_threshold_bp),
+            u64Padding: decodeFromFields(reified.vector("u64"), fields.u64_padding),
+        });
+    }
+
+    static fromFieldsWithTypes(item: FieldsWithTypes): UpdateRebalanceCostThresholdBpEvent {
+        if (!isUpdateRebalanceCostThresholdBpEvent(item.type)) {
+            throw new Error("not a UpdateRebalanceCostThresholdBpEvent type");
+        }
+
+        return UpdateRebalanceCostThresholdBpEvent.reified().new({
+            sender: decodeFromFieldsWithTypes("address", item.fields.sender),
+            index: decodeFromFieldsWithTypes("u64", item.fields.index),
+            previousRebalanceCostThresholdBp: decodeFromFieldsWithTypes("u64", item.fields.previous_rebalance_cost_threshold_bp),
+            newRebalanceCostThresholdBp: decodeFromFieldsWithTypes("u64", item.fields.new_rebalance_cost_threshold_bp),
+            u64Padding: decodeFromFieldsWithTypes(reified.vector("u64"), item.fields.u64_padding),
+        });
+    }
+
+    static fromBcs(data: Uint8Array): UpdateRebalanceCostThresholdBpEvent {
+        return UpdateRebalanceCostThresholdBpEvent.fromFields(UpdateRebalanceCostThresholdBpEvent.bcs.parse(data));
+    }
+
+    toJSONField() {
+        return {
+            sender: this.sender,
+            index: this.index.toString(),
+            previousRebalanceCostThresholdBp: this.previousRebalanceCostThresholdBp.toString(),
+            newRebalanceCostThresholdBp: this.newRebalanceCostThresholdBp.toString(),
+            u64Padding: fieldToJSON<Vector<"u64">>(`vector<u64>`, this.u64Padding),
+        };
+    }
+
+    toJSON() {
+        return { $typeName: this.$typeName, $typeArgs: this.$typeArgs, ...this.toJSONField() };
+    }
+
+    static fromJSONField(field: any): UpdateRebalanceCostThresholdBpEvent {
+        return UpdateRebalanceCostThresholdBpEvent.reified().new({
+            sender: decodeFromJSONField("address", field.sender),
+            index: decodeFromJSONField("u64", field.index),
+            previousRebalanceCostThresholdBp: decodeFromJSONField("u64", field.previousRebalanceCostThresholdBp),
+            newRebalanceCostThresholdBp: decodeFromJSONField("u64", field.newRebalanceCostThresholdBp),
+            u64Padding: decodeFromJSONField(reified.vector("u64"), field.u64Padding),
+        });
+    }
+
+    static fromJSON(json: Record<string, any>): UpdateRebalanceCostThresholdBpEvent {
+        if (json.$typeName !== UpdateRebalanceCostThresholdBpEvent.$typeName) {
+            throw new Error("not a WithTwoGenerics json object");
+        }
+
+        return UpdateRebalanceCostThresholdBpEvent.fromJSONField(json);
+    }
+
+    static fromSuiParsedData(content: SuiParsedData): UpdateRebalanceCostThresholdBpEvent {
+        if (content.dataType !== "moveObject") {
+            throw new Error("not an object");
+        }
+        if (!isUpdateRebalanceCostThresholdBpEvent(content.type)) {
+            throw new Error(`object at ${(content.fields as any).id} is not a UpdateRebalanceCostThresholdBpEvent object`);
+        }
+        return UpdateRebalanceCostThresholdBpEvent.fromFieldsWithTypes(content);
+    }
+
+    static fromSuiObjectData(data: SuiObjectData): UpdateRebalanceCostThresholdBpEvent {
+        if (data.bcs) {
+            if (data.bcs.dataType !== "moveObject" || !isUpdateRebalanceCostThresholdBpEvent(data.bcs.type)) {
+                throw new Error(`object at is not a UpdateRebalanceCostThresholdBpEvent object`);
+            }
+
+            return UpdateRebalanceCostThresholdBpEvent.fromBcs(fromB64(data.bcs.bcsBytes));
+        }
+        if (data.content) {
+            return UpdateRebalanceCostThresholdBpEvent.fromSuiParsedData(data.content);
+        }
+        throw new Error("Both `bcs` and `content` fields are missing from the data. Include `showBcs` or `showContent` in the request.");
+    }
+
+    static async fetch(client: SuiClient, id: string): Promise<UpdateRebalanceCostThresholdBpEvent> {
+        const res = await client.getObject({ id, options: { showBcs: true } });
+        if (res.error) {
+            throw new Error(`error fetching UpdateRebalanceCostThresholdBpEvent object at id ${id}: ${res.error.code}`);
+        }
+        if (res.data?.bcs?.dataType !== "moveObject" || !isUpdateRebalanceCostThresholdBpEvent(res.data.bcs.type)) {
+            throw new Error(`object at id ${id} is not a UpdateRebalanceCostThresholdBpEvent object`);
+        }
+
+        return UpdateRebalanceCostThresholdBpEvent.fromSuiObjectData(res.data);
     }
 }
 

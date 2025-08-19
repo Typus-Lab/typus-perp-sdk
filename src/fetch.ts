@@ -355,7 +355,7 @@ export async function getLiquidationPriceAndPnl(
         positions: Position[];
         user: string;
     }
-) {
+): Promise<PositionInfo[]> {
     let provider = new SuiClient({ url: config.rpcEndpoint });
     let tx = new Transaction();
 
@@ -395,20 +395,53 @@ export async function getLiquidationPriceAndPnl(
 
     let res = await provider.devInspectTransactionBlock({ sender: input.user, transactionBlock: tx });
     // console.log(res);
+    //   0  estimated_liquidation_price,
+    //   1  has_profit,
+    //   2  pnl_usd,
+    //   3  is_cost,
+    //   4  unrealized_cost_in_usd,
+    //   5  unrealized_funding_sign,
+    //   6  unrealized_funding_fee_usd,
+    //   7  unrealized_borrow_fee_usd,
+    //   8  close_fee_usd
 
-    let results = res.results?.slice(-input.positions.length).map((x) => {
+    let results = res.results!.slice(-input.positions.length).map((x) => {
         // console.log(x);
-        let liquidationPrice = bcs.u64().parse(Uint8Array.from(x.returnValues![0][0]));
+        let liquidationPrice = Number(bcs.u64().parse(Uint8Array.from(x.returnValues![0][0])));
         let isProfit = bcs.bool().parse(Uint8Array.from(x.returnValues![1][0]));
         var pnl = Number(bcs.u64().parse(Uint8Array.from(x.returnValues![2][0])));
         pnl = isProfit ? pnl : -pnl;
+        // including closeFee
         let isCost = bcs.bool().parse(Uint8Array.from(x.returnValues![3][0]));
         var cost = Number(bcs.u64().parse(Uint8Array.from(x.returnValues![4][0])));
         cost = isCost ? cost : -cost;
-        return [liquidationPrice, pnl - cost];
+        // cost = unrealized_loss + unrealized_trading_fee + unrealized_borrow_fee + unrealized_funding_fee;
+        let fundingFeeSign = bcs.bool().parse(Uint8Array.from(x.returnValues![5][0]));
+        var fundingFee = Number(bcs.u64().parse(Uint8Array.from(x.returnValues![6][0])));
+        fundingFee = fundingFeeSign ? fundingFee : -fundingFee;
+        let borrowFee = Number(bcs.u64().parse(Uint8Array.from(x.returnValues![7][0])));
+        let closeFee = Number(bcs.u64().parse(Uint8Array.from(x.returnValues![8][0])));
+
+        return {
+            liquidationPrice,
+            pnl: pnl + closeFee,
+            fundingFee,
+            borrowFee,
+            closeFee,
+            pnlAfterFee: pnl - cost,
+        } as PositionInfo;
     });
     // console.log(results);
     return results;
+}
+
+interface PositionInfo {
+    liquidationPrice: number;
+    pnl: number;
+    fundingFee: number;
+    borrowFee: number;
+    closeFee: number;
+    pnlAfterFee: number;
 }
 
 export async function getPositionCount(

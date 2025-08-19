@@ -260,12 +260,9 @@ export function parseOptionBidReceipts(positions: Position[]): (TypusBidReceipt 
 }
 
 /**
- * @returns [[lpShare, incentives][], deactivatingShares[]]
+ * @returns [lpShare, incentives][]
  */
-export async function getUserStake(
-    config: TypusConfig,
-    user: string
-): Promise<[[LpUserShare, string[]][], DeactivatingShares<typeof TLP_TOKEN>[]]> {
+export async function getUserStake(config: TypusConfig, user: string): Promise<[LpUserShare, string[]][]> {
     let provider = new SuiClient({ url: config.rpcEndpoint });
     let tx = new Transaction();
 
@@ -278,12 +275,6 @@ export async function getUserStake(
 
     getUserShares(tx, {
         registry: STAKE_POOL,
-        index: BigInt(0),
-        user,
-    });
-
-    getUserDeactivatingShares(tx, TLP_TOKEN, {
-        registry: LP_POOL,
         index: BigInt(0),
         user,
     });
@@ -310,8 +301,31 @@ export async function getUserStake(
             lpShares.push([lpShare, incentives]);
         });
 
+        return lpShares;
+    } else {
+        return [];
+    }
+}
+
+/**
+ * @returns deactivatingShares[]
+ */
+export async function getDeactivatingShares(config: TypusConfig, user: string): Promise<DeactivatingShares<typeof TLP_TOKEN>[]> {
+    let provider = new SuiClient({ url: config.rpcEndpoint });
+    let tx = new Transaction();
+
+    getUserDeactivatingShares(tx, TLP_TOKEN, {
+        registry: LP_POOL,
+        index: BigInt(0),
+        user,
+    });
+
+    let res = await provider.devInspectTransactionBlock({ sender: user, transactionBlock: tx });
+    // console.log(res);
+
+    if (res.results) {
         // @ts-ignore
-        var returnValues = res.results[2].returnValues[0][0];
+        var returnValues = res.results[0].returnValues[0][0];
         // console.log(returnValues);
 
         var reader = new BcsReader(new Uint8Array(returnValues));
@@ -325,9 +339,9 @@ export async function getUserStake(
         });
         // console.log(deactivatingShares);
 
-        return [lpShares, deactivatingShares];
+        return deactivatingShares;
     } else {
-        return [[], []];
+        return [];
     }
 }
 

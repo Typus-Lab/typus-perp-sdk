@@ -8,7 +8,7 @@ import {
     unsubscribe as _unsubscribe,
     snapshot as _snapshot,
 } from "../typus_stake_pool/stake-pool/functions";
-import { PythClient, TypusConfig, updateOracleWithPythUsd, updatePyth } from "@typus/typus-sdk/dist/src/utils";
+import { PythClient, splitCoin, splitCoins, TypusConfig, updateOracleWithPythUsd, updatePyth } from "@typus/typus-sdk/dist/src/utils";
 import { CLOCK, tokenType, typeArgToAsset, TOKEN, oracle } from "@typus/typus-sdk/dist/src/constants";
 import { LP_POOL, NETWORK, PERP_VERSION, STAKE_POOL, STAKE_POOL_VERSION, TLP_TOKEN, TLP_TREASURY_CAP } from "..";
 import { StakePool } from "src/typus_stake_pool/stake-pool/structs";
@@ -46,13 +46,29 @@ export async function mintStakeLp(
         userShareId: string | null;
         user: string;
         stake: boolean;
+        suiCoins?: string[]; // for sponsored tx
     }
 ): Promise<Transaction> {
     // update pyth oracle
     let tokens = input.lpPool.tokenPools.map((p) => typeArgToAsset("0x" + p.tokenType.name));
     // console.log("tokens", tokens);
+    let cToken = tokenType[NETWORK][input.cTOKEN];
 
-    await updatePyth(pythClient, tx, tokens);
+    let coin;
+    let suiCoin;
+
+    if (input.cTOKEN == "SUI" && config.sponsored) {
+        // split together
+        [coin, suiCoin] = splitCoins(tx, tokenType.MAINNET.SUI, input.coins, [input.amount, tokens.length.toString()], config.sponsored);
+    } else if (config.sponsored) {
+        coin = splitCoin(tx, cToken, input.coins, input.amount, config.sponsored);
+        suiCoin = splitCoin(tx, tokenType.MAINNET.SUI, input.suiCoins!, tokens.length.toString(), config.sponsored);
+    } else {
+        coin = splitCoin(tx, cToken, input.coins, input.amount, config.sponsored);
+        // no suiCoin
+    }
+
+    await updatePyth(pythClient, tx, tokens, suiCoin);
 
     for (let token of tokens) {
         updateOracleWithPythUsd(pythClient, tx, config.package.oracle, token);
@@ -65,26 +81,11 @@ export async function mintStakeLp(
         });
     }
 
-    var coin;
-
-    if (input.cTOKEN == "SUI") {
-        [coin] = tx.splitCoins(tx.gas, [input.amount]);
-    } else {
-        let destination = input.coins.pop()!;
-
-        if (input.coins.length > 0) {
-            tx.mergeCoins(destination, input.coins);
-        }
-
-        [coin] = tx.splitCoins(destination, [input.amount]);
-    }
-
     // console.log(iToken);
     if (input.userShareId) {
         harvestStakeReward(config, tx, { stakePool: input.stakePool, userShareId: input.userShareId, user: input.user });
     }
 
-    let cToken = tokenType[NETWORK][input.cTOKEN];
     let lpCoin = mintLp(tx, [cToken, TLP_TOKEN], {
         version: PERP_VERSION,
         registry: LP_POOL,
@@ -194,12 +195,18 @@ export async function unstakeRedeem(
         userShareId: string;
         share: string | null;
         user: string;
+        suiCoins?: string[]; // for sponsored tx
     }
 ): Promise<Transaction> {
     // update pyth oracle
     let tokens = input.lpPool.tokenPools.map((p) => typeArgToAsset("0x" + p.tokenType.name));
 
-    await updatePyth(pythClient, tx, tokens);
+    let suiCoin;
+    if (config.sponsored) {
+        suiCoin = splitCoin(tx, tokenType.MAINNET.SUI, input.suiCoins!, tokens.length.toString(), config.sponsored);
+    }
+
+    await updatePyth(pythClient, tx, tokens, suiCoin);
 
     for (let token of tokens) {
         updateOracleWithPythUsd(pythClient, tx, config.package.oracle, token);
@@ -257,12 +264,18 @@ export async function redeemTlp(
         lpCoins: string[];
         share: string | null;
         user: string;
+        suiCoins?: string[]; // for sponsored tx
     }
 ): Promise<Transaction> {
     // update pyth oracle
     let tokens = input.lpPool.tokenPools.map((p) => typeArgToAsset("0x" + p.tokenType.name));
 
-    await updatePyth(pythClient, tx, tokens);
+    let suiCoin;
+    if (config.sponsored) {
+        suiCoin = splitCoin(tx, tokenType.MAINNET.SUI, input.suiCoins!, tokens.length.toString(), config.sponsored);
+    }
+
+    await updatePyth(pythClient, tx, tokens, suiCoin);
 
     for (let token of tokens) {
         updateOracleWithPythUsd(pythClient, tx, config.package.oracle, token);
@@ -317,12 +330,18 @@ export async function claim(
         stakePool: StakePool;
         cTOKEN: TOKEN;
         user: string;
+        suiCoins?: string[]; // for sponsored tx
     }
 ): Promise<Transaction> {
     // update pyth oracle
     let tokens = input.lpPool.tokenPools.map((p) => typeArgToAsset("0x" + p.tokenType.name));
 
-    await updatePyth(pythClient, tx, tokens);
+    let suiCoin;
+    if (config.sponsored) {
+        suiCoin = splitCoin(tx, tokenType.MAINNET.SUI, input.suiCoins!, tokens.length.toString(), config.sponsored);
+    }
+
+    await updatePyth(pythClient, tx, tokens, suiCoin);
 
     for (let token of tokens) {
         updateOracleWithPythUsd(pythClient, tx, config.package.oracle, token);
@@ -360,27 +379,30 @@ export async function swap(
         TO_TOKEN: TOKEN;
         amount: string;
         user: string;
+        suiCoins?: string[]; // for sponsored tx
     }
 ): Promise<Transaction> {
-    await updatePyth(pythClient, tx, [input.FROM_TOKEN, input.TO_TOKEN]);
+    let fromToken = tokenType[NETWORK][input.FROM_TOKEN];
+    let toToken = tokenType[NETWORK][input.TO_TOKEN];
+
+    let coin;
+    let suiCoin;
+
+    if (input.FROM_TOKEN == "SUI" && config.sponsored) {
+        // split together
+        [coin, suiCoin] = splitCoins(tx, tokenType.MAINNET.SUI, input.coins, [input.amount, "2"], config.sponsored);
+    } else if (config.sponsored) {
+        coin = splitCoin(tx, fromToken, input.coins, input.amount, config.sponsored);
+        suiCoin = splitCoin(tx, tokenType.MAINNET.SUI, input.suiCoins!, "2", config.sponsored);
+    } else {
+        coin = splitCoin(tx, fromToken, input.coins, input.amount, config.sponsored);
+        // no suiCoin
+    }
+
+    await updatePyth(pythClient, tx, [input.FROM_TOKEN, input.TO_TOKEN], suiCoin);
     updateOracleWithPythUsd(pythClient, tx, config.package.oracle, input.FROM_TOKEN);
     updateOracleWithPythUsd(pythClient, tx, config.package.oracle, input.TO_TOKEN);
 
-    var coin;
-    if (input.FROM_TOKEN == "SUI") {
-        [coin] = tx.splitCoins(tx.gas, [input.amount]);
-    } else {
-        let destination = input.coins.pop()!;
-
-        if (input.coins.length > 0) {
-            tx.mergeCoins(destination, input.coins);
-        }
-
-        [coin] = tx.splitCoins(destination, [input.amount]);
-    }
-
-    let fromToken = tokenType[NETWORK][input.FROM_TOKEN];
-    let toToken = tokenType[NETWORK][input.TO_TOKEN];
     let token = _swap(tx, [fromToken, toToken], {
         version: PERP_VERSION,
         registry: LP_POOL,

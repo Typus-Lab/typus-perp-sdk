@@ -1,6 +1,6 @@
 import { assetToDecimal, TOKEN, typeArgToAsset } from "@typus/typus-sdk/dist/src/constants";
 import { PKG_V1 as PERP_PACKAGE_ID } from "../typus_perp/index";
-import { OrderFilledEvent, RealizeFundingEvent } from "../typus_perp/position/structs";
+import { OrderFilledEvent, RealizeFundingEvent, RemovePositionEvent } from "../typus_perp/position/structs";
 import {
     CancelTradingOrderEvent,
     CreateTradingOrderEvent,
@@ -22,7 +22,8 @@ export type actionType =
     | "Exercise Position"
     | "Liquidation"
     | "Force Close Position"
-    | "Swap";
+    | "Swap"
+    | "Realized Funding";
 
 export type sideType = "Long" | "Short";
 
@@ -167,18 +168,68 @@ export async function parseUserHistory(raw_events) {
                 events.push(e);
                 break;
 
-            case RealizeFundingEvent.$typeName.split("::")[2]:
+            case RemovePositionEvent.$typeName.split("::")[2]:
                 // same tx with order filled
-                var index = events.findLastIndex((e) => e.tx_digest == tx_digest);
+                var index = events.findLastIndex((e) => e.tx_digest == tx_digest && e.action == "Order Filled (Close Position)");
                 // console.log(index);
                 if (index !== -1) {
                     // true => user paid to pool
-                    let x = json.realized_funding_sign ? json.realized_funding_fee_usd / 10 ** 9 : -json.realized_funding_fee_usd / 10 ** 9;
+                    let remaining_collateral_amount =
+                        json.remaining_collateral_amount / 10 ** assetToDecimal(events[index].collateral_token)!;
                     events[index] = {
                         ...events[index],
-                        realized_pnl: (events[index].realized_pnl ?? 0) - x,
+                        collateral: remaining_collateral_amount + Math.max(0, events[index].realized_pnl!),
                     };
                 }
+                break;
+
+            case RealizeFundingEvent.$typeName.split("::")[2]:
+                // // same tx with order filled
+                // var index = events.findLastIndex((e) => e.tx_digest == tx_digest);
+                // // console.log(index);
+                // if (index !== -1) {
+                //     // true => user paid to pool
+                //     let x = json.realized_funding_sign ? json.realized_funding_fee_usd / 10 ** 9 : -json.realized_funding_fee_usd / 10 ** 9;
+                //     events[index] = {
+                //         ...events[index],
+                //         realized_pnl: (events[index].realized_pnl ?? 0) - x,
+                //     };
+                // }
+                var base_token = typeArgToAsset(json.symbol.base_token.name) as TOKEN;
+                var collateral_token = typeArgToAsset(json.collateral_token.name) as TOKEN;
+                var market = `${base_token}/USD`;
+                var related = events.find((e) => e.position_id === json.position_id && e.market === market);
+
+                // if realized_funding_sign is true, user pays to pool
+                let realized_funding_fee = json.realized_funding_sign
+                    ? -json.realized_funding_fee / 10 ** assetToDecimal(collateral_token)!
+                    : json.realized_funding_fee / 10 ** assetToDecimal(collateral_token)!;
+
+                let realized_funding_fee_usd = json.realized_funding_sign
+                    ? -json.realized_funding_fee_usd / 10 ** 9
+                    : json.realized_funding_fee_usd / 10 ** 9;
+
+                var e: Event = {
+                    action: "Realized Funding",
+                    typeName: name,
+                    order_id: undefined,
+                    position_id: json.position_id,
+                    market,
+                    side: related?.side,
+                    order_type: related?.order_type,
+                    status: "Filled",
+                    size: related?.size,
+                    base_token,
+                    collateral: realized_funding_fee,
+                    collateral_token,
+                    price: undefined,
+                    realized_pnl: realized_funding_fee_usd,
+                    timestamp,
+                    tx_digest,
+                    dov_index: related?.dov_index,
+                    sender: "user",
+                };
+                events.push(e);
                 break;
 
             case CancelTradingOrderEvent.$typeName.split("::")[2]:
@@ -305,10 +356,14 @@ export async function parseUserHistory(raw_events) {
     // SwapEvent => Swap
 }
 
-export async function getGraphQLEvents(module: string, sender: string, beforeCursor: string | null = null) {
+export async function getGraphQLEvents(module: string, sender: string | null, beforeCursor: string | null = null) {
     let before = "";
     if (beforeCursor) {
         before = `before: "${beforeCursor}",`;
+    }
+    let senderFilter = "";
+    if (sender) {
+        senderFilter = `sender: "${sender}"`;
     }
     var graphql = JSON.stringify({
         query: `
@@ -318,7 +373,7 @@ export async function getGraphQLEvents(module: string, sender: string, beforeCur
           ${before}
           filter: {
             eventType: "${module}",
-            sender: "${sender}"
+            ${senderFilter}
             }
         ) {
           pageInfo {
@@ -520,6 +575,22 @@ export async function getRealizeOptionFromSentio(userAddress: string, startTimes
     return events;
 }
 
+// export function toRecentTrades(events: Event[]): Event[] {
+//     let trades: Event[] = [];
+
+//     for (let event of events) {
+//         if (event.action == "Place Order") {
+//             trades.push(event);
+//         } else if (event.action == "Order Filled (Close Position)") {
+//             if (trades[trades.length - 1].tx_digest == event.tx_digest) {
+//                 trades[trades.length - 1].realized_pnl = event.realized_pnl;
+//             }
+//         }
+//     }
+
+//     return trades;
+// }
+
 // getOrderMatchFromSentio("0x95f26ce574fc9ace2608807648d99a4dce17f1be8964613d5b972edc82849e9e", 0);
 // getRealizeOptionFromSentio("0x95f26ce574fc9ace2608807648d99a4dce17f1be8964613d5b972edc82849e9e", 0);
 
@@ -529,10 +600,27 @@ function toToken(name: string): TOKEN {
         case "ETH":
         case "SOL":
         case "APT":
-            return `w${name}`;
+            return `w${name}` as TOKEN;
         case "WUSDC":
             return "wUSDC";
         default:
             return name as TOKEN;
+    }
+}
+
+export function toSentioToken(name: TOKEN): string {
+    switch (name) {
+        case "WBTC":
+            return "BTC";
+        case "wETH":
+            return "ETH";
+        case "wSOL":
+            return "SOL";
+        case "wAPT":
+            return "APT";
+        case "wUSDC":
+            return "USDC";
+        default:
+            return name;
     }
 }

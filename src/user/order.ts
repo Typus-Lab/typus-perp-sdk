@@ -6,9 +6,9 @@ import {
 } from "../typus_perp/trading/functions";
 import { Position, TradingOrder } from "../typus_perp/position/structs";
 import { COMPETITION_CONFIG, LP_POOL, MARKET, NETWORK, PERP_VERSION } from "..";
-import { PythClient, updatePyth, TypusConfig, updateOracleWithPythUsd } from "@typus/typus-sdk/dist/src/utils";
+import { PythClient, updatePyth, TypusConfig, updateOracleWithPythUsd, splitCoins, splitCoin } from "@typus/typus-sdk/dist/src/utils";
 import { CLOCK, tokenType, TOKEN, typeArgToAsset, oracle } from "@typus/typus-sdk/dist/src/constants";
-import { Transaction } from "@mysten/sui/transactions";
+import { Argument, Transaction } from "@mysten/sui/transactions";
 
 export async function createTradingOrder(
     config: TypusConfig,
@@ -25,41 +25,32 @@ export async function createTradingOrder(
         isStopOrder: boolean;
         reduceOnly: boolean;
         linkedPositionId: string | null;
+        suiCoins?: string[]; // for sponsored tx
     }
 ): Promise<Transaction> {
     // INPUTS
     let TOKEN = input.cToken;
     let BASE_TOKEN = input.tradingToken;
+    let tokens = Array.from(new Set([TOKEN, BASE_TOKEN]));
 
     let cToken = tokenType[NETWORK][TOKEN];
     let baseToken = tokenType[NETWORK][BASE_TOKEN];
 
-    var coin;
+    let coin;
+    let suiCoin;
 
-    if (TOKEN == "SUI") {
-        if (input.coins.length == 0) {
-            // support zero coin input for closing position
-            [coin] = zeroCoin(tx, [cToken]);
-        } else {
-            [coin] = tx.splitCoins(tx.gas, [input.amount]);
-        }
+    if (TOKEN == "SUI" && config.sponsored) {
+        // split together
+        [coin, suiCoin] = splitCoins(tx, tokenType.MAINNET.SUI, input.coins, [input.amount, tokens.length.toString()], config.sponsored);
+    } else if (config.sponsored) {
+        coin = splitCoin(tx, cToken, input.coins, input.amount, config.sponsored);
+        suiCoin = splitCoin(tx, tokenType.MAINNET.SUI, input.suiCoins!, tokens.length.toString(), config.sponsored);
     } else {
-        if (input.coins.length == 0) {
-            // support zero coin input for closing position
-            [coin] = zeroCoin(tx, [cToken]);
-        } else {
-            let destination = input.coins.pop()!;
-
-            if (input.coins.length > 0) {
-                tx.mergeCoins(destination, input.coins);
-            }
-
-            [coin] = tx.splitCoins(destination, [input.amount]);
-        }
+        coin = splitCoin(tx, cToken, input.coins, input.amount, config.sponsored);
+        // no suiCoin
     }
 
-    let tokens = Array.from(new Set([TOKEN, BASE_TOKEN]));
-    await updatePyth(pythClient, tx, tokens);
+    await updatePyth(pythClient, tx, tokens, suiCoin);
     for (let token of tokens) {
         updateOracleWithPythUsd(pythClient, tx, config.package.oracle, token);
     }
@@ -131,33 +122,34 @@ export async function increaseCollateral(
         coins: string[];
         amount: string;
         position: Position;
+        suiCoins?: string[]; // for sponsored tx
     }
 ): Promise<Transaction> {
     // parse from Position
     let TOKEN = typeArgToAsset(input.position.collateralToken.name);
     let BASE_TOKEN = typeArgToAsset(input.position.symbol.baseToken.name);
-
     let tokens = Array.from(new Set([TOKEN, BASE_TOKEN]));
-    await updatePyth(pythClient, tx, tokens);
-    for (let token of tokens) {
-        updateOracleWithPythUsd(pythClient, tx, config.package.oracle, token);
-    }
 
     let cToken = tokenType[NETWORK][TOKEN];
     let baseToken = tokenType[NETWORK][BASE_TOKEN];
 
-    var coin;
+    let coin;
+    let suiCoin;
 
-    if (TOKEN == "SUI") {
-        [coin] = tx.splitCoins(tx.gas, [input.amount]);
+    if (TOKEN == "SUI" && config.sponsored) {
+        // split together
+        [coin, suiCoin] = splitCoins(tx, tokenType.MAINNET.SUI, input.coins, [input.amount, tokens.length.toString()], config.sponsored);
+    } else if (config.sponsored) {
+        coin = splitCoin(tx, cToken, input.coins, input.amount, config.sponsored);
+        suiCoin = splitCoin(tx, tokenType.MAINNET.SUI, input.suiCoins!, tokens.length.toString(), config.sponsored);
     } else {
-        let destination = input.coins.pop()!;
+        coin = splitCoin(tx, cToken, input.coins, input.amount, config.sponsored);
+        // no suiCoin
+    }
 
-        if (input.coins.length > 0) {
-            tx.mergeCoins(destination, input.coins);
-        }
-
-        [coin] = tx.splitCoins(destination, [input.amount]);
+    await updatePyth(pythClient, tx, tokens, suiCoin);
+    for (let token of tokens) {
+        updateOracleWithPythUsd(pythClient, tx, config.package.oracle, token);
     }
 
     _increaseCollateral(tx, [cToken, baseToken], {
@@ -183,6 +175,7 @@ export async function releaseCollateral(
     input: {
         position: Position;
         amount: string;
+        suiCoins?: string[]; // for sponsored tx
     }
 ): Promise<Transaction> {
     // parse from Position
@@ -190,7 +183,13 @@ export async function releaseCollateral(
     let BASE_TOKEN = typeArgToAsset(input.position.symbol.baseToken.name);
 
     let tokens = Array.from(new Set([TOKEN, BASE_TOKEN]));
-    await updatePyth(pythClient, tx, tokens);
+
+    let suiCoin;
+    if (config.sponsored) {
+        suiCoin = splitCoin(tx, tokenType.MAINNET.SUI, input.suiCoins!, tokens.length.toString(), config.sponsored);
+    }
+
+    await updatePyth(pythClient, tx, tokens, suiCoin);
     for (let token of tokens) {
         updateOracleWithPythUsd(pythClient, tx, config.package.oracle, token);
     }

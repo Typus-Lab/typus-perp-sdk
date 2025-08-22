@@ -4,7 +4,9 @@ import {
     getGraphQLEvents,
     getLiquidateFromSentio,
     getOrderMatchFromSentio,
+    getRealizeFundingFromSentio,
     getRealizeOptionFromSentio,
+    getRemovePositionFromSentio,
     parseUserHistory,
     STAKE_PACKAGE_ID,
 } from "src";
@@ -55,10 +57,14 @@ import { PKG_V1 as PERP_PACKAGE_ID } from "src/typus_perp/index";
     // 6. force cancel order
     events = await getCancelOrderFromSentio(user, startTimestamp, events);
 
+    // 7.
+    events = await getRealizeFundingFromSentio(user, startTimestamp, events);
+    events = await getRemovePositionFromSentio(user, startTimestamp, events);
+
     // console.log(events);
     // console.log(events.filter((x) => x.collateral_token == "DEEP"));
 
-    // saveToFile(events, "userHistory.csv");
+    saveToFile(events, "userHistory.csv");
 })();
 
 import * as fs from "fs";

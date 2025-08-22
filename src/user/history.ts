@@ -463,6 +463,78 @@ export async function getLiquidateFromSentio(userAddress: string, startTimestamp
     return events;
 }
 
+export async function getRealizeFundingFromSentio(userAddress: string, startTimestamp: number, events: Event[]): Promise<Event[]> {
+    const datas = await getFromSentio("RealizeFunding", userAddress, startTimestamp.toString());
+    // console.log(datas);
+    let realizeFunding = datas.map((x) => {
+        let base_token = toToken(x.base_token);
+        let txHistory: Event = {
+            action: "Realized Funding",
+            typeName: "RealizeFundingEvent",
+            order_id: undefined,
+            position_id: x.position_id,
+            market: `${base_token}/USD`,
+            side: undefined,
+            order_type: undefined,
+            status: "Filled",
+            size: undefined,
+            base_token,
+            collateral: Number(x.realized_funding_fee),
+            collateral_token: x.collateral_token,
+            price: undefined,
+            realized_pnl: Number(x.realized_funding_fee_usd),
+            timestamp: x.timestamp,
+            tx_digest: x.transaction_hash,
+            dov_index: undefined,
+            sender: "cranker",
+        };
+
+        return txHistory;
+    });
+
+    // deduplicate
+    realizeFunding = realizeFunding.filter(
+        (x) => events.findIndex((y) => y.tx_digest == x.tx_digest && y.action == "Realized Funding") == -1
+    );
+    realizeFunding = realizeFunding.map((x) => {
+        // find related position
+        var related = events.find((e) => e.position_id === x.position_id && e.market === x.market);
+        // console.log(x, related);
+        if (related) {
+            x.side = related.side;
+            x.order_type = related.order_type;
+            x.size = related.size;
+            x.dov_index = related.dov_index;
+        }
+        return x;
+    });
+    // console.log(realizeFunding);
+    events = events.concat(realizeFunding);
+    events = events.sort((a, b) => Number(new Date(a.timestamp)) - Number(new Date(b.timestamp)));
+    return events;
+}
+
+export async function getRemovePositionFromSentio(userAddress: string, startTimestamp: number, events: Event[]): Promise<Event[]> {
+    const datas = await getFromSentio("RemovePosition", userAddress, startTimestamp.toString());
+    // console.log(datas);
+    datas.forEach((x) => {
+        // console.log(x);
+        // same tx with order filled
+        var index = events.findLastIndex((e) => e.tx_digest == x.transaction_hash && e.action == "Order Filled (Close Position)");
+        // console.log(index);
+        if (index !== -1) {
+            // true => user paid to pool
+            let remaining_collateral_amount = x.remaining_collateral_amount;
+            events[index] = {
+                ...events[index],
+                collateral: remaining_collateral_amount + Math.max(0, events[index].realized_pnl!),
+            };
+        }
+    });
+
+    return events;
+}
+
 export async function getCancelOrderFromSentio(userAddress: string, startTimestamp: number, events: Event[]): Promise<Event[]> {
     const datas = await getFromSentio("CancelOrder", userAddress, startTimestamp.toString(), true);
     // console.log(datas);

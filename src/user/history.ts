@@ -6,6 +6,7 @@ import {
     CreateTradingOrderEvent,
     CreateTradingOrderWithBidReceiptsEvent,
     IncreaseCollateralEvent,
+    ManagerReducePositionEvent,
     ReleaseCollateralEvent,
 } from "../typus_perp/trading/structs";
 import { SwapEvent } from "src/typus_perp/lp-pool/structs";
@@ -21,6 +22,7 @@ export type actionType =
     | "Modify Collateral"
     | "Exercise Position"
     | "Liquidation"
+    | "Force Cancel Order"
     | "Force Close Position"
     | "Swap"
     | "Realized Funding";
@@ -461,14 +463,70 @@ export async function getLiquidateFromSentio(userAddress: string, startTimestamp
     return events;
 }
 
+export async function getCancelOrderFromSentio(userAddress: string, startTimestamp: number, events: Event[]): Promise<Event[]> {
+    const datas = await getFromSentio("CancelOrder", userAddress, startTimestamp.toString(), true);
+    // console.log(datas);
+    let cancelOrder = datas.map((x) => {
+        let collateral = Number(x.released_collateral_amount);
+        let base_token = toToken(x.base_token);
+        let txHistory: Event = {
+            action: "Force Cancel Order",
+            typeName: "CancelTradingOrderEvent",
+            order_id: x.order_id,
+            position_id: undefined,
+            market: `${base_token}/USD`,
+            side: undefined,
+            order_type: undefined,
+            status: "Canceled",
+            size: undefined,
+            base_token,
+            collateral,
+            collateral_token: x.collateral_token,
+            price: undefined,
+            realized_pnl: undefined,
+            timestamp: x.timestamp,
+            tx_digest: x.transaction_hash,
+            dov_index: undefined,
+            sender: "cranker",
+        };
+
+        return txHistory;
+    });
+
+    // deduplicate
+    cancelOrder = cancelOrder.filter((x) => events.findIndex((y) => y.tx_digest == x.tx_digest) == -1);
+    cancelOrder = cancelOrder.map((x) => {
+        // find related order
+        let related = events.findLast((e) => e.order_id == x.order_id && e.market == x.market);
+        // console.log(x, related);
+        if (related) {
+            x.position_id = related.position_id;
+            x.side = related.side;
+            x.order_type = related.order_type;
+            x.size = related.size;
+            x.price = related.price;
+        }
+        return x;
+    });
+    // console.log(cancelOrder);
+    events = events.concat(cancelOrder);
+    events = events.sort((a, b) => Number(new Date(a.timestamp)) - Number(new Date(b.timestamp)));
+    return events;
+}
+
 export async function getOrderMatchFromSentio(userAddress: string, startTimestamp: number, events: Event[]): Promise<Event[]> {
-    const datas = await getFromSentio("OrderFilled", userAddress, startTimestamp.toString());
+    const datas = await getFromSentio("OrderFilled", userAddress, startTimestamp.toString(), true);
     // console.log(datas);
     let order_match = datas.map((x) => {
         let base_token = toToken(x.base_token);
 
         let txHistory: Event = {
-            action: x.order_type == "Open" ? "Order Filled (Open Position)" : "Order Filled (Close Position)",
+            action:
+                x.order_type == "Open"
+                    ? "Order Filled (Open Position)"
+                    : x.sender == "0x978f65df8570a075298598a9965c18de9087f9e888eb3430fe20334f5c554cfd"
+                      ? "Force Close Position"
+                      : "Order Filled (Close Position)",
             typeName: "OrderFilledEvent",
             order_id: x.order_id,
             position_id: x.position_id,
@@ -485,7 +543,7 @@ export async function getOrderMatchFromSentio(userAddress: string, startTimestam
             timestamp: x.timestamp,
             tx_digest: x.transaction_hash,
             dov_index: undefined,
-            sender: "cranker",
+            sender: x.is_cranker ? "cranker" : "user",
         };
 
         return txHistory;
@@ -494,6 +552,7 @@ export async function getOrderMatchFromSentio(userAddress: string, startTimestam
     // deduplicate
     order_match = order_match.filter((x) => events.findIndex((y) => y.tx_digest == x.tx_digest) == -1);
     order_match = order_match.map((x) => {
+        // find related order
         let related = events.findLast((e) => e.order_id == x.order_id && e.market == x.market);
         // console.log(x, related);
         if (related) {

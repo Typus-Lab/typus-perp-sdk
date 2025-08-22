@@ -6,15 +6,21 @@ const headers = {
     "Content-Type": "application/json",
 };
 
-export async function getFromSentio(event: string, userAddress: string, startTimestamp: string): Promise<any[]> {
+export async function getFromSentio(event: string, userAddress: string, startTimestamp: string, cranker?: boolean): Promise<any[]> {
     let apiUrl = "https://app.sentio.xyz/api/v1/analytics/typus/typus_perp_mainnet/sql/execute";
+
+    // add cranker fileter
+    let crankerFilter = "";
+    if (cranker) {
+        crankerFilter = "AND is_cranker == true";
+    }
 
     let requestData = {
         sqlQuery: {
             sql: `
                 SELECT *
                 FROM ${event}
-                WHERE distinct_id = '${userAddress}' AND timestamp >= ${startTimestamp}
+                WHERE distinct_id = '${userAddress}' AND timestamp >= ${startTimestamp} ${crankerFilter}
                 ORDER BY timestamp DESC;
             `,
             size: 1000,

@@ -1,5 +1,6 @@
 import "@typus/typus-sdk/dist/src/utils/load_env";
 import {
+    getCancelOrderFromSentio,
     getGraphQLEvents,
     getLiquidateFromSentio,
     getOrderMatchFromSentio,
@@ -32,23 +33,32 @@ import { PKG_V1 as PERP_PACKAGE_ID } from "src/typus_perp/index";
 
     // console.dir(raw_events, { depth: null });
     console.log(raw_events.length);
+    // console.log(raw_events.map((x) => x.contents.json));
 
     // 2. parser events
     let events = await parseUserHistory(raw_events);
     // console.log(events);
     console.log(events.length);
     console.log(events.at(0)?.timestamp);
+    const startTimestamp = Math.floor(new Date(events.at(0)?.timestamp!).getTime() / 1000);
+    console.log(startTimestamp);
 
-    // // 3. order match events from sentio
-    // events = await getOrderMatchFromSentio(user, 0, events);
+    // 3. order match events from sentio
+    events = await getOrderMatchFromSentio(user, startTimestamp, events);
 
-    // // 4. liquidate events from sentio
-    // events = await getLiquidateFromSentio(user, 0, events);
+    // 4. liquidate events from sentio
+    events = await getLiquidateFromSentio(user, startTimestamp, events);
 
-    // // 5. exercise events from sentio
-    // events = await getRealizeOptionFromSentio(user, 0, events);
+    // 5. exercise events from sentio
+    events = await getRealizeOptionFromSentio(user, startTimestamp, events);
 
-    saveToFile(events, "userHistory.csv");
+    // 6. force cancel order
+    events = await getCancelOrderFromSentio(user, startTimestamp, events);
+
+    // console.log(events);
+    // console.log(events.filter((x) => x.collateral_token == "DEEP"));
+
+    // saveToFile(events, "userHistory.csv");
 })();
 
 import * as fs from "fs";

@@ -493,8 +493,7 @@ export async function getCancelOrderFromSentio(userAddress: string, startTimesta
         return txHistory;
     });
 
-    // deduplicate
-    cancelOrder = cancelOrder.filter((x) => events.findIndex((y) => y.tx_digest == x.tx_digest) == -1);
+    // no duplicate
     cancelOrder = cancelOrder.map((x) => {
         // find related order
         let related = events.findLast((e) => e.order_id == x.order_id && e.market == x.market);

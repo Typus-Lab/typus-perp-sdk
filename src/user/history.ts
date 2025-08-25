@@ -520,7 +520,7 @@ export async function getRemovePositionFromSentio(userAddress: string, startTime
     datas.forEach((x) => {
         // console.log(x);
         // same tx with order filled
-        var index = events.findLastIndex((e) => e.tx_digest == x.transaction_hash && e.action == "Order Filled (Close Position)");
+        var index = events.findLastIndex((e) => e.tx_digest == x.transaction_hash && e.action == "Force Close Position");
         // console.log(index);
         if (index !== -1) {
             // true => user paid to pool

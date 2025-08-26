@@ -21,7 +21,7 @@ import { getSponsoredTx } from "@typus/typus-sdk/dist/src/utils/sponsoredTx";
     var tx = new Transaction();
 
     // INPUTS
-    let cToken: TOKEN = "wUSDT";
+    let cToken: TOKEN = "SUI";
     let tradingToken: TOKEN = "SUI";
 
     let pythClient = createPythClient(provider, NETWORK);
@@ -68,10 +68,14 @@ import { getSponsoredTx } from "@typus/typus-sdk/dist/src/utils/sponsoredTx";
 
     // For Sponsored Tx
     let sponsoredResponse = await getSponsoredTx(provider, user, tx);
-    let senderSig = await Transaction.from(sponsoredResponse?.txBytes).sign({ signer: keypair }); // wallet sign
-    let res = await provider.executeTransactionBlock({
-        transactionBlock: sponsoredResponse?.txBytes,
-        signature: [senderSig?.signature, sponsoredResponse?.sponsorSig],
-    });
-    console.log(res);
+    if (sponsoredResponse.txBytes) {
+        let senderSig = await Transaction.from(sponsoredResponse.txBytes).sign({ signer: keypair }); // wallet sign
+        let res = await provider.executeTransactionBlock({
+            transactionBlock: sponsoredResponse.txBytes,
+            signature: [senderSig?.signature, sponsoredResponse.sponsorSig],
+        });
+        console.log(res);
+    } else {
+        console.log(sponsoredResponse);
+    }
 })();

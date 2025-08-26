@@ -1,5 +1,5 @@
 import {
-    createTradingOrderWithBidReceiptV2 as _createTradingOrderWithBidReceipt,
+    createTradingOrderWithBidReceiptV3 as _createTradingOrderWithBidReceipt,
     reduceOptionCollateralPositionSizeV2 as _reduceOptionCollateralPositionSize,
 } from "../typus_perp/trading/functions";
 import { Transaction } from "@mysten/sui/transactions";
@@ -65,7 +65,6 @@ export async function createTradingOrderWithBidReceiptByAutoBid(
         isLong: input.isLong,
         dovRegistry: config.registry.dov.dovSingle,
         collateralBidReceipt,
-        user: input.user,
         tailsStakingRegistry: config.registry.typus.tailsStaking,
         competitionConfig: COMPETITION_CONFIG,
     });
@@ -130,7 +129,6 @@ export async function createTradingOrderWithBidReceipt(
         isLong: input.isLong,
         dovRegistry: config.registry.dov.dovSingle,
         collateralBidReceipt,
-        user: input.user,
         tailsStakingRegistry: config.registry.typus.tailsStaking,
         competitionConfig: COMPETITION_CONFIG,
     });

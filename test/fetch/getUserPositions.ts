@@ -12,9 +12,11 @@ import { createPythClient } from "@typus/typus-sdk/dist/src/utils";
 
     let positions = await getUserPositions(config, user);
     console.log(JSON.stringify(positions, (_, v) => (typeof v === "bigint" ? `${v}` : v), 2));
+    // `OpenFee` = unrealizedTradingFee
 
     let bidReceipts = parseOptionBidReceipts(positions);
     console.log(bidReceipts);
+    // use bidReceipts to calculate `Option PnL`
 
     if (positions.length > 0) {
         let pythClient = createPythClient(provider, NETWORK);

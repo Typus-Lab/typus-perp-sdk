@@ -3,6 +3,7 @@ import {
     cancelTradingOrder as _cancelTradingOrder,
     increaseCollateral as _increaseCollateral,
     releaseCollateral as _releaseCollateral,
+    collectPositionFundingFee as _collectPositionFundingFee,
 } from "../typus_perp/trading/functions";
 import { Position, TradingOrder } from "../typus_perp/position/structs";
 import { COMPETITION_CONFIG, LP_POOL, MARKET, NETWORK, PERP_VERSION } from "..";
@@ -211,6 +212,49 @@ export async function releaseCollateral(
     });
 
     tx.transferObjects([coin], input.position.user);
+
+    return tx;
+}
+
+export async function collectPositionFundingFee(
+    config: TypusConfig,
+    tx: Transaction,
+    pythClient: PythClient,
+    input: {
+        position: Position;
+        suiCoins?: string[]; // for sponsored tx
+    }
+): Promise<Transaction> {
+    // parse from Position
+    let TOKEN = typeArgToAsset(input.position.collateralToken.name);
+    let BASE_TOKEN = typeArgToAsset(input.position.symbol.baseToken.name);
+
+    let tokens = Array.from(new Set([TOKEN, BASE_TOKEN]));
+
+    let suiCoin;
+    if (config.sponsored) {
+        suiCoin = splitCoin(tx, tokenType.MAINNET.SUI, input.suiCoins!, tokens.length.toString(), config.sponsored);
+    }
+
+    await updatePyth(pythClient, tx, tokens, suiCoin);
+    for (let token of tokens) {
+        updateOracleWithPythUsd(pythClient, tx, config.package.oracle, token);
+    }
+
+    let cToken = tokenType[NETWORK][TOKEN];
+    let baseToken = tokenType[NETWORK][BASE_TOKEN];
+
+    _collectPositionFundingFee(tx, [cToken, baseToken], {
+        version: PERP_VERSION,
+        registry: MARKET,
+        poolRegistry: LP_POOL,
+        marketIndex: BigInt(0),
+        poolIndex: BigInt(0),
+        typusOracleCToken: oracle[NETWORK][TOKEN]!,
+        typusOracleTradingSymbol: oracle[NETWORK][BASE_TOKEN]!,
+        clock: CLOCK,
+        positionId: BigInt(input.position.positionId),
+    });
 
     return tx;
 }

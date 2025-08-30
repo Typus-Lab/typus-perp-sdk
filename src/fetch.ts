@@ -374,7 +374,8 @@ export async function getLiquidationPriceAndPnl(
         updateOracleWithPythUsd(pythClient, tx, config.package.oracle, token);
     }
 
-    for (let position of input.positions) {
+    console.log(input.positions.slice(3, 4));
+    for (let position of input.positions.slice(2, 3)) {
         // parse from Position
         let TOKEN = typeArgToAsset(position.collateralToken.name);
         let BASE_TOKEN = typeArgToAsset(position.symbol.baseToken.name);
@@ -405,7 +406,7 @@ export async function getLiquidationPriceAndPnl(
     //   7  unrealized_borrow_fee_usd,
     //   8  close_fee_usd
 
-    let results = res.results!.slice(-input.positions.length).map((x) => {
+    let results = res.results ? res.results!.slice(-input.positions.length).map((x) => {
         // console.log(x);
         let liquidationPrice = Number(bcs.u64().parse(Uint8Array.from(x.returnValues![0][0])));
         let isProfit = bcs.bool().parse(Uint8Array.from(x.returnValues![1][0]));
@@ -430,7 +431,7 @@ export async function getLiquidationPriceAndPnl(
             closeFee,
             pnlAfterFee: pnl - cost,
         } as PositionInfo;
-    });
+    }) : [];
     // console.log(results);
     return results;
 }

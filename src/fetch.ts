@@ -374,7 +374,7 @@ export async function getLiquidationPriceAndPnl(
         updateOracleWithPythUsd(pythClient, tx, config.package.oracle, token);
     }
 
-    for (let position of input.positions.slice(2, 3)) {
+    for (let position of input.positions) {
         // parse from Position
         let TOKEN = typeArgToAsset(position.collateralToken.name);
         let BASE_TOKEN = typeArgToAsset(position.symbol.baseToken.name);

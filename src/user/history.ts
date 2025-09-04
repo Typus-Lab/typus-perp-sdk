@@ -80,7 +80,7 @@ export async function parseUserHistory(raw_events) {
                 var market = `${base_token}/USD`;
 
                 var size = Number(json.size) / 10 ** assetToDecimal(base_token)!;
-                var collateral: number;
+                var collateral: number | undefined;
                 if (json.collateral_amount) {
                     collateral = Number(json.collateral_amount) / 10 ** assetToDecimal(collateral_token)!;
                 } else {
@@ -130,15 +130,7 @@ export async function parseUserHistory(raw_events) {
                 var price = json.filled_price;
                 var action: actionType;
                 var related: Event | undefined;
-
-                if (json.linked_position_id != undefined) {
-                    action = "Order Filled (Close Position)";
-                    related = events.findLast((e) => e.position_id === json.linked_position_id && e.market === market);
-                    // the "Place Order" is emit after Order Filled if filled immediately
-                } else {
-                    action = "Order Filled (Open Position)";
-                    related = events.findLast((e) => e.order_id === json.order_id && e.market === market);
-                }
+                var collateral: number | undefined;
 
                 var realized_trading_fee = Number(json.realized_trading_fee) + Number(json.realized_borrow_fee);
                 var realized_fee_in_usd = Number(json.realized_fee_in_usd) / 10 ** 9;
@@ -146,6 +138,17 @@ export async function parseUserHistory(raw_events) {
                 // console.log(realized_amount);
                 var realized_pnl =
                     realized_trading_fee > 0 ? ((realized_amount - realized_trading_fee) * realized_fee_in_usd) / realized_trading_fee : 0;
+
+                if (json.linked_position_id != undefined) {
+                    action = "Order Filled (Close Position)";
+                    related = events.findLast((e) => e.position_id === json.linked_position_id && e.market === market);
+                    // the "Place Order" is emit after Order Filled if filled immediately
+                    collateral = (realized_amount - realized_trading_fee) / 10 ** assetToDecimal(collateral_token)!;
+                } else {
+                    action = "Order Filled (Open Position)";
+                    related = events.findLast((e) => e.order_id === json.order_id && e.market === market);
+                    collateral = related?.collateral;
+                }
 
                 var e: Event = {
                     action,
@@ -158,7 +161,7 @@ export async function parseUserHistory(raw_events) {
                     status: "Filled",
                     size,
                     base_token,
-                    collateral: related?.collateral, // TODO: check for option collateral
+                    collateral, // TODO: check for option collateral
                     collateral_token,
                     price: Number(price) / 10 ** 8, // WARNING: fixed decimal
                     realized_pnl,
@@ -180,7 +183,7 @@ export async function parseUserHistory(raw_events) {
                         json.remaining_collateral_amount / 10 ** assetToDecimal(events[index].collateral_token)!;
                     events[index] = {
                         ...events[index],
-                        collateral: remaining_collateral_amount + Math.max(0, events[index].realized_pnl!),
+                        collateral: remaining_collateral_amount + Math.max(0, events[index].collateral!),
                     };
                 }
                 break;
@@ -270,7 +273,7 @@ export async function parseUserHistory(raw_events) {
                 var market = `${base_token}/USD`;
                 var related = events.find((e) => e.position_id === json.position_id && e.market === market);
 
-                var collateral: number;
+                var collateral: number | undefined;
                 if (json.increased_collateral_amount) {
                     collateral = Number(json.increased_collateral_amount) * -1;
                 } else {
@@ -527,7 +530,7 @@ export async function getRemovePositionFromSentio(userAddress: string, startTime
             let remaining_collateral_amount = x.remaining_collateral_amount;
             events[index] = {
                 ...events[index],
-                collateral: remaining_collateral_amount + Math.max(0, events[index].realized_pnl!),
+                collateral: remaining_collateral_amount + Math.max(0, events[index].collateral!),
             };
         }
     });

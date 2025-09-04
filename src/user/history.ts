@@ -25,7 +25,7 @@ export type actionType =
     | "Force Cancel Order"
     | "Force Close Position"
     | "Swap"
-    | "Realized Funding";
+    | "Realize Funding";
 
 export type sideType = "Long" | "Short";
 
@@ -215,7 +215,7 @@ export async function parseUserHistory(raw_events) {
                     : json.realized_funding_fee_usd / 10 ** 9;
 
                 var e: Event = {
-                    action: "Realized Funding",
+                    action: "Realize Funding",
                     typeName: name,
                     order_id: undefined,
                     position_id: json.position_id,
@@ -472,7 +472,7 @@ export async function getRealizeFundingFromSentio(userAddress: string, startTime
     let realizeFunding = datas.map((x) => {
         let base_token = toToken(x.base_token);
         let txHistory: Event = {
-            action: "Realized Funding",
+            action: "Realize Funding",
             typeName: "RealizeFundingEvent",
             order_id: undefined,
             position_id: x.position_id,
@@ -497,7 +497,7 @@ export async function getRealizeFundingFromSentio(userAddress: string, startTime
 
     // deduplicate
     realizeFunding = realizeFunding.filter(
-        (x) => events.findIndex((y) => y.tx_digest == x.tx_digest && y.action == "Realized Funding") == -1
+        (x) => events.findIndex((y) => y.tx_digest == x.tx_digest && y.action == "Realize Funding") == -1
     );
     realizeFunding = realizeFunding.map((x) => {
         // find related position

@@ -143,7 +143,9 @@ export async function parseUserHistory(raw_events) {
                     action = "Order Filled (Close Position)";
                     related = events.findLast((e) => e.position_id === json.linked_position_id && e.market === market);
                     // the "Place Order" is emit after Order Filled if filled immediately
-                    collateral = (realized_amount - realized_trading_fee) / 10 ** assetToDecimal(collateral_token)!;
+                    if (realized_pnl > 0) {
+                        collateral = (realized_amount - realized_trading_fee) / 10 ** assetToDecimal(collateral_token)!;
+                    }
                 } else {
                     action = "Order Filled (Open Position)";
                     related = events.findLast((e) => e.order_id === json.order_id && e.market === market);
@@ -181,25 +183,16 @@ export async function parseUserHistory(raw_events) {
                     // true => user paid to pool
                     let remaining_collateral_amount =
                         json.remaining_collateral_amount / 10 ** assetToDecimal(events[index].collateral_token)!;
+                    console.log("Remove", remaining_collateral_amount, events[index].collateral);
+
                     events[index] = {
                         ...events[index],
-                        collateral: remaining_collateral_amount + Math.max(0, events[index].collateral!),
+                        collateral: remaining_collateral_amount + events[index].collateral!,
                     };
                 }
                 break;
 
             case RealizeFundingEvent.$typeName.split("::")[2]:
-                // // same tx with order filled
-                // var index = events.findLastIndex((e) => e.tx_digest == tx_digest);
-                // // console.log(index);
-                // if (index !== -1) {
-                //     // true => user paid to pool
-                //     let x = json.realized_funding_sign ? json.realized_funding_fee_usd / 10 ** 9 : -json.realized_funding_fee_usd / 10 ** 9;
-                //     events[index] = {
-                //         ...events[index],
-                //         realized_pnl: (events[index].realized_pnl ?? 0) - x,
-                //     };
-                // }
                 var base_token = typeArgToAsset(json.symbol.base_token.name) as TOKEN;
                 var collateral_token = typeArgToAsset(json.collateral_token.name) as TOKEN;
                 var market = `${base_token}/USD`;
@@ -213,6 +206,18 @@ export async function parseUserHistory(raw_events) {
                 let realized_funding_fee_usd = json.realized_funding_sign
                     ? -json.realized_funding_fee_usd / 10 ** 9
                     : json.realized_funding_fee_usd / 10 ** 9;
+
+                // same tx with order filled
+                var index = events.findLastIndex((e) => e.tx_digest == tx_digest && e.action == "Order Filled (Close Position)");
+                // console.log(index);
+                if (index !== -1 && realized_funding_fee < 0) {
+                    // true => user paid to pool
+                    events[index] = {
+                        ...events[index],
+                        collateral: events[index].collateral ?? 0 - realized_funding_fee,
+                    };
+                    console.log("Funding", events[index].collateral, realized_funding_fee);
+                }
 
                 var e: Event = {
                     action: "Realize Funding",

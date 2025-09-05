@@ -183,7 +183,6 @@ export async function parseUserHistory(raw_events) {
                     // true => user paid to pool
                     let remaining_collateral_amount =
                         json.remaining_collateral_amount / 10 ** assetToDecimal(events[index].collateral_token)!;
-                    console.log("Remove", remaining_collateral_amount, events[index].collateral);
 
                     events[index] = {
                         ...events[index],
@@ -216,7 +215,6 @@ export async function parseUserHistory(raw_events) {
                         ...events[index],
                         collateral: events[index].collateral ?? 0 - realized_funding_fee,
                     };
-                    console.log("Funding", events[index].collateral, realized_funding_fee);
                 }
 
                 var e: Event = {

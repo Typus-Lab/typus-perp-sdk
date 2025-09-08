@@ -186,7 +186,7 @@ export async function parseUserHistory(raw_events) {
 
                     events[index] = {
                         ...events[index],
-                        collateral: remaining_collateral_amount + events[index].collateral!,
+                        collateral: remaining_collateral_amount + (events[index].collateral ?? 0),
                     };
                 }
                 break;

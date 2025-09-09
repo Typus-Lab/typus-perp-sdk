@@ -209,7 +209,7 @@ export async function parseUserHistory(raw_events) {
                 // same tx with order filled
                 var index = events.findLastIndex((e) => e.tx_digest == tx_digest && e.action == "Order Filled (Close Position)");
                 // console.log(index);
-                if (index !== -1 && realized_funding_fee < 0) {
+                if (index !== -1) {
                     // true => user paid to pool
                     events[index] = {
                         ...events[index],

@@ -214,6 +214,7 @@ export async function parseUserHistory(raw_events) {
                     events[index] = {
                         ...events[index],
                         collateral: events[index].collateral ?? 0 - realized_funding_fee,
+                        realized_pnl: events[index].realized_pnl ?? 0 - realized_funding_fee_usd,
                     };
                 }
 
@@ -512,6 +513,19 @@ export async function getRealizeFundingFromSentio(userAddress: string, startTime
             x.size = related.size;
             x.dov_index = related.dov_index;
         }
+
+        // same tx with order filled
+        var index = events.findLastIndex((e) => e.tx_digest == x.tx_digest && e.action == "Order Filled (Close Position)");
+        // console.log(index);
+        if (index !== -1) {
+            // true => user paid to pool
+            events[index] = {
+                ...events[index],
+                collateral: (events[index].collateral ?? 0) - (x.collateral ?? 0),
+                realized_pnl: (events[index].realized_pnl ?? 0) - (x.realized_pnl ?? 0),
+            };
+        }
+
         return x;
     });
     // console.log(realizeFunding);
@@ -613,7 +627,7 @@ export async function getOrderMatchFromSentio(userAddress: string, startTimestam
             status: "Filled",
             size: Number(x.filled_size),
             base_token,
-            collateral: Number(x.realized_amount),
+            collateral: Number(x.realized_amount) - Number(x.realized_fee),
             collateral_token: x.collateral_token,
             price: Number(x.filled_price),
             realized_pnl: Number(x.realized_pnl),
@@ -694,7 +708,7 @@ export async function getRealizeOptionFromSentio(userAddress: string, startTimes
                 x.dov_index = related.dov_index;
 
                 // add to close event
-                related.collateral = x.collateral;
+                related.collateral = Number(related.collateral ?? 0) + Number(x.collateral ?? 0);
                 related.realized_pnl = Number(related.realized_pnl ?? 0) + Number(x.realized_pnl ?? 0);
                 x.collateral = undefined;
                 x.realized_pnl = undefined;

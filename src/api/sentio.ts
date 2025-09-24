@@ -480,6 +480,92 @@ export async function getTlpPriceFromSentio(fromTimestamp?: number, toTimestamp?
     return samples[0].values;
 }
 
+export async function getTlpComparisonFromSentio(startTimestamp: number, endTimestamp: number): Promise<tlpComparison[]> {
+    let apiUrl = "https://app.sentio.xyz/api/v1/analytics/typus/typus_perp_mainnet/sql/execute";
+
+    let requestData = {
+        sqlQuery: {
+            sql: `
+                with
+                tlp_hourly as (
+                    select
+                        toStartOfHour(timestamp + interval 30 minute) as hour,
+                        argMin(value, abs(toUnixTimestamp(timestamp) - toUnixTimestamp(toStartOfHour(timestamp + interval 30 minute)))) as tlp_price
+                    from tlp_price
+                    WHERE timestamp >= ${startTimestamp} and timestamp < ${endTimestamp}
+                    group by hour
+                ),
+
+                sui_hourly as (
+                    select
+                        toStartOfHour(time + interval 30 minute) as hour,
+                        argMin(price, abs(toUnixTimestamp(time) - toUnixTimestamp(toStartOfHour(time + interval 30 minute)))) as sui_price
+                    from 'token.prices'
+                    where symbol = 'sui'
+                        and time >= ${startTimestamp} and time < ${endTimestamp}
+                    group by hour
+                ),
+
+                merged as (
+                    select
+                        t.hour,
+                        t.tlp_price,
+                        s.sui_price
+                    from tlp_hourly t
+                    join sui_hourly s
+                    on t.hour = s.hour
+                ),
+
+                base as (
+                    select min(hour) as base_hour
+                    from merged
+                ),
+                base_prices as (
+                    select
+                        anyIf(m.tlp_price, m.hour = b.base_hour) as base_tlp,
+                        anyIf(m.sui_price, m.hour = b.base_hour) as base_sui
+                    from merged m
+                    cross join base b
+                )
+
+                select
+                    m.hour,
+                    100 * m.tlp_price / bp.base_tlp as tlp_value,
+                    100 * m.sui_price / bp.base_sui as sui_value,
+                    0.6 * (100 * m.sui_price / bp.base_sui) + 0.4 * 100 as portfolio_60sui_40usdc
+                from merged m
+                cross join base_prices bp
+                order by m.hour;
+            `,
+            size: 1000,
+        },
+    };
+
+    let jsonData = JSON.stringify(requestData);
+
+    let response = await fetch(apiUrl, {
+        method: "POST",
+        headers,
+        body: jsonData,
+    });
+
+    let data = await response.json();
+    // console.log(data);
+
+    if (data.result) {
+        return data.result.rows as tlpComparison[];
+    } else {
+        return [];
+    }
+}
+
+interface tlpComparison {
+    hour: string;
+    portfolio_60sui_40usdc: number;
+    sui_value: number;
+    tlp_value: number;
+}
+
 export async function getUserPnlFromSentio(startTimestamp: number, endTimestamp: number, userAddress?: string): Promise<any[]> {
     let apiUrl = "https://app.sentio.xyz/api/v1/analytics/typus/typus_perp_mainnet/sql/execute";
 
@@ -489,7 +575,6 @@ export async function getUserPnlFromSentio(startTimestamp: number, endTimestamp:
     }
 
     let requestData = {
-        version: 25,
         sqlQuery: {
             sql: `
             WITH
@@ -578,7 +663,6 @@ export async function getLeaderboardFromSentio(startTs: number, endTs: number): 
     let size = (10 * (endTs - startTs)) / 60 / 60 / 24; // day * 10
 
     let requestData = {
-        version: 25,
         sqlQuery: {
             sql: `
                 WITH
@@ -663,3 +747,4 @@ export async function getLeaderboardFromSentio(startTs: number, endTs: number): 
 // getUserPnlFromSentio(parseTimestamp("2025-06-24 11:00:00"), parseTimestamp("2025-07-08 11:00:00")).then((x) => console.log(x));
 // getMinuteTradingVolumeFromSentio("SUI", 30, 10).then((x) => console.log(x));
 // getLeaderboardFromSentio(1754362800, 1754362800 + 60 * 60 * 24 * 14).then((x) => console.log(x, x.length));
+// getTlpComparisonFromSentio(1758076817, 1758681617).then((x) => console.log(x));

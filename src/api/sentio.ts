@@ -530,6 +530,8 @@ export async function getTlpComparisonFromSentio(startTimestamp: number, endTime
 
                 select
                     m.hour,
+                    m.tlp_price,
+                    m.sui_price,
                     100 * m.tlp_price / bp.base_tlp as tlp_value,
                     100 * m.sui_price / bp.base_sui as sui_value,
                     0.6 * (100 * m.sui_price / bp.base_sui) + 0.4 * 100 as portfolio_60sui_40usdc
@@ -564,6 +566,8 @@ interface tlpComparison {
     portfolio_60sui_40usdc: number;
     sui_value: number;
     tlp_value: number;
+    sui_price: number;
+    tlp_price: number;
 }
 
 export async function getUserPnlFromSentio(startTimestamp: number, endTimestamp: number, userAddress?: string): Promise<any[]> {

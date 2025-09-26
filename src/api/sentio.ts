@@ -539,7 +539,7 @@ export async function getTlpComparisonFromSentio(startTimestamp: number, endTime
                 cross join base_prices bp
                 order by m.hour;
             `,
-            size: 1000,
+            size: 10000,
         },
     };
 

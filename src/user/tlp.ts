@@ -44,6 +44,7 @@ export async function mintStakeLp(
         cTOKEN: TOKEN;
         amount: string;
         userShareId: string | null;
+        isAutoCompound: boolean;
         user: string;
         stake: boolean;
         suiCoins?: string[]; // for sponsored tx
@@ -103,7 +104,7 @@ export async function mintStakeLp(
             index: BigInt(0),
             lpToken: lpCoin,
             clock: CLOCK,
-            userShareId: input.userShareId ? BigInt(input.userShareId) : null,
+            isAutoCompound: input.isAutoCompound ? BigInt(1) : null,
         });
     } else {
         tx.transferObjects([lpCoin], input.user);
@@ -144,7 +145,7 @@ export async function stakeLp(
         index: BigInt(0),
         lpToken: coin,
         clock: CLOCK,
-        userShareId: input.userShareId ? BigInt(input.userShareId) : null,
+        isAutoCompound: null,
     });
 
     return tx;
@@ -455,7 +456,7 @@ export async function harvestStakeReward(
                 index: BigInt(0),
                 lpToken: iCoin,
                 clock: CLOCK,
-                userShareId: input.userShareId ? BigInt(input.userShareId) : null,
+                isAutoCompound: null,
             });
         } else {
             tx.transferObjects([iCoin], input.user);

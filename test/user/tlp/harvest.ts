@@ -14,14 +14,12 @@ import { getStakePool, getUserStake, harvestStakeReward, NETWORK } from "src";
     console.log(user);
 
     // 1. Get user's stake
-    let stakes = await getUserStake(config, user);
-    // console.log(stakes);
-    let stake = stakes[0];
+    let stake = await getUserStake(config, user);
     console.log(stake);
 
     // 2. StakePool
     let stakePool = await getStakePool(config);
-    // console.log(stakePool);
+    console.log(stakePool);
 
     let tx = new Transaction();
 

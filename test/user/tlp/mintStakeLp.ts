@@ -47,9 +47,10 @@ import { TOKEN, tokenType } from "@typus/typus-sdk/dist/src/constants";
         coins,
         cTOKEN,
         amount: "10000000000",
-        userShareId: stakes.length > 0 ? stakes[0][0][0].userShareId.toString() : null,
+        userShareId: stakes ? stakes[0].userShareId.toString() : null,
         user,
         stake: false,
+        isAutoCompound: false,
     });
 
     // console.log(tx.getData());

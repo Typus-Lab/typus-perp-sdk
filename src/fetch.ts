@@ -52,6 +52,7 @@ import {
     phantom,
 } from "./_framework/reified";
 import { TLP as TlpStruct } from "./typus_perp/tlp/structs";
+import { KeyedBigVector } from "./_dependencies/source/0x4b0f4ee1a40ce37ec81c987cc4e76a665419e74b863319492fc7d26f708b835a/keyed-big-vector/structs";
 
 export async function getLpPools(config: TypusConfig): Promise<LiquidityPool[]> {
     let provider = new SuiClient({ url: config.rpcEndpoint });
@@ -260,9 +261,9 @@ export function parseOptionBidReceipts(positions: Position[]): (TypusBidReceipt 
 }
 
 /**
- * @returns [lpShare, incentives][]
+ * @returns [lpShare, incentives]
  */
-export async function getUserStake(config: TypusConfig, user: string): Promise<[LpUserShare, string[]][]> {
+export async function getUserStake(config: TypusConfig, user: string): Promise<[LpUserShare, string[]] | null> {
     let provider = new SuiClient({ url: config.rpcEndpoint });
     let tx = new Transaction();
 
@@ -288,22 +289,17 @@ export async function getUserStake(config: TypusConfig, user: string): Promise<[
         // console.log(returnValues);
 
         var reader = new BcsReader(new Uint8Array(returnValues));
-        let lpShares: [LpUserShare, string[]][] = [];
+        let length = reader.readULEB();
+        let lpShare = LpUserShare.fromFields(LpUserShare.bcs.read(reader));
+        let incentives: string[] = [];
         reader.readVec((reader) => {
-            let length = reader.readULEB();
-            let lpShare = LpUserShare.fromFields(LpUserShare.bcs.read(reader));
-            let incentives: string[] = [];
-            reader.readVec((reader) => {
-                let incentive = reader.read64();
-                incentives.push(incentive);
-            });
-
-            lpShares.push([lpShare, incentives]);
+            let incentive = reader.read64();
+            incentives.push(incentive);
         });
 
-        return lpShares;
+        return [lpShare, incentives];
     } else {
-        return [];
+        return null;
     }
 }
 
@@ -405,32 +401,34 @@ export async function getLiquidationPriceAndPnl(
     //   7  unrealized_borrow_fee_usd,
     //   8  close_fee_usd
 
-    let results = res.results ? res.results!.slice(-input.positions.length).map((x) => {
-        // console.log(x);
-        let liquidationPrice = Number(bcs.u64().parse(Uint8Array.from(x.returnValues![0][0])));
-        let isProfit = bcs.bool().parse(Uint8Array.from(x.returnValues![1][0]));
-        var pnl = Number(bcs.u64().parse(Uint8Array.from(x.returnValues![2][0])));
-        pnl = isProfit ? pnl : -pnl;
-        // including closeFee
-        let isCost = bcs.bool().parse(Uint8Array.from(x.returnValues![3][0]));
-        var cost = Number(bcs.u64().parse(Uint8Array.from(x.returnValues![4][0])));
-        cost = isCost ? cost : -cost;
-        // cost = unrealized_loss + unrealized_trading_fee + unrealized_borrow_fee + unrealized_funding_fee;
-        let fundingFeeSign = bcs.bool().parse(Uint8Array.from(x.returnValues![5][0]));
-        var fundingFee = Number(bcs.u64().parse(Uint8Array.from(x.returnValues![6][0])));
-        fundingFee = fundingFeeSign ? fundingFee : -fundingFee;
-        let borrowFee = Number(bcs.u64().parse(Uint8Array.from(x.returnValues![7][0])));
-        let closeFee = Number(bcs.u64().parse(Uint8Array.from(x.returnValues![8][0])));
+    let results = res.results
+        ? res.results!.slice(-input.positions.length).map((x) => {
+              // console.log(x);
+              let liquidationPrice = Number(bcs.u64().parse(Uint8Array.from(x.returnValues![0][0])));
+              let isProfit = bcs.bool().parse(Uint8Array.from(x.returnValues![1][0]));
+              var pnl = Number(bcs.u64().parse(Uint8Array.from(x.returnValues![2][0])));
+              pnl = isProfit ? pnl : -pnl;
+              // including closeFee
+              let isCost = bcs.bool().parse(Uint8Array.from(x.returnValues![3][0]));
+              var cost = Number(bcs.u64().parse(Uint8Array.from(x.returnValues![4][0])));
+              cost = isCost ? cost : -cost;
+              // cost = unrealized_loss + unrealized_trading_fee + unrealized_borrow_fee + unrealized_funding_fee;
+              let fundingFeeSign = bcs.bool().parse(Uint8Array.from(x.returnValues![5][0]));
+              var fundingFee = Number(bcs.u64().parse(Uint8Array.from(x.returnValues![6][0])));
+              fundingFee = fundingFeeSign ? fundingFee : -fundingFee;
+              let borrowFee = Number(bcs.u64().parse(Uint8Array.from(x.returnValues![7][0])));
+              let closeFee = Number(bcs.u64().parse(Uint8Array.from(x.returnValues![8][0])));
 
-        return {
-            liquidationPrice,
-            pnl: pnl + closeFee,
-            fundingFee,
-            borrowFee,
-            closeFee,
-            pnlAfterFee: pnl - cost,
-        } as PositionInfo;
-    }) : [];
+              return {
+                  liquidationPrice,
+                  pnl: pnl + closeFee,
+                  fundingFee,
+                  borrowFee,
+                  closeFee,
+                  pnlAfterFee: pnl - cost,
+              } as PositionInfo;
+          })
+        : [];
     // console.log(results);
     return results;
 }

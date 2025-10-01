@@ -21,20 +21,17 @@ import { createPythClient } from "@typus/typus-sdk/dist/src/utils";
     let pythClient = createPythClient(provider, NETWORK);
 
     // 1. Get user's stake
-    let stakes = await getUserStake(config, user);
-    console.log(stakes);
+    let stake = await getUserStake(config, user);
+    console.log(stake);
 
     // 2. StakePool
     let stakePool = await getStakePool(config);
     // console.log(stakePool);
 
-    let stake = stakes[0];
-    console.log(stake);
-
     let tx = new Transaction();
 
     await unstake(config, tx, {
-        userShareId: stake[0][0].userShareId.toString(),
+        userShareId: stake![0].userShareId.toString(),
         lpPool,
         stakePool,
         share: "1000000000",

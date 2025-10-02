@@ -20,12 +20,12 @@ import mne from "mnemonic.json";
     var nextCursor: string | null = null;
 
     var total = 0;
-    let users: { user: string; share: number }[] = [];
+    let users: { user: string; total_shares: number; active_shares: number }[] = [];
 
     while (hasNextPage) {
         var res = await provider.getDynamicFields({
-            // parentId: "0x0ad369d88f8072ae5f8a3a9f7c197778bfd0f5ca8eca4c51336ddc4be3104f0c",
-            parentId: "0xaaeb8ee5148b7ee3eefc6733e3fe2eb48f5d8d187d7d79f9cc21aa59902f077d",
+            parentId: "0x0ad369d88f8072ae5f8a3a9f7c197778bfd0f5ca8eca4c51336ddc4be3104f0c",
+            // parentId: "0xaaeb8ee5148b7ee3eefc6733e3fe2eb48f5d8d187d7d79f9cc21aa59902f077d",
             cursor: nextCursor,
         });
         // console.log(res);
@@ -35,14 +35,19 @@ import mne from "mnemonic.json";
         var res2 = await provider.multiGetObjects({ ids: res.data.map((x) => x.objectId), options: { showContent: true } });
 
         res2.forEach((x) => {
+            var total_shares = 0;
+            var active_shares = 0;
             // @ts-ignore
-            let share = Number(x.data?.content.fields.value[0].fields.total_shares);
+            x.data?.content.fields.value.forEach((y) => {
+                total_shares += Number(y.fields.total_shares);
+                active_shares += Number(y.fields.active_shares);
+            });
             // @ts-ignore
             let user = x.data?.content.fields.name;
-            console.log(user, share);
+            console.log(user, active_shares);
 
-            users.push({ user, share });
-            total += share;
+            users.push({ user, total_shares, active_shares });
+            total += active_shares;
         });
     }
 
@@ -51,6 +56,8 @@ import mne from "mnemonic.json";
     console.log(stakePool.poolInfo.totalShare);
 
     saveToFile(users, "stake_v1_users.csv");
+
+    console.log(users.length);
 
     var tx = new Transaction();
 

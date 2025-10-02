@@ -39,7 +39,7 @@ export const STAKE_PACKAGE_ID =
         : "0x220e7ba8923c0c30b57c0baab3bc15d781a39bb294cf7af318c0fc816b5cf7e6";
 export const STAKE_PUBLISHED_AT =
     NETWORK == "MAINNET"
-        ? "0x4b9eb21b97ff55e5f9c1b4118fc30d124b3bccf4740610370ebe099236f3d4b3"
+        ? "0xdf96424bc1ba70a6e53c07b2b55c597eccb8a21f722a917a5b4c9d8514b2d858"
         : "0x11f4f072d6472f545a82200ec4bee8a8db006e209f76bcc013178c585ed4b368";
 export const STAKE_PKG_V1 =
     NETWORK == "MAINNET"

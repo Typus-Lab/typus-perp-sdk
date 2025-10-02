@@ -12,7 +12,7 @@ import {
     getEstimatedLiquidationPriceAndPnl,
 } from "./typus_perp/trading/functions";
 
-import { allocateIncentive, getUserShares } from "./typus_stake_pool/stake-pool/functions";
+import { allocateIncentive, getUserShares, getUserSharesByUserShareId } from "./typus_stake_pool/stake-pool/functions";
 import { LpUserShare, StakePool } from "./typus_stake_pool/stake-pool/structs";
 
 import { CLOCK, oracle, SENDER, TOKEN, tokenType, typeArgToAsset } from "@typus/typus-sdk/dist/src/constants";
@@ -281,6 +281,53 @@ export async function getUserStake(config: TypusConfig, user: string): Promise<[
     });
 
     let res = await provider.devInspectTransactionBlock({ sender: user, transactionBlock: tx });
+    // console.log(res);
+
+    if (res.results) {
+        // @ts-ignore
+        var returnValues = res.results[1].returnValues[0][0];
+        // console.log(returnValues);
+
+        var reader = new BcsReader(new Uint8Array(returnValues));
+        let length = reader.readULEB();
+        // console.log(length);
+        if (length == 0) {
+            return null;
+        }
+        let lpShare = LpUserShare.fromFields(LpUserShare.bcs.read(reader));
+        let incentives: string[] = [];
+        reader.readVec((reader) => {
+            let incentive = reader.read64();
+            incentives.push(incentive);
+        });
+
+        return [lpShare, incentives];
+    } else {
+        return null;
+    }
+}
+
+/**
+ * @returns [lpShare, incentives]
+ */
+export async function getUserStakeById(config: TypusConfig, userShareId: string): Promise<[LpUserShare, string[]] | null> {
+    let provider = new SuiClient({ url: config.rpcEndpoint });
+    let tx = new Transaction();
+
+    allocateIncentive(tx, {
+        version: STAKE_POOL_VERSION,
+        registry: STAKE_POOL,
+        index: BigInt(0),
+        clock: CLOCK,
+    });
+
+    getUserSharesByUserShareId(tx, {
+        registry: STAKE_POOL,
+        index: BigInt(0),
+        userShareId: BigInt(userShareId),
+    });
+
+    let res = await provider.devInspectTransactionBlock({ sender: SENDER, transactionBlock: tx });
     // console.log(res);
 
     if (res.results) {

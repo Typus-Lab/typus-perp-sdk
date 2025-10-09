@@ -52,6 +52,8 @@ export interface Event {
     timestamp: string;
     tx_digest: string;
     dov_index: string | undefined; // for option collateral
+    reduce_only?: boolean;
+    is_stop_order?: boolean;
     sender: "user" | "cranker";
 }
 
@@ -117,6 +119,8 @@ export async function parseUserHistory(raw_events) {
                     timestamp,
                     tx_digest,
                     dov_index: json.dov_index,
+                    reduce_only: json.reduce_only,
+                    is_stop_order: json.is_stop_order,
                     sender: "user",
                 };
                 events.push(e);

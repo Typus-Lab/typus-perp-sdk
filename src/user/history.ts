@@ -17,6 +17,7 @@ export type actionType =
     | "Place Order"
     | "Cancel Order"
     | "Order Filled (Open Position)"
+    | "Order Filled (Increase Position)"
     | "Order Filled (Close Position)"
     | "Realized PnL"
     | "Modify Collateral"
@@ -141,8 +142,18 @@ export async function parseUserHistory(raw_events) {
 
                 if (json.linked_position_id != undefined) {
                     action = "Order Filled (Close Position)";
+
                     related = events.findLast((e) => e.position_id === json.linked_position_id && e.market === market);
                     // the "Place Order" is emit after Order Filled if filled immediately
+                    const relatedRawEvent = raw_events.find((e) => {
+                        const type: string = e.contents.type.repr;
+                        const [pkg, mod, name] = type.split("::");
+                        return name === related?.typeName && e.transactionBlock.digest === related?.tx_digest && related?.order_id === json.order_id
+                    });
+                    if (relatedRawEvent?.contents?.json?.reduce_only === false) {
+                        action = "Order Filled (Increase Position)";
+                    }
+
                     if (realized_pnl > 0) {
                         collateral = (realized_amount - realized_trading_fee) / 10 ** assetToDecimal(collateral_token)!;
                     }
@@ -293,10 +304,10 @@ export async function parseUserHistory(raw_events) {
                     side: !related
                         ? undefined
                         : related.action === "Order Filled (Open Position)"
-                          ? related.side
-                          : related.side === "Long"
-                            ? "Short"
-                            : "Long",
+                            ? related.side
+                            : related.side === "Long"
+                                ? "Short"
+                                : "Long",
                     order_type: related?.order_type,
                     status: "Filled",
                     size: related?.size,
@@ -616,8 +627,8 @@ export async function getOrderMatchFromSentio(userAddress: string, startTimestam
                 x.order_type == "Open"
                     ? "Order Filled (Open Position)"
                     : x.sender == "0x978f65df8570a075298598a9965c18de9087f9e888eb3430fe20334f5c554cfd"
-                      ? "Force Close Position"
-                      : "Order Filled (Close Position)",
+                        ? "Force Close Position"
+                        : "Order Filled (Close Position)",
             typeName: "OrderFilledEvent",
             order_id: x.order_id,
             position_id: x.position_id,

@@ -11,10 +11,10 @@ import { createPythClient } from "@typus/typus-sdk/dist/src/utils";
     console.log(user);
 
     let positions = await getUserPositions(config, user);
-    // console.log(JSON.stringify(positions, (_, v) => (typeof v === "bigint" ? `${v}` : v), 2));
+    console.log(JSON.stringify(positions, (_, v) => (typeof v === "bigint" ? `${v}` : v), 2));
     // `OpenFee` = unrealizedTradingFee
 
-    let bidReceipts = parseOptionBidReceipts(positions);
+    // let bidReceipts = parseOptionBidReceipts(positions);
     // console.log(bidReceipts);
     // use bidReceipts to calculate `Option PnL`
 
@@ -25,6 +25,6 @@ import { createPythClient } from "@typus/typus-sdk/dist/src/utils";
             positions,
             user,
         });
-        console.log(liquidationPrices);
+        // console.log(liquidationPrices);
     }
 })();

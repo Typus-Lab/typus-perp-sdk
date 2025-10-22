@@ -267,12 +267,12 @@ export async function getUserStake(config: TypusConfig, user: string): Promise<[
     let provider = new SuiClient({ url: config.rpcEndpoint });
     let tx = new Transaction();
 
-    allocateIncentive(tx, {
-        version: STAKE_POOL_VERSION,
-        registry: STAKE_POOL,
-        index: BigInt(0),
-        clock: CLOCK,
-    });
+    // allocateIncentive(tx, {
+    //     version: STAKE_POOL_VERSION,
+    //     registry: STAKE_POOL,
+    //     index: BigInt(0),
+    //     clock: CLOCK,
+    // });
 
     getUserShares(tx, {
         registry: STAKE_POOL,
@@ -285,7 +285,7 @@ export async function getUserStake(config: TypusConfig, user: string): Promise<[
 
     if (res.results) {
         // @ts-ignore
-        var returnValues = res.results[1].returnValues[0][0];
+        var returnValues = res.results[0].returnValues[0][0];
         // console.log(returnValues);
 
         var reader = new BcsReader(new Uint8Array(returnValues));

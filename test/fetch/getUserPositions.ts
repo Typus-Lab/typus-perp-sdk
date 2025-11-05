@@ -4,7 +4,7 @@ import { getLiquidationPriceAndPnl, getUserPositions, NETWORK, parseOptionBidRec
 import { createPythClient } from "@typus/typus-sdk/dist/src/utils";
 
 (async () => {
-    let config = await TypusConfig.default(NETWORK, null);
+    let config = await TypusConfig.default('TESTNET', null);
     let provider = new SuiClient({ url: config.rpcEndpoint });
 
     let user = "0x845c22be3e771ac8d90973e9859b5088207527c158f75ba4ac9e6201ca1eedb8";
@@ -19,12 +19,12 @@ import { createPythClient } from "@typus/typus-sdk/dist/src/utils";
     // use bidReceipts to calculate `Option PnL`
 
     if (positions.length > 0) {
-        let pythClient = createPythClient(provider, NETWORK);
+        let pythClient = createPythClient(provider, 'TESTNET');
 
-        let liquidationPrices = await getLiquidationPriceAndPnl(config, pythClient, {
-            positions,
-            user,
-        });
+        //let liquidationPrices = await getLiquidationPriceAndPnl(config, pythClient, {
+        //    positions,
+        //    user,
+        //});
         // console.log(liquidationPrices);
     }
 })();

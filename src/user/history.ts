@@ -424,7 +424,7 @@ export async function getGraphQLEvents(module: string, sender: string | null, be
           `,
     });
 
-    let response = await fetch(`https://sui-${NETWORK.toLowerCase()}.mystenlabs.com/graphql`, {
+    let response = await fetch(`https://graphql.${NETWORK.toLowerCase()}.sui.io/graphql`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: graphql,

@@ -14,4 +14,4 @@ vaultHistory.json
 *.txt
 dist
 test*.ts
-install-state.gz
+.yarn/*

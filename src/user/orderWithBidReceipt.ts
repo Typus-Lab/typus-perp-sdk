@@ -22,6 +22,7 @@ export async function createTradingOrderWithBidReceiptByAutoBid(
         bToken: TOKEN;
         signalIndex: string;
         strategyIndex: string;
+        share?: string; // if undefined, merge all receipts
         suiCoins?: string[]; // for sponsored tx
     }
 ): Promise<Transaction> {
@@ -45,6 +46,7 @@ export async function createTradingOrderWithBidReceiptByAutoBid(
         signalIndex: input.signalIndex,
         strategyIndex: input.strategyIndex,
         user: input.user,
+        share: input.share,
     });
 
     let cToken = tokenType[NETWORK][TOKEN];

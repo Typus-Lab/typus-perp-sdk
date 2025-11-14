@@ -6,14 +6,22 @@
     "description": "typus perp sdk",
     "license": "MIT",
     "dependencies": {
-        "@typus/typus-sdk": "1.8.13"
+        "@mysten/bcs": "1.9.2",
+        "@mysten/sui": "1.44.0",
+        "@typus/typus-sdk": "1.8.21"
+    },
+    "resolutions": {
+        "@mysten/bcs": "1.9.2",
+        "@mysten/sui": "1.44.0"
     },
     "devDependencies": {
         "@types/bs58": "^4.0.1",
         "@types/camelcase-keys-deep": "^0.1.2",
         "@types/expect": "^24.3.0",
         "@types/mocha": "^10.0.1",
+        "@types/node": "^24.10.1",
         "@types/rx": "^4.1.2",
+        "axios": "^1.13.2",
         "prettier": "^3.0.0",
         "ts-node": "^10.9.2",
         "tsc-alias": "^1.8.10",
@@ -33,5 +41,6 @@
     "bugs": {
         "url": "https://github.com/Typus-Lab/typus-perp-sdk/issues"
     },
-    "homepage": "https://github.com/Typus-Lab/typus-perp-sdk#readme"
+    "homepage": "https://github.com/Typus-Lab/typus-perp-sdk#readme",
+    "packageManager": "yarn@4.10.3+sha512.c38cafb5c7bb273f3926d04e55e1d8c9dfa7d9c3ea1f36a4868fa028b9e5f72298f0b7f401ad5eb921749eb012eb1c3bb74bf7503df3ee43fd600d14a018266f"
 }

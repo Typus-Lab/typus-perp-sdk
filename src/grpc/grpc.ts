@@ -1,5 +1,5 @@
 import { SuiGrpcClient } from "@mysten/sui/grpc";
-import { LIQUIDITY_POOL_0 } from "src/perp";
+import { LIQUIDITY_POOL_0 } from "../index";
 
 import * as lp_pool from "src/generated/typus_perp/lp_pool";
 

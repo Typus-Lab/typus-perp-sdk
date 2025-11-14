@@ -1,7 +1,7 @@
 import {
     createTradingOrderWithBidReceiptV3 as _createTradingOrderWithBidReceipt,
     reduceOptionCollateralPositionSizeV2 as _reduceOptionCollateralPositionSize,
-} from "../typus_perp/trading/functions";
+} from "src/generated/typus_perp/trading";
 import { Transaction } from "@mysten/sui/transactions";
 import { PythClient, updatePyth, TypusConfig, updateOracleWithPythUsd, splitCoin } from "@typus/typus-sdk/dist/src/utils";
 import { tokenType, TOKEN, CLOCK, oracle } from "@typus/typus-sdk/dist/src/constants";
@@ -50,24 +50,28 @@ export async function createTradingOrderWithBidReceiptByAutoBid(
     let cToken = tokenType[NETWORK][TOKEN];
     let bToken = tokenType[NETWORK][input.bToken];
     let baseToken = tokenType[NETWORK][BASE_TOKEN];
-    _createTradingOrderWithBidReceipt(tx, [cToken, bToken, baseToken], {
-        version: PERP_VERSION,
-        registry: MARKET,
-        poolRegistry: LP_POOL,
-        marketIndex: BigInt(0),
-        poolIndex: BigInt(0),
-        typusOracleCToken: oracle[NETWORK][TOKEN]!,
-        typusOracleTradingSymbol: oracle[NETWORK][BASE_TOKEN]!,
-        clock: CLOCK,
-        typusEcosystemVersion: config.version.typus,
-        typusUserRegistry: config.registry.typus.user,
-        typusLeaderboardRegistry: config.registry.typus.leaderboard,
-        isLong: input.isLong,
-        dovRegistry: config.registry.dov.dovSingle,
-        collateralBidReceipt,
-        tailsStakingRegistry: config.registry.typus.tailsStaking,
-        competitionConfig: COMPETITION_CONFIG,
-    });
+    tx.add(
+        _createTradingOrderWithBidReceipt({
+            arguments: {
+                version: PERP_VERSION,
+                registry: MARKET,
+                poolRegistry: LP_POOL,
+                marketIndex: BigInt(0),
+                poolIndex: BigInt(0),
+                typusOracleCToken: oracle[NETWORK][TOKEN]!,
+                typusOracleTradingSymbol: oracle[NETWORK][BASE_TOKEN]!,
+                typusEcosystemVersion: config.version.typus,
+                typusUserRegistry: config.registry.typus.user,
+                typusLeaderboardRegistry: config.registry.typus.leaderboard,
+                isLong: input.isLong,
+                dovRegistry: config.registry.dov.dovSingle,
+                collateralBidReceipt,
+                tailsStakingRegistry: config.registry.typus.tailsStaking,
+                competitionConfig: COMPETITION_CONFIG,
+            },
+            typeArguments: [cToken, bToken, baseToken],
+        })
+    );
 
     return tx;
 }
@@ -114,24 +118,28 @@ export async function createTradingOrderWithBidReceipt(
     let cToken = tokenType[NETWORK][TOKEN];
     let bToken = tokenType[NETWORK][input.bToken];
     let baseToken = tokenType[NETWORK][BASE_TOKEN];
-    _createTradingOrderWithBidReceipt(tx, [cToken, bToken, baseToken], {
-        version: PERP_VERSION,
-        registry: MARKET,
-        poolRegistry: LP_POOL,
-        marketIndex: BigInt(0),
-        poolIndex: BigInt(0),
-        typusOracleCToken: oracle[NETWORK][TOKEN]!,
-        typusOracleTradingSymbol: oracle[NETWORK][BASE_TOKEN]!,
-        clock: CLOCK,
-        typusEcosystemVersion: config.version.typus,
-        typusUserRegistry: config.registry.typus.user,
-        typusLeaderboardRegistry: config.registry.typus.leaderboard,
-        isLong: input.isLong,
-        dovRegistry: config.registry.dov.dovSingle,
-        collateralBidReceipt,
-        tailsStakingRegistry: config.registry.typus.tailsStaking,
-        competitionConfig: COMPETITION_CONFIG,
-    });
+    tx.add(
+        _createTradingOrderWithBidReceipt({
+            arguments: {
+                version: PERP_VERSION,
+                registry: MARKET,
+                poolRegistry: LP_POOL,
+                marketIndex: BigInt(0),
+                poolIndex: BigInt(0),
+                typusOracleCToken: oracle[NETWORK][TOKEN]!,
+                typusOracleTradingSymbol: oracle[NETWORK][BASE_TOKEN]!,
+                typusEcosystemVersion: config.version.typus,
+                typusUserRegistry: config.registry.typus.user,
+                typusLeaderboardRegistry: config.registry.typus.leaderboard,
+                isLong: input.isLong,
+                dovRegistry: config.registry.dov.dovSingle,
+                collateralBidReceipt,
+                tailsStakingRegistry: config.registry.typus.tailsStaking,
+                competitionConfig: COMPETITION_CONFIG,
+            },
+            typeArguments: [cToken, bToken, baseToken],
+        })
+    );
 
     return tx;
 }
@@ -166,24 +174,28 @@ export async function reduceOptionCollateralPositionSize(
     let cToken = tokenType[NETWORK][TOKEN];
     let bToken = tokenType[NETWORK][input.bToken];
     let baseToken = tokenType[NETWORK][BASE_TOKEN];
-    _reduceOptionCollateralPositionSize(tx, [cToken, bToken, baseToken], {
-        version: PERP_VERSION,
-        registry: MARKET,
-        poolRegistry: LP_POOL,
-        marketIndex: BigInt(0),
-        poolIndex: BigInt(0),
-        typusOracleCToken: oracle[NETWORK][TOKEN]!,
-        typusOracleTradingSymbol: oracle[NETWORK][BASE_TOKEN]!,
-        clock: CLOCK,
-        typusEcosystemVersion: config.version.typus,
-        typusUserRegistry: config.registry.typus.user,
-        typusLeaderboardRegistry: config.registry.typus.leaderboard,
-        dovRegistry: config.registry.dov.dovSingle,
-        positionId: BigInt(input.positionId),
-        orderSize: input.orderSize ? BigInt(input.orderSize) : null,
-        tailsStakingRegistry: config.registry.typus.tailsStaking,
-        competitionConfig: COMPETITION_CONFIG,
-    });
+    tx.add(
+        _reduceOptionCollateralPositionSize({
+            arguments: {
+                version: PERP_VERSION,
+                registry: MARKET,
+                poolRegistry: LP_POOL,
+                marketIndex: BigInt(0),
+                poolIndex: BigInt(0),
+                typusOracleCToken: oracle[NETWORK][TOKEN]!,
+                typusOracleTradingSymbol: oracle[NETWORK][BASE_TOKEN]!,
+                typusEcosystemVersion: config.version.typus,
+                typusUserRegistry: config.registry.typus.user,
+                typusLeaderboardRegistry: config.registry.typus.leaderboard,
+                dovRegistry: config.registry.dov.dovSingle,
+                positionId: BigInt(input.positionId),
+                orderSize: input.orderSize ? BigInt(input.orderSize) : null,
+                tailsStakingRegistry: config.registry.typus.tailsStaking,
+                competitionConfig: COMPETITION_CONFIG,
+            },
+            typeArguments: [cToken, bToken, baseToken],
+        })
+    );
 
     return tx;
 }

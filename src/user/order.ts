@@ -8,7 +8,7 @@ import {
 import { Position, TradingOrder } from "src/generated/typus_perp/position";
 import { COMPETITION_CONFIG, LP_POOL, MARKET, NETWORK, PERP_VERSION } from "..";
 import { PythClient, updatePyth, TypusConfig, updateOracleWithPythUsd, splitCoins, splitCoin } from "@typus/typus-sdk/dist/src/utils";
-import { CLOCK, tokenType, TOKEN, typeArgToAsset, oracle } from "@typus/typus-sdk/dist/src/constants";
+import { tokenType, TOKEN, typeArgToAsset, oracle } from "@typus/typus-sdk/dist/src/constants";
 import { Argument, Transaction } from "@mysten/sui/transactions";
 
 export async function createTradingOrder(
@@ -104,17 +104,19 @@ export async function cancelTradingOrder(
     let cToken = "0x" + input.order.collateral_token.name;
     let BASE_TOKEN = "0x" + input.order.symbol.base_token.name;
 
-    let coin = _cancelTradingOrder({
-        arguments: {
-            version: PERP_VERSION,
-            registry: MARKET,
-            marketIndex: BigInt(0),
-            orderId: BigInt(input.order.order_id),
-            triggerPrice: BigInt(input.order.trigger_price),
-            orderUser: null,
-        },
-        typeArguments: [cToken, BASE_TOKEN],
-    });
+    let coin = tx.add(
+        _cancelTradingOrder({
+            arguments: {
+                version: PERP_VERSION,
+                registry: MARKET,
+                marketIndex: BigInt(0),
+                orderId: BigInt(input.order.order_id),
+                triggerPrice: BigInt(input.order.trigger_price),
+                orderUser: null,
+            },
+            typeArguments: [cToken, BASE_TOKEN],
+        })
+    );
 
     tx.transferObjects([coin], input.user);
 
@@ -158,21 +160,22 @@ export async function increaseCollateral(
     for (let token of tokens) {
         updateOracleWithPythUsd(pythClient, tx, config.package.oracle, token);
     }
-
-    _increaseCollateral({
-        arguments: {
-            version: PERP_VERSION,
-            registry: MARKET,
-            poolRegistry: LP_POOL,
-            marketIndex: BigInt(0),
-            poolIndex: BigInt(0),
-            typusOracleCToken: oracle[NETWORK][TOKEN]!,
-            typusOracleTradingSymbol: oracle[NETWORK][BASE_TOKEN]!,
-            positionId: BigInt(input.position.position_id),
-            collateral: coin,
-        },
-        typeArguments: [cToken, baseToken],
-    });
+    tx.add(
+        _increaseCollateral({
+            arguments: {
+                version: PERP_VERSION,
+                registry: MARKET,
+                poolRegistry: LP_POOL,
+                marketIndex: BigInt(0),
+                poolIndex: BigInt(0),
+                typusOracleCToken: oracle[NETWORK][TOKEN]!,
+                typusOracleTradingSymbol: oracle[NETWORK][BASE_TOKEN]!,
+                positionId: BigInt(input.position.position_id),
+                collateral: coin,
+            },
+            typeArguments: [cToken, baseToken],
+        })
+    );
 
     return tx;
 }
@@ -206,20 +209,22 @@ export async function releaseCollateral(
     let cToken = tokenType[NETWORK][TOKEN];
     let baseToken = tokenType[NETWORK][BASE_TOKEN];
 
-    let coin = _releaseCollateral({
-        arguments: {
-            version: PERP_VERSION,
-            registry: MARKET,
-            poolRegistry: LP_POOL,
-            marketIndex: BigInt(0),
-            poolIndex: BigInt(0),
-            typusOracleCToken: oracle[NETWORK][TOKEN]!,
-            typusOracleTradingSymbol: oracle[NETWORK][BASE_TOKEN]!,
-            positionId: BigInt(input.position.position_id),
-            releaseAmount: BigInt(input.amount),
-        },
-        typeArguments: [cToken, baseToken],
-    });
+    let coin = tx.add(
+        _releaseCollateral({
+            arguments: {
+                version: PERP_VERSION,
+                registry: MARKET,
+                poolRegistry: LP_POOL,
+                marketIndex: BigInt(0),
+                poolIndex: BigInt(0),
+                typusOracleCToken: oracle[NETWORK][TOKEN]!,
+                typusOracleTradingSymbol: oracle[NETWORK][BASE_TOKEN]!,
+                positionId: BigInt(input.position.position_id),
+                releaseAmount: BigInt(input.amount),
+            },
+            typeArguments: [cToken, baseToken],
+        })
+    );
 
     tx.transferObjects([coin], input.position.user);
 
@@ -253,20 +258,21 @@ export async function collectPositionFundingFee(
 
     let cToken = tokenType[NETWORK][TOKEN];
     let baseToken = tokenType[NETWORK][BASE_TOKEN];
-
-    _collectPositionFundingFee({
-        arguments: {
-            version: PERP_VERSION,
-            registry: MARKET,
-            poolRegistry: LP_POOL,
-            marketIndex: BigInt(0),
-            poolIndex: BigInt(0),
-            typusOracleCToken: oracle[NETWORK][TOKEN]!,
-            typusOracleTradingSymbol: oracle[NETWORK][BASE_TOKEN]!,
-            positionId: BigInt(input.position.position_id),
-        },
-        typeArguments: [cToken, baseToken],
-    });
+    tx.add(
+        _collectPositionFundingFee({
+            arguments: {
+                version: PERP_VERSION,
+                registry: MARKET,
+                poolRegistry: LP_POOL,
+                marketIndex: BigInt(0),
+                poolIndex: BigInt(0),
+                typusOracleCToken: oracle[NETWORK][TOKEN]!,
+                typusOracleTradingSymbol: oracle[NETWORK][BASE_TOKEN]!,
+                positionId: BigInt(input.position.position_id),
+            },
+            typeArguments: [cToken, baseToken],
+        })
+    );
 
     return tx;
 }

@@ -4,8 +4,8 @@ import {
     increaseCollateral as _increaseCollateral,
     releaseCollateral as _releaseCollateral,
     collectPositionFundingFee as _collectPositionFundingFee,
-} from "../typus_perp/trading/functions";
-import { Position, TradingOrder } from "../typus_perp/position/structs";
+} from "src/generated/typus_perp/trading";
+import { Position, TradingOrder } from "src/generated/typus_perp/position";
 import { COMPETITION_CONFIG, LP_POOL, MARKET, NETWORK, PERP_VERSION } from "..";
 import { PythClient, updatePyth, TypusConfig, updateOracleWithPythUsd, splitCoins, splitCoin } from "@typus/typus-sdk/dist/src/utils";
 import { CLOCK, tokenType, TOKEN, typeArgToAsset, oracle } from "@typus/typus-sdk/dist/src/constants";
@@ -55,29 +55,32 @@ export async function createTradingOrder(
     for (let token of tokens) {
         updateOracleWithPythUsd(pythClient, tx, config.package.oracle, token);
     }
-
-    _createTradingOrder(tx, [cToken, baseToken], {
-        version: PERP_VERSION,
-        registry: MARKET,
-        poolRegistry: LP_POOL,
-        marketIndex: BigInt(0),
-        poolIndex: BigInt(0),
-        typusOracleCToken: oracle[NETWORK][TOKEN]!,
-        typusOracleTradingSymbol: oracle[NETWORK][BASE_TOKEN]!,
-        clock: CLOCK,
-        typusEcosystemVersion: config.version.typus,
-        typusUserRegistry: config.registry.typus.user,
-        typusLeaderboardRegistry: config.registry.typus.leaderboard,
-        collateral: coin,
-        size: BigInt(input.size),
-        triggerPrice: BigInt(input.triggerPrice),
-        isLong: input.isLong,
-        isStopOrder: input.isStopOrder,
-        reduceOnly: input.reduceOnly,
-        linkedPositionId: input.linkedPositionId ? BigInt(input.linkedPositionId) : null,
-        tailsStakingRegistry: config.registry.typus.tailsStaking,
-        competitionConfig: COMPETITION_CONFIG,
-    });
+    tx.add(
+        _createTradingOrder({
+            arguments: {
+                version: PERP_VERSION,
+                registry: MARKET,
+                poolRegistry: LP_POOL,
+                marketIndex: BigInt(0),
+                poolIndex: BigInt(0),
+                typusOracleCToken: oracle[NETWORK][TOKEN]!,
+                typusOracleTradingSymbol: oracle[NETWORK][BASE_TOKEN]!,
+                typusEcosystemVersion: config.version.typus,
+                typusUserRegistry: config.registry.typus.user,
+                typusLeaderboardRegistry: config.registry.typus.leaderboard,
+                collateral: coin,
+                size: BigInt(input.size),
+                triggerPrice: BigInt(input.triggerPrice),
+                isLong: input.isLong,
+                isStopOrder: input.isStopOrder,
+                reduceOnly: input.reduceOnly,
+                linkedPositionId: input.linkedPositionId ? BigInt(input.linkedPositionId) : null,
+                tailsStakingRegistry: config.registry.typus.tailsStaking,
+                competitionConfig: COMPETITION_CONFIG,
+            },
+            typeArguments: [cToken, baseToken],
+        })
+    );
 
     return tx;
 }
@@ -94,20 +97,23 @@ export async function cancelTradingOrder(
     config: TypusConfig,
     tx: Transaction,
     input: {
-        order: TradingOrder;
+        order: typeof TradingOrder.$inferType;
         user: string;
     }
 ): Promise<Transaction> {
-    let cToken = "0x" + input.order.collateralToken.name;
-    let BASE_TOKEN = "0x" + input.order.symbol.baseToken.name;
+    let cToken = "0x" + input.order.collateral_token.name;
+    let BASE_TOKEN = "0x" + input.order.symbol.base_token.name;
 
-    let coin = _cancelTradingOrder(tx, [cToken, BASE_TOKEN], {
-        version: PERP_VERSION,
-        registry: MARKET,
-        marketIndex: BigInt(0),
-        orderId: input.order.orderId,
-        triggerPrice: input.order.triggerPrice,
-        orderUser: null,
+    let coin = _cancelTradingOrder({
+        arguments: {
+            version: PERP_VERSION,
+            registry: MARKET,
+            marketIndex: BigInt(0),
+            orderId: BigInt(input.order.order_id),
+            triggerPrice: BigInt(input.order.trigger_price),
+            orderUser: null,
+        },
+        typeArguments: [cToken, BASE_TOKEN],
     });
 
     tx.transferObjects([coin], input.user);
@@ -122,13 +128,13 @@ export async function increaseCollateral(
     input: {
         coins: string[];
         amount: string;
-        position: Position;
+        position: typeof Position.$inferType;
         suiCoins?: string[]; // for sponsored tx
     }
 ): Promise<Transaction> {
     // parse from Position
-    let TOKEN = typeArgToAsset(input.position.collateralToken.name);
-    let BASE_TOKEN = typeArgToAsset(input.position.symbol.baseToken.name);
+    let TOKEN = typeArgToAsset(input.position.collateral_token.name);
+    let BASE_TOKEN = typeArgToAsset(input.position.symbol.base_token.name);
     let tokens = Array.from(new Set([TOKEN, BASE_TOKEN]));
 
     let cToken = tokenType[NETWORK][TOKEN];
@@ -153,17 +159,19 @@ export async function increaseCollateral(
         updateOracleWithPythUsd(pythClient, tx, config.package.oracle, token);
     }
 
-    _increaseCollateral(tx, [cToken, baseToken], {
-        version: PERP_VERSION,
-        registry: MARKET,
-        poolRegistry: LP_POOL,
-        marketIndex: BigInt(0),
-        poolIndex: BigInt(0),
-        typusOracleCToken: oracle[NETWORK][TOKEN]!,
-        typusOracleTradingSymbol: oracle[NETWORK][BASE_TOKEN]!,
-        clock: CLOCK,
-        positionId: BigInt(input.position.positionId),
-        collateral: coin,
+    _increaseCollateral({
+        arguments: {
+            version: PERP_VERSION,
+            registry: MARKET,
+            poolRegistry: LP_POOL,
+            marketIndex: BigInt(0),
+            poolIndex: BigInt(0),
+            typusOracleCToken: oracle[NETWORK][TOKEN]!,
+            typusOracleTradingSymbol: oracle[NETWORK][BASE_TOKEN]!,
+            positionId: BigInt(input.position.position_id),
+            collateral: coin,
+        },
+        typeArguments: [cToken, baseToken],
     });
 
     return tx;
@@ -174,14 +182,14 @@ export async function releaseCollateral(
     tx: Transaction,
     pythClient: PythClient,
     input: {
-        position: Position;
+        position: typeof Position.$inferType;
         amount: string;
         suiCoins?: string[]; // for sponsored tx
     }
 ): Promise<Transaction> {
     // parse from Position
-    let TOKEN = typeArgToAsset(input.position.collateralToken.name);
-    let BASE_TOKEN = typeArgToAsset(input.position.symbol.baseToken.name);
+    let TOKEN = typeArgToAsset(input.position.collateral_token.name);
+    let BASE_TOKEN = typeArgToAsset(input.position.symbol.base_token.name);
 
     let tokens = Array.from(new Set([TOKEN, BASE_TOKEN]));
 
@@ -198,17 +206,19 @@ export async function releaseCollateral(
     let cToken = tokenType[NETWORK][TOKEN];
     let baseToken = tokenType[NETWORK][BASE_TOKEN];
 
-    let coin = _releaseCollateral(tx, [cToken, baseToken], {
-        version: PERP_VERSION,
-        registry: MARKET,
-        poolRegistry: LP_POOL,
-        marketIndex: BigInt(0),
-        poolIndex: BigInt(0),
-        typusOracleCToken: oracle[NETWORK][TOKEN]!,
-        typusOracleTradingSymbol: oracle[NETWORK][BASE_TOKEN]!,
-        clock: CLOCK,
-        positionId: BigInt(input.position.positionId),
-        releaseAmount: BigInt(input.amount),
+    let coin = _releaseCollateral({
+        arguments: {
+            version: PERP_VERSION,
+            registry: MARKET,
+            poolRegistry: LP_POOL,
+            marketIndex: BigInt(0),
+            poolIndex: BigInt(0),
+            typusOracleCToken: oracle[NETWORK][TOKEN]!,
+            typusOracleTradingSymbol: oracle[NETWORK][BASE_TOKEN]!,
+            positionId: BigInt(input.position.position_id),
+            releaseAmount: BigInt(input.amount),
+        },
+        typeArguments: [cToken, baseToken],
     });
 
     tx.transferObjects([coin], input.position.user);
@@ -221,13 +231,13 @@ export async function collectPositionFundingFee(
     tx: Transaction,
     pythClient: PythClient,
     input: {
-        position: Position;
+        position: typeof Position.$inferType;
         suiCoins?: string[]; // for sponsored tx
     }
 ): Promise<Transaction> {
     // parse from Position
-    let TOKEN = typeArgToAsset(input.position.collateralToken.name);
-    let BASE_TOKEN = typeArgToAsset(input.position.symbol.baseToken.name);
+    let TOKEN = typeArgToAsset(input.position.collateral_token.name);
+    let BASE_TOKEN = typeArgToAsset(input.position.symbol.base_token.name);
 
     let tokens = Array.from(new Set([TOKEN, BASE_TOKEN]));
 
@@ -244,16 +254,18 @@ export async function collectPositionFundingFee(
     let cToken = tokenType[NETWORK][TOKEN];
     let baseToken = tokenType[NETWORK][BASE_TOKEN];
 
-    _collectPositionFundingFee(tx, [cToken, baseToken], {
-        version: PERP_VERSION,
-        registry: MARKET,
-        poolRegistry: LP_POOL,
-        marketIndex: BigInt(0),
-        poolIndex: BigInt(0),
-        typusOracleCToken: oracle[NETWORK][TOKEN]!,
-        typusOracleTradingSymbol: oracle[NETWORK][BASE_TOKEN]!,
-        clock: CLOCK,
-        positionId: BigInt(input.position.positionId),
+    _collectPositionFundingFee({
+        arguments: {
+            version: PERP_VERSION,
+            registry: MARKET,
+            poolRegistry: LP_POOL,
+            marketIndex: BigInt(0),
+            poolIndex: BigInt(0),
+            typusOracleCToken: oracle[NETWORK][TOKEN]!,
+            typusOracleTradingSymbol: oracle[NETWORK][BASE_TOKEN]!,
+            positionId: BigInt(input.position.position_id),
+        },
+        typeArguments: [cToken, baseToken],
     });
 
     return tx;

@@ -41,6 +41,8 @@ import { TOKEN } from "@typus/typus-sdk/dist/src/constants";
         share,
     });
 
+    console.log(tx);
+
     let dryrunRes = await provider.devInspectTransactionBlock({
         transactionBlock: tx,
         sender: user,

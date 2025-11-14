@@ -2,29 +2,42 @@ import "@typus/typus-sdk/dist/src/utils/load_env";
 import { SuiClient } from "@mysten/sui/client";
 import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519";
 import { Transaction } from "@mysten/sui/transactions";
-import { mintStakeLp, NETWORK, getUserStake, getLpPools, getStakePool } from "src";
+import { mintStakeLp, NETWORK, getUserStake, getLpPool, getStakePool, STAKE_PUBLISHED_AT, PERP_PUBLISHED_AT, STAKE_PACKAGE_ID } from "src";
 import { TypusConfig, createPythClient } from "@typus/typus-sdk/dist/src/utils";
 import { TOKEN, tokenType } from "@typus/typus-sdk/dist/src/constants";
 
 (async () => {
     let keypair = Ed25519Keypair.deriveKeypair(String(process.env.MNEMONIC));
     let config = await TypusConfig.default(NETWORK, null);
-    let provider = new SuiClient({ url: config.rpcEndpoint });
+    let provider = new SuiClient({
+        network: "testnet",
+        url: config.rpcEndpoint,
+        mvr: {
+            overrides: {
+                // packages: {
+                //     // "@local-pkg/your-package": PERP_PUBLISHED_AT,
+                //     "@typus/stake_pool": "0x11f4f072d6472f545a82200ec4bee8a8db006e209f76bcc013178c585ed4b368",
+                // },
+                // types: {
+                //     "@typus/stake_pool": "0x11f4f072d6472f545a82200ec4bee8a8db006e209f76bcc013178c585ed4b368",
+                // },
+            },
+        },
+    });
 
     let user = keypair.toSuiAddress();
-    console.log(user);
+    // console.log(user);
 
-    let lpPools = await getLpPools(config);
-    let lpPool = lpPools[0];
+    let lpPool = await getLpPool(provider);
     // console.log(lpPool);
 
-    let stakePool = await getStakePool(config);
+    let stakePool = await getStakePool(provider);
     // console.log(stakePool);
 
     let pythClient = createPythClient(provider, NETWORK);
 
-    let stakes = await getUserStake(config, user);
-    // console.log(stakes);
+    let stakes = await getUserStake(provider, user);
+    console.log(stakes);
 
     // INPUT
     let cTOKEN: TOKEN = "wUSDT";
@@ -47,7 +60,7 @@ import { TOKEN, tokenType } from "@typus/typus-sdk/dist/src/constants";
         coins,
         cTOKEN,
         amount: "10000000000",
-        userShareId: stakes ? stakes[0].userShareId.toString() : null,
+        userShareId: stakes ? stakes[0].user_share_id.toString() : null,
         user,
         stake: false,
         isAutoCompound: false,

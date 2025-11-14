@@ -1,6 +1,7 @@
 import { TypusConfig } from "@typus/typus-sdk/dist/src/utils";
 import { getLpPool, getStakePool, getStakePools, NETWORK } from "src";
 import { getTlpFeeFromSentio } from "src/api/sentio";
+import { SuiClient } from "@mysten/sui/client";
 
 (async () => {
     let config = await TypusConfig.default(NETWORK, null);
@@ -9,10 +10,11 @@ import { getTlpFeeFromSentio } from "src/api/sentio";
     // console.log(stakePools); // 1 lpPool inclueded
     // let stakePool = stakePools[0];
 
-    let stakePool = await getStakePool(config);
-    let incentive_ratio = Number(stakePool.incentives[0].config.periodIncentiveAmount) / Number(stakePool.poolInfo.totalShare);
+    let provider = new SuiClient({ url: config.rpcEndpoint });
+    let stakePool = await getStakePool(provider);
+    let incentive_ratio = Number(stakePool.incentives[0].config.period_incentive_amount) / Number(stakePool.pool_info.total_share);
     // console.log(incentive_ratio);
-    let times = (365 * 24 * 3600 * 1000) / Number(stakePool.incentives[0].config.incentiveIntervalTsMs);
+    let times = (365 * 24 * 3600 * 1000) / Number(stakePool.incentives[0].config.incentive_interval_ts_ms);
     let incentive_apr = incentive_ratio * times;
 
     const end = Math.round(Date.now() / 1000);
@@ -21,9 +23,9 @@ import { getTlpFeeFromSentio } from "src/api/sentio";
     // console.log(value);
     // console.log((value * 365) / 7);
 
-    let lpPool = await getLpPool(config);
-    let tvl_usd = Number(lpPool.poolInfo.tvlUsd) / 10 ** 9;
-    let tlp_amount = Number(lpPool.poolInfo.totalShareSupply) / 10 ** 9;
+    let lpPool = await getLpPool(provider);
+    let tvl_usd = Number(lpPool.pool_info.tvl_usd) / 10 ** 9;
+    let tlp_amount = Number(lpPool.pool_info.total_share_supply) / 10 ** 9;
     let tlp_price = tvl_usd / tlp_amount;
     // console.log(tvl_usd);
     console.log(tlp_price);

@@ -152,7 +152,11 @@ export async function parseUserHistory(raw_events) {
                     const relatedRawEvent = raw_events.find((e) => {
                         const type: string = e.contents.type.repr;
                         const [pkg, mod, name] = type.split("::");
-                        return name === related?.typeName && e.transactionBlock.digest === related?.tx_digest && related?.order_id === json.order_id
+                        return (
+                            name === related?.typeName &&
+                            e.transactionBlock.digest === related?.tx_digest &&
+                            related?.order_id === json.order_id
+                        );
                     });
                     if (relatedRawEvent?.contents?.json?.reduce_only === false) {
                         action = "Order Filled (Increase Position)";
@@ -308,10 +312,10 @@ export async function parseUserHistory(raw_events) {
                     side: !related
                         ? undefined
                         : related.action === "Order Filled (Open Position)"
-                            ? related.side
-                            : related.side === "Long"
-                                ? "Short"
-                                : "Long",
+                          ? related.side
+                          : related.side === "Long"
+                            ? "Short"
+                            : "Long",
                     order_type: related?.order_type,
                     status: "Filled",
                     size: related?.size,
@@ -631,8 +635,8 @@ export async function getOrderMatchFromSentio(userAddress: string, startTimestam
                 x.order_type == "Open"
                     ? "Order Filled (Open Position)"
                     : x.sender == "0x978f65df8570a075298598a9965c18de9087f9e888eb3430fe20334f5c554cfd"
-                        ? "Force Close Position"
-                        : "Order Filled (Close Position)",
+                      ? "Force Close Position"
+                      : "Order Filled (Close Position)",
             typeName: "OrderFilledEvent",
             order_id: x.order_id,
             position_id: x.position_id,

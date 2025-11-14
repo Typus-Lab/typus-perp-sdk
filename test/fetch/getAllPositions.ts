@@ -12,5 +12,5 @@ import { getAllPositions, NETWORK } from "src";
         slice: "100",
         page: "1",
     });
-    console.log(res);
+    console.log(res.positions.length);
 })();

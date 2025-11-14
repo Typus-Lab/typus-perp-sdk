@@ -26,7 +26,7 @@ import { normalizeStructTag } from "@mysten/sui/utils";
     let coins = (
         await provider.getCoins({
             owner: user,
-            coinType: normalizeStructTag(position.collateralToken.name),
+            coinType: normalizeStructTag(position.collateral_token.name),
         })
     ).data.map((coin) => coin.coinObjectId);
 

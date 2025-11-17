@@ -399,7 +399,7 @@ export async function getGraphQLEvents(module: string, sender: string | null, be
           last: 50,
           ${before}
           filter: {
-            eventType: "${module}",
+            module: "${module}",
             ${senderFilter}
             }
         ) {
@@ -411,8 +411,8 @@ export async function getGraphQLEvents(module: string, sender: string | null, be
           }
           edges { cursor }
           nodes {
-            transactionBlock { digest }
-            sendingModule {
+            transaction { digest }
+            transactionModule {
               name
               package { digest }
             }

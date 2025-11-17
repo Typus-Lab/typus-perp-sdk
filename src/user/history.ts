@@ -66,7 +66,7 @@ export async function parseUserHistory(raw_events) {
         }
         const json = event.contents.json;
         const timestamp = event.timestamp;
-        const tx_digest = event.transactionBlock.digest;
+        const tx_digest = event.transaction.digest;
         // console.log(type);
         // console.log(tx_digest);
         // console.log(json);
@@ -74,292 +74,296 @@ export async function parseUserHistory(raw_events) {
 
         const [pkg, mod, name] = type.split("::");
 
-        switch (name) {
-            case CreateTradingOrderEvent.name.split("::")[2]:
-            case CreateTradingOrderWithBidReceiptsEvent.name.split("::")[2]:
-                var base_token = typeArgToAsset(json.base_token.name) as TOKEN;
-                var collateral_token = typeArgToAsset(json.collateral_token.name) as TOKEN;
-                var market = `${base_token}/USD`;
+        if (mod == "trading") {
+            switch (name) {
+                case CreateTradingOrderEvent.name.split("::")[2]:
+                case CreateTradingOrderWithBidReceiptsEvent.name.split("::")[2]:
+                    var base_token = typeArgToAsset(json.base_token.name) as TOKEN;
+                    var collateral_token = typeArgToAsset(json.collateral_token.name) as TOKEN;
+                    var market = `${base_token}/USD`;
 
-                var size = Number(json.size) / 10 ** assetToDecimal(base_token)!;
-                var collateral: number | undefined;
-                if (json.collateral_amount) {
-                    collateral = Number(json.collateral_amount) / 10 ** assetToDecimal(collateral_token)!;
-                } else {
-                    collateral = Number(json.collateral_in_deposit_token) / 10 ** assetToDecimal(collateral_token)!;
-                }
-
-                var order_type: orderType = "Limit";
-                var price = json.trigger_price;
-                if (json.filled) {
-                    order_type = "Market";
-                    price = json.filled_price!;
-                } else if (json.reduce_only && !json.is_stop_order) {
-                    order_type = "Take Profit";
-                } else if (json.reduce_only && json.is_stop_order) {
-                    order_type = "Stop Loss";
-                }
-
-                var e: Event = {
-                    action: "Place Order",
-                    typeName: name,
-                    order_id: json.order_id,
-                    position_id: json.linked_position_id,
-                    market,
-                    side: json.is_long ? "Long" : "Short",
-                    order_type,
-                    status: json.filled ? "Filled" : "Open",
-                    size,
-                    base_token,
-                    collateral,
-                    collateral_token,
-                    price: Number(price) / 10 ** 8, // WARNING: fixed decimal
-                    realized_pnl: undefined,
-                    timestamp,
-                    tx_digest,
-                    dov_index: json.dov_index,
-                    reduce_only: json.reduce_only,
-                    is_stop_order: json.is_stop_order,
-                    sender: "user",
-                };
-                events.push(e);
-                break;
-
-            case OrderFilledEvent.name.split("::")[2]:
-                var base_token = typeArgToAsset(json.symbol.base_token.name) as TOKEN;
-                var collateral_token = typeArgToAsset(json.collateral_token.name) as TOKEN;
-                var market = `${base_token}/USD`;
-
-                var size = Number(json.filled_size) / 10 ** assetToDecimal(base_token)!;
-                var price = json.filled_price;
-                var action: actionType;
-                var related: Event | undefined;
-                var collateral: number | undefined;
-
-                var realized_trading_fee = Number(json.realized_trading_fee) + Number(json.realized_borrow_fee);
-                var realized_fee_in_usd = Number(json.realized_fee_in_usd) / 10 ** 9;
-                var realized_amount = json.realized_amount_sign ? Number(json.realized_amount) : -Number(json.realized_amount);
-                // console.log(realized_amount);
-                var realized_pnl =
-                    realized_trading_fee > 0 ? ((realized_amount - realized_trading_fee) * realized_fee_in_usd) / realized_trading_fee : 0;
-
-                if (json.linked_position_id != undefined) {
-                    action = "Order Filled (Close Position)";
-
-                    related = events.findLast((e) => e.position_id === json.linked_position_id && e.market === market);
-                    // the "Place Order" is emit after Order Filled if filled immediately
-                    const relatedRawEvent = raw_events.find((e) => {
-                        const type: string = e.contents.type.repr;
-                        const [pkg, mod, name] = type.split("::");
-                        return (
-                            name === related?.typeName &&
-                            e.transactionBlock.digest === related?.tx_digest &&
-                            related?.order_id === json.order_id
-                        );
-                    });
-                    if (relatedRawEvent?.contents?.json?.reduce_only === false) {
-                        action = "Order Filled (Increase Position)";
+                    var size = Number(json.size) / 10 ** assetToDecimal(base_token)!;
+                    var collateral: number | undefined;
+                    if (json.collateral_amount) {
+                        collateral = Number(json.collateral_amount) / 10 ** assetToDecimal(collateral_token)!;
+                    } else {
+                        collateral = Number(json.collateral_in_deposit_token) / 10 ** assetToDecimal(collateral_token)!;
                     }
 
-                    if (realized_pnl > 0) {
-                        collateral = (realized_amount - realized_trading_fee) / 10 ** assetToDecimal(collateral_token)!;
+                    var order_type: orderType = "Limit";
+                    var price = json.trigger_price;
+                    if (json.filled) {
+                        order_type = "Market";
+                        price = json.filled_price!;
+                    } else if (json.reduce_only && !json.is_stop_order) {
+                        order_type = "Take Profit";
+                    } else if (json.reduce_only && json.is_stop_order) {
+                        order_type = "Stop Loss";
                     }
-                } else {
-                    action = "Order Filled (Open Position)";
-                    related = events.findLast((e) => e.order_id === json.order_id && e.market === market);
-                    collateral = related?.collateral;
-                }
 
-                var e: Event = {
-                    action,
-                    typeName: name,
-                    order_id: json.order_id,
-                    position_id: json.linked_position_id ?? json.new_position_id,
-                    market,
-                    side: json.position_side ? "Long" : "Short",
-                    order_type: related?.order_type,
-                    status: "Filled",
-                    size,
-                    base_token,
-                    collateral, // TODO: check for option collateral
-                    collateral_token,
-                    price: Number(price) / 10 ** 8, // WARNING: fixed decimal
-                    realized_pnl,
-                    timestamp,
-                    tx_digest,
-                    dov_index: related?.dov_index,
-                    sender: "user",
-                };
-                events.push(e);
-                break;
-
-            case RemovePositionEvent.name.split("::")[2]:
-                // same tx with order filled
-                var index = events.findLastIndex((e) => e.tx_digest == tx_digest && e.action == "Order Filled (Close Position)");
-                // console.log(index);
-                if (index !== -1) {
-                    // true => user paid to pool
-                    let remaining_collateral_amount =
-                        json.remaining_collateral_amount / 10 ** assetToDecimal(events[index].collateral_token)!;
-
-                    events[index] = {
-                        ...events[index],
-                        collateral: remaining_collateral_amount + (events[index].collateral ?? 0),
+                    var e: Event = {
+                        action: "Place Order",
+                        typeName: name,
+                        order_id: json.order_id,
+                        position_id: json.linked_position_id,
+                        market,
+                        side: json.is_long ? "Long" : "Short",
+                        order_type,
+                        status: json.filled ? "Filled" : "Open",
+                        size,
+                        base_token,
+                        collateral,
+                        collateral_token,
+                        price: Number(price) / 10 ** 8, // WARNING: fixed decimal
+                        realized_pnl: undefined,
+                        timestamp,
+                        tx_digest,
+                        dov_index: json.dov_index,
+                        reduce_only: json.reduce_only,
+                        is_stop_order: json.is_stop_order,
+                        sender: "user",
                     };
-                }
-                break;
+                    events.push(e);
+                    break;
 
-            case RealizeFundingEvent.name.split("::")[2]:
-                var base_token = typeArgToAsset(json.symbol.base_token.name) as TOKEN;
-                var collateral_token = typeArgToAsset(json.collateral_token.name) as TOKEN;
-                var market = `${base_token}/USD`;
-                var related = events.find((e) => e.position_id === json.position_id && e.market === market);
+                case OrderFilledEvent.name.split("::")[2]:
+                    var base_token = typeArgToAsset(json.symbol.base_token.name) as TOKEN;
+                    var collateral_token = typeArgToAsset(json.collateral_token.name) as TOKEN;
+                    var market = `${base_token}/USD`;
 
-                // if realized_funding_sign is true, user pays to pool
-                let realized_funding_fee = json.realized_funding_sign
-                    ? -json.realized_funding_fee / 10 ** assetToDecimal(collateral_token)!
-                    : json.realized_funding_fee / 10 ** assetToDecimal(collateral_token)!;
+                    var size = Number(json.filled_size) / 10 ** assetToDecimal(base_token)!;
+                    var price = json.filled_price;
+                    var action: actionType;
+                    var related: Event | undefined;
+                    var collateral: number | undefined;
 
-                let realized_funding_fee_usd = json.realized_funding_sign
-                    ? -json.realized_funding_fee_usd / 10 ** 9
-                    : json.realized_funding_fee_usd / 10 ** 9;
+                    var realized_trading_fee = Number(json.realized_trading_fee) + Number(json.realized_borrow_fee);
+                    var realized_fee_in_usd = Number(json.realized_fee_in_usd) / 10 ** 9;
+                    var realized_amount = json.realized_amount_sign ? Number(json.realized_amount) : -Number(json.realized_amount);
+                    // console.log(realized_amount);
+                    var realized_pnl =
+                        realized_trading_fee > 0
+                            ? ((realized_amount - realized_trading_fee) * realized_fee_in_usd) / realized_trading_fee
+                            : 0;
 
-                // same tx with order filled
-                var index = events.findLastIndex((e) => e.tx_digest == tx_digest && e.action == "Order Filled (Close Position)");
-                // console.log(index);
-                if (index !== -1) {
-                    // true => user paid to pool
-                    events[index] = {
-                        ...events[index],
-                        collateral: events[index].collateral ?? 0 - realized_funding_fee,
-                        realized_pnl: events[index].realized_pnl ?? 0 - realized_funding_fee_usd,
+                    if (json.linked_position_id != undefined) {
+                        action = "Order Filled (Close Position)";
+
+                        related = events.findLast((e) => e.position_id === json.linked_position_id && e.market === market);
+                        // the "Place Order" is emit after Order Filled if filled immediately
+                        const relatedRawEvent = raw_events.find((e) => {
+                            const type: string = e.contents.type.repr;
+                            const [pkg, mod, name] = type.split("::");
+                            return (
+                                name === related?.typeName &&
+                                e.transactionBlock.digest === related?.tx_digest &&
+                                related?.order_id === json.order_id
+                            );
+                        });
+                        if (relatedRawEvent?.contents?.json?.reduce_only === false) {
+                            action = "Order Filled (Increase Position)";
+                        }
+
+                        if (realized_pnl > 0) {
+                            collateral = (realized_amount - realized_trading_fee) / 10 ** assetToDecimal(collateral_token)!;
+                        }
+                    } else {
+                        action = "Order Filled (Open Position)";
+                        related = events.findLast((e) => e.order_id === json.order_id && e.market === market);
+                        collateral = related?.collateral;
+                    }
+
+                    var e: Event = {
+                        action,
+                        typeName: name,
+                        order_id: json.order_id,
+                        position_id: json.linked_position_id ?? json.new_position_id,
+                        market,
+                        side: json.position_side ? "Long" : "Short",
+                        order_type: related?.order_type,
+                        status: "Filled",
+                        size,
+                        base_token,
+                        collateral, // TODO: check for option collateral
+                        collateral_token,
+                        price: Number(price) / 10 ** 8, // WARNING: fixed decimal
+                        realized_pnl,
+                        timestamp,
+                        tx_digest,
+                        dov_index: related?.dov_index,
+                        sender: "user",
                     };
-                }
+                    events.push(e);
+                    break;
 
-                var e: Event = {
-                    action: "Realize Funding",
-                    typeName: name,
-                    order_id: undefined,
-                    position_id: json.position_id,
-                    market,
-                    side: related?.side,
-                    order_type: related?.order_type,
-                    status: "Filled",
-                    size: related?.size,
-                    base_token,
-                    collateral: realized_funding_fee,
-                    collateral_token,
-                    price: undefined,
-                    realized_pnl: realized_funding_fee_usd,
-                    timestamp,
-                    tx_digest,
-                    dov_index: related?.dov_index,
-                    sender: "user",
-                };
-                events.push(e);
-                break;
+                case RemovePositionEvent.name.split("::")[2]:
+                    // same tx with order filled
+                    var index = events.findLastIndex((e) => e.tx_digest == tx_digest && e.action == "Order Filled (Close Position)");
+                    // console.log(index);
+                    if (index !== -1) {
+                        // true => user paid to pool
+                        let remaining_collateral_amount =
+                            json.remaining_collateral_amount / 10 ** assetToDecimal(events[index].collateral_token)!;
 
-            case CancelTradingOrderEvent.name.split("::")[2]:
-                var base_token = typeArgToAsset(json.base_token.name) as TOKEN;
-                var collateral_token = typeArgToAsset(json.collateral_token.name) as TOKEN;
-                var market = `${base_token}/USD`;
-                var related = events.findLast((e) => e.order_id === json.order_id && e.market === market);
+                        events[index] = {
+                            ...events[index],
+                            collateral: remaining_collateral_amount + (events[index].collateral ?? 0),
+                        };
+                    }
+                    break;
 
-                var e: Event = {
-                    action: "Cancel Order",
-                    typeName: name,
-                    order_id: json.order_id,
-                    position_id: related?.position_id,
-                    market,
-                    side: related?.side,
-                    order_type: related?.order_type,
-                    status: "Canceled",
-                    size: related?.size,
-                    base_token,
-                    collateral: Number(json.released_collateral_amount) / 10 ** assetToDecimal(collateral_token)!, // WARNING: fixed decimal
-                    collateral_token,
-                    price: Number(json.trigger_price) / 10 ** 8, // WARNING: fixed decimal
-                    realized_pnl: undefined,
-                    timestamp,
-                    tx_digest,
-                    dov_index: related?.dov_index,
-                    sender: "user",
-                };
-                events.push(e);
-                break;
+                case RealizeFundingEvent.name.split("::")[2]:
+                    var base_token = typeArgToAsset(json.symbol.base_token.name) as TOKEN;
+                    var collateral_token = typeArgToAsset(json.collateral_token.name) as TOKEN;
+                    var market = `${base_token}/USD`;
+                    var related = events.find((e) => e.position_id === json.position_id && e.market === market);
 
-            case IncreaseCollateralEvent.name.split("::")[2]:
-            case ReleaseCollateralEvent.name.split("::")[2]:
-                var base_token = typeArgToAsset(json.base_token.name) as TOKEN;
-                var collateral_token = typeArgToAsset(json.collateral_token.name) as TOKEN;
-                var market = `${base_token}/USD`;
-                var related = events.find((e) => e.position_id === json.position_id && e.market === market);
+                    // if realized_funding_sign is true, user pays to pool
+                    let realized_funding_fee = json.realized_funding_sign
+                        ? -json.realized_funding_fee / 10 ** assetToDecimal(collateral_token)!
+                        : json.realized_funding_fee / 10 ** assetToDecimal(collateral_token)!;
 
-                var collateral: number | undefined;
-                if (json.increased_collateral_amount) {
-                    collateral = Number(json.increased_collateral_amount) * -1;
-                } else {
-                    collateral = Number(json.released_collateral_amount);
-                }
+                    let realized_funding_fee_usd = json.realized_funding_sign
+                        ? -json.realized_funding_fee_usd / 10 ** 9
+                        : json.realized_funding_fee_usd / 10 ** 9;
 
-                var e: Event = {
-                    action: "Modify Collateral",
-                    typeName: name,
-                    order_id: undefined,
-                    position_id: json.position_id,
-                    market,
-                    side: !related
-                        ? undefined
-                        : related.action === "Order Filled (Open Position)"
-                          ? related.side
-                          : related.side === "Long"
-                            ? "Short"
-                            : "Long",
-                    order_type: related?.order_type,
-                    status: "Filled",
-                    size: related?.size,
-                    base_token,
-                    collateral: collateral / 10 ** assetToDecimal(collateral_token)!, // WARNING: fixed decimal
-                    collateral_token,
-                    price: related?.price,
-                    realized_pnl: undefined,
-                    timestamp,
-                    tx_digest,
-                    dov_index: related?.dov_index,
-                    sender: "user",
-                };
-                events.push(e);
-                break;
+                    // same tx with order filled
+                    var index = events.findLastIndex((e) => e.tx_digest == tx_digest && e.action == "Order Filled (Close Position)");
+                    // console.log(index);
+                    if (index !== -1) {
+                        // true => user paid to pool
+                        events[index] = {
+                            ...events[index],
+                            collateral: events[index].collateral ?? 0 - realized_funding_fee,
+                            realized_pnl: events[index].realized_pnl ?? 0 - realized_funding_fee_usd,
+                        };
+                    }
 
-            case SwapEvent.name.split("::")[2]:
-                var from_token = typeArgToAsset(json.from_token_type.name) as TOKEN;
-                var to_token = typeArgToAsset(json.to_token_type.name) as TOKEN;
+                    var e: Event = {
+                        action: "Realize Funding",
+                        typeName: name,
+                        order_id: undefined,
+                        position_id: json.position_id,
+                        market,
+                        side: related?.side,
+                        order_type: related?.order_type,
+                        status: "Filled",
+                        size: related?.size,
+                        base_token,
+                        collateral: realized_funding_fee,
+                        collateral_token,
+                        price: undefined,
+                        realized_pnl: realized_funding_fee_usd,
+                        timestamp,
+                        tx_digest,
+                        dov_index: related?.dov_index,
+                        sender: "user",
+                    };
+                    events.push(e);
+                    break;
 
-                var from_price = Number(json.oracle_price_from_token);
-                var to_price = Number(json.oracle_price_to_token);
+                case CancelTradingOrderEvent.name.split("::")[2]:
+                    var base_token = typeArgToAsset(json.base_token.name) as TOKEN;
+                    var collateral_token = typeArgToAsset(json.collateral_token.name) as TOKEN;
+                    var market = `${base_token}/USD`;
+                    var related = events.findLast((e) => e.order_id === json.order_id && e.market === market);
 
-                var e: Event = {
-                    action: "Swap",
-                    typeName: name,
-                    order_id: undefined,
-                    position_id: undefined,
-                    market: `${from_token}/${to_token}`,
-                    side: undefined,
-                    order_type: "Market",
-                    status: "Filled",
-                    size: Number(json.actual_to_amount) / 10 ** assetToDecimal(to_token)!,
-                    base_token: to_token,
-                    collateral: Number(json.from_amount) / 10 ** assetToDecimal(from_token)!,
-                    collateral_token: from_token,
-                    price: from_price / to_price,
-                    realized_pnl: -Number(json.fee_amount_usd) / 10 ** 9,
-                    timestamp,
-                    tx_digest,
-                    dov_index: undefined,
-                    sender: "user",
-                };
-                events.push(e);
-                break;
+                    var e: Event = {
+                        action: "Cancel Order",
+                        typeName: name,
+                        order_id: json.order_id,
+                        position_id: related?.position_id,
+                        market,
+                        side: related?.side,
+                        order_type: related?.order_type,
+                        status: "Canceled",
+                        size: related?.size,
+                        base_token,
+                        collateral: Number(json.released_collateral_amount) / 10 ** assetToDecimal(collateral_token)!, // WARNING: fixed decimal
+                        collateral_token,
+                        price: Number(json.trigger_price) / 10 ** 8, // WARNING: fixed decimal
+                        realized_pnl: undefined,
+                        timestamp,
+                        tx_digest,
+                        dov_index: related?.dov_index,
+                        sender: "user",
+                    };
+                    events.push(e);
+                    break;
+
+                case IncreaseCollateralEvent.name.split("::")[2]:
+                case ReleaseCollateralEvent.name.split("::")[2]:
+                    var base_token = typeArgToAsset(json.base_token.name) as TOKEN;
+                    var collateral_token = typeArgToAsset(json.collateral_token.name) as TOKEN;
+                    var market = `${base_token}/USD`;
+                    var related = events.find((e) => e.position_id === json.position_id && e.market === market);
+
+                    var collateral: number | undefined;
+                    if (json.increased_collateral_amount) {
+                        collateral = Number(json.increased_collateral_amount) * -1;
+                    } else {
+                        collateral = Number(json.released_collateral_amount);
+                    }
+
+                    var e: Event = {
+                        action: "Modify Collateral",
+                        typeName: name,
+                        order_id: undefined,
+                        position_id: json.position_id,
+                        market,
+                        side: !related
+                            ? undefined
+                            : related.action === "Order Filled (Open Position)"
+                              ? related.side
+                              : related.side === "Long"
+                                ? "Short"
+                                : "Long",
+                        order_type: related?.order_type,
+                        status: "Filled",
+                        size: related?.size,
+                        base_token,
+                        collateral: collateral / 10 ** assetToDecimal(collateral_token)!, // WARNING: fixed decimal
+                        collateral_token,
+                        price: related?.price,
+                        realized_pnl: undefined,
+                        timestamp,
+                        tx_digest,
+                        dov_index: related?.dov_index,
+                        sender: "user",
+                    };
+                    events.push(e);
+                    break;
+
+                case SwapEvent.name.split("::")[2]:
+                    var from_token = typeArgToAsset(json.from_token_type.name) as TOKEN;
+                    var to_token = typeArgToAsset(json.to_token_type.name) as TOKEN;
+
+                    var from_price = Number(json.oracle_price_from_token);
+                    var to_price = Number(json.oracle_price_to_token);
+
+                    var e: Event = {
+                        action: "Swap",
+                        typeName: name,
+                        order_id: undefined,
+                        position_id: undefined,
+                        market: `${from_token}/${to_token}`,
+                        side: undefined,
+                        order_type: "Market",
+                        status: "Filled",
+                        size: Number(json.actual_to_amount) / 10 ** assetToDecimal(to_token)!,
+                        base_token: to_token,
+                        collateral: Number(json.from_amount) / 10 ** assetToDecimal(from_token)!,
+                        collateral_token: from_token,
+                        price: from_price / to_price,
+                        realized_pnl: -Number(json.fee_amount_usd) / 10 ** 9,
+                        timestamp,
+                        tx_digest,
+                        dov_index: undefined,
+                        sender: "user",
+                    };
+                    events.push(e);
+                    break;
+            }
         }
     });
 
@@ -399,7 +403,7 @@ export async function getGraphQLEvents(module: string, sender: string | null, be
           last: 50,
           ${before}
           filter: {
-            module: "${module}",
+            type: "${module}",
             ${senderFilter}
             }
         ) {

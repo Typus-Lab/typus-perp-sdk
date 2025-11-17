@@ -4,7 +4,6 @@ import { TypusClient } from "src/client";
 import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519";
 import { Transaction } from "@mysten/sui/transactions";
 import { collectPositionFundingFee, getUserPositions, NETWORK } from "src";
-import { createPythClient } from "@typus/typus-sdk/dist/src/utils";
 import { TOKEN, tokenType } from "@typus/typus-sdk/dist/src/constants";
 import { getSponsoredTx } from "@typus/typus-sdk/dist/src/utils/sponsoredTx";
 

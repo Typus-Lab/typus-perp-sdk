@@ -4,7 +4,6 @@ import { TypusClient } from "src/client";
 import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519";
 import { Transaction } from "@mysten/sui/transactions";
 import { createTradingOrder, NETWORK } from "src";
-import { createPythClient } from "@typus/typus-sdk/dist/src/utils";
 import { TOKEN, tokenType } from "@typus/typus-sdk/dist/src/constants";
 import { getSponsoredTx } from "@typus/typus-sdk/dist/src/utils/sponsoredTx";
 
@@ -52,7 +51,7 @@ import { getSponsoredTx } from "@typus/typus-sdk/dist/src/utils/sponsoredTx";
         suiCoins,
     });
 
-    // let dryrunRes = await provider.devInspectTransactionBlock({
+    // let dryrunRes = await client.jsonRpcClient.devInspectTransactionBlock({
     //     transactionBlock: tx,
     //     sender: user,
     // });
@@ -61,7 +60,7 @@ import { getSponsoredTx } from "@typus/typus-sdk/dist/src/utils/sponsoredTx";
     // console.log(dryrunRes.events.filter((e) => e.type.endsWith("RealizeFundingEvent"))); // only exists if the order size is reduced ( with linked_position_id provided)
     // console.log(dryrunRes.events.filter((e) => e.type.endsWith("OrderFilledEvent"))); // if the order is not filled, there will be no OrderFilledEvent
 
-    // let res = await provider.signAndExecuteTransaction({ signer: keypair, transaction: tx });
+    // let res = await client.jsonRpcClient.signAndExecuteTransaction({ signer: keypair, transaction: tx });
     // console.log(res);
 
     // For Sponsored Tx

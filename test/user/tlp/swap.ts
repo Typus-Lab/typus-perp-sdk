@@ -1,23 +1,19 @@
 import "@typus/typus-sdk/dist/src/utils/load_env";
 import { TypusConfig } from "@typus/typus-sdk/dist/src/utils";
 import { TypusClient } from "src/client";
-import { SuiClient } from "@mysten/sui/client";
+
 import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519";
 import { Transaction } from "@mysten/sui/transactions";
 import { TOKEN, tokenType } from "@typus/typus-sdk/dist/src/constants";
 import { NETWORK, swap } from "src";
-import { createPythClient } from "@typus/typus-sdk/dist/src/utils";
 
 (async () => {
     let keypair = Ed25519Keypair.deriveKeypair(String(process.env.MNEMONIC));
     let config = await TypusConfig.default(NETWORK, null);
     let client = new TypusClient(config);
-    let provider = new SuiClient({ url: config.rpcEndpoint });
 
     let user = keypair.toSuiAddress();
     console.log(user);
-
-    let pythClient = createPythClient(provider, NETWORK);
 
     // INPUT
     let FROM_TOKEN: TOKEN = "wUSDT";
@@ -25,7 +21,7 @@ import { createPythClient } from "@typus/typus-sdk/dist/src/utils";
 
     // coins
     let coins = (
-        await provider.getCoins({
+        await client.jsonRpcClient.getCoins({
             owner: user,
             coinType: tokenType[NETWORK][FROM_TOKEN],
         })
@@ -42,14 +38,14 @@ import { createPythClient } from "@typus/typus-sdk/dist/src/utils";
         user,
     });
 
-    let dryrunRes = await provider.devInspectTransactionBlock({
+    let dryrunRes = await client.jsonRpcClient.devInspectTransactionBlock({
         transactionBlock: tx,
         sender: user,
     });
     console.log(dryrunRes);
     console.log(dryrunRes.events.filter((e) => e.type.endsWith("SwapEvent"))[0].parsedJson);
 
-    let res = await provider.signAndExecuteTransaction({ signer: keypair, transaction: tx });
+    let res = await client.jsonRpcClient.signAndExecuteTransaction({ signer: keypair, transaction: tx });
     console.log(res);
     // https://testnet.suivision.xyz/txblock/8TDGppninwYxBqpNtao3mMa936nemU3rdMqA8xesJREA
 })();

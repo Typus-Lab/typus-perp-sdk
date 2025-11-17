@@ -4,7 +4,6 @@ import { TypusClient } from "src/client";
 import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519";
 import { Transaction } from "@mysten/sui/transactions";
 import { increaseCollateral, getUserPositions, NETWORK } from "src";
-import { createPythClient } from "@typus/typus-sdk/dist/src/utils";
 import { normalizeStructTag } from "@mysten/sui/utils";
 
 (async () => {
@@ -20,8 +19,6 @@ import { normalizeStructTag } from "@mysten/sui/utils";
     let positions = await getUserPositions(client, user);
     let position = positions.at(-1)!;
     // console.log(position);
-
-    let pythClient = createPythClient(client.jsonRpcClient, NETWORK);
 
     let coins = (
         await client.jsonRpcClient.getCoins({

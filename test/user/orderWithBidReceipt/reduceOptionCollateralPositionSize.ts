@@ -1,6 +1,6 @@
 import { TypusConfig } from "@typus/typus-sdk/dist/src/utils";
 import { TypusClient } from "src/client";
-import { SuiClient } from "@mysten/sui/client";
+
 import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519";
 import { Transaction } from "@mysten/sui/transactions";
 import { reduceOptionCollateralPositionSize, NETWORK } from "src";
@@ -12,12 +12,9 @@ import { TOKEN } from "@typus/typus-sdk/dist/src/constants";
     let keypair = Ed25519Keypair.deriveKeypair(String(process.env.MNEMONIC));
     let config = await TypusConfig.default(NETWORK, null);
     let client = new TypusClient(config);
-    let provider = new SuiClient({ url: config.rpcEndpoint });
 
     let user = keypair.toSuiAddress();
     console.log(user);
-
-    let pythClient = createPythClient(provider, NETWORK);
 
     var tx = new Transaction();
 
@@ -34,14 +31,14 @@ import { TOKEN } from "@typus/typus-sdk/dist/src/constants";
         orderSize: "100000",
     });
 
-    let dryrunRes = await provider.devInspectTransactionBlock({
+    let dryrunRes = await client.jsonRpcClient.devInspectTransactionBlock({
         transactionBlock: tx,
         sender: user,
     });
     // console.log(dryrunRes.events.filter((e) => e.type.endsWith("reduceOptionCollateralPositionSizesEvent")));
     console.log(dryrunRes.events.filter((e) => e.type.endsWith("OrderFilledEvent"))); // if the order is not filled, there will be no OrderFilledEvent
 
-    let res = await provider.signAndExecuteTransaction({ signer: keypair, transaction: tx });
+    let res = await client.jsonRpcClient.signAndExecuteTransaction({ signer: keypair, transaction: tx });
     console.log(res);
     // https://testnet.suivision.xyz/txblock/9BwZRXhRqYxeP6k3NavsVX1yQQjTfJbPBYijDPfaPHPH
 })();

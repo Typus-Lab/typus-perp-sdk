@@ -1,44 +1,26 @@
 import "@typus/typus-sdk/dist/src/utils/load_env";
-import { SuiClient } from "@mysten/sui/client";
 import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519";
 import { Transaction } from "@mysten/sui/transactions";
 import { mintStakeLp, NETWORK, getUserStake, getLpPool, getStakePool, STAKE_PUBLISHED_AT, PERP_PUBLISHED_AT, STAKE_PACKAGE_ID } from "src";
 import { TypusConfig, createPythClient } from "@typus/typus-sdk/dist/src/utils";
 import { TOKEN, tokenType } from "@typus/typus-sdk/dist/src/constants";
+import { TypusClient } from "src/client";
 
 (async () => {
     let keypair = Ed25519Keypair.deriveKeypair(String(process.env.MNEMONIC));
     let config = await TypusConfig.default(NETWORK, null);
     let client = new TypusClient(config);
 
-    let provider = new SuiClient({
-        network: "testnet",
-        url: config.rpcEndpoint,
-        mvr: {
-            overrides: {
-                // packages: {
-                //     // "@local-pkg/your-package": PERP_PUBLISHED_AT,
-                //     "@typus/stake_pool": "0x11f4f072d6472f545a82200ec4bee8a8db006e209f76bcc013178c585ed4b368",
-                // },
-                // types: {
-                //     "@typus/stake_pool": "0x11f4f072d6472f545a82200ec4bee8a8db006e209f76bcc013178c585ed4b368",
-                // },
-            },
-        },
-    });
-
     let user = keypair.toSuiAddress();
     // console.log(user);
 
-    let lpPool = await getLpPool(provider);
+    let lpPool = await getLpPool(client);
     // console.log(lpPool);
 
-    let stakePool = await getStakePool(provider);
+    let stakePool = await getStakePool(client);
     // console.log(stakePool);
 
-    let pythClient = createPythClient(provider, NETWORK);
-
-    let stakes = await getUserStake(provider, user);
+    let stakes = await getUserStake(client, user);
     console.log(stakes);
 
     // INPUT
@@ -47,7 +29,7 @@ import { TOKEN, tokenType } from "@typus/typus-sdk/dist/src/constants";
 
     // coins
     let coins = (
-        await provider.getCoins({
+        await client.jsonRpcClient.getCoins({
             owner: user,
             coinType: cToken,
         })
@@ -70,7 +52,7 @@ import { TOKEN, tokenType } from "@typus/typus-sdk/dist/src/constants";
 
     // console.log(tx.getData());
 
-    let dryrunRes = await provider.devInspectTransactionBlock({
+    let dryrunRes = await client.jsonRpcClient.devInspectTransactionBlock({
         transactionBlock: tx,
         sender: user,
     });
@@ -78,7 +60,7 @@ import { TOKEN, tokenType } from "@typus/typus-sdk/dist/src/constants";
     console.log(dryrunRes.events.filter((e) => e.type.endsWith("MintLpEvent")));
     console.log(dryrunRes.events.filter((e) => e.type.endsWith("StakeEvent")));
 
-    let res = await provider.signAndExecuteTransaction({ signer: keypair, transaction: tx });
+    let res = await client.jsonRpcClient.signAndExecuteTransaction({ signer: keypair, transaction: tx });
     console.log(res);
     // https://testnet.suivision.xyz/txblock/GRjmdrHtcqzAP4a8i6nTef88zDpPZ2ouLSVX4DTj8JnC
 })();

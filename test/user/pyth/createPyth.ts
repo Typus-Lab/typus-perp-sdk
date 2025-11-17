@@ -1,6 +1,6 @@
 import { SuiPriceServiceConnection, SuiPythClient } from "@pythnetwork/pyth-sui-js";
 import { Transaction } from "@mysten/sui/transactions";
-import { SuiClient } from "@mysten/sui/client";
+
 import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519";
 import { TypusConfig } from "@typus/typus-sdk/dist/src/utils";
 import { TypusClient } from "src/client";
@@ -29,7 +29,6 @@ let wormholeStateId = "0x31358d198147da50db32eda2562951d53973a0c0ad5ed738e9b17d8
     let keypair = Ed25519Keypair.deriveKeypair(String(mnemonic.MNEMONIC));
     let config = await TypusConfig.default(NETWORK, null);
     let client = new TypusClient(config);
-    let provider = new SuiClient({ url: config.rpcEndpoint });
 
     let tx = new Transaction();
 
@@ -43,7 +42,7 @@ let wormholeStateId = "0x31358d198147da50db32eda2562951d53973a0c0ad5ed738e9b17d8
 
     let priceInfoObjectIds = await client.createPriceFeed(tx, priceFeedUpdateData);
 
-    let res = await provider.signAndExecuteTransaction({
+    let res = await client.jsonRpcClient.signAndExecuteTransaction({
         signer: keypair,
         transaction: tx,
         options: {

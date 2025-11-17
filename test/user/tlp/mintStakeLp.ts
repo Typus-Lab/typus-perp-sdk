@@ -9,6 +9,8 @@ import { TOKEN, tokenType } from "@typus/typus-sdk/dist/src/constants";
 (async () => {
     let keypair = Ed25519Keypair.deriveKeypair(String(process.env.MNEMONIC));
     let config = await TypusConfig.default(NETWORK, null);
+    let client = new TypusClient(config);
+
     let provider = new SuiClient({
         network: "testnet",
         url: config.rpcEndpoint,
@@ -54,7 +56,7 @@ import { TOKEN, tokenType } from "@typus/typus-sdk/dist/src/constants";
 
     let tx = new Transaction();
 
-    tx = await mintStakeLp(config, tx, pythClient, {
+    tx = await mintStakeLp(client, tx, {
         lpPool,
         stakePool,
         coins,

@@ -3,7 +3,7 @@ import { Transaction } from "@mysten/sui/transactions";
 import { SuiClient } from "@mysten/sui/client";
 import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519";
 import { TypusConfig } from "@typus/typus-sdk/dist/src/utils";
-
+import { TypusClient } from "src/client";
 import mnemonic from "mnemonic.json";
 import { NETWORK } from "src";
 
@@ -28,15 +28,14 @@ let wormholeStateId = "0x31358d198147da50db32eda2562951d53973a0c0ad5ed738e9b17d8
 (async () => {
     let keypair = Ed25519Keypair.deriveKeypair(String(mnemonic.MNEMONIC));
     let config = await TypusConfig.default(NETWORK, null);
+    let client = new TypusClient(config);
     let provider = new SuiClient({ url: config.rpcEndpoint });
 
-    // @ts-ignore
-    let client = new SuiPythClient(provider, pythStateId, wormholeStateId);
     let tx = new Transaction();
 
     let priceFeedUpdateData = await connection.getPriceFeedsUpdateData(priceIDs);
 
-    let pythPackageId = await client.getPythPackageId();
+    let pythPackageId = await client.pythClient.client.getPythPackageId();
     console.log("Pyth package ID:", pythPackageId);
 
     // @ts-ignore

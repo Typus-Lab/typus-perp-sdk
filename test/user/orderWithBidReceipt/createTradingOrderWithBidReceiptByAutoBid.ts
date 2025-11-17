@@ -1,4 +1,5 @@
 import { TypusConfig } from "@typus/typus-sdk/dist/src/utils";
+import { TypusClient } from "src/client";
 import { SuiClient } from "@mysten/sui/client";
 import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519";
 import { Transaction } from "@mysten/sui/transactions";
@@ -10,6 +11,7 @@ import { TOKEN } from "@typus/typus-sdk/dist/src/constants";
 (async () => {
     let keypair = Ed25519Keypair.deriveKeypair(String(process.env.MNEMONIC));
     let config = await TypusConfig.default(NETWORK, null);
+    let client = new TypusClient(config);
     let provider = new SuiClient({ url: config.rpcEndpoint });
 
     let user = keypair.toSuiAddress();
@@ -20,18 +22,18 @@ import { TOKEN } from "@typus/typus-sdk/dist/src/constants";
     var tx = new Transaction();
 
     // 2. Get receipt detail, vaultIndex, dToken, bToken, oToken
-    let index = "2";
+    let dovIndex = "2";
     let cToken: TOKEN = "AFSUI"; // dToken
     let bToken: TOKEN = "SUI";
     let tradingToken: TOKEN = "SUI"; // oToken
     let isLong = false; // call => short, put => long
 
-    tx = await createTradingOrderWithBidReceiptByAutoBid(config, tx, pythClient, {
+    tx = await createTradingOrderWithBidReceiptByAutoBid(client, tx, {
         cToken,
         tradingToken,
         isLong,
         user,
-        index,
+        dovIndex,
         bToken,
         signalIndex: "0",
         strategyIndex: "9",

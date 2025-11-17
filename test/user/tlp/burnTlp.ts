@@ -1,6 +1,6 @@
 // import "@typus/typus-sdk/dist/src/utils/load_env";
 // import { TypusConfig } from "@typus/typus-sdk/dist/src/utils";
-// import { SuiClient } from "@mysten/sui/client";
+import { TypusClient } from "src/client"; // import { SuiClient } from "@mysten/sui/client";
 // import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519";
 // import { Transaction } from "@mysten/sui/transactions";
 // import { NETWORK, getLpPools, getStakePool, getUserStake, burnTlp } from "src";
@@ -9,6 +9,7 @@
 // (async () => {
 //     let keypair = Ed25519Keypair.deriveKeypair(String(process.env.MNEMONIC));
 //     let config = await TypusConfig.default(NETWORK, null);
+let client = new TypusClient(config);
 //     let provider = new SuiClient({ url: config.rpcEndpoint });
 
 //     let user = keypair.toSuiAddress();
@@ -32,7 +33,7 @@
 
 //     let tx = new Transaction();
 
-//     await burnTlp(config, tx, pythClient, {
+//     await burnTlp(client, tx, {
 //         lpCoin,
 //         lpPool,
 //         stakePool,

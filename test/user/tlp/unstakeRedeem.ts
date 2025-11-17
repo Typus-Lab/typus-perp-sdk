@@ -1,50 +1,47 @@
 import "@typus/typus-sdk/dist/src/utils/load_env";
 import { TypusConfig } from "@typus/typus-sdk/dist/src/utils";
-import { SuiClient } from "@mysten/sui/client";
+import { TypusClient } from "src/client";
 import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519";
 import { Transaction } from "@mysten/sui/transactions";
 import { NETWORK, getLpPools, getStakePool, getUserStake, unstakeRedeem } from "src";
-import { createPythClient } from "@typus/typus-sdk/dist/src/utils";
 
 (async () => {
     let keypair = Ed25519Keypair.deriveKeypair(String(process.env.MNEMONIC));
     let config = await TypusConfig.default(NETWORK, null);
-    let provider = new SuiClient({ url: config.rpcEndpoint });
+    let client = new TypusClient(config);
 
     let user = keypair.toSuiAddress();
     console.log(user);
 
-    let lpPools = await getLpPools(config);
+    let lpPools = await getLpPools(client);
     let lpPool = lpPools[0];
     // console.log(lpPool);
 
-    let pythClient = createPythClient(provider, NETWORK);
-
     // 1. Get user's stake
-    let stakes = await getUserStake(config, user);
+    let stakes = await getUserStake(client, user);
     console.log(stakes);
 
     // 2. StakePool
-    let stakePool = await getStakePool(config);
+    let stakePool = await getStakePool(client);
     // console.log(stakePool);
 
     let tx = new Transaction();
 
-    await unstakeRedeem(config, tx, pythClient, {
-        userShareId: stakes![0].userShareId.toString(),
+    await unstakeRedeem(client, tx, {
+        userShareId: stakes![0].user_share_id.toString(),
         lpPool,
         stakePool,
         share: "1000000000",
         user,
     });
 
-    let dryrunRes = await provider.devInspectTransactionBlock({
+    let dryrunRes = await client.jsonRpcClient.devInspectTransactionBlock({
         transactionBlock: tx,
         sender: user,
     });
     console.log(dryrunRes.events.filter((e) => e.type.endsWith("UnstakeEvent")));
 
-    let res = await provider.signAndExecuteTransaction({ signer: keypair, transaction: tx });
+    let res = await client.jsonRpcClient.signAndExecuteTransaction({ signer: keypair, transaction: tx });
     console.log(res);
     // https://testnet.suivision.xyz/txblock/EvBgQwKFay8YMYDG9WtStsfvR7MzhPa4nu5aKMgeptzX?tab=Events
 })();

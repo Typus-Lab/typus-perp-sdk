@@ -1,16 +1,16 @@
 import { TypusConfig } from "@typus/typus-sdk/dist/src/utils";
+import { TypusClient } from "src/client";
 import { getStakePool, getStakePools, NETWORK } from "src";
-import { SuiClient } from "@mysten/sui/client";
 
 (async () => {
     let config = await TypusConfig.default(NETWORK, null);
+    let client = new TypusClient(config);
 
     // let stakePools = await getStakePools(config);
     // console.log(stakePools); // 1 lpPool inclueded
     // let stakePool = stakePools[0];
 
-    let provider = new SuiClient({ url: config.rpcEndpoint });
-    let stakePool = await getStakePool(provider);
+    let stakePool = await getStakePool(client);
     console.log(stakePool);
 
     console.log(

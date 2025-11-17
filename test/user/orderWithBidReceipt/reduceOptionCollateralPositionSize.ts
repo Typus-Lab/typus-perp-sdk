@@ -1,4 +1,5 @@
 import { TypusConfig } from "@typus/typus-sdk/dist/src/utils";
+import { TypusClient } from "src/client";
 import { SuiClient } from "@mysten/sui/client";
 import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519";
 import { Transaction } from "@mysten/sui/transactions";
@@ -10,6 +11,7 @@ import { TOKEN } from "@typus/typus-sdk/dist/src/constants";
 (async () => {
     let keypair = Ed25519Keypair.deriveKeypair(String(process.env.MNEMONIC));
     let config = await TypusConfig.default(NETWORK, null);
+    let client = new TypusClient(config);
     let provider = new SuiClient({ url: config.rpcEndpoint });
 
     let user = keypair.toSuiAddress();
@@ -24,7 +26,7 @@ import { TOKEN } from "@typus/typus-sdk/dist/src/constants";
     let bToken: TOKEN = "wUSDC";
     let tradingToken: TOKEN = "wETH"; // oToken
 
-    tx = await reduceOptionCollateralPositionSize(config, tx, pythClient, {
+    tx = await reduceOptionCollateralPositionSize(client, tx, {
         cToken,
         tradingToken,
         bToken,

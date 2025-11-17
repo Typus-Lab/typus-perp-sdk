@@ -1,6 +1,6 @@
 import "@typus/typus-sdk/dist/src/utils/load_env";
 import { TypusConfig } from "@typus/typus-sdk/dist/src/utils";
-import { SuiClient } from "@mysten/sui/client";
+import { TypusClient } from "src/client";
 import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519";
 import { Transaction } from "@mysten/sui/transactions";
 import { increaseCollateral, getUserPositions, NETWORK } from "src";
@@ -10,39 +10,39 @@ import { normalizeStructTag } from "@mysten/sui/utils";
 (async () => {
     let keypair = Ed25519Keypair.deriveKeypair(String(process.env.MNEMONIC));
     let config = await TypusConfig.default(NETWORK, null);
-    let provider = new SuiClient({ url: config.rpcEndpoint });
+    let client = new TypusClient(config);
 
     let user = keypair.toSuiAddress();
     console.log(user);
 
     var tx = new Transaction();
 
-    let positions = await getUserPositions(config, user);
+    let positions = await getUserPositions(client, user);
     let position = positions.at(-1)!;
     // console.log(position);
 
-    let pythClient = createPythClient(provider, NETWORK);
+    let pythClient = createPythClient(client.jsonRpcClient, NETWORK);
 
     let coins = (
-        await provider.getCoins({
+        await client.jsonRpcClient.getCoins({
             owner: user,
             coinType: normalizeStructTag(position.collateral_token.name),
         })
     ).data.map((coin) => coin.coinObjectId);
 
-    tx = await increaseCollateral(config, tx, pythClient, {
+    tx = await increaseCollateral(client, tx, {
         coins,
         amount: "1000000",
         position,
     });
 
-    let dryrunRes = await provider.devInspectTransactionBlock({
+    let dryrunRes = await client.jsonRpcClient.devInspectTransactionBlock({
         transactionBlock: tx,
         sender: user,
     });
     console.log(dryrunRes);
     console.log(dryrunRes.events.filter((e) => e.type.endsWith("IncreaseCollateralEvent"))[0].parsedJson);
 
-    let res = await provider.signAndExecuteTransaction({ signer: keypair, transaction: tx });
+    let res = await client.jsonRpcClient.signAndExecuteTransaction({ signer: keypair, transaction: tx });
     console.log(res);
 })();

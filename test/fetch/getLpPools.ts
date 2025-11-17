@@ -1,18 +1,17 @@
 import { TypusConfig } from "@typus/typus-sdk/dist/src/utils";
+import { TypusClient } from "src/client";
 import { getLpPool, NETWORK } from "src";
-import { SuiClient } from "@mysten/sui/client";
 
 (async () => {
     let config = await TypusConfig.default(NETWORK, null);
+    let client = new TypusClient(config);
 
     // let lpPools = await getLpPools(config);
     // console.log(lpPools); // 1 lpPool inclueded
     // const lpPool = lpPools[0];
 
-    let provider = new SuiClient({ url: config.rpcEndpoint });
-
     // skip dynamic field fetching
-    let lpPool = await getLpPool(provider);
+    let lpPool = await getLpPool(client);
     console.log(lpPool.pool_info);
 
     // avaliable token types to mint the lp tokens (3 token types supported)

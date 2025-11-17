@@ -1,9 +1,8 @@
-import { SuiClient } from "@mysten/sui/client";
 import { Transaction } from "@mysten/sui/transactions";
 import { bcs, BcsReader } from "@mysten/bcs";
 
-import { CLOCK, oracle, SENDER, TOKEN, tokenType, typeArgToAsset } from "@typus/typus-sdk/dist/src/constants";
-import { pythStateId, PythClient, updatePyth, TypusConfig, updateOracleWithPythUsd } from "@typus/typus-sdk/dist/src/utils";
+import { oracle, SENDER, TOKEN, tokenType, typeArgToAsset } from "@typus/typus-sdk/dist/src/constants";
+import { updatePyth, updateOracleWithPythUsd } from "@typus/typus-sdk/dist/src/utils";
 
 import {
     LIQUIDITY_POOL,
@@ -18,8 +17,8 @@ import {
     TLP_TOKEN,
 } from ".";
 
-import { getMarketsBcs, MarketRegistry, Markets, SymbolMarket } from "./generated/typus_perp/trading";
-import { DeactivatingShares, getUserDeactivatingShares, Registry } from "./generated/typus_perp/lp_pool";
+import { getMarketsBcs, Markets, SymbolMarket } from "./generated/typus_perp/trading";
+import { DeactivatingShares, getUserDeactivatingShares } from "./generated/typus_perp/lp_pool";
 import { TradingOrder, Position } from "./generated/typus_perp/position";
 import {
     getUserOrders as _getUserOrders,
@@ -28,30 +27,23 @@ import {
     getEstimatedLiquidationPriceAndPnl,
 } from "./generated/typus_perp/trading";
 import { LiquidityPool } from "./generated/typus_perp/lp_pool";
-import {
-    LpUserShare,
-    StakePool,
-    getUserShares,
-    allocateIncentive,
-    getUserSharesByUserShareId,
-} from "./generated/typus_stake_pool/stake_pool";
+import { LpUserShare, StakePool, getUserShares, allocateIncentive } from "./generated/typus_stake_pool/stake_pool";
 
 import { TypusBidReceipt } from "./generated/typus_perp/deps/typus_framework/vault";
+import { TypusClient } from "src/client";
 
-export async function getLpPools(config: TypusConfig): Promise<(typeof LiquidityPool.$inferType)[]> {
-    let provider = new SuiClient({ url: config.rpcEndpoint });
-
-    // const lpPoolRegistry = await Registry.fetch(provider, LP_POOL);
+export async function getLpPools(client: TypusClient): Promise<(typeof LiquidityPool.$inferType)[]> {
+    // const lpPoolRegistry = await Registry.fetch(client.jsonRpcClient, LP_POOL);
     // console.log(lpPoolRegistry);
 
-    let dynamicFields = await provider.getDynamicFields({
+    let dynamicFields = await client.jsonRpcClient.getDynamicFields({
         parentId: LIQUIDITY_POOL,
     });
 
     let lpPools: (typeof LiquidityPool.$inferType)[] = [];
 
     for (const field of dynamicFields.data) {
-        let lpPool = await getLpPool(provider, field.objectId);
+        let lpPool = await getLpPool(client, field.objectId);
         // console.log(lpPool);
         lpPools.push(lpPool);
     }
@@ -59,11 +51,11 @@ export async function getLpPools(config: TypusConfig): Promise<(typeof Liquidity
     return lpPools;
 }
 
-export async function getLpPool(provider: SuiClient, objectId: string = LIQUIDITY_POOL_0): Promise<typeof LiquidityPool.$inferType> {
-    // let lpPool = await LiquidityPool.fetch(provider, objectId);
+export async function getLpPool(client: TypusClient, objectId: string = LIQUIDITY_POOL_0): Promise<typeof LiquidityPool.$inferType> {
+    // let lpPool = await LiquidityPool.fetch(client.jsonRpcClient, objectId);
     // return lpPool;
 
-    const data = await provider.getObject({
+    const data = await client.jsonRpcClient.getObject({
         id: objectId,
         options: {
             // request the bcs data when loading your object
@@ -79,18 +71,17 @@ export async function getLpPool(provider: SuiClient, objectId: string = LIQUIDIT
     return LiquidityPool.fromBase64(data.data.bcs.bcsBytes);
 }
 
-// getLpPool(provider).then((x) => console.log(x));
+// getLpPool(client.jsonRpcClient).then((x) => console.log(x));
 
-export async function getStakePools(config: TypusConfig): Promise<(typeof StakePool.$inferType)[]> {
-    let provider = new SuiClient({ url: config.rpcEndpoint });
-    let dynamicFields = await provider.getDynamicFields({
+export async function getStakePools(client: TypusClient): Promise<(typeof StakePool.$inferType)[]> {
+    let dynamicFields = await client.jsonRpcClient.getDynamicFields({
         parentId: STAKE_POOL,
     });
 
     let stakePools: (typeof StakePool.$inferType)[] = [];
 
     for (const field of dynamicFields.data) {
-        let stakePool = await getStakePool(provider, field.objectId);
+        let stakePool = await getStakePool(client, field.objectId);
         // console.log(stakePool);
         stakePools.push(stakePool);
     }
@@ -98,11 +89,11 @@ export async function getStakePools(config: TypusConfig): Promise<(typeof StakeP
     return stakePools;
 }
 
-export async function getStakePool(provider: SuiClient, objectId: string = STAKE_POOL_0): Promise<typeof StakePool.$inferType> {
-    // let stakePool = await StakePool.fetch(provider, objectId);
+export async function getStakePool(client: TypusClient, objectId: string = STAKE_POOL_0): Promise<typeof StakePool.$inferType> {
+    // let stakePool = await StakePool.fetch(client.jsonRpcClient, objectId);
     // return stakePool;
 
-    const data = await provider.getObject({
+    const data = await client.jsonRpcClient.getObject({
         id: objectId,
         options: {
             // request the bcs data when loading your object
@@ -124,15 +115,14 @@ export interface MarketsData {
 }
 
 export async function getMarkets(
-    config: TypusConfig,
+    client: TypusClient,
     input: {
         indexes: string[];
     }
 ): Promise<MarketsData[]> {
-    let provider = new SuiClient({ url: config.rpcEndpoint });
     let tx = new Transaction();
     tx.add(getMarketsBcs({ arguments: { registry: MARKET, indexes: input.indexes.map((x) => BigInt(x)) } }));
-    let devInspectTransactionBlockResult = await provider.devInspectTransactionBlock({ sender: SENDER, transactionBlock: tx });
+    let devInspectTransactionBlockResult = await client.jsonRpcClient.devInspectTransactionBlock({ sender: SENDER, transactionBlock: tx });
     // @ts-ignore
     let bytes = devInspectTransactionBlockResult.results[0].returnValues[0][0];
     let reader = new BcsReader(new Uint8Array(bytes));
@@ -155,8 +145,7 @@ export async function getMarkets(
     return results;
 }
 
-export async function getUserOrders(config: TypusConfig, user: string) {
-    let provider = new SuiClient({ url: config.rpcEndpoint });
+export async function getUserOrders(client: TypusClient, user: string) {
     let tx = new Transaction();
     tx.add(
         _getUserOrders({
@@ -169,7 +158,7 @@ export async function getUserOrders(config: TypusConfig, user: string) {
         })
     );
 
-    let res = await provider.devInspectTransactionBlock({ sender: user, transactionBlock: tx });
+    let res = await client.jsonRpcClient.devInspectTransactionBlock({ sender: user, transactionBlock: tx });
     // console.log(res);
 
     // @ts-ignore
@@ -190,8 +179,7 @@ export async function getUserOrders(config: TypusConfig, user: string) {
     return orders;
 }
 
-export async function getUserPositions(config: TypusConfig, user: string) {
-    let provider = new SuiClient({ url: config.rpcEndpoint });
+export async function getUserPositions(client: TypusClient, user: string) {
     let tx = new Transaction();
 
     tx.add(
@@ -205,7 +193,7 @@ export async function getUserPositions(config: TypusConfig, user: string) {
         })
     );
 
-    let res = await provider.devInspectTransactionBlock({ sender: user, transactionBlock: tx });
+    let res = await client.jsonRpcClient.devInspectTransactionBlock({ sender: user, transactionBlock: tx });
     // console.log(res);
 
     // @ts-ignore
@@ -241,7 +229,7 @@ export function parseOptionBidReceipts(positions: (typeof Position.$inferType)[]
 /**
  * @returns [lpShare, incentives]
  */
-export async function getUserStake(provider: SuiClient, user: string): Promise<[typeof LpUserShare.$inferType, string[]] | null> {
+export async function getUserStake(client: TypusClient, user: string): Promise<[typeof LpUserShare.$inferType, string[]] | null> {
     let tx = new Transaction();
 
     tx.add(
@@ -264,7 +252,7 @@ export async function getUserStake(provider: SuiClient, user: string): Promise<[
         })
     );
 
-    let res = await provider.devInspectTransactionBlock({ sender: user, transactionBlock: tx });
+    let res = await client.jsonRpcClient.devInspectTransactionBlock({ sender: user, transactionBlock: tx });
     // console.log(res);
 
     if (res.results) {
@@ -296,8 +284,7 @@ export async function getUserStake(provider: SuiClient, user: string): Promise<[
 /**
  * @returns deactivatingShares[]
  */
-export async function getDeactivatingShares(config: TypusConfig, user: string): Promise<(typeof DeactivatingShares.$inferType)[]> {
-    let provider = new SuiClient({ url: config.rpcEndpoint });
+export async function getDeactivatingShares(client: TypusClient, user: string): Promise<(typeof DeactivatingShares.$inferType)[]> {
     let tx = new Transaction();
     tx.add(
         getUserDeactivatingShares({
@@ -310,7 +297,7 @@ export async function getDeactivatingShares(config: TypusConfig, user: string): 
         })
     );
 
-    let res = await provider.devInspectTransactionBlock({ sender: user, transactionBlock: tx });
+    let res = await client.jsonRpcClient.devInspectTransactionBlock({ sender: user, transactionBlock: tx });
     // console.log(res);
 
     if (res.results) {
@@ -339,14 +326,12 @@ export async function getDeactivatingShares(config: TypusConfig, user: string): 
  * @returns [liquidationPrice, pnl(in USD)]
  */
 export async function getLiquidationPriceAndPnl(
-    config: TypusConfig,
-    pythClient: PythClient,
+    client: TypusClient,
     input: {
         positions: (typeof Position.$inferType)[];
         user: string;
     }
 ): Promise<PositionInfo[]> {
-    let provider = new SuiClient({ url: config.rpcEndpoint });
     let tx = new Transaction();
 
     let tokens: TOKEN[] = [];
@@ -359,9 +344,9 @@ export async function getLiquidationPriceAndPnl(
         tokens.push(BASE_TOKEN);
     }
 
-    await updatePyth(pythClient, tx, Array.from(new Set(tokens)));
+    await updatePyth(client.pythClient, tx, Array.from(new Set(tokens)));
     for (let token of Array.from(new Set(tokens))) {
-        updateOracleWithPythUsd(pythClient, tx, config.package.oracle, token);
+        updateOracleWithPythUsd(client.pythClient, tx, client.config.package.oracle, token);
     }
 
     for (let position of input.positions) {
@@ -379,14 +364,14 @@ export async function getLiquidationPriceAndPnl(
                     typusOracleCToken: oracle[NETWORK][TOKEN]!,
                     typusOracleTradingSymbol: oracle[NETWORK][BASE_TOKEN]!,
                     positionId: BigInt(position.position_id),
-                    dovRegistry: config.registry.dov.dovSingle,
+                    dovRegistry: client.config.registry.dov.dovSingle,
                 },
                 typeArguments: [position.collateral_token.name, position.symbol.base_token.name],
             })
         );
     }
 
-    let res = await provider.devInspectTransactionBlock({ sender: input.user, transactionBlock: tx });
+    let res = await client.jsonRpcClient.devInspectTransactionBlock({ sender: input.user, transactionBlock: tx });
     // console.log(res);
     //   0  estimated_liquidation_price,
     //   1  has_profit,
@@ -440,14 +425,13 @@ interface PositionInfo {
 }
 
 export async function getAllPositions(
-    config: TypusConfig,
+    client: TypusClient,
     input: {
         baseToken: TOKEN;
         slice: string;
         page: string;
     }
 ) {
-    let provider = new SuiClient({ url: config.rpcEndpoint });
     let tx = new Transaction();
     tx.add(
         _getAllPositions({
@@ -461,7 +445,7 @@ export async function getAllPositions(
             typeArguments: [tokenType[NETWORK][input.baseToken]],
         })
     );
-    let res = await provider.devInspectTransactionBlock({
+    let res = await client.jsonRpcClient.devInspectTransactionBlock({
         sender: SENDER,
         transactionBlock: tx,
     });
@@ -499,14 +483,14 @@ export async function getAllPositions(
 const SLICE = 100;
 
 export async function getAllPositionsWithTradingSymbol(
-    config: TypusConfig,
+    client: TypusClient,
     input: {
         baseToken: TOKEN;
     }
 ): Promise<(typeof Position.$inferType)[]> {
     var positions: (typeof Position.$inferType)[] = [];
 
-    var { positions: pos, maxPage } = await getAllPositions(config, {
+    var { positions: pos, maxPage } = await getAllPositions(client, {
         baseToken: input.baseToken,
         slice: SLICE.toString(),
         page: "1",
@@ -517,7 +501,7 @@ export async function getAllPositionsWithTradingSymbol(
 
     for (let page = 2; page <= maxPage; page++) {
         console.log(page);
-        var { positions: pos, maxPage } = await getAllPositions(config, {
+        var { positions: pos, maxPage } = await getAllPositions(client, {
             baseToken: input.baseToken,
             slice: SLICE.toString(),
             page: page.toString(),

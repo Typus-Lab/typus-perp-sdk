@@ -8,9 +8,9 @@ import {
     getRealizeOptionFromSentio,
     getRemovePositionFromSentio,
     parseUserHistory,
+    PERP_PACKAGE_ID,
     STAKE_PACKAGE_ID,
 } from "src";
-import { PKG_V1 as PERP_PACKAGE_ID } from "src/typus_perp/index";
 
 (async () => {
     let user = "0xdc72506f269feb89822c13e66b282bc52c5724c27e575a04cbec949a13671d13";

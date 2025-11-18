@@ -42,7 +42,7 @@ let wormholeStateId = "0x31358d198147da50db32eda2562951d53973a0c0ad5ed738e9b17d8
 
     let priceInfoObjectIds = await client.createPriceFeed(tx, priceFeedUpdateData);
 
-    let res = await client.jsonRpcClient.signAndExecuteTransaction({
+    let res = await client.signAndExecuteTransaction({
         signer: keypair,
         transaction: tx,
         options: {

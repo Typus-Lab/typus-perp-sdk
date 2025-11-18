@@ -30,7 +30,7 @@ import { getStakePool, getUserStake, harvestStakeReward, NETWORK } from "src";
         user,
     });
 
-    let dryrunRes = await client.jsonRpcClient.devInspectTransactionBlock({
+    let dryrunRes = await client.devInspectTransactionBlock({
         transactionBlock: tx,
         sender: user,
     });
@@ -43,7 +43,7 @@ import { getStakePool, getUserStake, harvestStakeReward, NETWORK } from "src";
         console.log(`Sui incentive amount: ${harvest_amount / 10e9}`);
     }
 
-    let res = await client.jsonRpcClient.signAndExecuteTransaction({ signer: keypair, transaction: tx });
+    let res = await client.signAndExecuteTransaction({ signer: keypair, transaction: tx });
     console.log(res);
     // https://testnet.suivision.xyz/txblock/EvBgQwKFay8YMYDG9WtStsfvR7MzhPa4nu5aKMgeptzX?tab=Events
 })();

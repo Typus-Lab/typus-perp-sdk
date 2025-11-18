@@ -25,7 +25,7 @@ import { NETWORK, TLP, TLP_TOKEN, getLpPools, getStakePool, getUserStake, redeem
     // 2. get TLP coins
     // coins
     let coins = (
-        await client.jsonRpcClient.getCoins({
+        await client.getCoins({
             owner: user,
             coinType: TLP_TOKEN,
         })
@@ -41,13 +41,13 @@ import { NETWORK, TLP, TLP_TOKEN, getLpPools, getStakePool, getUserStake, redeem
         lpCoins: coins,
     });
 
-    let dryrunRes = await client.jsonRpcClient.devInspectTransactionBlock({
+    let dryrunRes = await client.devInspectTransactionBlock({
         transactionBlock: tx,
         sender: user,
     });
     console.log(dryrunRes.events.filter((e) => e.type.endsWith("RedeemEvent")));
 
-    let res = await client.jsonRpcClient.signAndExecuteTransaction({ signer: keypair, transaction: tx });
+    let res = await client.signAndExecuteTransaction({ signer: keypair, transaction: tx });
     console.log(res);
     // https://testnet.suivision.xyz/txblock/EvBgQwKFay8YMYDG9WtStsfvR7MzhPa4nu5aKMgeptzX?tab=Events
 })();

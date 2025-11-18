@@ -12,7 +12,7 @@ import { bcs } from "@mysten/sui/bcs";
 import * as type_name from "./deps/std/type_name";
 import * as object from "./deps/sui/object";
 import * as vec_set from "./deps/sui/vec_set";
-const $moduleName = "0x11f4f072d6472f545a82200ec4bee8a8db006e209f76bcc013178c585ed4b368::admin";
+const $moduleName = "@typus/stake-pool::admin";
 export const FeeInfo = new MoveStruct({
     name: `${$moduleName}::FeeInfo`,
     fields: {

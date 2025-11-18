@@ -31,14 +31,14 @@ import { TOKEN } from "@typus/typus-sdk/dist/src/constants";
         orderSize: "100000",
     });
 
-    let dryrunRes = await client.jsonRpcClient.devInspectTransactionBlock({
+    let dryrunRes = await client.devInspectTransactionBlock({
         transactionBlock: tx,
         sender: user,
     });
     // console.log(dryrunRes.events.filter((e) => e.type.endsWith("reduceOptionCollateralPositionSizesEvent")));
     console.log(dryrunRes.events.filter((e) => e.type.endsWith("OrderFilledEvent"))); // if the order is not filled, there will be no OrderFilledEvent
 
-    let res = await client.jsonRpcClient.signAndExecuteTransaction({ signer: keypair, transaction: tx });
+    let res = await client.signAndExecuteTransaction({ signer: keypair, transaction: tx });
     console.log(res);
     // https://testnet.suivision.xyz/txblock/9BwZRXhRqYxeP6k3NavsVX1yQQjTfJbPBYijDPfaPHPH
 })();

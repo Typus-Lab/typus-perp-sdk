@@ -7,7 +7,7 @@ import { type Transaction } from "@mysten/sui/transactions";
 import * as object from "./deps/sui/object";
 import * as type_name from "./deps/std/type_name";
 import * as vec_map from "./deps/sui/vec_map";
-const $moduleName = "0x11f4f072d6472f545a82200ec4bee8a8db006e209f76bcc013178c585ed4b368::stake_pool";
+const $moduleName = "@typus/stake-pool::stake_pool";
 export const StakePoolRegistry = new MoveStruct({
     name: `${$moduleName}::StakePoolRegistry`,
     fields: {
@@ -313,7 +313,7 @@ export interface InitOptions {
 }
 /** Initializes the module. */
 export function init(options: InitOptions = {}) {
-    const packageAddress = options.package ?? "0x11f4f072d6472f545a82200ec4bee8a8db006e209f76bcc013178c585ed4b368";
+    const packageAddress = options.package ?? "@typus/stake-pool";
     return (tx: Transaction) =>
         tx.moveCall({
             package: packageAddress,
@@ -339,7 +339,7 @@ export interface NewStakePoolOptions {
 }
 /** [Authorized Function] Creates a new stake pool. */
 export function newStakePool(options: NewStakePoolOptions) {
-    const packageAddress = options.package ?? "0x11f4f072d6472f545a82200ec4bee8a8db006e209f76bcc013178c585ed4b368";
+    const packageAddress = options.package ?? "@typus/stake-pool";
     const argumentsTypes = [
         `${packageAddress}::admin::Version`,
         `${packageAddress}::stake_pool::StakePoolRegistry`,
@@ -373,7 +373,7 @@ export interface AutoCompoundOptions {
 }
 /** [Authorized Function] */
 export function autoCompound(options: AutoCompoundOptions) {
-    const packageAddress = options.package ?? "0x11f4f072d6472f545a82200ec4bee8a8db006e209f76bcc013178c585ed4b368";
+    const packageAddress = options.package ?? "@typus/stake-pool";
     const argumentsTypes = [
         `${packageAddress}::admin::Version`,
         `${packageAddress}::stake_pool::StakePoolRegistry`,
@@ -412,7 +412,7 @@ export interface AddIncentiveTokenOptions {
 }
 /** [Authorized Function] Adds a new incentive token to a pool. */
 export function addIncentiveToken(options: AddIncentiveTokenOptions) {
-    const packageAddress = options.package ?? "0x11f4f072d6472f545a82200ec4bee8a8db006e209f76bcc013178c585ed4b368";
+    const packageAddress = options.package ?? "@typus/stake-pool";
     const argumentsTypes = [
         `${packageAddress}::admin::Version`,
         `${packageAddress}::stake_pool::StakePoolRegistry`,
@@ -449,7 +449,7 @@ export interface DeactivateIncentiveTokenOptions {
 }
 /** [Authorized Function] Deactivates an incentive token. */
 export function deactivateIncentiveToken(options: DeactivateIncentiveTokenOptions) {
-    const packageAddress = options.package ?? "0x11f4f072d6472f545a82200ec4bee8a8db006e209f76bcc013178c585ed4b368";
+    const packageAddress = options.package ?? "@typus/stake-pool";
     const argumentsTypes = [
         `${packageAddress}::admin::Version`,
         `${packageAddress}::stake_pool::StakePoolRegistry`,
@@ -483,7 +483,7 @@ export interface ActivateIncentiveTokenOptions {
 }
 /** [Authorized Function] Activates an incentive token. */
 export function activateIncentiveToken(options: ActivateIncentiveTokenOptions) {
-    const packageAddress = options.package ?? "0x11f4f072d6472f545a82200ec4bee8a8db006e209f76bcc013178c585ed4b368";
+    const packageAddress = options.package ?? "@typus/stake-pool";
     const argumentsTypes = [
         `${packageAddress}::admin::Version`,
         `${packageAddress}::stake_pool::StakePoolRegistry`,
@@ -517,7 +517,7 @@ export interface RemoveIncentiveTokenOptions {
 }
 /** [Authorized Function] Removes an incentive token. */
 export function removeIncentiveToken(options: RemoveIncentiveTokenOptions) {
-    const packageAddress = options.package ?? "0x11f4f072d6472f545a82200ec4bee8a8db006e209f76bcc013178c585ed4b368";
+    const packageAddress = options.package ?? "@typus/stake-pool";
     const argumentsTypes = [
         `${packageAddress}::admin::Version`,
         `${packageAddress}::stake_pool::StakePoolRegistry`,
@@ -552,7 +552,7 @@ export interface UpdateUnlockCountdownTsMsOptions {
 }
 /** [Authorized Function] Updates the unlock countdown. */
 export function updateUnlockCountdownTsMs(options: UpdateUnlockCountdownTsMsOptions) {
-    const packageAddress = options.package ?? "0x11f4f072d6472f545a82200ec4bee8a8db006e209f76bcc013178c585ed4b368";
+    const packageAddress = options.package ?? "@typus/stake-pool";
     const argumentsTypes = [
         `${packageAddress}::admin::Version`,
         `${packageAddress}::stake_pool::StakePoolRegistry`,
@@ -592,7 +592,7 @@ export interface UpdateIncentiveConfigOptions {
 }
 /** [Authorized Function] Updates the incentive configuration. */
 export function updateIncentiveConfig(options: UpdateIncentiveConfigOptions) {
-    const packageAddress = options.package ?? "0x11f4f072d6472f545a82200ec4bee8a8db006e209f76bcc013178c585ed4b368";
+    const packageAddress = options.package ?? "@typus/stake-pool";
     const argumentsTypes = [
         `${packageAddress}::admin::Version`,
         `${packageAddress}::stake_pool::StakePoolRegistry`,
@@ -629,7 +629,7 @@ export interface AllocateIncentiveOptions {
 }
 /** Allocates incentive to the pool. WARNING: no authority check inside */
 export function allocateIncentive(options: AllocateIncentiveOptions) {
-    const packageAddress = options.package ?? "0x11f4f072d6472f545a82200ec4bee8a8db006e209f76bcc013178c585ed4b368";
+    const packageAddress = options.package ?? "@typus/stake-pool";
     const argumentsTypes = [
         `${packageAddress}::admin::Version`,
         `${packageAddress}::stake_pool::StakePoolRegistry`,
@@ -665,7 +665,7 @@ export interface DepositIncentiveOptions {
 }
 /** [Authorized Function] Deposits incentive tokens. */
 export function depositIncentive(options: DepositIncentiveOptions) {
-    const packageAddress = options.package ?? "0x11f4f072d6472f545a82200ec4bee8a8db006e209f76bcc013178c585ed4b368";
+    const packageAddress = options.package ?? "@typus/stake-pool";
     const argumentsTypes = [
         `${packageAddress}::admin::Version`,
         `${packageAddress}::stake_pool::StakePoolRegistry`,
@@ -702,7 +702,7 @@ export interface WithdrawIncentiveV2Options {
 }
 /** [Authorized Function] Withdraws incentive tokens. */
 export function withdrawIncentiveV2(options: WithdrawIncentiveV2Options) {
-    const packageAddress = options.package ?? "0x11f4f072d6472f545a82200ec4bee8a8db006e209f76bcc013178c585ed4b368";
+    const packageAddress = options.package ?? "@typus/stake-pool";
     const argumentsTypes = [
         `${packageAddress}::admin::Version`,
         `${packageAddress}::stake_pool::StakePoolRegistry`,
@@ -742,7 +742,7 @@ export interface StakeOptions {
 }
 /** [User Function] Stake LP tokens. */
 export function stake(options: StakeOptions) {
-    const packageAddress = options.package ?? "0x11f4f072d6472f545a82200ec4bee8a8db006e209f76bcc013178c585ed4b368";
+    const packageAddress = options.package ?? "@typus/stake-pool";
     const argumentsTypes = [
         `${packageAddress}::admin::Version`,
         `${packageAddress}::stake_pool::StakePoolRegistry`,
@@ -782,7 +782,7 @@ export interface UpdatePoolInfoU64PaddingOptions {
 }
 /** [Authorized Function] Update TLP price for calculating staking exp */
 export function updatePoolInfoU64Padding(options: UpdatePoolInfoU64PaddingOptions) {
-    const packageAddress = options.package ?? "0x11f4f072d6472f545a82200ec4bee8a8db006e209f76bcc013178c585ed4b368";
+    const packageAddress = options.package ?? "@typus/stake-pool";
     const argumentsTypes = [
         `${packageAddress}::admin::Version`,
         `${packageAddress}::stake_pool::StakePoolRegistry`,
@@ -818,7 +818,7 @@ export interface HotfixPoolInfoU64PaddingOptions {
 }
 /** [Authorized Function] Update TLP price for calculating staking exp */
 export function hotfixPoolInfoU64Padding(options: HotfixPoolInfoU64PaddingOptions) {
-    const packageAddress = options.package ?? "0x11f4f072d6472f545a82200ec4bee8a8db006e209f76bcc013178c585ed4b368";
+    const packageAddress = options.package ?? "@typus/stake-pool";
     const argumentsTypes = [
         `${packageAddress}::admin::Version`,
         `${packageAddress}::stake_pool::StakePoolRegistry`,
@@ -857,7 +857,7 @@ export interface SnapshotOptions {
 }
 /** [User Function] Get the staking exp */
 export function snapshot(options: SnapshotOptions) {
-    const packageAddress = options.package ?? "0x11f4f072d6472f545a82200ec4bee8a8db006e209f76bcc013178c585ed4b368";
+    const packageAddress = options.package ?? "@typus/stake-pool";
     const argumentsTypes = [
         `${packageAddress}::admin::Version`,
         `${packageAddress}::stake_pool::StakePoolRegistry`,
@@ -898,7 +898,7 @@ export interface UnsubscribeOptions {
 }
 /** [User Function] Pre-process to unstake the TLP */
 export function unsubscribe(options: UnsubscribeOptions) {
-    const packageAddress = options.package ?? "0x11f4f072d6472f545a82200ec4bee8a8db006e209f76bcc013178c585ed4b368";
+    const packageAddress = options.package ?? "@typus/stake-pool";
     const argumentsTypes = [
         `${packageAddress}::admin::Version`,
         `${packageAddress}::stake_pool::StakePoolRegistry`,
@@ -937,7 +937,7 @@ export interface UnstakeOptions {
 }
 /** [User Function] Post-process to unstake the TLP */
 export function unstake(options: UnstakeOptions) {
-    const packageAddress = options.package ?? "0x11f4f072d6472f545a82200ec4bee8a8db006e209f76bcc013178c585ed4b368";
+    const packageAddress = options.package ?? "@typus/stake-pool";
     const argumentsTypes = [
         `${packageAddress}::admin::Version`,
         `${packageAddress}::stake_pool::StakePoolRegistry`,
@@ -971,7 +971,7 @@ export interface UpdateLastIncentivePriceIndexOptions {
           ];
 }
 export function updateLastIncentivePriceIndex(options: UpdateLastIncentivePriceIndexOptions) {
-    const packageAddress = options.package ?? "0x11f4f072d6472f545a82200ec4bee8a8db006e209f76bcc013178c585ed4b368";
+    const packageAddress = options.package ?? "@typus/stake-pool";
     const argumentsTypes = [
         `${packageAddress}::stake_pool::LpUserShare`,
         "0x0000000000000000000000000000000000000000000000000000000000000001::type_name::TypeName",
@@ -997,7 +997,7 @@ export interface LogHarvestedAmountOptions {
         | [userShare: RawTransactionArgument<string>, incentiveValue: RawTransactionArgument<number | bigint>];
 }
 export function logHarvestedAmount(options: LogHarvestedAmountOptions) {
-    const packageAddress = options.package ?? "0x11f4f072d6472f545a82200ec4bee8a8db006e209f76bcc013178c585ed4b368";
+    const packageAddress = options.package ?? "@typus/stake-pool";
     const argumentsTypes = [`${packageAddress}::stake_pool::LpUserShare`, "u64"] satisfies string[];
     const parameterNames = ["userShare", "incentiveValue"];
     return (tx: Transaction) =>
@@ -1028,7 +1028,7 @@ export interface HarvestPerUserShareOptions {
 }
 /** [User Function] Harvest the incentive from staking TLP */
 export function harvestPerUserShare(options: HarvestPerUserShareOptions) {
-    const packageAddress = options.package ?? "0x11f4f072d6472f545a82200ec4bee8a8db006e209f76bcc013178c585ed4b368";
+    const packageAddress = options.package ?? "@typus/stake-pool";
     const argumentsTypes = [
         `${packageAddress}::admin::Version`,
         `${packageAddress}::stake_pool::StakePoolRegistry`,
@@ -1062,7 +1062,7 @@ export interface CalculateIncentiveOptions {
           ];
 }
 export function calculateIncentive(options: CalculateIncentiveOptions) {
-    const packageAddress = options.package ?? "0x11f4f072d6472f545a82200ec4bee8a8db006e209f76bcc013178c585ed4b368";
+    const packageAddress = options.package ?? "@typus/stake-pool";
     const argumentsTypes = [
         "u64",
         "0x0000000000000000000000000000000000000000000000000000000000000001::type_name::TypeName",
@@ -1086,7 +1086,7 @@ export interface HarvestProgressUpdatedOptions {
     arguments: HarvestProgressUpdatedArguments | [current: RawTransactionArgument<string>, user: RawTransactionArgument<string>];
 }
 export function harvestProgressUpdated(options: HarvestProgressUpdatedOptions) {
-    const packageAddress = options.package ?? "0x11f4f072d6472f545a82200ec4bee8a8db006e209f76bcc013178c585ed4b368";
+    const packageAddress = options.package ?? "@typus/stake-pool";
     const argumentsTypes = [
         "0x0000000000000000000000000000000000000000000000000000000000000002::vec_map::VecMap<0x0000000000000000000000000000000000000000000000000000000000000001::type_name::TypeName, u64>",
         "0x0000000000000000000000000000000000000000000000000000000000000002::vec_map::VecMap<0x0000000000000000000000000000000000000000000000000000000000000001::type_name::TypeName, u64>",
@@ -1108,7 +1108,7 @@ export interface MultiplierOptions {
     arguments: MultiplierArguments | [decimal: RawTransactionArgument<number | bigint>];
 }
 export function multiplier(options: MultiplierOptions) {
-    const packageAddress = options.package ?? "0x11f4f072d6472f545a82200ec4bee8a8db006e209f76bcc013178c585ed4b368";
+    const packageAddress = options.package ?? "@typus/stake-pool";
     const argumentsTypes = ["u64"] satisfies string[];
     const parameterNames = ["decimal"];
     return (tx: Transaction) =>
@@ -1131,7 +1131,7 @@ export interface GetUserSharesOptions {
         | [registry: RawTransactionArgument<string>, index: RawTransactionArgument<number | bigint>, user: RawTransactionArgument<string>];
 }
 export function getUserShares(options: GetUserSharesOptions) {
-    const packageAddress = options.package ?? "0x11f4f072d6472f545a82200ec4bee8a8db006e209f76bcc013178c585ed4b368";
+    const packageAddress = options.package ?? "@typus/stake-pool";
     const argumentsTypes = [`${packageAddress}::stake_pool::StakePoolRegistry`, "u64", "address"] satisfies string[];
     const parameterNames = ["registry", "index", "user"];
     return (tx: Transaction) =>
@@ -1158,7 +1158,7 @@ export interface GetUserSharesByUserShareIdOptions {
           ];
 }
 export function getUserSharesByUserShareId(options: GetUserSharesByUserShareIdOptions) {
-    const packageAddress = options.package ?? "0x11f4f072d6472f545a82200ec4bee8a8db006e209f76bcc013178c585ed4b368";
+    const packageAddress = options.package ?? "@typus/stake-pool";
     const argumentsTypes = [`${packageAddress}::stake_pool::StakePoolRegistry`, "u64", "u64"] satisfies string[];
     const parameterNames = ["registry", "index", "userShareId"];
     return (tx: Transaction) =>
@@ -1178,7 +1178,7 @@ export interface GetStakePoolOptions {
     arguments: GetStakePoolArguments | [id: RawTransactionArgument<string>, index: RawTransactionArgument<number | bigint>];
 }
 export function getStakePool(options: GetStakePoolOptions) {
-    const packageAddress = options.package ?? "0x11f4f072d6472f545a82200ec4bee8a8db006e209f76bcc013178c585ed4b368";
+    const packageAddress = options.package ?? "@typus/stake-pool";
     const argumentsTypes = ["0x0000000000000000000000000000000000000000000000000000000000000002::object::UID", "u64"] satisfies string[];
     const parameterNames = ["id", "index"];
     return (tx: Transaction) =>
@@ -1198,7 +1198,7 @@ export interface GetMutStakePoolOptions {
     arguments: GetMutStakePoolArguments | [id: RawTransactionArgument<string>, index: RawTransactionArgument<number | bigint>];
 }
 export function getMutStakePool(options: GetMutStakePoolOptions) {
-    const packageAddress = options.package ?? "0x11f4f072d6472f545a82200ec4bee8a8db006e209f76bcc013178c585ed4b368";
+    const packageAddress = options.package ?? "@typus/stake-pool";
     const argumentsTypes = ["0x0000000000000000000000000000000000000000000000000000000000000002::object::UID", "u64"] satisfies string[];
     const parameterNames = ["id", "index"];
     return (tx: Transaction) =>
@@ -1217,7 +1217,7 @@ export interface GetIncentiveTokensOptions {
     arguments: GetIncentiveTokensArguments | [stakePool: RawTransactionArgument<string>];
 }
 export function getIncentiveTokens(options: GetIncentiveTokensOptions) {
-    const packageAddress = options.package ?? "0x11f4f072d6472f545a82200ec4bee8a8db006e209f76bcc013178c585ed4b368";
+    const packageAddress = options.package ?? "@typus/stake-pool";
     const argumentsTypes = [`${packageAddress}::stake_pool::StakePool`] satisfies string[];
     const parameterNames = ["stakePool"];
     return (tx: Transaction) =>
@@ -1237,7 +1237,7 @@ export interface GetIncentiveOptions {
     arguments: GetIncentiveArguments | [stakePool: RawTransactionArgument<string>, tokenType: RawTransactionArgument<string>];
 }
 export function getIncentive(options: GetIncentiveOptions) {
-    const packageAddress = options.package ?? "0x11f4f072d6472f545a82200ec4bee8a8db006e209f76bcc013178c585ed4b368";
+    const packageAddress = options.package ?? "@typus/stake-pool";
     const argumentsTypes = [
         `${packageAddress}::stake_pool::StakePool`,
         "0x0000000000000000000000000000000000000000000000000000000000000001::type_name::TypeName",
@@ -1260,7 +1260,7 @@ export interface GetMutIncentiveOptions {
     arguments: GetMutIncentiveArguments | [stakePool: RawTransactionArgument<string>, tokenType: RawTransactionArgument<string>];
 }
 export function getMutIncentive(options: GetMutIncentiveOptions) {
-    const packageAddress = options.package ?? "0x11f4f072d6472f545a82200ec4bee8a8db006e209f76bcc013178c585ed4b368";
+    const packageAddress = options.package ?? "@typus/stake-pool";
     const argumentsTypes = [
         `${packageAddress}::stake_pool::StakePool`,
         "0x0000000000000000000000000000000000000000000000000000000000000001::type_name::TypeName",
@@ -1283,7 +1283,7 @@ export interface RemoveIncentiveOptions {
     arguments: RemoveIncentiveArguments | [stakePool: RawTransactionArgument<string>, tokenType: RawTransactionArgument<string>];
 }
 export function removeIncentive(options: RemoveIncentiveOptions) {
-    const packageAddress = options.package ?? "0x11f4f072d6472f545a82200ec4bee8a8db006e209f76bcc013178c585ed4b368";
+    const packageAddress = options.package ?? "@typus/stake-pool";
     const argumentsTypes = [
         `${packageAddress}::stake_pool::StakePool`,
         "0x0000000000000000000000000000000000000000000000000000000000000001::type_name::TypeName",
@@ -1305,7 +1305,7 @@ export interface GetLastIncentivePriceIndexOptions {
     arguments: GetLastIncentivePriceIndexArguments | [stakePool: RawTransactionArgument<string>];
 }
 export function getLastIncentivePriceIndex(options: GetLastIncentivePriceIndexOptions) {
-    const packageAddress = options.package ?? "0x11f4f072d6472f545a82200ec4bee8a8db006e209f76bcc013178c585ed4b368";
+    const packageAddress = options.package ?? "@typus/stake-pool";
     const argumentsTypes = [`${packageAddress}::stake_pool::StakePool`] satisfies string[];
     const parameterNames = ["stakePool"];
     return (tx: Transaction) =>
@@ -1335,7 +1335,7 @@ export interface WithdrawIncentiveOptions {
     typeArguments: [string];
 }
 export function withdrawIncentive(options: WithdrawIncentiveOptions) {
-    const packageAddress = options.package ?? "0x11f4f072d6472f545a82200ec4bee8a8db006e209f76bcc013178c585ed4b368";
+    const packageAddress = options.package ?? "@typus/stake-pool";
     const argumentsTypes = [
         `${packageAddress}::admin::Version`,
         `${packageAddress}::stake_pool::StakePoolRegistry`,
@@ -1357,7 +1357,7 @@ export interface DeprecatedOptions {
     arguments?: [];
 }
 export function deprecated(options: DeprecatedOptions = {}) {
-    const packageAddress = options.package ?? "0x11f4f072d6472f545a82200ec4bee8a8db006e209f76bcc013178c585ed4b368";
+    const packageAddress = options.package ?? "@typus/stake-pool";
     return (tx: Transaction) =>
         tx.moveCall({
             package: packageAddress,

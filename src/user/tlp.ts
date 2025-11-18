@@ -9,7 +9,6 @@ import {
     unstake as _unstake,
     unsubscribe as _unsubscribe,
     snapshot as _snapshot,
-    allocateIncentive,
 } from "src/generated/typus_stake_pool/stake_pool";
 import { LiquidityPool, redeem, mintLp, updateLiquidityValue, swap as _swap, claim as _claim } from "src/generated/typus_perp/lp_pool";
 import { TypusClient } from "src/client";
@@ -489,16 +488,6 @@ export async function harvestStakeReward(
     let iTokens = input.stakePool.incentives.map((i) => i.token_type.name);
 
     snapshot(client, tx, { userShareId: input.userShareId });
-
-    tx.add(
-        allocateIncentive({
-            arguments: {
-                version: STAKE_POOL_VERSION,
-                registry: STAKE_POOL,
-                index: BigInt(input.perpIndex ?? 0),
-            },
-        })
-    );
 
     for (let iToken of iTokens) {
         // console.log(iToken);

@@ -24,14 +24,14 @@ import { getSponsoredTx } from "@typus/typus-sdk/dist/src/utils/sponsoredTx";
     let tradingToken: TOKEN = "SUI";
 
     let coins = (
-        await client.jsonRpcClient.getCoins({
+        await client.getCoins({
             owner: user,
             coinType: tokenType[NETWORK][cToken],
         })
     ).data.map((coin) => coin.coinObjectId);
 
     let suiCoins = (
-        await client.jsonRpcClient.getCoins({
+        await client.getCoins({
             owner: user,
             coinType: tokenType[NETWORK]["SUI"],
         })
@@ -51,28 +51,28 @@ import { getSponsoredTx } from "@typus/typus-sdk/dist/src/utils/sponsoredTx";
         suiCoins,
     });
 
-    // let dryrunRes = await client.jsonRpcClient.devInspectTransactionBlock({
-    //     transactionBlock: tx,
-    //     sender: user,
-    // });
-    // console.log(dryrunRes);
-    // console.log(dryrunRes.events.filter((e) => e.type.endsWith("CreateTradingOrderEvent"))[0].parsedJson); //
-    // console.log(dryrunRes.events.filter((e) => e.type.endsWith("RealizeFundingEvent"))); // only exists if the order size is reduced ( with linked_position_id provided)
-    // console.log(dryrunRes.events.filter((e) => e.type.endsWith("OrderFilledEvent"))); // if the order is not filled, there will be no OrderFilledEvent
+    let dryrunRes = await client.devInspectTransactionBlock({
+        transactionBlock: tx,
+        sender: user,
+    });
+    console.log(dryrunRes);
+    console.log(dryrunRes.events.filter((e) => e.type.endsWith("CreateTradingOrderEvent"))[0].parsedJson); //
+    console.log(dryrunRes.events.filter((e) => e.type.endsWith("RealizeFundingEvent"))); // only exists if the order size is reduced ( with linked_position_id provided)
+    console.log(dryrunRes.events.filter((e) => e.type.endsWith("OrderFilledEvent"))); // if the order is not filled, there will be no OrderFilledEvent
 
-    // let res = await client.jsonRpcClient.signAndExecuteTransaction({ signer: keypair, transaction: tx });
+    // let res = await client.signAndExecuteTransaction({ signer: keypair, transaction: tx });
     // console.log(res);
 
     // For Sponsored Tx
-    let sponsoredResponse = await getSponsoredTx(client.jsonRpcClient, user, tx);
-    if (sponsoredResponse.txBytes) {
-        let senderSig = await Transaction.from(sponsoredResponse.txBytes).sign({ signer: keypair }); // wallet sign
-        let res = await client.jsonRpcClient.executeTransactionBlock({
-            transactionBlock: sponsoredResponse.txBytes,
-            signature: [senderSig?.signature, sponsoredResponse.sponsorSig],
-        });
-        console.log(res);
-    } else {
-        console.log(sponsoredResponse);
-    }
+    // let sponsoredResponse = await getSponsoredTx(client.jsonRpcClient, user, tx);
+    // if (sponsoredResponse.txBytes) {
+    //     let senderSig = await Transaction.from(sponsoredResponse.txBytes).sign({ signer: keypair }); // wallet sign
+    //     let res = await client.executeTransactionBlock({
+    //         transactionBlock: sponsoredResponse.txBytes,
+    //         signature: [senderSig?.signature, sponsoredResponse.sponsorSig],
+    //     });
+    //     console.log(res);
+    // } else {
+    //     console.log(sponsoredResponse);
+    // }
 })();

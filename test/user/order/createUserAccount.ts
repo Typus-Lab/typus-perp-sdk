@@ -25,6 +25,6 @@
 
 //     tx.transferObjects([userAccountCap], user);
 
-//     let res = await client.jsonRpcClient.signAndExecuteTransaction({ signer: keypair, transaction: tx });
+//     let res = await client.signAndExecuteTransaction({ signer: keypair, transaction: tx });
 //     console.log(res);
 // })();

@@ -33,10 +33,10 @@ import { TypusBidReceipt } from "./generated/typus_perp/deps/typus_framework/vau
 import { TypusClient } from "src/client";
 
 export async function getLpPools(client: TypusClient): Promise<(typeof LiquidityPool.$inferType)[]> {
-    // const lpPoolRegistry = await Registry.fetch(client.jsonRpcClient, LP_POOL);
+    // const lpPoolRegistry = await Registry.fetch(client, LP_POOL);
     // console.log(lpPoolRegistry);
 
-    let dynamicFields = await client.jsonRpcClient.getDynamicFields({
+    let dynamicFields = await client.getDynamicFields({
         parentId: LIQUIDITY_POOL,
     });
 
@@ -52,10 +52,10 @@ export async function getLpPools(client: TypusClient): Promise<(typeof Liquidity
 }
 
 export async function getLpPool(client: TypusClient, objectId: string = LIQUIDITY_POOL_0): Promise<typeof LiquidityPool.$inferType> {
-    // let lpPool = await LiquidityPool.fetch(client.jsonRpcClient, objectId);
+    // let lpPool = await LiquidityPool.fetch(client, objectId);
     // return lpPool;
 
-    const data = await client.jsonRpcClient.getObject({
+    const data = await client.getObject({
         id: objectId,
         options: {
             // request the bcs data when loading your object
@@ -71,10 +71,10 @@ export async function getLpPool(client: TypusClient, objectId: string = LIQUIDIT
     return LiquidityPool.fromBase64(data.data.bcs.bcsBytes);
 }
 
-// getLpPool(client.jsonRpcClient).then((x) => console.log(x));
+// getLpPool(client).then((x) => console.log(x));
 
 export async function getStakePools(client: TypusClient): Promise<(typeof StakePool.$inferType)[]> {
-    let dynamicFields = await client.jsonRpcClient.getDynamicFields({
+    let dynamicFields = await client.getDynamicFields({
         parentId: STAKE_POOL,
     });
 
@@ -90,10 +90,10 @@ export async function getStakePools(client: TypusClient): Promise<(typeof StakeP
 }
 
 export async function getStakePool(client: TypusClient, objectId: string = STAKE_POOL_0): Promise<typeof StakePool.$inferType> {
-    // let stakePool = await StakePool.fetch(client.jsonRpcClient, objectId);
+    // let stakePool = await StakePool.fetch(client, objectId);
     // return stakePool;
 
-    const data = await client.jsonRpcClient.getObject({
+    const data = await client.getObject({
         id: objectId,
         options: {
             // request the bcs data when loading your object
@@ -122,7 +122,7 @@ export async function getMarkets(
 ): Promise<MarketsData[]> {
     let tx = new Transaction();
     tx.add(getMarketsBcs({ arguments: { registry: MARKET, indexes: input.indexes.map((x) => BigInt(x)) } }));
-    let devInspectTransactionBlockResult = await client.jsonRpcClient.devInspectTransactionBlock({ sender: SENDER, transactionBlock: tx });
+    let devInspectTransactionBlockResult = await client.devInspectTransactionBlock({ sender: SENDER, transactionBlock: tx });
     // @ts-ignore
     let bytes = devInspectTransactionBlockResult.results[0].returnValues[0][0];
     let reader = new BcsReader(new Uint8Array(bytes));
@@ -158,7 +158,7 @@ export async function getUserOrders(client: TypusClient, user: string) {
         })
     );
 
-    let res = await client.jsonRpcClient.devInspectTransactionBlock({ sender: user, transactionBlock: tx });
+    let res = await client.devInspectTransactionBlock({ sender: user, transactionBlock: tx });
     // console.log(res);
 
     // @ts-ignore
@@ -193,7 +193,7 @@ export async function getUserPositions(client: TypusClient, user: string) {
         })
     );
 
-    let res = await client.jsonRpcClient.devInspectTransactionBlock({ sender: user, transactionBlock: tx });
+    let res = await client.devInspectTransactionBlock({ sender: user, transactionBlock: tx });
     // console.log(res);
 
     // @ts-ignore
@@ -252,7 +252,7 @@ export async function getUserStake(client: TypusClient, user: string): Promise<[
         })
     );
 
-    let res = await client.jsonRpcClient.devInspectTransactionBlock({ sender: user, transactionBlock: tx });
+    let res = await client.devInspectTransactionBlock({ sender: user, transactionBlock: tx });
     // console.log(res);
 
     if (res.results) {
@@ -297,7 +297,7 @@ export async function getDeactivatingShares(client: TypusClient, user: string): 
         })
     );
 
-    let res = await client.jsonRpcClient.devInspectTransactionBlock({ sender: user, transactionBlock: tx });
+    let res = await client.devInspectTransactionBlock({ sender: user, transactionBlock: tx });
     // console.log(res);
 
     if (res.results) {
@@ -371,7 +371,7 @@ export async function getLiquidationPriceAndPnl(
         );
     }
 
-    let res = await client.jsonRpcClient.devInspectTransactionBlock({ sender: input.user, transactionBlock: tx });
+    let res = await client.devInspectTransactionBlock({ sender: input.user, transactionBlock: tx });
     // console.log(res);
     //   0  estimated_liquidation_price,
     //   1  has_profit,
@@ -445,7 +445,7 @@ export async function getAllPositions(
             typeArguments: [tokenType[NETWORK][input.baseToken]],
         })
     );
-    let res = await client.jsonRpcClient.devInspectTransactionBlock({
+    let res = await client.devInspectTransactionBlock({
         sender: SENDER,
         transactionBlock: tx,
     });

@@ -16,7 +16,7 @@ import { NETWORK } from "src";
     let priceInfoObjectIds = await updatePyth(client.pythClient, tx, ["SUI", "WBTC", "wETH", "wSOL", "DEEP", "WAL", "wAPT", "JPY", "XAU"]);
     console.log(priceInfoObjectIds);
 
-    let res = await client.jsonRpcClient.signAndExecuteTransaction({
+    let res = await client.signAndExecuteTransaction({
         signer: keypair,
         transaction: tx,
         options: {

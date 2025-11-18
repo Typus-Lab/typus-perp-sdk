@@ -13,21 +13,23 @@ export const NETWORK = process.env.NEXT_PUBLIC_CLUSTER == "testnet" ? "TESTNET" 
 
 /** Register the MVR plugin globally */
 
-import { namedPackagesPlugin, Transaction } from "@mysten/sui/transactions";
+// import { namedPackagesPlugin, Transaction } from "@mysten/sui/transactions";
 
-const mvrPlugin = NETWORK == "MAINNET" ? "https://mainnet.mvr.mystenlabs.com" : "https://testnet.mvr.mystenlabs.com";
+// const mvrPlugin = NETWORK == "MAINNET" ? "https://mainnet.mvr.mystenlabs.com" : "https://testnet.mvr.mystenlabs.com";
 
-const plugin = namedPackagesPlugin({ url: mvrPlugin });
+// const plugin = namedPackagesPlugin({ url: mvrPlugin });
 
-/** Register the MVR plugin globally (once) for our PTB construction */
-Transaction.registerGlobalSerializationPlugin("namedPackagesPlugin", plugin);
+// /** Register the MVR plugin globally (once) for our PTB construction */
+// Transaction.registerGlobalSerializationPlugin("namedPackagesPlugin", plugin);
 
 export const PERP_PACKAGE_ID =
     NETWORK == "MAINNET"
         ? "0xe27969a70f93034de9ce16e6ad661b480324574e68d15a64b513fd90eb2423e5"
         : "0x585924f160f83ef16f8927ec117e4d740abb6f4e571ecfa89ff3e973042cb1b9";
 export const PERP_PUBLISHED_AT =
-    NETWORK == "MAINNET" ? "0x9eda9afa0b42bf908766c42d02a549c271d7d0ae02c8c58c5075858f8f4d3b69" : "@typus/perp";
+    NETWORK == "MAINNET"
+        ? "0x9eda9afa0b42bf908766c42d02a549c271d7d0ae02c8c58c5075858f8f4d3b69"
+        : "0x19b9b177d12906eef7e7a0f62ba8575b6fca211964a21aa1877800474137d044";
 export const PERP_PKG_V1 =
     NETWORK == "MAINNET"
         ? "0xe27969a70f93034de9ce16e6ad661b480324574e68d15a64b513fd90eb2423e5"

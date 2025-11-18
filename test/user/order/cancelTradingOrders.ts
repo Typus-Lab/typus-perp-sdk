@@ -24,12 +24,12 @@ import { cancelTradingOrder, getUserOrders, NETWORK } from "src";
         user,
     });
 
-    let dryrunRes = await client.jsonRpcClient.devInspectTransactionBlock({
+    let dryrunRes = await client.devInspectTransactionBlock({
         transactionBlock: tx,
         sender: user,
     });
     console.log(dryrunRes.events.filter((e) => e.type.endsWith("CancelTradingOrderEvent"))[0].parsedJson);
 
-    let res = await client.jsonRpcClient.signAndExecuteTransaction({ signer: keypair, transaction: tx });
-    console.log(res);
+    // let res = await client.signAndExecuteTransaction({ signer: keypair, transaction: tx });
+    // console.log(res);
 })();

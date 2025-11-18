@@ -21,7 +21,7 @@ import { NETWORK, swap } from "src";
 
     // coins
     let coins = (
-        await client.jsonRpcClient.getCoins({
+        await client.getCoins({
             owner: user,
             coinType: tokenType[NETWORK][FROM_TOKEN],
         })
@@ -38,14 +38,14 @@ import { NETWORK, swap } from "src";
         user,
     });
 
-    let dryrunRes = await client.jsonRpcClient.devInspectTransactionBlock({
+    let dryrunRes = await client.devInspectTransactionBlock({
         transactionBlock: tx,
         sender: user,
     });
     console.log(dryrunRes);
     console.log(dryrunRes.events.filter((e) => e.type.endsWith("SwapEvent"))[0].parsedJson);
 
-    let res = await client.jsonRpcClient.signAndExecuteTransaction({ signer: keypair, transaction: tx });
+    let res = await client.signAndExecuteTransaction({ signer: keypair, transaction: tx });
     console.log(res);
     // https://testnet.suivision.xyz/txblock/8TDGppninwYxBqpNtao3mMa936nemU3rdMqA8xesJREA
 })();

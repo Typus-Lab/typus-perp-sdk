@@ -21,7 +21,7 @@ import { normalizeStructTag } from "@mysten/sui/utils";
     // console.log(position);
 
     let coins = (
-        await client.jsonRpcClient.getCoins({
+        await client.getCoins({
             owner: user,
             coinType: normalizeStructTag(position.collateral_token.name),
         })
@@ -33,13 +33,13 @@ import { normalizeStructTag } from "@mysten/sui/utils";
         position,
     });
 
-    let dryrunRes = await client.jsonRpcClient.devInspectTransactionBlock({
+    let dryrunRes = await client.devInspectTransactionBlock({
         transactionBlock: tx,
         sender: user,
     });
     console.log(dryrunRes);
     console.log(dryrunRes.events.filter((e) => e.type.endsWith("IncreaseCollateralEvent"))[0].parsedJson);
 
-    let res = await client.jsonRpcClient.signAndExecuteTransaction({ signer: keypair, transaction: tx });
+    let res = await client.signAndExecuteTransaction({ signer: keypair, transaction: tx });
     console.log(res);
 })();

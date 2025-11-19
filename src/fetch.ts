@@ -52,23 +52,24 @@ export async function getLpPools(client: TypusClient): Promise<(typeof Liquidity
 }
 
 export async function getLpPool(client: TypusClient, objectId: string = LIQUIDITY_POOL_0): Promise<typeof LiquidityPool.$inferType> {
-    // let lpPool = await LiquidityPool.fetch(client, objectId);
-    // return lpPool;
+    // const data = await client.getObject({
+    //     id: objectId,
+    //     options: {
+    //         // request the bcs data when loading your object
+    //         showBcs: true,
+    //     },
+    // });
+    // if (data.data?.bcs?.dataType !== "moveObject") {
+    //     throw new Error("Expected a move object");
+    // }
+    // // console.log(data.data.bcs.bcsBytes);
+    // return LiquidityPool.fromBase64(data.data.bcs.bcsBytes);
 
-    const data = await client.getObject({
-        id: objectId,
-        options: {
-            // request the bcs data when loading your object
-            showBcs: true,
-        },
-    });
-    if (data.data?.bcs?.dataType !== "moveObject") {
-        throw new Error("Expected a move object");
-    }
-
-    // console.log(data.data.bcs.bcsBytes);
-
-    return LiquidityPool.fromBase64(data.data.bcs.bcsBytes);
+    const data = await client.gRpcClient.ledgerService
+        .getObject({ objectId, readMask: { paths: ["contents"] } })
+        .then((x) => x.response.object);
+    // console.log(data?.contents);
+    return LiquidityPool.parse(data?.contents?.value!);
 }
 
 // getLpPool(client).then((x) => console.log(x));
@@ -90,23 +91,26 @@ export async function getStakePools(client: TypusClient): Promise<(typeof StakeP
 }
 
 export async function getStakePool(client: TypusClient, objectId: string = STAKE_POOL_0): Promise<typeof StakePool.$inferType> {
-    // let stakePool = await StakePool.fetch(client, objectId);
-    // return stakePool;
+    // const data = await client.getObject({
+    //     id: objectId,
+    //     options: {
+    //         // request the bcs data when loading your object
+    //         showBcs: true,
+    //     },
+    // });
+    // if (data.data?.bcs?.dataType !== "moveObject") {
+    //     throw new Error("Expected a move object");
+    // }
 
-    const data = await client.getObject({
-        id: objectId,
-        options: {
-            // request the bcs data when loading your object
-            showBcs: true,
-        },
-    });
-    if (data.data?.bcs?.dataType !== "moveObject") {
-        throw new Error("Expected a move object");
-    }
+    // // console.log(data.data.bcs.bcsBytes);
 
-    // console.log(data.data.bcs.bcsBytes);
+    // return StakePool.fromBase64(data.data.bcs.bcsBytes);
 
-    return StakePool.fromBase64(data.data.bcs.bcsBytes);
+    const data = await client.gRpcClient.ledgerService
+        .getObject({ objectId, readMask: { paths: ["contents"] } })
+        .then((x) => x.response.object);
+    // console.log(data?.contents);
+    return StakePool.parse(data?.contents?.value!);
 }
 
 export interface MarketsData {

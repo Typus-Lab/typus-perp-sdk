@@ -33,22 +33,21 @@ import { TypusBidReceipt } from "./generated/typus_perp/deps/typus_framework/vau
 import { TypusClient } from "src/client";
 
 export async function getLpPools(client: TypusClient): Promise<(typeof LiquidityPool.$inferType)[]> {
-    // const lpPoolRegistry = await Registry.fetch(client, LP_POOL);
-    // console.log(lpPoolRegistry);
+    // let dynamicFields = await client.getDynamicFields({
+    //     parentId: LIQUIDITY_POOL,
+    // });
 
-    let dynamicFields = await client.getDynamicFields({
-        parentId: LIQUIDITY_POOL,
-    });
+    // let lpPools: (typeof LiquidityPool.$inferType)[] = [];
 
-    let lpPools: (typeof LiquidityPool.$inferType)[] = [];
+    // for (const field of dynamicFields.data) {
+    //     let lpPool = await getLpPool(client, field.objectId);
+    //     // console.log(lpPool);
+    //     lpPools.push(lpPool);
+    // }
 
-    for (const field of dynamicFields.data) {
-        let lpPool = await getLpPool(client, field.objectId);
-        // console.log(lpPool);
-        lpPools.push(lpPool);
-    }
+    // return lpPools;
 
-    return lpPools;
+    return client.getDynamicObjectFieldsBcs(LIQUIDITY_POOL).then((x) => x.map((x) => LiquidityPool.parse(x)));
 }
 
 export async function getLpPool(client: TypusClient, objectId: string = LIQUIDITY_POOL_0): Promise<typeof LiquidityPool.$inferType> {
@@ -65,29 +64,28 @@ export async function getLpPool(client: TypusClient, objectId: string = LIQUIDIT
     // // console.log(data.data.bcs.bcsBytes);
     // return LiquidityPool.fromBase64(data.data.bcs.bcsBytes);
 
-    const data = await client.gRpcClient.ledgerService
-        .getObject({ objectId, readMask: { paths: ["contents"] } })
-        .then((x) => x.response.object);
-    // console.log(data?.contents);
-    return LiquidityPool.parse(data?.contents?.value!);
+    const bcs = await client.getObjectBcs(objectId);
+    return LiquidityPool.parse(bcs!);
 }
 
 // getLpPool(client).then((x) => console.log(x));
 
 export async function getStakePools(client: TypusClient): Promise<(typeof StakePool.$inferType)[]> {
-    let dynamicFields = await client.getDynamicFields({
-        parentId: STAKE_POOL,
-    });
+    // let dynamicFields = await client.getDynamicFields({
+    //     parentId: STAKE_POOL,
+    // });
 
-    let stakePools: (typeof StakePool.$inferType)[] = [];
+    // let stakePools: (typeof StakePool.$inferType)[] = [];
 
-    for (const field of dynamicFields.data) {
-        let stakePool = await getStakePool(client, field.objectId);
-        // console.log(stakePool);
-        stakePools.push(stakePool);
-    }
+    // for (const field of dynamicFields.data) {
+    //     let stakePool = await getStakePool(client, field.objectId);
+    //     // console.log(stakePool);
+    //     stakePools.push(stakePool);
+    // }
 
-    return stakePools;
+    // return stakePools;
+
+    return client.getDynamicObjectFieldsBcs(STAKE_POOL).then((x) => x.map((x) => StakePool.parse(x)));
 }
 
 export async function getStakePool(client: TypusClient, objectId: string = STAKE_POOL_0): Promise<typeof StakePool.$inferType> {
@@ -106,11 +104,8 @@ export async function getStakePool(client: TypusClient, objectId: string = STAKE
 
     // return StakePool.fromBase64(data.data.bcs.bcsBytes);
 
-    const data = await client.gRpcClient.ledgerService
-        .getObject({ objectId, readMask: { paths: ["contents"] } })
-        .then((x) => x.response.object);
-    // console.log(data?.contents);
-    return StakePool.parse(data?.contents?.value!);
+    const bcs = await client.getObjectBcs(objectId);
+    return StakePool.parse(bcs!);
 }
 
 export interface MarketsData {

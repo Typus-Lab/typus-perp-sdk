@@ -1,13 +1,13 @@
 import { TypusConfig } from "@typus/typus-sdk/dist/src/utils";
 import { TypusClient } from "src/client";
-import { getLpPool, NETWORK } from "src";
+import { getLpPool, getLpPools, NETWORK } from "src";
 
 (async () => {
     let config = await TypusConfig.default(NETWORK, null);
     let client = new TypusClient(config);
 
-    // let lpPools = await getLpPools(config);
-    // console.log(lpPools); // 1 lpPool inclueded
+    let lpPools = await getLpPools(client);
+    console.log(lpPools); // 1 lpPool inclueded
     // const lpPool = lpPools[0];
 
     // skip dynamic field fetching

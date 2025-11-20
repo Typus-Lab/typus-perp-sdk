@@ -11,6 +11,7 @@ import {
     QueryEventsParams,
     SuiClient,
 } from "@mysten/sui/client";
+import { Transaction } from "@mysten/sui/transactions";
 import { createPythClient, PythClient, TypusConfig } from "@typus/typus-sdk/dist/src/utils";
 import type { Experimental_SuiClientTypes } from "@mysten/sui/experimental";
 import { PERP_PUBLISHED_AT, STAKE_PUBLISHED_AT } from "src";
@@ -79,5 +80,48 @@ export class TypusClient {
     }
     queryEvents(params: QueryEventsParams) {
         return this.jsonRpcClient.queryEvents(params);
+    }
+
+    // gRPC
+    async getObjectBcs(objectId: string): Promise<Uint8Array<ArrayBufferLike> | undefined> {
+        const x = await this.gRpcClient.ledgerService.getObject({ objectId, readMask: { paths: ["contents"] } });
+        return x.response.object?.contents?.value;
+    }
+
+    async batchGetObjectsBcs(objectIds: string[]): Promise<(Uint8Array<ArrayBufferLike> | undefined)[]> {
+        let requests = objectIds.map((objectId) => {
+            return {
+                objectId: objectId,
+            };
+        });
+        const x = await this.gRpcClient.ledgerService.batchGetObjects({
+            requests,
+            readMask: { paths: ["contents"] },
+        });
+        return x.response.objects.map((x_1) => {
+            if (x_1.result.oneofKind === "object") {
+                return x_1.result.object.contents?.value;
+            } else if (x_1.result.oneofKind === "error") {
+                console.error(x_1.result.error);
+            } else {
+                console.warn("undefined case");
+            }
+        });
+    }
+
+    async getDynamicFieldsBcs(parent: string) {
+        const x = await this.gRpcClient.stateService.listDynamicFields({ parent, readMask: { paths: ["field_object"] } });
+        return x.response.dynamicFields.map((x_1) => {
+            // console.log(x_1.fieldObject?.contents?.value!);
+            return x_1.fieldObject?.contents?.value!;
+        });
+    }
+
+    async getDynamicObjectFieldsBcs(parent: string) {
+        const x = await this.gRpcClient.stateService.listDynamicFields({ parent, readMask: { paths: ["child_object"] } });
+        return x.response.dynamicFields.map((x_1) => {
+            // console.log(x_1.childObject?.contents?.value!);
+            return x_1.childObject?.contents?.value!;
+        });
     }
 }

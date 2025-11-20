@@ -6,8 +6,8 @@ import { getStakePool, getStakePools, NETWORK } from "src";
     let config = await TypusConfig.default(NETWORK, null);
     let client = new TypusClient(config);
 
-    // let stakePools = await getStakePools(config);
-    // console.log(stakePools); // 1 lpPool inclueded
+    let stakePools = await getStakePools(client);
+    console.log(stakePools); // 1 lpPool inclueded
     // let stakePool = stakePools[0];
 
     let stakePool = await getStakePool(client);

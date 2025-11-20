@@ -1,5 +1,5 @@
 import { SuiGrpcClient } from "@mysten/sui/grpc";
-import { LIQUIDITY_POOL, LIQUIDITY_POOL_0 } from "../index";
+import { LIQUIDITY_POOL } from "../index";
 import { getLpPool, NETWORK } from "src";
 import { tokenType } from "@typus/typus-sdk/dist/src/constants";
 

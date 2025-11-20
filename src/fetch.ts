@@ -4,18 +4,7 @@ import { bcs, BcsReader } from "@mysten/bcs";
 import { oracle, SENDER, TOKEN, tokenType, typeArgToAsset } from "@typus/typus-sdk/dist/src/constants";
 import { updatePyth, updateOracleWithPythUsd } from "@typus/typus-sdk/dist/src/utils";
 
-import {
-    LIQUIDITY_POOL,
-    LIQUIDITY_POOL_0,
-    LP_POOL,
-    MARKET,
-    NETWORK,
-    PERP_VERSION,
-    STAKE_POOL,
-    STAKE_POOL_0,
-    STAKE_POOL_VERSION,
-    TLP_TOKEN,
-} from ".";
+import { LIQUIDITY_POOL, LP_POOL, MARKET, NETWORK, PERP_VERSION, STAKE_POOL, STAKE_POOL_VERSION, TLP_TOKEN } from ".";
 
 import { getMarketsBcs, Markets, SymbolMarket } from "./generated/typus_perp/trading";
 import { DeactivatingShares, getUserDeactivatingShares } from "./generated/typus_perp/lp_pool";
@@ -50,7 +39,7 @@ export async function getLpPools(client: TypusClient): Promise<(typeof Liquidity
     return client.getDynamicObjectFieldsBcs(LIQUIDITY_POOL).then((x) => x.map((x) => LiquidityPool.parse(x)));
 }
 
-export async function getLpPool(client: TypusClient, objectId: string = LIQUIDITY_POOL_0): Promise<typeof LiquidityPool.$inferType> {
+export async function getLpPool(client: TypusClient, objectId: string): Promise<typeof LiquidityPool.$inferType> {
     // const data = await client.getObject({
     //     id: objectId,
     //     options: {
@@ -88,7 +77,7 @@ export async function getStakePools(client: TypusClient): Promise<(typeof StakeP
     return client.getDynamicObjectFieldsBcs(STAKE_POOL).then((x) => x.map((x) => StakePool.parse(x)));
 }
 
-export async function getStakePool(client: TypusClient, objectId: string = STAKE_POOL_0): Promise<typeof StakePool.$inferType> {
+export async function getStakePool(client: TypusClient, objectId: string): Promise<typeof StakePool.$inferType> {
     // const data = await client.getObject({
     //     id: objectId,
     //     options: {

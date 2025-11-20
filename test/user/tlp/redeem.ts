@@ -4,7 +4,7 @@ import { TypusClient } from "src/client";
 
 import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519";
 import { Transaction } from "@mysten/sui/transactions";
-import { NETWORK, TLP, TLP_TOKEN, getLpPools, getStakePool, getUserStake, redeemTlp } from "src";
+import { NETWORK, TLP_TOKEN, getLpPools, getStakePool, getUserStake, redeemTlp } from "src";
 
 (async () => {
     let keypair = Ed25519Keypair.deriveKeypair(String(process.env.MNEMONIC));

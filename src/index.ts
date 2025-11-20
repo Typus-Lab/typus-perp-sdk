@@ -34,16 +34,17 @@ export const STAKE_PKG_V1 =
         ? "0xc427209145715a00a93d7e674a95c556a7147d79fda1bbaeb1a1cac5f9923966"
         : "0xce188b7277324a817a91ce1953dd1d71f2dbb4685364caa90eb430c9ac453dc8";
 
-// Registry
+// lp_pool::Registry
 export const LP_POOL =
     NETWORK == "MAINNET"
         ? "0xfee68e535bf24702be28fa38ea2d5946e617e0035027d5ca29dbed99efd82aaa"
         : "0x351312d71a8834cd978649ef065dc48928eaf07a279566bc93050a89c2b1edae";
 
+// liquidity_pool_registry
 export const LIQUIDITY_POOL =
     NETWORK == "MAINNET"
         ? "0x9973b7dd68ab8ba18702d913191a4c62c597847d9cd9f0b5bd97f1b938fc9a0a"
-        : "0x310a065075d2d49a09440402fcf8d2238886111c063cddaa4c118b09b1790e5e";
+        : "0x185f5713a04a01dbb2ef1ca603177b21c26a8a1f7c3b60b0b94c77c31dd4602d";
 
 // MarketRegistry
 export const MARKET =

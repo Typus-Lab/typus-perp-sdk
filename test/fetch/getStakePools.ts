@@ -8,10 +8,7 @@ import { getStakePool, getStakePools, NETWORK } from "src";
 
     let stakePools = await getStakePools(client);
     console.log(stakePools); // 1 lpPool inclueded
-    // let stakePool = stakePools[0];
-
-    let stakePool = await getStakePool(client);
-    console.log(stakePool);
+    let stakePool = stakePools[0];
 
     console.log(
         "Incentives: ",

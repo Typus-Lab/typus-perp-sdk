@@ -8,11 +8,7 @@ import { getLpPool, getLpPools, NETWORK } from "src";
 
     let lpPools = await getLpPools(client);
     console.log(lpPools); // 1 lpPool inclueded
-    // const lpPool = lpPools[0];
-
-    // skip dynamic field fetching
-    let lpPool = await getLpPool(client);
-    console.log(lpPool.pool_info);
+    const lpPool = lpPools[0];
 
     // avaliable token types to mint the lp tokens (3 token types supported)
     // console.log(lpPool.liquidityTokens.map((m) => m.name));

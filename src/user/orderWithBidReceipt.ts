@@ -46,7 +46,6 @@ export async function createTradingOrderWithBidReceiptByAutoBid(
         signalIndex: input.signalIndex,
         strategyIndex: input.strategyIndex,
         user: input.user,
-        share: input.share,
     });
 
     let cToken = tokenType[NETWORK][TOKEN];

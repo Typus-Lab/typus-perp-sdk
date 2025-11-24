@@ -50,7 +50,7 @@ export const LIQUIDITY_POOL =
 export const MARKET =
     NETWORK == "MAINNET"
         ? "0xc969d946a2b6b917a83b5fb71765793c4a52149e50d2c8cf5c01d7421fc7cd73"
-        : "0x7f427b15136ab0f5919e66612ff343f9c34d2733e636c95f6d9563a596a4b6ac";
+        : "0x00fdefdaa281113998afe29b3b8906a8f7bfdfc031891da3b9d7ddc08a924919";
 
 export const PERP_VERSION =
     NETWORK == "MAINNET"

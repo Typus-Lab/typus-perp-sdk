@@ -24,15 +24,15 @@ export const PERP_PKG_V1 =
 export const STAKE_PACKAGE_ID =
     NETWORK == "MAINNET"
         ? "0xc427209145715a00a93d7e674a95c556a7147d79fda1bbaeb1a1cac5f9923966"
-        : "0xce188b7277324a817a91ce1953dd1d71f2dbb4685364caa90eb430c9ac453dc8";
+        : "0xcfe3d323fec2dde129480328dbcf075bc47bac50f916f33746d74f1c875acd2e";
 export const STAKE_PUBLISHED_AT =
     NETWORK == "MAINNET"
         ? "0xdf96424bc1ba70a6e53c07b2b55c597eccb8a21f722a917a5b4c9d8514b2d858"
-        : "0xce188b7277324a817a91ce1953dd1d71f2dbb4685364caa90eb430c9ac453dc8";
+        : "0xcfe3d323fec2dde129480328dbcf075bc47bac50f916f33746d74f1c875acd2e";
 export const STAKE_PKG_V1 =
     NETWORK == "MAINNET"
         ? "0xc427209145715a00a93d7e674a95c556a7147d79fda1bbaeb1a1cac5f9923966"
-        : "0xce188b7277324a817a91ce1953dd1d71f2dbb4685364caa90eb430c9ac453dc8";
+        : "0xcfe3d323fec2dde129480328dbcf075bc47bac50f916f33746d74f1c875acd2e";
 
 // lp_pool::Registry
 export const LP_POOL =
@@ -56,11 +56,6 @@ export const PERP_VERSION =
     NETWORK == "MAINNET"
         ? "0xa12c282a068328833ec4a9109fc77803ec1f523f8da1bb0f82bac8450335f0c9"
         : "0xfd3699c86cda99e542e4517dc3ad4d9164806664fcbcc23981ad0d5101b87abd";
-
-export const TLP_TOKEN =
-    NETWORK == "MAINNET"
-        ? "0xe27969a70f93034de9ce16e6ad661b480324574e68d15a64b513fd90eb2423e5::tlp::TLP"
-        : "0x29d1dcc803ec1cc1b4c98a8c818c655ecf432ebd2f85757bffc21806d329e240::tlp::TLP";
 
 export const TLP_TREASURY_CAP =
     NETWORK == "MAINNET"

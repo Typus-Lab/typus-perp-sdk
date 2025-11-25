@@ -9,9 +9,16 @@ import { getUserStake, getDeactivatingShares, NETWORK } from "src";
     let user = "0xd15f079d5f60b8fdfdcf3ca66c0d3473790c758b04b6418929d5d2991c5443ee";
     console.log(user);
 
-    let stakes = await getUserStake(client, user);
+    let stakes = await getUserStake(client, {
+        user,
+        indexes: [
+            ...Array(2)
+                .keys()
+                .map((x) => x.toString()),
+        ],
+    });
     console.dir(stakes, { depth: null });
 
-    let deactivatingShares = await getDeactivatingShares(client, user);
+    let deactivatingShares = await getDeactivatingShares(client, { user, indexes: [] });
     console.dir(deactivatingShares, { depth: null });
 })();

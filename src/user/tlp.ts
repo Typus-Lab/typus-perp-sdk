@@ -1,7 +1,8 @@
+import { normalizeStructTag } from "@mysten/sui/utils";
 import { Transaction } from "@mysten/sui/transactions";
 import { splitCoin, splitCoins, updateOracleWithPythUsd, updatePyth } from "@typus/typus-sdk/dist/src/utils";
 import { CLOCK, tokenType, typeArgToAsset, TOKEN, oracle } from "@typus/typus-sdk/dist/src/constants";
-import { LP_POOL, NETWORK, PERP_VERSION, STAKE_POOL, STAKE_POOL_VERSION, TLP_TOKEN, TLP_TREASURY_CAP } from "..";
+import { LP_POOL, NETWORK, PERP_VERSION, STAKE_POOL, STAKE_POOL_VERSION, TLP_TREASURY_CAP } from "..";
 import {
     StakePool,
     harvestPerUserShare,
@@ -100,6 +101,8 @@ export async function mintStakeLp(
         harvestStakeReward(client, tx, { stakePool: input.stakePool, userShareId: input.userShareId, user: input.user });
     }
 
+    let lpToken = normalizeStructTag(input.lpPool.lp_token_type.name);
+
     let lpCoin = tx.add(
         mintLp({
             arguments: {
@@ -110,7 +113,7 @@ export async function mintStakeLp(
                 oracle: oracle[NETWORK][input.cTOKEN]!,
                 coin,
             },
-            typeArguments: [cToken, TLP_TOKEN],
+            typeArguments: [cToken, lpToken],
         })
     );
 
@@ -124,7 +127,7 @@ export async function mintStakeLp(
                     lpToken: lpCoin,
                     UserShareId: null,
                 },
-                typeArguments: [TLP_TOKEN],
+                typeArguments: [lpToken],
             })
         );
     } else {
@@ -167,11 +170,10 @@ export async function stakeLp(
                 version: STAKE_POOL_VERSION,
                 registry: STAKE_POOL,
                 index: BigInt(input.perpIndex ?? 0),
-
                 lpToken: lpCoin,
                 UserShareId: null,
             },
-            typeArguments: [TLP_TOKEN],
+            typeArguments: [normalizeStructTag(input.stakePool.pool_info.stake_token.name)],
         })
     );
 
@@ -192,6 +194,8 @@ export async function unstake(
 ): Promise<Transaction> {
     harvestStakeReward(client, tx, { stakePool: input.stakePool, userShareId: input.userShareId, user: input.user });
 
+    let lpToken = normalizeStructTag(input.lpPool.lp_token_type.name);
+
     tx.add(
         _unsubscribe({
             arguments: {
@@ -201,7 +205,7 @@ export async function unstake(
                 unsubscribedShares: input.share ? BigInt(input.share) : null,
                 UserShareId: BigInt(input.userShareId),
             },
-            typeArguments: [TLP_TOKEN],
+            typeArguments: [lpToken],
         })
     );
 
@@ -213,7 +217,7 @@ export async function unstake(
                 index: BigInt(input.perpIndex ?? 0),
                 UserShareId: BigInt(input.userShareId),
             },
-            typeArguments: [TLP_TOKEN],
+            typeArguments: [lpToken],
         })
     );
 
@@ -255,6 +259,8 @@ export async function unstakeRedeem(
 
     harvestStakeReward(client, tx, { stakePool: input.stakePool, userShareId: input.userShareId, user: input.user });
 
+    let lpToken = normalizeStructTag(input.lpPool.lp_token_type.name);
+
     tx.add(
         _unsubscribe({
             arguments: {
@@ -264,7 +270,7 @@ export async function unstakeRedeem(
                 unsubscribedShares: input.share ? BigInt(input.share) : null,
                 UserShareId: BigInt(input.userShareId),
             },
-            typeArguments: [TLP_TOKEN],
+            typeArguments: [lpToken],
         })
     );
 
@@ -276,13 +282,13 @@ export async function unstakeRedeem(
                 index: BigInt(input.perpIndex ?? 0),
                 UserShareId: BigInt(input.userShareId),
             },
-            typeArguments: [TLP_TOKEN],
+            typeArguments: [lpToken],
         })
     );
 
     let balance = tx.moveCall({
         target: `0x2::coin::into_balance`,
-        typeArguments: [TLP_TOKEN],
+        typeArguments: [input.lpPool.lp_token_type.name],
         arguments: [lpCoin],
     });
 
@@ -295,7 +301,7 @@ export async function unstakeRedeem(
 
                 balance,
             },
-            typeArguments: [TLP_TOKEN],
+            typeArguments: [input.lpPool.lp_token_type.name],
         })
     );
 
@@ -355,9 +361,11 @@ export async function redeemTlp(
         burnCoin = lpCoin;
     }
 
+    let lpToken = normalizeStructTag(input.lpPool.lp_token_type.name);
+
     let balance = tx.moveCall({
         target: `0x2::coin::into_balance`,
-        typeArguments: [TLP_TOKEN],
+        typeArguments: [lpToken],
         arguments: [burnCoin],
     });
 
@@ -369,7 +377,7 @@ export async function redeemTlp(
                 index: BigInt(input.perpIndex ?? 0),
                 balance,
             },
-            typeArguments: [TLP_TOKEN],
+            typeArguments: [lpToken],
         })
     );
 
@@ -415,7 +423,7 @@ export async function claim(
             treasuryCaps: TLP_TREASURY_CAP,
             oracle: oracle[NETWORK][input.cTOKEN]!,
         },
-        typeArguments: [TLP_TOKEN, cToken],
+        typeArguments: [normalizeStructTag(input.lpPool.lp_token_type.name), cToken],
     })(tx);
 
     tx.transferObjects([token], input.user);
@@ -514,7 +522,7 @@ export async function harvestStakeReward(
                         lpToken: iCoin,
                         UserShareId: BigInt(input.userShareId),
                     },
-                    typeArguments: [TLP_TOKEN],
+                    typeArguments: [normalizeStructTag(input.stakePool.pool_info.stake_token.name)],
                 })
             );
         } else {

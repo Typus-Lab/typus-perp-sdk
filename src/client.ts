@@ -14,7 +14,7 @@ import {
 import { Transaction } from "@mysten/sui/transactions";
 import { createPythClient, PythClient, TypusConfig } from "@typus/typus-sdk/dist/src/utils";
 import type { Experimental_SuiClientTypes } from "@mysten/sui/experimental";
-import { PERP_PUBLISHED_AT, STAKE_PUBLISHED_AT } from "src";
+import { PERP_PACKAGE_ID, PERP_PUBLISHED_AT, STAKE_PACKAGE_ID, STAKE_PUBLISHED_AT } from "src";
 
 export type Network = "MAINNET" | "TESTNET";
 
@@ -39,6 +39,10 @@ export class TypusClient {
                         "@typus/perp": PERP_PUBLISHED_AT,
                         "@typus/stake-pool": STAKE_PUBLISHED_AT,
                     },
+                    // types: {
+                    //     "@typus/perp": PERP_PACKAGE_ID,
+                    //     "@typus/stake-pool": STAKE_PACKAGE_ID,
+                    // },
                 },
             },
         });

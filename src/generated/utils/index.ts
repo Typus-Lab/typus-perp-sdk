@@ -95,10 +95,6 @@ export function normalizeMoveArguments(args: unknown[] | object, argTypes: strin
             }
             const name = parameterNames[index];
             arg = args[name as keyof typeof args];
-
-            if (arg == null) {
-                throw new Error(`Parameter ${name} is required`);
-            }
         }
 
         index += 1;

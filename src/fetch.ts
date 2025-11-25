@@ -4,7 +4,7 @@ import { bcs, BcsReader } from "@mysten/bcs";
 import { oracle, SENDER, TOKEN, tokenType, typeArgToAsset } from "@typus/typus-sdk/dist/src/constants";
 import { updatePyth, updateOracleWithPythUsd } from "@typus/typus-sdk/dist/src/utils";
 
-import { LIQUIDITY_POOL, LP_POOL, MARKET, NETWORK, PERP_VERSION, STAKE_POOL, STAKE_POOL_VERSION, TLP_TOKEN } from ".";
+import { LIQUIDITY_POOL, LP_POOL, MARKET, NETWORK, PERP_VERSION, STAKE_POOL, STAKE_POOL_VERSION } from ".";
 
 import { getMarketsBcs, Markets, SymbolMarket } from "./generated/typus_perp/trading";
 import { DeactivatingShares, getUserDeactivatingShares } from "./generated/typus_perp/lp_pool";
@@ -36,7 +36,9 @@ export async function getLpPools(client: TypusClient): Promise<(typeof Liquidity
 
     // return lpPools;
 
-    return client.getDynamicObjectFieldsBcs(LIQUIDITY_POOL).then((x) => x.map((x) => LiquidityPool.parse(x)));
+    return (await client.getDynamicObjectFieldsBcs(LIQUIDITY_POOL).then((x) => x.map((x) => LiquidityPool.parse(x)))).sort(
+        (a, b) => Number(a.index) - Number(b.index)
+    );
 }
 
 export async function getLpPool(client: TypusClient, objectId: string): Promise<typeof LiquidityPool.$inferType> {
@@ -74,7 +76,9 @@ export async function getStakePools(client: TypusClient): Promise<(typeof StakeP
 
     // return stakePools;
 
-    return client.getDynamicObjectFieldsBcs(STAKE_POOL).then((x) => x.map((x) => StakePool.parse(x)));
+    return (await client.getDynamicObjectFieldsBcs(STAKE_POOL).then((x) => x.map((x) => StakePool.parse(x)))).sort(
+        (a, b) => Number(a.pool_info.index) - Number(b.pool_info.index)
+    );
 }
 
 export async function getStakePool(client: TypusClient, objectId: string): Promise<typeof StakePool.$inferType> {
@@ -133,70 +137,92 @@ export async function getMarkets(
     return results;
 }
 
-export async function getUserOrders(client: TypusClient, user: string) {
+export async function getUserOrders(
+    client: TypusClient,
+    input: {
+        user: string;
+        indexes: string[];
+    }
+) {
     let tx = new Transaction();
-    tx.add(
-        _getUserOrders({
-            arguments: {
-                version: PERP_VERSION,
-                registry: MARKET,
-                marketIndex: BigInt(0),
-                user,
-            },
-        })
-    );
 
-    let res = await client.devInspectTransactionBlock({ sender: user, transactionBlock: tx });
+    for (let i of input.indexes) {
+        tx.add(
+            _getUserOrders({
+                arguments: {
+                    version: PERP_VERSION,
+                    registry: MARKET,
+                    marketIndex: BigInt(i),
+                    user: input.user,
+                },
+            })
+        );
+    }
+
+    let res = await client.devInspectTransactionBlock({ sender: input.user, transactionBlock: tx });
     // console.log(res);
 
-    // @ts-ignore
-    let returnValues = res.results[0].returnValues[0][0];
-    // console.log(returnValues);
-
-    let reader = new BcsReader(new Uint8Array(returnValues));
     let orders: (typeof TradingOrder.$inferType)[] = [];
-    reader.readVec((reader) => {
-        let length = reader.readULEB();
-        let bytes = reader.readBytes(length);
-        let order = TradingOrder.parse(bytes);
-        orders.push(order);
-    });
 
-    // let orders: TradingOrder[] = readVecOrder(Uint8Array.from(returnValues));
-    // console.log(orders);
+    for (var x = 0; x < input.indexes.length; x++) {
+        // @ts-ignore
+        let returnValues = res.results[x].returnValues[0][0];
+        // console.log(returnValues);
+
+        let reader = new BcsReader(new Uint8Array(returnValues));
+        reader.readVec((reader) => {
+            let length = reader.readULEB();
+            let bytes = reader.readBytes(length);
+            let order = TradingOrder.parse(bytes);
+            orders.push(order);
+        });
+    }
+
     return orders;
 }
 
-export async function getUserPositions(client: TypusClient, user: string) {
+export async function getUserPositions(
+    client: TypusClient,
+    input: {
+        user: string;
+        indexes: string[];
+    }
+) {
     let tx = new Transaction();
 
-    tx.add(
-        _getUserPositions({
-            arguments: {
-                version: PERP_VERSION,
-                registry: MARKET,
-                marketIndex: BigInt(0),
-                user,
-            },
-        })
-    );
+    for (let i of input.indexes) {
+        tx.add(
+            _getUserPositions({
+                arguments: {
+                    version: PERP_VERSION,
+                    registry: MARKET,
+                    marketIndex: BigInt(i),
+                    user: input.user,
+                },
+            })
+        );
+    }
 
-    let res = await client.devInspectTransactionBlock({ sender: user, transactionBlock: tx });
+    let res = await client.devInspectTransactionBlock({ sender: input.user, transactionBlock: tx });
     // console.log(res);
 
-    // @ts-ignore
-    let returnValues = res.results[0].returnValues[0][0];
-    // console.log(returnValues);
-
-    let reader = new BcsReader(new Uint8Array(returnValues));
     let positions: (typeof Position.$inferType)[] = [];
-    reader.readVec((reader) => {
-        let length = reader.readULEB();
-        let bytes = reader.readBytes(length);
-        let position = Position.parse(bytes);
-        positions.push(position);
-    });
 
+    for (var x = 0; x < input.indexes.length; x++) {
+        // @ts-ignore
+        let returnValues = res.results[x].returnValues[0][0];
+        // console.log(returnValues);
+
+        let reader = new BcsReader(new Uint8Array(returnValues));
+        reader.readVec((reader) => {
+            let length = reader.readULEB();
+            let bytes = reader.readBytes(length);
+            let position = Position.parse(bytes);
+            // @ts-ignore
+            position.marketIndex = x;
+            positions.push(position);
+        });
+    }
     // let positions: Position[] = readVecPosition(Uint8Array.from(returnValues));
     // console.log(positions);
     return positions;
@@ -215,95 +241,121 @@ export function parseOptionBidReceipts(positions: (typeof Position.$inferType)[]
 }
 
 /**
- * @returns [lpShare, incentives]
+ * @returns [lpShare, incentives][]
  */
-export async function getUserStake(client: TypusClient, user: string): Promise<[typeof LpUserShare.$inferType, string[]] | null> {
+export async function getUserStake(
+    client: TypusClient,
+    input: {
+        user: string;
+        indexes: string[];
+    }
+): Promise<[typeof LpUserShare.$inferType, string[]][]> {
     let tx = new Transaction();
 
-    tx.add(
-        allocateIncentive({
-            arguments: {
-                version: STAKE_POOL_VERSION,
-                registry: STAKE_POOL,
-                index: BigInt(0),
-            },
-        })
-    );
+    for (let i of input.indexes) {
+        tx.add(
+            allocateIncentive({
+                arguments: {
+                    version: STAKE_POOL_VERSION,
+                    registry: STAKE_POOL,
+                    index: BigInt(i),
+                },
+            })
+        );
+        tx.add(
+            getUserShares({
+                arguments: {
+                    registry: STAKE_POOL,
+                    index: BigInt(i),
+                    user: input.user,
+                },
+            })
+        );
+    }
 
-    tx.add(
-        getUserShares({
-            arguments: {
-                registry: STAKE_POOL,
-                index: BigInt(0),
-                user,
-            },
-        })
-    );
-
-    let res = await client.devInspectTransactionBlock({ sender: user, transactionBlock: tx });
+    let res = await client.devInspectTransactionBlock({ sender: input.user, transactionBlock: tx });
     // console.log(res);
 
     if (res.results) {
-        // @ts-ignore
-        var returnValues = res.results[1].returnValues[0][0];
-        // console.log(returnValues);
+        let results: any[] = [];
 
-        var reader = new BcsReader(new Uint8Array(returnValues));
-        let length = reader.readULEB();
-        // console.log(length);
-        if (length == 0) {
-            return null;
+        for (var x = 0; x < input.indexes.length; x++) {
+            // @ts-ignore
+            var returnValues = res.results[1].returnValues[0][0];
+            // console.log(returnValues);
+
+            var reader = new BcsReader(new Uint8Array(returnValues));
+            let length = reader.readULEB();
+            console.log(length);
+            if (length == 0) {
+                results.push([]);
+                continue;
+            }
+            // let lpShare = LpUserShare.fromFields(LpUserShare.bcs.read(reader));
+            let lpShare = LpUserShare.read(reader);
+
+            let incentives: string[] = [];
+            reader.readVec((reader) => {
+                let incentive = reader.read64();
+                incentives.push(incentive);
+            });
+
+            results.push([lpShare, incentives]);
         }
-        // let lpShare = LpUserShare.fromFields(LpUserShare.bcs.read(reader));
-        let lpShare = LpUserShare.read(reader);
 
-        let incentives: string[] = [];
-        reader.readVec((reader) => {
-            let incentive = reader.read64();
-            incentives.push(incentive);
-        });
-
-        return [lpShare, incentives];
+        return results;
     } else {
-        return null;
+        return [];
     }
 }
 
 /**
  * @returns deactivatingShares[]
  */
-export async function getDeactivatingShares(client: TypusClient, user: string): Promise<(typeof DeactivatingShares.$inferType)[]> {
+export async function getDeactivatingShares(
+    client: TypusClient,
+    input: {
+        user: string;
+        indexes: string[];
+    }
+): Promise<(typeof DeactivatingShares.$inferType)[]> {
     let tx = new Transaction();
-    tx.add(
-        getUserDeactivatingShares({
-            arguments: {
-                registry: LP_POOL,
-                index: BigInt(0),
-                user,
-            },
-            typeArguments: [TLP_TOKEN],
-        })
-    );
 
-    let res = await client.devInspectTransactionBlock({ sender: user, transactionBlock: tx });
+    for (let i of input.indexes) {
+        tx.add(
+            getUserDeactivatingShares({
+                arguments: {
+                    registry: LP_POOL,
+                    index: BigInt(i),
+                    user: input.user,
+                },
+                typeArguments: ["TLP_TOKEN"],
+            })
+        );
+    }
+
+    let res = await client.devInspectTransactionBlock({ sender: input.user, transactionBlock: tx });
     // console.log(res);
 
     if (res.results) {
-        // @ts-ignore
-        var returnValues = res.results[0].returnValues[0][0];
-        // console.log(returnValues);
-
-        var reader = new BcsReader(new Uint8Array(returnValues));
         let deactivatingShares: (typeof DeactivatingShares.$inferType)[] = [];
-        reader.readVec((reader) => {
-            let length = reader.readULEB();
-            let lpShare = DeactivatingShares.read(reader);
 
+        for (var x = 0; x < input.indexes.length; x++) {
             // @ts-ignore
-            deactivatingShares.push(lpShare);
-        });
-        // console.log(deactivatingShares);
+            var returnValues = res.results[0].returnValues[0][0];
+            // console.log(returnValues);
 
+            var reader = new BcsReader(new Uint8Array(returnValues));
+            reader.readVec((reader) => {
+                let length = reader.readULEB();
+                let lpShare = DeactivatingShares.read(reader);
+
+                // @ts-ignore
+                deactivatingShares.push(lpShare);
+            });
+        }
+
+        // console.log(deactivatingShares);
         return deactivatingShares;
     } else {
         return [];
@@ -317,7 +369,6 @@ export async function getLiquidationPriceAndPnl(
     client: TypusClient,
     input: {
         positions: (typeof Position.$inferType)[];
-        user: string;
     }
 ): Promise<PositionInfo[]> {
     let tx = new Transaction();
@@ -341,14 +392,16 @@ export async function getLiquidationPriceAndPnl(
         // parse from Position
         let TOKEN = typeArgToAsset(position.collateral_token.name);
         let BASE_TOKEN = typeArgToAsset(position.symbol.base_token.name);
+        // @ts-ignore
+        let index = position.marketIndex;
         tx.add(
             getEstimatedLiquidationPriceAndPnl({
                 arguments: {
                     version: PERP_VERSION,
                     registry: MARKET,
                     poolRegistry: LP_POOL,
-                    marketIndex: BigInt(0),
-                    poolIndex: BigInt(0),
+                    marketIndex: BigInt(index),
+                    poolIndex: BigInt(index),
                     typusOracleCToken: oracle[NETWORK][TOKEN]!,
                     typusOracleTradingSymbol: oracle[NETWORK][BASE_TOKEN]!,
                     positionId: BigInt(position.position_id),
@@ -359,7 +412,7 @@ export async function getLiquidationPriceAndPnl(
         );
     }
 
-    let res = await client.devInspectTransactionBlock({ sender: input.user, transactionBlock: tx });
+    let res = await client.devInspectTransactionBlock({ sender: SENDER, transactionBlock: tx });
     // console.log(res);
     //   0  estimated_liquidation_price,
     //   1  has_profit,
@@ -418,6 +471,7 @@ export async function getAllPositions(
         baseToken: TOKEN;
         slice: string;
         page: string;
+        marketIndex: string;
     }
 ) {
     let tx = new Transaction();
@@ -426,7 +480,7 @@ export async function getAllPositions(
             arguments: {
                 version: PERP_VERSION,
                 registry: MARKET,
-                marketIndex: BigInt(0),
+                marketIndex: BigInt(input.marketIndex),
                 slice: BigInt(input.slice),
                 page: BigInt(input.page),
             },
@@ -474,6 +528,7 @@ export async function getAllPositionsWithTradingSymbol(
     client: TypusClient,
     input: {
         baseToken: TOKEN;
+        marketIndex: string;
     }
 ): Promise<(typeof Position.$inferType)[]> {
     var positions: (typeof Position.$inferType)[] = [];
@@ -482,6 +537,7 @@ export async function getAllPositionsWithTradingSymbol(
         baseToken: input.baseToken,
         slice: SLICE.toString(),
         page: "1",
+        marketIndex: input.marketIndex,
     });
     // console.log(maxPage);
 
@@ -493,6 +549,7 @@ export async function getAllPositionsWithTradingSymbol(
             baseToken: input.baseToken,
             slice: SLICE.toString(),
             page: page.toString(),
+            marketIndex: input.marketIndex,
         });
         positions = positions.concat(pos);
     }

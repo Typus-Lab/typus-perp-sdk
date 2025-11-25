@@ -1,22 +1,10 @@
 import "@typus/typus-sdk/dist/src/utils/load_env";
 import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519";
 import { Transaction } from "@mysten/sui/transactions";
-import {
-    mintStakeLp,
-    NETWORK,
-    getUserStake,
-    getLpPool,
-    getStakePool,
-    STAKE_PUBLISHED_AT,
-    PERP_PUBLISHED_AT,
-    STAKE_PACKAGE_ID,
-    PERP_PACKAGE_ID,
-} from "src";
-import { TypusConfig, createPythClient } from "@typus/typus-sdk/dist/src/utils";
+import { mintStakeLp, NETWORK, getUserStake, getLpPools, getStakePools } from "src";
+import { TypusConfig } from "@typus/typus-sdk/dist/src/utils";
 import { TOKEN, tokenType } from "@typus/typus-sdk/dist/src/constants";
 import { TypusClient } from "src/client";
-
-import { isValidNamedPackage, parseStructTag } from "@mysten/sui/utils";
 
 (async () => {
     let keypair = Ed25519Keypair.deriveKeypair(String(process.env.MNEMONIC));
@@ -26,13 +14,24 @@ import { isValidNamedPackage, parseStructTag } from "@mysten/sui/utils";
     let user = keypair.toSuiAddress();
     // console.log(user);
 
-    let lpPool = await getLpPool(client);
+    const index = 0;
+
+    let lpPools = await getLpPools(client);
+    let lpPool = lpPools[index];
     // console.log(lpPool);
 
-    let stakePool = await getStakePool(client);
+    let stakePools = await getStakePools(client);
+    let stakePool = stakePools[index];
     // console.log(stakePool);
 
-    let stakes = await getUserStake(client, user);
+    let stakes = await getUserStake(client, {
+        user,
+        indexes: [
+            ...Array(lpPools.length)
+                .keys()
+                .map((x) => x.toString()),
+        ],
+    });
     console.log(stakes);
 
     // INPUT
@@ -56,13 +55,14 @@ import { isValidNamedPackage, parseStructTag } from "@mysten/sui/utils";
         coins,
         cTOKEN,
         amount: "10000000000",
-        userShareId: stakes ? stakes[0].user_share_id.toString() : null,
+        userShareId: stakes[index] ? stakes[index][0].user_share_id.toString() : null,
         user,
-        stake: false,
+        stake: true,
         isAutoCompound: false,
     });
 
-    // console.log(JSON.parse(await tx.toJSON({ client: client.jsonRpcClient })).commands);
+    // console.dir(JSON.parse(await tx.toJSON({ client: client.jsonRpcClient })).commands[8], { depth: null });
+    // console.dir(JSON.parse(await tx.toJSON({ client: client.jsonRpcClient })).inputs[11], { depth: null });
 
     // let dryrunRes = await client.devInspectTransactionBlock({
     //     transactionBlock: tx,

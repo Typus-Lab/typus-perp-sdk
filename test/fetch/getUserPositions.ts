@@ -6,10 +6,10 @@ import { getLiquidationPriceAndPnl, getUserPositions, NETWORK, parseOptionBidRec
     let config = await TypusConfig.default(NETWORK, null);
     let client = new TypusClient(config);
 
-    let user = "0x845c22be3e771ac8d90973e9859b5088207527c158f75ba4ac9e6201ca1eedb8";
+    let user = "0x575efc989b65eafc66ee88a60def0134c5466a05b7d0882a5736e837b3ede4c0";
     console.log(user);
 
-    let positions = await getUserPositions(client, user);
+    let positions = await getUserPositions(client, { user, indexes: ["0", "1"] });
     console.log(JSON.stringify(positions, (_, v) => (typeof v === "bigint" ? `${v}` : v), 2));
     // `OpenFee` = unrealizedTradingFee
 

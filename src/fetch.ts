@@ -21,7 +21,7 @@ import { LpUserShare, StakePool, getUserShares, allocateIncentive } from "./gene
 import { TypusBidReceipt } from "./generated/typus_perp/deps/typus_framework/vault";
 import { TypusClient } from "src/client";
 
-export async function getLpPools(client: TypusClient): Promise<(typeof LiquidityPool.$inferType)[]> {
+export async function getLpPools(client: TypusClient) {
     // let dynamicFields = await client.getDynamicFields({
     //     parentId: LIQUIDITY_POOL,
     // });
@@ -41,7 +41,7 @@ export async function getLpPools(client: TypusClient): Promise<(typeof Liquidity
     );
 }
 
-export async function getLpPool(client: TypusClient, objectId: string): Promise<typeof LiquidityPool.$inferType> {
+export async function getLpPool(client: TypusClient, objectId: string) {
     // const data = await client.getObject({
     //     id: objectId,
     //     options: {
@@ -61,7 +61,7 @@ export async function getLpPool(client: TypusClient, objectId: string): Promise<
 
 // getLpPool(client).then((x) => console.log(x));
 
-export async function getStakePools(client: TypusClient): Promise<(typeof StakePool.$inferType)[]> {
+export async function getStakePools(client: TypusClient) {
     // let dynamicFields = await client.getDynamicFields({
     //     parentId: STAKE_POOL,
     // });
@@ -81,7 +81,7 @@ export async function getStakePools(client: TypusClient): Promise<(typeof StakeP
     );
 }
 
-export async function getStakePool(client: TypusClient, objectId: string): Promise<typeof StakePool.$inferType> {
+export async function getStakePool(client: TypusClient, objectId: string) {
     // const data = await client.getObject({
     //     id: objectId,
     //     options: {
@@ -162,23 +162,35 @@ export async function getUserOrders(
     let res = await client.devInspectTransactionBlock({ sender: input.user, transactionBlock: tx });
     // console.log(res);
 
-    let orders: (typeof TradingOrder.$inferType)[] = [];
-
-    for (var x = 0; x < input.indexes.length; x++) {
+    res.results?.map((x) => {
         // @ts-ignore
-        let returnValues = res.results[x].returnValues[0][0];
+        let returnValues = x.returnValues[0][0];
         // console.log(returnValues);
 
         let reader = new BcsReader(new Uint8Array(returnValues));
-        reader.readVec((reader) => {
+        let yy = reader.readVec((reader) => {
             let length = reader.readULEB();
             let bytes = reader.readBytes(length);
             let order = TradingOrder.parse(bytes);
-            orders.push(order);
+            return order;
         });
-    }
+    });
 
-    return orders;
+    // for (var x = 0; x < input.indexes.length; x++) {
+    //     // @ts-ignore
+    //     let returnValues = res.results[x].returnValues[0][0];
+    //     // console.log(returnValues);
+
+    //     let reader = new BcsReader(new Uint8Array(returnValues));
+    //     reader.readVec((reader) => {
+    //         let length = reader.readULEB();
+    //         let bytes = reader.readBytes(length);
+    //         let order = TradingOrder.parse(bytes);
+    //         orders.push(order);
+    //     });
+    // }
+
+    // return orders;
 }
 
 export async function getUserPositions(
@@ -228,7 +240,7 @@ export async function getUserPositions(
     return positions;
 }
 
-export function parseOptionBidReceipts(positions: (typeof Position.$inferType)[]): (typeof TypusBidReceipt.$inferType | null)[] {
+export function parseOptionBidReceipts(positions: (typeof Position.$inferType)[]) {
     return positions.map((position) => {
         if (position.option_collateral_info) {
             let bidReceipt = TypusBidReceipt.parse(Uint8Array.from(Array.from(position.option_collateral_info.bid_receipts_bcs[0])));
@@ -249,7 +261,7 @@ export async function getUserStake(
         user: string;
         indexes: string[];
     }
-): Promise<[typeof LpUserShare.$inferType, string[]][]> {
+) {
     let tx = new Transaction();
 
     for (let i of input.indexes) {
@@ -318,7 +330,7 @@ export async function getDeactivatingShares(
         user: string;
         indexes: string[];
     }
-): Promise<(typeof DeactivatingShares.$inferType)[]> {
+) {
     let tx = new Transaction();
 
     for (let i of input.indexes) {
@@ -530,9 +542,7 @@ export async function getAllPositionsWithTradingSymbol(
         baseToken: TOKEN;
         marketIndex: string;
     }
-): Promise<(typeof Position.$inferType)[]> {
-    var positions: (typeof Position.$inferType)[] = [];
-
+) {
     var { positions: pos, maxPage } = await getAllPositions(client, {
         baseToken: input.baseToken,
         slice: SLICE.toString(),
@@ -541,7 +551,7 @@ export async function getAllPositionsWithTradingSymbol(
     });
     // console.log(maxPage);
 
-    positions = positions.concat(pos);
+    var positions = pos;
 
     for (let page = 2; page <= maxPage; page++) {
         console.log(page);

@@ -101,17 +101,15 @@ export async function getStakePool(client: TypusClient, objectId: string) {
     return StakePool.parse(bcs!);
 }
 
-export interface MarketsData {
-    markets: typeof Markets.$inferType;
-    symbolMarkets: (typeof SymbolMarket.$inferType)[];
-}
-
+/**
+ * @returns [Markets, SymbolMarket[]][]
+ */
 export async function getMarkets(
     client: TypusClient,
     input: {
         indexes: string[];
     }
-): Promise<MarketsData[]> {
+) {
     let tx = new Transaction();
     tx.add(getMarketsBcs({ arguments: { registry: MARKET, indexes: input.indexes.map((x) => BigInt(x)) } }));
     let devInspectTransactionBlockResult = await client.devInspectTransactionBlock({ sender: SENDER, transactionBlock: tx });
@@ -119,19 +117,19 @@ export async function getMarkets(
     let bytes = devInspectTransactionBlockResult.results[0].returnValues[0][0];
     let reader = new BcsReader(new Uint8Array(bytes));
     let marketIndex = 0;
-    let results: MarketsData[] = [];
+    let results: [typeof Markets.$inferType, (typeof SymbolMarket.$inferType)[]][] = [];
     reader.readVec((reader, i) => {
         if (i == marketIndex) {
             let length = reader.readULEB();
             let bytes = reader.readBytes(length);
             let markets = Markets.parse(bytes);
-            results.push({ markets, symbolMarkets: [] });
+            results.push([markets, []]);
             marketIndex = i + markets.symbols.length + 1;
         } else {
             let length = reader.readULEB();
             let bytes = reader.readBytes(length);
             let symbolMarket = SymbolMarket.parse(bytes);
-            results[results.length - 1].symbolMarkets.push(symbolMarket);
+            results[results.length - 1][1].push(symbolMarket);
         }
     });
     return results;

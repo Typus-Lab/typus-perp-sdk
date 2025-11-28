@@ -160,35 +160,23 @@ export async function getUserOrders(
     let res = await client.devInspectTransactionBlock({ sender: input.user, transactionBlock: tx });
     // console.log(res);
 
-    res.results?.map((x) => {
+    let orders: (typeof TradingOrder.$inferType)[] = [];
+
+    for (var x = 0; x < input.indexes.length; x++) {
         // @ts-ignore
-        let returnValues = x.returnValues[0][0];
+        let returnValues = res.results[x].returnValues[0][0];
         // console.log(returnValues);
 
         let reader = new BcsReader(new Uint8Array(returnValues));
-        let yy = reader.readVec((reader) => {
+        reader.readVec((reader) => {
             let length = reader.readULEB();
             let bytes = reader.readBytes(length);
             let order = TradingOrder.parse(bytes);
-            return order;
+            orders.push(order);
         });
-    });
+    }
 
-    // for (var x = 0; x < input.indexes.length; x++) {
-    //     // @ts-ignore
-    //     let returnValues = res.results[x].returnValues[0][0];
-    //     // console.log(returnValues);
-
-    //     let reader = new BcsReader(new Uint8Array(returnValues));
-    //     reader.readVec((reader) => {
-    //         let length = reader.readULEB();
-    //         let bytes = reader.readBytes(length);
-    //         let order = TradingOrder.parse(bytes);
-    //         orders.push(order);
-    //     });
-    // }
-
-    // return orders;
+    return orders;
 }
 
 export async function getUserPositions(

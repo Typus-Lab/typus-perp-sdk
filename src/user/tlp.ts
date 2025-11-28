@@ -18,8 +18,7 @@ export async function snapshot(
     client: TypusClient,
     tx: Transaction,
     input: {
-        userShareId: string;
-        perpIndex?: number;
+        perpIndex: string;
     }
 ): Promise<Transaction> {
     tx.add(
@@ -27,7 +26,7 @@ export async function snapshot(
             arguments: {
                 version: STAKE_POOL_VERSION,
                 registry: STAKE_POOL,
-                index: BigInt(input.perpIndex ?? 0),
+                index: BigInt(input.perpIndex),
                 typusEcosystemVersion: client.config.version.typus,
                 typusUserRegistry: client.config.registry.typus.user,
             },
@@ -50,7 +49,6 @@ export async function mintStakeLp(
         user: string;
         stake: boolean;
         suiCoins?: string[]; // for sponsored tx
-        perpIndex?: number;
     }
 ): Promise<Transaction> {
     // update pyth oracle
@@ -87,7 +85,7 @@ export async function mintStakeLp(
                 arguments: {
                     version: PERP_VERSION,
                     registry: LP_POOL,
-                    index: BigInt(input.perpIndex ?? 0),
+                    index: BigInt(input.stakePool.pool_info.index),
                     oracle: oracle[NETWORK][token]!,
                 },
                 typeArguments: [tokenType[NETWORK][token]],
@@ -108,7 +106,7 @@ export async function mintStakeLp(
                 version: PERP_VERSION,
                 registry: LP_POOL,
                 treasuryCaps: TLP_TREASURY_CAP,
-                index: BigInt(input.perpIndex ?? 0),
+                index: BigInt(input.stakePool.pool_info.index),
                 oracle: oracle[NETWORK][input.cTOKEN]!,
                 coin,
             },
@@ -122,7 +120,7 @@ export async function mintStakeLp(
                 arguments: {
                     version: STAKE_POOL_VERSION,
                     registry: STAKE_POOL,
-                    index: BigInt(input.perpIndex ?? 0),
+                    index: BigInt(input.stakePool.pool_info.index),
                     lpToken: lpCoin,
                 },
                 typeArguments: [lpToken],
@@ -144,7 +142,6 @@ export async function stakeLp(
         amount: string;
         userShareId: string | null;
         user: string;
-        perpIndex?: number;
     }
 ): Promise<Transaction> {
     var lpCoin;
@@ -167,7 +164,7 @@ export async function stakeLp(
             arguments: {
                 version: STAKE_POOL_VERSION,
                 registry: STAKE_POOL,
-                index: BigInt(input.perpIndex ?? 0),
+                index: BigInt(input.stakePool.pool_info.index),
                 lpToken: lpCoin,
             },
             typeArguments: [normalizeStructTag(input.stakePool.pool_info.stake_token.name)],
@@ -186,7 +183,6 @@ export async function unstake(
         userShareId: string;
         share: string | null;
         user: string;
-        perpIndex?: number;
     }
 ): Promise<Transaction> {
     harvestStakeReward(client, tx, { stakePool: input.stakePool, userShareId: input.userShareId, user: input.user });
@@ -198,7 +194,7 @@ export async function unstake(
             arguments: {
                 version: STAKE_POOL_VERSION,
                 registry: STAKE_POOL,
-                index: BigInt(input.perpIndex ?? 0),
+                index: BigInt(input.stakePool.pool_info.index),
                 unsubscribedShares: input.share ? BigInt(input.share) : null,
             },
             typeArguments: [lpToken],
@@ -210,7 +206,7 @@ export async function unstake(
             arguments: {
                 version: STAKE_POOL_VERSION,
                 registry: STAKE_POOL,
-                index: BigInt(input.perpIndex ?? 0),
+                index: BigInt(input.stakePool.pool_info.index),
             },
             typeArguments: [lpToken],
         })
@@ -231,7 +227,6 @@ export async function unstakeRedeem(
         share: string | null;
         user: string;
         suiCoins?: string[]; // for sponsored tx
-        perpIndex?: number;
     }
 ): Promise<Transaction> {
     // update pyth oracle
@@ -247,7 +242,12 @@ export async function unstakeRedeem(
     for (let token of tokens) {
         updateOracleWithPythUsd(client.pythClient, tx, client.config.package.oracle, token);
         updateLiquidityValue({
-            arguments: { version: PERP_VERSION, registry: LP_POOL, index: BigInt(input.perpIndex ?? 0), oracle: oracle[NETWORK][token]! },
+            arguments: {
+                version: PERP_VERSION,
+                registry: LP_POOL,
+                index: BigInt(input.stakePool.pool_info.index),
+                oracle: oracle[NETWORK][token]!,
+            },
             typeArguments: [tokenType[NETWORK][token]],
         })(tx);
     }
@@ -261,7 +261,7 @@ export async function unstakeRedeem(
             arguments: {
                 version: STAKE_POOL_VERSION,
                 registry: STAKE_POOL,
-                index: BigInt(input.perpIndex ?? 0),
+                index: BigInt(input.stakePool.pool_info.index),
                 unsubscribedShares: input.share ? BigInt(input.share) : null,
             },
             typeArguments: [lpToken],
@@ -273,7 +273,7 @@ export async function unstakeRedeem(
             arguments: {
                 version: STAKE_POOL_VERSION,
                 registry: STAKE_POOL,
-                index: BigInt(input.perpIndex ?? 0),
+                index: BigInt(input.stakePool.pool_info.index),
             },
             typeArguments: [lpToken],
         })
@@ -290,7 +290,7 @@ export async function unstakeRedeem(
             arguments: {
                 version: PERP_VERSION,
                 registry: LP_POOL,
-                index: BigInt(input.perpIndex ?? 0),
+                index: BigInt(input.stakePool.pool_info.index),
 
                 balance,
             },
@@ -310,7 +310,6 @@ export async function redeemTlp(
         share: string | null;
         user: string;
         suiCoins?: string[]; // for sponsored tx
-        perpIndex?: number;
     }
 ): Promise<Transaction> {
     // update pyth oracle
@@ -330,7 +329,7 @@ export async function redeemTlp(
                 arguments: {
                     version: PERP_VERSION,
                     registry: LP_POOL,
-                    index: BigInt(input.perpIndex ?? 0),
+                    index: BigInt(input.lpPool.index),
                     oracle: oracle[NETWORK][token]!,
                 },
                 typeArguments: [tokenType[NETWORK][token]],
@@ -367,7 +366,7 @@ export async function redeemTlp(
             arguments: {
                 version: PERP_VERSION,
                 registry: LP_POOL,
-                index: BigInt(input.perpIndex ?? 0),
+                index: BigInt(input.lpPool.index),
                 balance,
             },
             typeArguments: [lpToken],
@@ -386,7 +385,6 @@ export async function claim(
         cTOKEN: TOKEN;
         user: string;
         suiCoins?: string[]; // for sponsored tx
-        perpIndex?: number;
     }
 ): Promise<Transaction> {
     // update pyth oracle
@@ -402,7 +400,12 @@ export async function claim(
     for (let token of tokens) {
         updateOracleWithPythUsd(client.pythClient, tx, client.config.package.oracle, token);
         updateLiquidityValue({
-            arguments: { version: PERP_VERSION, registry: LP_POOL, index: BigInt(input.perpIndex ?? 0), oracle: oracle[NETWORK][token]! },
+            arguments: {
+                version: PERP_VERSION,
+                registry: LP_POOL,
+                index: BigInt(input.stakePool.pool_info.index),
+                oracle: oracle[NETWORK][token]!,
+            },
             typeArguments: [tokenType[NETWORK][token]],
         })(tx);
     }
@@ -412,7 +415,7 @@ export async function claim(
         arguments: {
             version: PERP_VERSION,
             registry: LP_POOL,
-            index: BigInt(input.perpIndex ?? 0),
+            index: BigInt(input.stakePool.pool_info.index),
             treasuryCaps: TLP_TREASURY_CAP,
             oracle: oracle[NETWORK][input.cTOKEN]!,
         },
@@ -433,8 +436,8 @@ export async function swap(
         TO_TOKEN: TOKEN;
         amount: string;
         user: string;
+        perpIndex: number;
         suiCoins?: string[]; // for sponsored tx
-        perpIndex?: number;
     }
 ): Promise<Transaction> {
     let fromToken = tokenType[NETWORK][input.FROM_TOKEN];
@@ -462,7 +465,7 @@ export async function swap(
         arguments: {
             version: PERP_VERSION,
             registry: LP_POOL,
-            index: BigInt(input.perpIndex ?? 0),
+            index: BigInt(input.perpIndex),
             oracleFromToken: oracle[NETWORK][input.FROM_TOKEN]!,
             oracleToToken: oracle[NETWORK][input.TO_TOKEN]!,
             fromCoin: coin,
@@ -483,12 +486,11 @@ export async function harvestStakeReward(
         stakePool: typeof StakePool.$inferType;
         userShareId: string;
         user: string;
-        perpIndex?: number;
     }
 ): Promise<Transaction> {
     let iTokens = input.stakePool.incentives.map((i) => i.token_type.name);
 
-    snapshot(client, tx, { userShareId: input.userShareId });
+    snapshot(client, tx, { perpIndex: input.stakePool.pool_info.index });
 
     for (let iToken of iTokens) {
         // console.log(iToken);
@@ -498,7 +500,7 @@ export async function harvestStakeReward(
                 arguments: {
                     version: STAKE_POOL_VERSION,
                     registry: STAKE_POOL,
-                    index: BigInt(input.perpIndex ?? 0),
+                    index: BigInt(input.stakePool.pool_info.index),
                 },
                 typeArguments: [iToken],
             })
@@ -510,7 +512,7 @@ export async function harvestStakeReward(
                     arguments: {
                         version: STAKE_POOL_VERSION,
                         registry: STAKE_POOL,
-                        index: BigInt(input.perpIndex ?? 0),
+                        index: BigInt(input.stakePool.pool_info.index),
                         lpToken: iCoin,
                     },
                     typeArguments: [normalizeStructTag(input.stakePool.pool_info.stake_token.name)],

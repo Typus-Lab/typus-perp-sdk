@@ -24,15 +24,15 @@ export const PERP_PKG_V1 =
 export const STAKE_PACKAGE_ID =
     NETWORK == "MAINNET"
         ? "0xc427209145715a00a93d7e674a95c556a7147d79fda1bbaeb1a1cac5f9923966"
-        : "0xcfe3d323fec2dde129480328dbcf075bc47bac50f916f33746d74f1c875acd2e";
+        : "0xa59d5f571a6f57ee5faf842ec633245afb78ca3721b8b1194052c69ad6a12230";
 export const STAKE_PUBLISHED_AT =
     NETWORK == "MAINNET"
         ? "0xdf96424bc1ba70a6e53c07b2b55c597eccb8a21f722a917a5b4c9d8514b2d858"
-        : "0xcfe3d323fec2dde129480328dbcf075bc47bac50f916f33746d74f1c875acd2e";
+        : "0xa59d5f571a6f57ee5faf842ec633245afb78ca3721b8b1194052c69ad6a12230";
 export const STAKE_PKG_V1 =
     NETWORK == "MAINNET"
         ? "0xc427209145715a00a93d7e674a95c556a7147d79fda1bbaeb1a1cac5f9923966"
-        : "0xcfe3d323fec2dde129480328dbcf075bc47bac50f916f33746d74f1c875acd2e";
+        : "0xa59d5f571a6f57ee5faf842ec633245afb78ca3721b8b1194052c69ad6a12230";
 
 // lp_pool::Registry
 export const LP_POOL =
@@ -66,12 +66,12 @@ export const TLP_TREASURY_CAP =
 export const STAKE_POOL =
     NETWORK == "MAINNET"
         ? "0x2cdf93717f87a8a7aeb98b27777b3b643f0ae2b277f44e6bcda0fc655a47d3e0"
-        : "0xc48d38a6cd76ac6628ba98f1bdad7ade8d4b5273066aa4408a81e5e00a92363e";
+        : "0xa43479d938b1d46e2dc3ae0558a54c2ab32312a1da8eeaa8d5b49238e739b2fa";
 
 export const STAKE_POOL_VERSION =
     NETWORK == "MAINNET"
         ? "0xdf3ed1599218b2415b2cd7fa06296f7f647676019b2873ec18e55a626c584f1b"
-        : "0x138583562f9f8fc6261e8fd752a105eb42c8887f83efaba87b42a757f3d98765";
+        : "0x57221de2517aee3d628be7fcf07afb9f6021edb06b519e57bd84ec5d37fff6f5";
 
 export const COMPETITION_CONFIG =
     NETWORK == "MAINNET"

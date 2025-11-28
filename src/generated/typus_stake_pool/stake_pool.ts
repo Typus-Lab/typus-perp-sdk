@@ -29,10 +29,11 @@ export const StakePoolInfo = new MoveStruct({
         total_share: bcs.u64(),
         /** Whether the pool is active. */
         active: bcs.bool(),
-        /**
-         * Padding for future use. [new_tlp_price (decimal 4), usd_per_exp,
-         * depositors_count]
-         */
+        /** tlp price (decimal 4) */
+        new_tlp_price: bcs.u64(),
+        /** number of depositor */
+        depositors_count: bcs.u64(),
+        /** Padding for future use. */
         u64_padding: bcs.vector(bcs.u64()),
     },
 });
@@ -41,6 +42,8 @@ export const StakePoolConfig = new MoveStruct({
     fields: {
         /** The unlock countdown in milliseconds. */
         unlock_countdown_ts_ms: bcs.u64(),
+        /** for exp calculation */
+        usd_per_exp: bcs.u64(),
         /** Padding for future use. */
         u64_padding: bcs.vector(bcs.u64()),
     },
@@ -128,10 +131,13 @@ export const LpUserShare = new MoveStruct({
         deactivating_shares: bcs.vector(DeactivatingShares),
         /** The last incentive price index. */
         last_incentive_price_index: vec_map.VecMap(type_name.TypeName, bcs.u64()),
-        /**
-         * Padding for future use. [snapshot_ts_ms, old_tlp_price (decimal 4),
-         * is_auto_compound(deprecated), harvested_amount]
-         */
+        /** The last snapshot ts for exp. */
+        snapshot_ts_ms: bcs.u64(),
+        /** old tlp price for exp with decimal 4 */
+        tlp_price: bcs.u64(),
+        /** accumulated harvested amount */
+        harvested_amount: bcs.u64(),
+        /** Padding for future use. */
         u64_padding: bcs.vector(bcs.u64()),
     },
 });
@@ -317,7 +323,7 @@ export function init(options: InitOptions = {}) {
     return (tx: Transaction) =>
         tx.moveCall({
             package: packageAddress,
-            module: "stake_pool",
+            module: "stake-pool",
             function: "init",
         });
 }
@@ -349,7 +355,7 @@ export function newStakePool(options: NewStakePoolOptions) {
     return (tx: Transaction) =>
         tx.moveCall({
             package: packageAddress,
-            module: "stake_pool",
+            module: "stake-pool",
             function: "new_stake_pool",
             arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
             typeArguments: options.typeArguments,
@@ -384,7 +390,7 @@ export function autoCompound(options: AutoCompoundOptions) {
     return (tx: Transaction) =>
         tx.moveCall({
             package: packageAddress,
-            module: "stake_pool",
+            module: "stake-pool",
             function: "auto_compound",
             arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
             typeArguments: options.typeArguments,
@@ -425,7 +431,7 @@ export function addIncentiveToken(options: AddIncentiveTokenOptions) {
     return (tx: Transaction) =>
         tx.moveCall({
             package: packageAddress,
-            module: "stake_pool",
+            module: "stake-pool",
             function: "add_incentive_token",
             arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
             typeArguments: options.typeArguments,
@@ -459,7 +465,7 @@ export function deactivateIncentiveToken(options: DeactivateIncentiveTokenOption
     return (tx: Transaction) =>
         tx.moveCall({
             package: packageAddress,
-            module: "stake_pool",
+            module: "stake-pool",
             function: "deactivate_incentive_token",
             arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
             typeArguments: options.typeArguments,
@@ -493,7 +499,7 @@ export function activateIncentiveToken(options: ActivateIncentiveTokenOptions) {
     return (tx: Transaction) =>
         tx.moveCall({
             package: packageAddress,
-            module: "stake_pool",
+            module: "stake-pool",
             function: "activate_incentive_token",
             arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
             typeArguments: options.typeArguments,
@@ -527,7 +533,7 @@ export function removeIncentiveToken(options: RemoveIncentiveTokenOptions) {
     return (tx: Transaction) =>
         tx.moveCall({
             package: packageAddress,
-            module: "stake_pool",
+            module: "stake-pool",
             function: "remove_incentive_token",
             arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
             typeArguments: options.typeArguments,
@@ -563,7 +569,7 @@ export function updateUnlockCountdownTsMs(options: UpdateUnlockCountdownTsMsOpti
     return (tx: Transaction) =>
         tx.moveCall({
             package: packageAddress,
-            module: "stake_pool",
+            module: "stake-pool",
             function: "update_unlock_countdown_ts_ms",
             arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
         });
@@ -606,7 +612,7 @@ export function updateIncentiveConfig(options: UpdateIncentiveConfigOptions) {
     return (tx: Transaction) =>
         tx.moveCall({
             package: packageAddress,
-            module: "stake_pool",
+            module: "stake-pool",
             function: "update_incentive_config",
             arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
             typeArguments: options.typeArguments,
@@ -640,7 +646,7 @@ export function allocateIncentive(options: AllocateIncentiveOptions) {
     return (tx: Transaction) =>
         tx.moveCall({
             package: packageAddress,
-            module: "stake_pool",
+            module: "stake-pool",
             function: "allocate_incentive",
             arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
         });
@@ -676,7 +682,7 @@ export function depositIncentive(options: DepositIncentiveOptions) {
     return (tx: Transaction) =>
         tx.moveCall({
             package: packageAddress,
-            module: "stake_pool",
+            module: "stake-pool",
             function: "deposit_incentive",
             arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
             typeArguments: options.typeArguments,
@@ -714,7 +720,7 @@ export function withdrawIncentiveV2(options: WithdrawIncentiveV2Options) {
     return (tx: Transaction) =>
         tx.moveCall({
             package: packageAddress,
-            module: "stake_pool",
+            module: "stake-pool",
             function: "withdraw_incentive_v2",
             arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
             typeArguments: options.typeArguments,
@@ -725,7 +731,6 @@ export interface StakeArguments {
     registry: RawTransactionArgument<string>;
     index: RawTransactionArgument<number | bigint>;
     lpToken: RawTransactionArgument<string>;
-    UserShareId: RawTransactionArgument<number | bigint | null>;
 }
 export interface StakeOptions {
     package?: string;
@@ -736,7 +741,6 @@ export interface StakeOptions {
               registry: RawTransactionArgument<string>,
               index: RawTransactionArgument<number | bigint>,
               lpToken: RawTransactionArgument<string>,
-              UserShareId: RawTransactionArgument<number | bigint | null>,
           ];
     typeArguments: [string];
 }
@@ -748,14 +752,13 @@ export function stake(options: StakeOptions) {
         `${packageAddress}::stake_pool::StakePoolRegistry`,
         "u64",
         `0x0000000000000000000000000000000000000000000000000000000000000002::coin::Coin<${options.typeArguments[0]}>`,
-        "0x0000000000000000000000000000000000000000000000000000000000000001::option::Option<u64>",
         "0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock",
     ] satisfies string[];
-    const parameterNames = ["version", "registry", "index", "lpToken", "UserShareId"];
+    const parameterNames = ["version", "registry", "index", "lpToken"];
     return (tx: Transaction) =>
         tx.moveCall({
             package: packageAddress,
-            module: "stake_pool",
+            module: "stake-pool",
             function: "stake",
             arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
             typeArguments: options.typeArguments,
@@ -794,43 +797,8 @@ export function updatePoolInfoU64Padding(options: UpdatePoolInfoU64PaddingOption
     return (tx: Transaction) =>
         tx.moveCall({
             package: packageAddress,
-            module: "stake_pool",
+            module: "stake-pool",
             function: "update_pool_info_u64_padding",
-            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
-        });
-}
-export interface HotfixPoolInfoU64PaddingArguments {
-    version: RawTransactionArgument<string>;
-    registry: RawTransactionArgument<string>;
-    index: RawTransactionArgument<number | bigint>;
-    u64Padding: RawTransactionArgument<number | bigint[]>;
-}
-export interface HotfixPoolInfoU64PaddingOptions {
-    package?: string;
-    arguments:
-        | HotfixPoolInfoU64PaddingArguments
-        | [
-              version: RawTransactionArgument<string>,
-              registry: RawTransactionArgument<string>,
-              index: RawTransactionArgument<number | bigint>,
-              u64Padding: RawTransactionArgument<number | bigint[]>,
-          ];
-}
-/** [Authorized Function] Update TLP price for calculating staking exp */
-export function hotfixPoolInfoU64Padding(options: HotfixPoolInfoU64PaddingOptions) {
-    const packageAddress = options.package ?? "@typus/stake-pool";
-    const argumentsTypes = [
-        `${packageAddress}::admin::Version`,
-        `${packageAddress}::stake_pool::StakePoolRegistry`,
-        "u64",
-        "vector<u64>",
-    ] satisfies string[];
-    const parameterNames = ["version", "registry", "index", "u64Padding"];
-    return (tx: Transaction) =>
-        tx.moveCall({
-            package: packageAddress,
-            module: "stake_pool",
-            function: "hotfix_pool_info_u64_padding",
             arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
         });
 }
@@ -840,7 +808,6 @@ export interface SnapshotArguments {
     typusEcosystemVersion: RawTransactionArgument<string>;
     typusUserRegistry: RawTransactionArgument<string>;
     index: RawTransactionArgument<number | bigint>;
-    UserShareId: RawTransactionArgument<number | bigint>;
 }
 export interface SnapshotOptions {
     package?: string;
@@ -852,7 +819,6 @@ export interface SnapshotOptions {
               typusEcosystemVersion: RawTransactionArgument<string>,
               typusUserRegistry: RawTransactionArgument<string>,
               index: RawTransactionArgument<number | bigint>,
-              UserShareId: RawTransactionArgument<number | bigint>,
           ];
 }
 /** [User Function] Get the staking exp */
@@ -861,17 +827,16 @@ export function snapshot(options: SnapshotOptions) {
     const argumentsTypes = [
         `${packageAddress}::admin::Version`,
         `${packageAddress}::stake_pool::StakePoolRegistry`,
-        "0x4b0f4ee1a40ce37ec81c987cc4e76a665419e74b863319492fc7d26f708b835a::ecosystem::Version",
-        "0x4b0f4ee1a40ce37ec81c987cc4e76a665419e74b863319492fc7d26f708b835a::user::TypusUserRegistry",
-        "u64",
+        "0x4213e12a2220f15f1837a76897110d2260786558169bd8d0847f21e9b551f277::ecosystem::Version",
+        "0x4213e12a2220f15f1837a76897110d2260786558169bd8d0847f21e9b551f277::user::TypusUserRegistry",
         "u64",
         "0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock",
     ] satisfies string[];
-    const parameterNames = ["version", "registry", "typusEcosystemVersion", "typusUserRegistry", "index", "UserShareId"];
+    const parameterNames = ["version", "registry", "typusEcosystemVersion", "typusUserRegistry", "index"];
     return (tx: Transaction) =>
         tx.moveCall({
             package: packageAddress,
-            module: "stake_pool",
+            module: "stake-pool",
             function: "snapshot",
             arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
         });
@@ -880,7 +845,6 @@ export interface UnsubscribeArguments {
     version: RawTransactionArgument<string>;
     registry: RawTransactionArgument<string>;
     index: RawTransactionArgument<number | bigint>;
-    UserShareId: RawTransactionArgument<number | bigint>;
     unsubscribedShares: RawTransactionArgument<number | bigint | null>;
 }
 export interface UnsubscribeOptions {
@@ -891,7 +855,6 @@ export interface UnsubscribeOptions {
               version: RawTransactionArgument<string>,
               registry: RawTransactionArgument<string>,
               index: RawTransactionArgument<number | bigint>,
-              UserShareId: RawTransactionArgument<number | bigint>,
               unsubscribedShares: RawTransactionArgument<number | bigint | null>,
           ];
     typeArguments: [string];
@@ -903,15 +866,14 @@ export function unsubscribe(options: UnsubscribeOptions) {
         `${packageAddress}::admin::Version`,
         `${packageAddress}::stake_pool::StakePoolRegistry`,
         "u64",
-        "u64",
         "0x0000000000000000000000000000000000000000000000000000000000000001::option::Option<u64>",
         "0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock",
     ] satisfies string[];
-    const parameterNames = ["version", "registry", "index", "UserShareId", "unsubscribedShares"];
+    const parameterNames = ["version", "registry", "index", "unsubscribedShares"];
     return (tx: Transaction) =>
         tx.moveCall({
             package: packageAddress,
-            module: "stake_pool",
+            module: "stake-pool",
             function: "unsubscribe",
             arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
             typeArguments: options.typeArguments,
@@ -921,7 +883,6 @@ export interface UnstakeArguments {
     version: RawTransactionArgument<string>;
     registry: RawTransactionArgument<string>;
     index: RawTransactionArgument<number | bigint>;
-    UserShareId: RawTransactionArgument<number | bigint>;
 }
 export interface UnstakeOptions {
     package?: string;
@@ -931,7 +892,6 @@ export interface UnstakeOptions {
               version: RawTransactionArgument<string>,
               registry: RawTransactionArgument<string>,
               index: RawTransactionArgument<number | bigint>,
-              UserShareId: RawTransactionArgument<number | bigint>,
           ];
     typeArguments: [string];
 }
@@ -942,14 +902,13 @@ export function unstake(options: UnstakeOptions) {
         `${packageAddress}::admin::Version`,
         `${packageAddress}::stake_pool::StakePoolRegistry`,
         "u64",
-        "u64",
         "0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock",
     ] satisfies string[];
-    const parameterNames = ["version", "registry", "index", "UserShareId"];
+    const parameterNames = ["version", "registry", "index"];
     return (tx: Transaction) =>
         tx.moveCall({
             package: packageAddress,
-            module: "stake_pool",
+            module: "stake-pool",
             function: "unstake",
             arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
             typeArguments: options.typeArguments,
@@ -981,7 +940,7 @@ export function updateLastIncentivePriceIndex(options: UpdateLastIncentivePriceI
     return (tx: Transaction) =>
         tx.moveCall({
             package: packageAddress,
-            module: "stake_pool",
+            module: "stake-pool",
             function: "update_last_incentive_price_index",
             arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
         });
@@ -1003,7 +962,7 @@ export function logHarvestedAmount(options: LogHarvestedAmountOptions) {
     return (tx: Transaction) =>
         tx.moveCall({
             package: packageAddress,
-            module: "stake_pool",
+            module: "stake-pool",
             function: "log_harvested_amount",
             arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
         });
@@ -1012,7 +971,6 @@ export interface HarvestPerUserShareArguments {
     version: RawTransactionArgument<string>;
     registry: RawTransactionArgument<string>;
     index: RawTransactionArgument<number | bigint>;
-    UserShareId: RawTransactionArgument<number | bigint>;
 }
 export interface HarvestPerUserShareOptions {
     package?: string;
@@ -1022,7 +980,6 @@ export interface HarvestPerUserShareOptions {
               version: RawTransactionArgument<string>,
               registry: RawTransactionArgument<string>,
               index: RawTransactionArgument<number | bigint>,
-              UserShareId: RawTransactionArgument<number | bigint>,
           ];
     typeArguments: [string];
 }
@@ -1033,14 +990,13 @@ export function harvestPerUserShare(options: HarvestPerUserShareOptions) {
         `${packageAddress}::admin::Version`,
         `${packageAddress}::stake_pool::StakePoolRegistry`,
         "u64",
-        "u64",
         "0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock",
     ] satisfies string[];
-    const parameterNames = ["version", "registry", "index", "UserShareId"];
+    const parameterNames = ["version", "registry", "index"];
     return (tx: Transaction) =>
         tx.moveCall({
             package: packageAddress,
-            module: "stake_pool",
+            module: "stake-pool",
             function: "harvest_per_user_share",
             arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
             typeArguments: options.typeArguments,
@@ -1072,7 +1028,7 @@ export function calculateIncentive(options: CalculateIncentiveOptions) {
     return (tx: Transaction) =>
         tx.moveCall({
             package: packageAddress,
-            module: "stake_pool",
+            module: "stake-pool",
             function: "calculate_incentive",
             arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
         });
@@ -1095,7 +1051,7 @@ export function harvestProgressUpdated(options: HarvestProgressUpdatedOptions) {
     return (tx: Transaction) =>
         tx.moveCall({
             package: packageAddress,
-            module: "stake_pool",
+            module: "stake-pool",
             function: "harvest_progress_updated",
             arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
         });
@@ -1114,7 +1070,7 @@ export function multiplier(options: MultiplierOptions) {
     return (tx: Transaction) =>
         tx.moveCall({
             package: packageAddress,
-            module: "stake_pool",
+            module: "stake-pool",
             function: "multiplier",
             arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
         });
@@ -1137,7 +1093,7 @@ export function getUserShares(options: GetUserSharesOptions) {
     return (tx: Transaction) =>
         tx.moveCall({
             package: packageAddress,
-            module: "stake_pool",
+            module: "stake-pool",
             function: "get_user_shares",
             arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
         });
@@ -1164,7 +1120,7 @@ export function getUserSharesByUserShareId(options: GetUserSharesByUserShareIdOp
     return (tx: Transaction) =>
         tx.moveCall({
             package: packageAddress,
-            module: "stake_pool",
+            module: "stake-pool",
             function: "get_user_shares_by_user_share_id",
             arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
         });
@@ -1184,7 +1140,7 @@ export function getStakePool(options: GetStakePoolOptions) {
     return (tx: Transaction) =>
         tx.moveCall({
             package: packageAddress,
-            module: "stake_pool",
+            module: "stake-pool",
             function: "get_stake_pool",
             arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
         });
@@ -1204,7 +1160,7 @@ export function getMutStakePool(options: GetMutStakePoolOptions) {
     return (tx: Transaction) =>
         tx.moveCall({
             package: packageAddress,
-            module: "stake_pool",
+            module: "stake-pool",
             function: "get_mut_stake_pool",
             arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
         });
@@ -1223,7 +1179,7 @@ export function getIncentiveTokens(options: GetIncentiveTokensOptions) {
     return (tx: Transaction) =>
         tx.moveCall({
             package: packageAddress,
-            module: "stake_pool",
+            module: "stake-pool",
             function: "get_incentive_tokens",
             arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
         });
@@ -1246,7 +1202,7 @@ export function getIncentive(options: GetIncentiveOptions) {
     return (tx: Transaction) =>
         tx.moveCall({
             package: packageAddress,
-            module: "stake_pool",
+            module: "stake-pool",
             function: "get_incentive",
             arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
         });
@@ -1269,7 +1225,7 @@ export function getMutIncentive(options: GetMutIncentiveOptions) {
     return (tx: Transaction) =>
         tx.moveCall({
             package: packageAddress,
-            module: "stake_pool",
+            module: "stake-pool",
             function: "get_mut_incentive",
             arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
         });
@@ -1292,7 +1248,7 @@ export function removeIncentive(options: RemoveIncentiveOptions) {
     return (tx: Transaction) =>
         tx.moveCall({
             package: packageAddress,
-            module: "stake_pool",
+            module: "stake-pool",
             function: "remove_incentive",
             arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
         });
@@ -1311,57 +1267,8 @@ export function getLastIncentivePriceIndex(options: GetLastIncentivePriceIndexOp
     return (tx: Transaction) =>
         tx.moveCall({
             package: packageAddress,
-            module: "stake_pool",
+            module: "stake-pool",
             function: "get_last_incentive_price_index",
             arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
-        });
-}
-export interface WithdrawIncentiveArguments {
-    version: RawTransactionArgument<string>;
-    registry: RawTransactionArgument<string>;
-    index: RawTransactionArgument<number | bigint>;
-    amount: RawTransactionArgument<number | bigint | null>;
-}
-export interface WithdrawIncentiveOptions {
-    package?: string;
-    arguments:
-        | WithdrawIncentiveArguments
-        | [
-              version: RawTransactionArgument<string>,
-              registry: RawTransactionArgument<string>,
-              index: RawTransactionArgument<number | bigint>,
-              amount: RawTransactionArgument<number | bigint | null>,
-          ];
-    typeArguments: [string];
-}
-export function withdrawIncentive(options: WithdrawIncentiveOptions) {
-    const packageAddress = options.package ?? "@typus/stake-pool";
-    const argumentsTypes = [
-        `${packageAddress}::admin::Version`,
-        `${packageAddress}::stake_pool::StakePoolRegistry`,
-        "u64",
-        "0x0000000000000000000000000000000000000000000000000000000000000001::option::Option<u64>",
-    ] satisfies string[];
-    const parameterNames = ["version", "registry", "index", "amount"];
-    return (tx: Transaction) =>
-        tx.moveCall({
-            package: packageAddress,
-            module: "stake_pool",
-            function: "withdraw_incentive",
-            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
-            typeArguments: options.typeArguments,
-        });
-}
-export interface DeprecatedOptions {
-    package?: string;
-    arguments?: [];
-}
-export function deprecated(options: DeprecatedOptions = {}) {
-    const packageAddress = options.package ?? "@typus/stake-pool";
-    return (tx: Transaction) =>
-        tx.moveCall({
-            package: packageAddress,
-            module: "stake_pool",
-            function: "deprecated",
         });
 }

@@ -28,7 +28,6 @@ export async function snapshot(
                 version: STAKE_POOL_VERSION,
                 registry: STAKE_POOL,
                 index: BigInt(input.perpIndex ?? 0),
-                UserShareId: BigInt(input.userShareId),
                 typusEcosystemVersion: client.config.version.typus,
                 typusUserRegistry: client.config.registry.typus.user,
             },
@@ -125,7 +124,6 @@ export async function mintStakeLp(
                     registry: STAKE_POOL,
                     index: BigInt(input.perpIndex ?? 0),
                     lpToken: lpCoin,
-                    UserShareId: null,
                 },
                 typeArguments: [lpToken],
             })
@@ -171,7 +169,6 @@ export async function stakeLp(
                 registry: STAKE_POOL,
                 index: BigInt(input.perpIndex ?? 0),
                 lpToken: lpCoin,
-                UserShareId: null,
             },
             typeArguments: [normalizeStructTag(input.stakePool.pool_info.stake_token.name)],
         })
@@ -203,7 +200,6 @@ export async function unstake(
                 registry: STAKE_POOL,
                 index: BigInt(input.perpIndex ?? 0),
                 unsubscribedShares: input.share ? BigInt(input.share) : null,
-                UserShareId: BigInt(input.userShareId),
             },
             typeArguments: [lpToken],
         })
@@ -215,7 +211,6 @@ export async function unstake(
                 version: STAKE_POOL_VERSION,
                 registry: STAKE_POOL,
                 index: BigInt(input.perpIndex ?? 0),
-                UserShareId: BigInt(input.userShareId),
             },
             typeArguments: [lpToken],
         })
@@ -268,7 +263,6 @@ export async function unstakeRedeem(
                 registry: STAKE_POOL,
                 index: BigInt(input.perpIndex ?? 0),
                 unsubscribedShares: input.share ? BigInt(input.share) : null,
-                UserShareId: BigInt(input.userShareId),
             },
             typeArguments: [lpToken],
         })
@@ -280,7 +274,6 @@ export async function unstakeRedeem(
                 version: STAKE_POOL_VERSION,
                 registry: STAKE_POOL,
                 index: BigInt(input.perpIndex ?? 0),
-                UserShareId: BigInt(input.userShareId),
             },
             typeArguments: [lpToken],
         })
@@ -506,7 +499,6 @@ export async function harvestStakeReward(
                     version: STAKE_POOL_VERSION,
                     registry: STAKE_POOL,
                     index: BigInt(input.perpIndex ?? 0),
-                    UserShareId: BigInt(input.userShareId),
                 },
                 typeArguments: [iToken],
             })
@@ -520,7 +512,6 @@ export async function harvestStakeReward(
                         registry: STAKE_POOL,
                         index: BigInt(input.perpIndex ?? 0),
                         lpToken: iCoin,
-                        UserShareId: BigInt(input.userShareId),
                     },
                     typeArguments: [normalizeStructTag(input.stakePool.pool_info.stake_token.name)],
                 })

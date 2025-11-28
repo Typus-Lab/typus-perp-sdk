@@ -10,7 +10,7 @@ import { getSponsoredTx } from "@typus/typus-sdk/dist/src/utils/sponsoredTx";
 (async () => {
     let config = await TypusConfig.default(NETWORK, null);
     let client = new TypusClient(config);
-    config.sponsored = false;
+    config.sponsored = true;
 
     let keypair = Ed25519Keypair.deriveKeypair(String(process.env.MNEMONIC));
 
@@ -38,7 +38,6 @@ import { getSponsoredTx } from "@typus/typus-sdk/dist/src/utils/sponsoredTx";
     ).data.map((coin) => coin.coinObjectId);
 
     tx = await createTradingOrder(client, tx, {
-        perpIndex: "1",
         coins,
         cToken,
         amount: "1000000000",
@@ -61,6 +60,16 @@ import { getSponsoredTx } from "@typus/typus-sdk/dist/src/utils/sponsoredTx";
     console.log(dryrunRes.events.filter((e) => e.type.endsWith("RealizeFundingEvent"))); // only exists if the order size is reduced ( with linked_position_id provided)
     console.log(dryrunRes.events.filter((e) => e.type.endsWith("OrderFilledEvent"))); // if the order is not filled, there will be no OrderFilledEvent
 
-    let res = await client.signAndExecuteTransaction({ signer: keypair, transaction: tx });
-    console.log(res);
+    // For Sponsored Tx
+    let sponsoredResponse = await getSponsoredTx(client.jsonRpcClient, user, tx);
+    if (sponsoredResponse.txBytes) {
+        let senderSig = await Transaction.from(sponsoredResponse.txBytes).sign({ signer: keypair }); // wallet sign
+        let res = await client.executeTransactionBlock({
+            transactionBlock: sponsoredResponse.txBytes,
+            signature: [senderSig?.signature, sponsoredResponse.sponsorSig],
+        });
+        console.log(res);
+    } else {
+        console.log(sponsoredResponse);
+    }
 })();

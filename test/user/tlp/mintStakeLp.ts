@@ -14,17 +14,17 @@ import { TypusClient } from "src/client";
     let user = keypair.toSuiAddress();
     // console.log(user);
 
-    const index = 0;
+    const index = 1;
 
     let lpPools = await getLpPools(client);
     let lpPool = lpPools[index];
     // console.log(lpPool);
 
     let stakePools = await getStakePools(client);
-    console.log(stakePools);
+    // console.log(stakePools);
 
     let stakePool = stakePools[index];
-    console.log(stakePool);
+    // console.log(stakePool);
 
     let stakes = await getUserStake(client, {
         user,
@@ -57,7 +57,7 @@ import { TypusClient } from "src/client";
         coins,
         cTOKEN,
         amount: "10000000000",
-        userShareId: stakes[index][0] ? stakes[index][0].user_share_id.toString() : null,
+        userShareId: stakes.length > 0 ? stakes[index][0]!.user_share_id.toString() : null,
         user,
         stake: true,
         isAutoCompound: false,

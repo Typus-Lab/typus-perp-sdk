@@ -13,6 +13,7 @@ import { getAllPositions, NETWORK } from "src";
         baseToken,
         slice: "100",
         page: "1",
+        marketIndex: "0",
     });
     console.log(res.positions.length);
 })();

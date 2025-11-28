@@ -45,7 +45,7 @@ import { normalizeStructTag } from "@mysten/sui/utils";
         stakePool,
         lpCoins: coins,
         amount: "10000000000",
-        userShareId: stakes[index].length > 0 ? stakes[index][0].user_share_id.toString() : null,
+        userShareId: stakes[index][0] ? stakes[index][0].user_share_id.toString() : null,
         user,
     });
 

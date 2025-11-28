@@ -4,7 +4,7 @@ import { TypusClient } from "src/client";
 
 import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519";
 import { Transaction } from "@mysten/sui/transactions";
-import { getStakePool, getUserStake, harvestStakeReward, NETWORK } from "src";
+import { getStakePool, getStakePools, getUserStake, harvestStakeReward, NETWORK } from "src";
 
 (async () => {
     let keypair = Ed25519Keypair.deriveKeypair(String(process.env.MNEMONIC));
@@ -14,13 +14,22 @@ import { getStakePool, getUserStake, harvestStakeReward, NETWORK } from "src";
     let user = keypair.toSuiAddress();
     console.log(user);
 
-    // 1. Get user's stake
-    let stake = await getUserStake(client, user);
-    console.log(stake);
+    const index = 0;
 
-    // 2. StakePool
-    let stakePool = await getStakePool(client);
+    let stakePools = await getStakePools(client);
+    let stakePool = stakePools[index];
+
     console.log(stakePool);
+
+    let stakes = await getUserStake(client, {
+        user,
+        indexes: [
+            ...Array(stakePools.length)
+                .keys()
+                .map((x) => x.toString()),
+        ],
+    });
+    console.log(stakes);
 
     let tx = new Transaction();
 

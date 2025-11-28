@@ -14,13 +14,10 @@ import { TypusClient } from "src/client";
     let user = keypair.toSuiAddress();
     console.log(user);
 
-    let stakes = await getUserStake(client, user);
-    console.log(stakes);
-
     let tx = new Transaction();
 
     tx = await snapshot(client, tx, {
-        userShareId: stakes![0][0][0].userShareId.toString(),
+        perpIndex: "0",
     });
 
     // console.log(tx.getData());

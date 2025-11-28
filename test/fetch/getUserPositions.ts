@@ -20,7 +20,6 @@ import { getLiquidationPriceAndPnl, getUserPositions, NETWORK, parseOptionBidRec
     if (positions.length > 0) {
         let liquidationPrices = await getLiquidationPriceAndPnl(client, {
             positions,
-            user,
         });
         console.log(liquidationPrices);
     }

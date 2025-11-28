@@ -11,6 +11,7 @@ import { getAllPositionsWithTradingSymbol, NETWORK } from "src";
 
     let res = await getAllPositionsWithTradingSymbol(client, {
         baseToken,
+        marketIndex: "0",
     });
     // console.log(res);
     console.log("res.length:", res.length);

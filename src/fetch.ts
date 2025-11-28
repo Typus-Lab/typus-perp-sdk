@@ -287,7 +287,7 @@ export async function getUserStake(
     // console.log(res);
 
     if (res.results) {
-        let results: any[] = [];
+        let results: [typeof LpUserShare.$inferType | null, string[]][] = [];
 
         for (var x = 0; x < input.indexes.length; x++) {
             // @ts-ignore
@@ -298,7 +298,7 @@ export async function getUserStake(
             let length = reader.readULEB();
             console.log(length);
             if (length == 0) {
-                results.push([]);
+                results.push([null, []]);
                 continue;
             }
             // let lpShare = LpUserShare.fromFields(LpUserShare.bcs.read(reader));

@@ -4,7 +4,8 @@ import { TypusClient } from "src/client";
 
 import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519";
 import { Transaction } from "@mysten/sui/transactions";
-import { NETWORK, TLP_TOKEN, getLpPools, getStakePool, getUserStake, redeemTlp } from "src";
+import { NETWORK, getLpPools, getStakePool, getUserStake, redeemTlp } from "src";
+import { normalizeStructTag } from "@mysten/sui/utils";
 
 (async () => {
     let keypair = Ed25519Keypair.deriveKeypair(String(process.env.MNEMONIC));
@@ -18,16 +19,12 @@ import { NETWORK, TLP_TOKEN, getLpPools, getStakePool, getUserStake, redeemTlp }
     let lpPool = lpPools[0];
     // console.log(lpPool);
 
-    // 1. Get user's stake
-    let stakes = await getUserStake(client, user);
-    console.log(stakes);
-
     // 2. get TLP coins
     // coins
     let coins = (
         await client.getCoins({
             owner: user,
-            coinType: TLP_TOKEN,
+            coinType: normalizeStructTag(lpPool.lp_token_type.name),
         })
     ).data.map((coin) => coin.coinObjectId);
     console.log(coins.length);
@@ -36,7 +33,7 @@ import { NETWORK, TLP_TOKEN, getLpPools, getStakePool, getUserStake, redeemTlp }
 
     await redeemTlp(client, tx, {
         lpPool,
-        share: "1964494844",
+        share: "10000000",
         user,
         lpCoins: coins,
     });

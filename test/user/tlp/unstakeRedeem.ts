@@ -3,7 +3,7 @@ import { TypusConfig } from "@typus/typus-sdk/dist/src/utils";
 import { TypusClient } from "src/client";
 import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519";
 import { Transaction } from "@mysten/sui/transactions";
-import { NETWORK, getLpPools, getStakePool, getUserStake, unstakeRedeem } from "src";
+import { NETWORK, getLpPools, getStakePool, getStakePools, getUserStake, unstakeRedeem } from "src";
 
 (async () => {
     let keypair = Ed25519Keypair.deriveKeypair(String(process.env.MNEMONIC));
@@ -13,22 +13,26 @@ import { NETWORK, getLpPools, getStakePool, getUserStake, unstakeRedeem } from "
     let user = keypair.toSuiAddress();
     console.log(user);
 
+    const index = 0;
+
     let lpPools = await getLpPools(client);
-    let lpPool = lpPools[0];
+    let lpPool = lpPools[index];
     // console.log(lpPool);
 
-    // 1. Get user's stake
-    let stakes = await getUserStake(client, user);
-    console.log(stakes);
+    let stakePools = await getStakePools(client);
+    console.log(stakePools);
 
-    // 2. StakePool
-    let stakePool = await getStakePool(client);
-    // console.log(stakePool);
+    let stakePool = stakePools[index];
+    console.log(stakePool);
+
+    // 1. Get user's stake
+    let stakes = await getUserStake(client, { user, indexes: ["0", "1"] });
+    console.log(stakes);
 
     let tx = new Transaction();
 
     await unstakeRedeem(client, tx, {
-        userShareId: stakes![0].user_share_id.toString(),
+        userShareId: stakes[index][0]!.user_share_id.toString(),
         lpPool,
         stakePool,
         share: "1000000000",

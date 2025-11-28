@@ -21,8 +21,10 @@ import { TypusClient } from "src/client";
     // console.log(lpPool);
 
     let stakePools = await getStakePools(client);
+    console.log(stakePools);
+
     let stakePool = stakePools[index];
-    // console.log(stakePool);
+    console.log(stakePool);
 
     let stakes = await getUserStake(client, {
         user,
@@ -55,7 +57,7 @@ import { TypusClient } from "src/client";
         coins,
         cTOKEN,
         amount: "10000000000",
-        userShareId: stakes[index] ? stakes[index][0].user_share_id.toString() : null,
+        userShareId: stakes[index][0] ? stakes[index][0].user_share_id.toString() : null,
         user,
         stake: true,
         isAutoCompound: false,

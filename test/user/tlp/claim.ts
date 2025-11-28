@@ -4,7 +4,7 @@ import { TypusClient } from "src/client";
 
 import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519";
 import { Transaction } from "@mysten/sui/transactions";
-import { NETWORK, getLpPools, getStakePool, claim } from "src";
+import { NETWORK, getLpPools, getStakePool, claim, getStakePools } from "src";
 
 (async () => {
     let keypair = Ed25519Keypair.deriveKeypair(String(process.env.MNEMONIC));
@@ -14,14 +14,17 @@ import { NETWORK, getLpPools, getStakePool, claim } from "src";
     let user = keypair.toSuiAddress();
     console.log(user);
 
+    const index = 0;
+
     let lpPools = await getLpPools(client);
-    let lpPool = lpPools[0];
+    let lpPool = lpPools[index];
     // console.log(lpPool);
 
-    // 2. StakePool
-    let stakePool = await getStakePool(client);
-    // console.log(stakePool);
+    let stakePools = await getStakePools(client);
+    console.log(stakePools);
 
+    let stakePool = stakePools[index];
+    console.log(stakePool);
     let tx = new Transaction();
 
     await claim(client, tx, {

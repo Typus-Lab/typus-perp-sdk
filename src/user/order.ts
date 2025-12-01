@@ -4,6 +4,7 @@ import {
     increaseCollateral as _increaseCollateral,
     releaseCollateral as _releaseCollateral,
     collectPositionFundingFee as _collectPositionFundingFee,
+    Markets,
 } from "src/generated/typus_perp/trading";
 import { Position, TradingOrder } from "src/generated/typus_perp/position";
 import { COMPETITION_CONFIG, LP_POOL, MARKET, NETWORK, PERP_VERSION } from "..";
@@ -11,6 +12,24 @@ import { updatePyth, updateOracleWithPythUsd, splitCoins, splitCoin } from "@typ
 import { tokenType, TOKEN, typeArgToAsset, oracle } from "@typus/typus-sdk/dist/src/constants";
 import { Transaction } from "@mysten/sui/transactions";
 import { TypusClient } from "src/client";
+import { normalizeStructTag } from "@mysten/sui/utils";
+
+export function findMarketIndex(
+    client: TypusClient,
+    input: {
+        markets: (typeof Markets.$inferType)[];
+        tradingToken: TOKEN;
+    }
+) {
+    let target = tokenType[client.config.network][input.tradingToken];
+    for (let i = 0; i < input.markets.length; i++) {
+        for (let symbol of input.markets[i].symbols) {
+            if (normalizeStructTag(symbol.name) == target) {
+                return i;
+            }
+        }
+    }
+}
 
 export async function createTradingOrder(
     client: TypusClient,

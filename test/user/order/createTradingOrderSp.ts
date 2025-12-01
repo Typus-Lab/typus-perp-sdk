@@ -3,7 +3,7 @@ import { TypusConfig } from "@typus/typus-sdk/dist/src/utils";
 import { TypusClient } from "src/client";
 import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519";
 import { Transaction } from "@mysten/sui/transactions";
-import { createTradingOrder, NETWORK } from "src";
+import { createTradingOrder, findMarketIndex, getMarkets, NETWORK } from "src";
 import { TOKEN, tokenType } from "@typus/typus-sdk/dist/src/constants";
 import { getSponsoredTx } from "@typus/typus-sdk/dist/src/utils/sponsoredTx";
 
@@ -37,7 +37,13 @@ import { getSponsoredTx } from "@typus/typus-sdk/dist/src/utils/sponsoredTx";
         })
     ).data.map((coin) => coin.coinObjectId);
 
+    let markets = await getMarkets(client, { indexes: ["0", "1"] });
+
+    let perpIndex = findMarketIndex(client, { markets: markets.map((x) => x[0]), tradingToken });
+    console.log("perpIndex: ", perpIndex);
+
     tx = await createTradingOrder(client, tx, {
+        perpIndex: perpIndex!.toString(),
         coins,
         cToken,
         amount: "1000000000",

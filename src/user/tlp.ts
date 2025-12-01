@@ -95,7 +95,7 @@ export async function mintStakeLp(
 
     // console.log(iToken);
     if (input.userShareId) {
-        harvestStakeReward(client, tx, { stakePool: input.stakePool, userShareId: input.userShareId, user: input.user });
+        harvestStakeReward(client, tx, { stakePool: input.stakePool, user: input.user });
     }
 
     let lpToken = normalizeStructTag(input.lpPool.lp_token_type.name);
@@ -156,7 +156,7 @@ export async function stakeLp(
 
     // console.log(iToken);
     if (input.userShareId) {
-        harvestStakeReward(client, tx, { stakePool: input.stakePool, userShareId: input.userShareId, user: input.user });
+        harvestStakeReward(client, tx, { stakePool: input.stakePool, user: input.user });
     }
 
     tx.add(
@@ -185,7 +185,7 @@ export async function unstake(
         user: string;
     }
 ): Promise<Transaction> {
-    harvestStakeReward(client, tx, { stakePool: input.stakePool, userShareId: input.userShareId, user: input.user });
+    harvestStakeReward(client, tx, { stakePool: input.stakePool, user: input.user });
 
     let lpToken = normalizeStructTag(input.lpPool.lp_token_type.name);
 
@@ -252,7 +252,7 @@ export async function unstakeRedeem(
         })(tx);
     }
 
-    harvestStakeReward(client, tx, { stakePool: input.stakePool, userShareId: input.userShareId, user: input.user });
+    harvestStakeReward(client, tx, { stakePool: input.stakePool, user: input.user });
 
     let lpToken = normalizeStructTag(input.lpPool.lp_token_type.name);
 
@@ -484,7 +484,6 @@ export async function harvestStakeReward(
     tx: Transaction,
     input: {
         stakePool: typeof StakePool.$inferType;
-        userShareId: string;
         user: string;
     }
 ): Promise<Transaction> {

@@ -12,9 +12,9 @@ import { TypusClient } from "src/client";
     let client = new TypusClient(config);
 
     let user = keypair.toSuiAddress();
-    // console.log(user);
+    console.log(user);
 
-    const index = 1;
+    const index = 0;
 
     let lpPools = await getLpPools(client);
     let lpPool = lpPools[index];
@@ -34,7 +34,10 @@ import { TypusClient } from "src/client";
                 .map((x) => x.toString()),
         ],
     });
-    console.log(stakes);
+    console.log("stakes: ", stakes);
+
+    let userShareId = stakes.length > 0 ? stakes[index][0]!.user_share_id.toString() : null;
+    console.log("userShareId: ", userShareId);
 
     // INPUT
     let cTOKEN: TOKEN = "wUSDT";
@@ -47,7 +50,7 @@ import { TypusClient } from "src/client";
             coinType: cToken,
         })
     ).data.map((coin) => coin.coinObjectId);
-    console.log(coins.length);
+    console.log("coins.length: ", coins.length);
 
     let tx = new Transaction();
 
@@ -57,7 +60,7 @@ import { TypusClient } from "src/client";
         coins,
         cTOKEN,
         amount: "10000000000",
-        userShareId: stakes.length > 0 ? stakes[index][0]!.user_share_id.toString() : null,
+        userShareId,
         user,
         stake: true,
         isAutoCompound: false,

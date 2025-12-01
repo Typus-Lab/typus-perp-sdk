@@ -251,15 +251,15 @@ export async function getUserStake(
     let tx = new Transaction();
 
     for (let i of input.indexes) {
-        tx.add(
-            allocateIncentive({
-                arguments: {
-                    version: STAKE_POOL_VERSION,
-                    registry: STAKE_POOL,
-                    index: BigInt(i),
-                },
-            })
-        );
+        // tx.add(
+        //     allocateIncentive({
+        //         arguments: {
+        //             version: STAKE_POOL_VERSION,
+        //             registry: STAKE_POOL,
+        //             index: BigInt(i),
+        //         },
+        //     })
+        // );
         tx.add(
             getUserShares({
                 arguments: {
@@ -279,7 +279,7 @@ export async function getUserStake(
 
         for (var x = 0; x < input.indexes.length; x++) {
             // @ts-ignore
-            var returnValues = res.results[1].returnValues[0][0];
+            var returnValues = res.results[x].returnValues[0][0];
             // console.log(returnValues);
 
             var reader = new BcsReader(new Uint8Array(returnValues));

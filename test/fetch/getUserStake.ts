@@ -6,16 +6,12 @@ import { getUserStake, getDeactivatingShares, NETWORK } from "src";
     let config = await TypusConfig.default(NETWORK, null);
     let client = new TypusClient(config);
 
-    let user = "0xd15f079d5f60b8fdfdcf3ca66c0d3473790c758b04b6418929d5d2991c5443ee";
+    let user = "0xb6c7e3b1c61ee81516a8317f221daa035f1503e0ac3ae7a50b61834bc7a3ead9";
     console.log(user);
 
     let stakes = await getUserStake(client, {
         user,
-        indexes: [
-            ...Array(2)
-                .keys()
-                .map((x) => x.toString()),
-        ],
+        indexes: ["0", "1"],
     });
     console.dir(stakes, { depth: null });
 

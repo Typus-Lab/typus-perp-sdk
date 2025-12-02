@@ -6,7 +6,7 @@ import { getLiquidationPriceAndPnl, getUserPositions, NETWORK, parseOptionBidRec
     let config = await TypusConfig.default(NETWORK, null);
     let client = new TypusClient(config);
 
-    let user = "0x575efc989b65eafc66ee88a60def0134c5466a05b7d0882a5736e837b3ede4c0";
+    let user = "0xb6c7e3b1c61ee81516a8317f221daa035f1503e0ac3ae7a50b61834bc7a3ead9";
     console.log(user);
 
     let positions = await getUserPositions(client, { user, indexes: ["0", "1"] });

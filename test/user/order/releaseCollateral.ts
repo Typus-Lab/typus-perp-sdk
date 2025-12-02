@@ -15,7 +15,7 @@ import { releaseCollateral, getUserPositions, NETWORK } from "src";
 
     var tx = new Transaction();
 
-    let positions = await getUserPositions(client, user);
+    let positions = await getUserPositions(client, { user, indexes: ["0", "1"] });
     let position = positions[0];
     console.log(position);
 

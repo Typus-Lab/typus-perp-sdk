@@ -123,7 +123,6 @@ export async function cancelTradingOrder(
     client: TypusClient,
     tx: Transaction,
     input: {
-        perpIndex: string;
         order: typeof TradingOrder.$inferType;
         user: string;
     }
@@ -136,7 +135,8 @@ export async function cancelTradingOrder(
             arguments: {
                 version: PERP_VERSION,
                 registry: MARKET,
-                marketIndex: BigInt(input.perpIndex),
+                // @ts-ignore
+                marketIndex: BigInt(input.order.marketIndex),
                 orderId: BigInt(input.order.order_id),
                 triggerPrice: BigInt(input.order.trigger_price),
                 orderUser: null,
@@ -154,7 +154,6 @@ export async function increaseCollateral(
     client: TypusClient,
     tx: Transaction,
     input: {
-        perpIndex: string;
         coins: string[];
         amount: string;
         position: typeof Position.$inferType;
@@ -193,14 +192,17 @@ export async function increaseCollateral(
     for (let token of tokens) {
         updateOracleWithPythUsd(client.pythClient, tx, client.config.package.oracle, token);
     }
+    // @ts-ignore
+    let marketIndex = BigInt(input.position.marketIndex);
+
     tx.add(
         _increaseCollateral({
             arguments: {
                 version: PERP_VERSION,
                 registry: MARKET,
                 poolRegistry: LP_POOL,
-                marketIndex: BigInt(input.perpIndex),
-                poolIndex: BigInt(input.perpIndex),
+                marketIndex: marketIndex,
+                poolIndex: marketIndex,
                 typusOracleCToken: oracle[NETWORK][TOKEN]!,
                 typusOracleTradingSymbol: oracle[NETWORK][BASE_TOKEN]!,
                 positionId: BigInt(input.position.position_id),
@@ -217,7 +219,6 @@ export async function releaseCollateral(
     client: TypusClient,
     tx: Transaction,
     input: {
-        perpIndex: string;
         position: typeof Position.$inferType;
         amount: string;
         suiCoins?: string[]; // for sponsored tx
@@ -242,14 +243,17 @@ export async function releaseCollateral(
     let cToken = tokenType[NETWORK][TOKEN];
     let baseToken = tokenType[NETWORK][BASE_TOKEN];
 
+    // @ts-ignore
+    let marketIndex = BigInt(input.position.marketIndex);
+
     let coin = tx.add(
         _releaseCollateral({
             arguments: {
                 version: PERP_VERSION,
                 registry: MARKET,
                 poolRegistry: LP_POOL,
-                marketIndex: BigInt(input.perpIndex),
-                poolIndex: BigInt(input.perpIndex),
+                marketIndex: marketIndex,
+                poolIndex: marketIndex,
                 typusOracleCToken: oracle[NETWORK][TOKEN]!,
                 typusOracleTradingSymbol: oracle[NETWORK][BASE_TOKEN]!,
                 positionId: BigInt(input.position.position_id),
@@ -268,7 +272,6 @@ export async function collectPositionFundingFee(
     client: TypusClient,
     tx: Transaction,
     input: {
-        perpIndex: string;
         position: typeof Position.$inferType;
         suiCoins?: string[]; // for sponsored tx
     }
@@ -291,14 +294,18 @@ export async function collectPositionFundingFee(
 
     let cToken = tokenType[NETWORK][TOKEN];
     let baseToken = tokenType[NETWORK][BASE_TOKEN];
+
+    // @ts-ignore
+    let marketIndex = BigInt(input.position.marketIndex);
+
     tx.add(
         _collectPositionFundingFee({
             arguments: {
                 version: PERP_VERSION,
                 registry: MARKET,
                 poolRegistry: LP_POOL,
-                marketIndex: BigInt(input.perpIndex),
-                poolIndex: BigInt(input.perpIndex),
+                marketIndex: marketIndex,
+                poolIndex: marketIndex,
                 typusOracleCToken: oracle[NETWORK][TOKEN]!,
                 typusOracleTradingSymbol: oracle[NETWORK][BASE_TOKEN]!,
                 positionId: BigInt(input.position.position_id),

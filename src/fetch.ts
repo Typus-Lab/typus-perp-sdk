@@ -172,6 +172,8 @@ export async function getUserOrders(
             let length = reader.readULEB();
             let bytes = reader.readBytes(length);
             let order = TradingOrder.parse(bytes);
+            // @ts-ignore
+            order.marketIndex = x;
             orders.push(order);
         });
     }

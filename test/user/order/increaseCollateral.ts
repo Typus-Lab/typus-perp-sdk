@@ -16,9 +16,9 @@ import { normalizeStructTag } from "@mysten/sui/utils";
 
     var tx = new Transaction();
 
-    let positions = await getUserPositions(client, user);
-    let position = positions.at(-1)!;
-    // console.log(position);
+    let positions = await getUserPositions(client, { user, indexes: ["0", "1"] });
+    let position = positions[0];
+    console.log(position);
 
     let coins = (
         await client.getCoins({

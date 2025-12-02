@@ -15,7 +15,7 @@ import { cancelTradingOrder, getUserOrders, NETWORK } from "src";
 
     var tx = new Transaction();
 
-    let orders = await getUserOrders(client, user);
+    let orders = await getUserOrders(client, { user, indexes: ["0", "1"] });
     let order = orders[0];
     console.log(order);
 

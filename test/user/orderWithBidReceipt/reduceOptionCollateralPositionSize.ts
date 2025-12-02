@@ -3,7 +3,7 @@ import { TypusClient } from "src/client";
 
 import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519";
 import { Transaction } from "@mysten/sui/transactions";
-import { reduceOptionCollateralPositionSize, NETWORK } from "src";
+import { reduceOptionCollateralPositionSize, NETWORK, getMarkets, findMarketIndex } from "src";
 import { createPythClient } from "@typus/typus-sdk/dist/src/utils";
 import "@typus/typus-sdk/dist/src/utils/load_env";
 import { TOKEN } from "@typus/typus-sdk/dist/src/constants";
@@ -23,7 +23,13 @@ import { TOKEN } from "@typus/typus-sdk/dist/src/constants";
     let bToken: TOKEN = "wUSDC";
     let tradingToken: TOKEN = "wETH"; // oToken
 
+    let markets = await getMarkets(client, { indexes: ["0", "1"] });
+    let marketsOnly = markets.map((x) => x[0]);
+    let perpIndex = findMarketIndex(client, { markets: marketsOnly, tradingToken });
+    console.log("perpIndex: ", perpIndex);
+
     tx = await reduceOptionCollateralPositionSize(client, tx, {
+        perpIndex: perpIndex!.toString(),
         cToken,
         tradingToken,
         bToken,

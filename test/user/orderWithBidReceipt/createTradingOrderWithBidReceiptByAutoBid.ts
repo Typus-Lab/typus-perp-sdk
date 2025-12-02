@@ -3,7 +3,7 @@ import { TypusConfig } from "@typus/typus-sdk/dist/src/utils";
 import { TypusClient } from "src/client";
 import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519";
 import { Transaction } from "@mysten/sui/transactions";
-import { createTradingOrderWithBidReceiptByAutoBid, NETWORK } from "src";
+import { createTradingOrderWithBidReceiptByAutoBid, findMarketIndex, getMarkets, NETWORK } from "src";
 import { TOKEN } from "@typus/typus-sdk/dist/src/constants";
 
 (async () => {
@@ -23,7 +23,13 @@ import { TOKEN } from "@typus/typus-sdk/dist/src/constants";
     let tradingToken: TOKEN = "SUI"; // oToken
     let isLong = false; // call => short, put => long
 
+    let markets = await getMarkets(client, { indexes: ["0", "1"] });
+    let marketsOnly = markets.map((x) => x[0]);
+    let perpIndex = findMarketIndex(client, { markets: marketsOnly, tradingToken });
+    console.log("perpIndex: ", perpIndex);
+
     tx = await createTradingOrderWithBidReceiptByAutoBid(client, tx, {
+        perpIndex: perpIndex!.toString(),
         cToken,
         tradingToken,
         isLong,

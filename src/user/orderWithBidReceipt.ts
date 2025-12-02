@@ -14,6 +14,7 @@ export async function createTradingOrderWithBidReceiptByAutoBid(
     client: TypusClient,
     tx: Transaction,
     input: {
+        perpIndex: string;
         cToken: TOKEN;
         tradingToken: TOKEN;
         isLong: boolean;
@@ -23,7 +24,6 @@ export async function createTradingOrderWithBidReceiptByAutoBid(
         signalIndex: string;
         strategyIndex: string;
         suiCoins?: string[]; // for sponsored tx
-        perpIndex?: number;
     }
 ): Promise<Transaction> {
     // INPUTS
@@ -57,8 +57,8 @@ export async function createTradingOrderWithBidReceiptByAutoBid(
                 version: PERP_VERSION,
                 registry: MARKET,
                 poolRegistry: LP_POOL,
-                marketIndex: BigInt(input.perpIndex ?? 0),
-                poolIndex: BigInt(input.perpIndex ?? 0),
+                marketIndex: BigInt(input.perpIndex),
+                poolIndex: BigInt(input.perpIndex),
                 typusOracleCToken: oracle[NETWORK][TOKEN]!,
                 typusOracleTradingSymbol: oracle[NETWORK][BASE_TOKEN]!,
                 typusEcosystemVersion: client.config.version.typus,
@@ -81,6 +81,7 @@ export async function createTradingOrderWithBidReceipt(
     client: TypusClient,
     tx: Transaction,
     input: {
+        perpIndex: string;
         cToken: TOKEN;
         tradingToken: TOKEN;
         isLong: boolean;
@@ -90,7 +91,6 @@ export async function createTradingOrderWithBidReceipt(
         bidReceipts: string[];
         share?: string; // if undefined, merge all receipts
         suiCoins?: string[]; // for sponsored tx
-        perpIndex?: number;
     }
 ): Promise<Transaction> {
     // INPUTS
@@ -125,8 +125,8 @@ export async function createTradingOrderWithBidReceipt(
                 version: PERP_VERSION,
                 registry: MARKET,
                 poolRegistry: LP_POOL,
-                marketIndex: BigInt(input.perpIndex ?? 0),
-                poolIndex: BigInt(input.perpIndex ?? 0),
+                marketIndex: BigInt(input.perpIndex),
+                poolIndex: BigInt(input.perpIndex),
                 typusOracleCToken: oracle[NETWORK][TOKEN]!,
                 typusOracleTradingSymbol: oracle[NETWORK][BASE_TOKEN]!,
                 typusEcosystemVersion: client.config.version.typus,
@@ -149,13 +149,13 @@ export async function reduceOptionCollateralPositionSize(
     client: TypusClient,
     tx: Transaction,
     input: {
+        perpIndex: string;
         cToken: TOKEN;
         tradingToken: TOKEN;
         bToken: string;
         positionId: string;
         orderSize: string | null;
         suiCoins?: string[]; // for sponsored tx
-        perpIndex?: number;
     }
 ): Promise<Transaction> {
     let TOKEN = input.cToken;
@@ -181,8 +181,8 @@ export async function reduceOptionCollateralPositionSize(
                 version: PERP_VERSION,
                 registry: MARKET,
                 poolRegistry: LP_POOL,
-                marketIndex: BigInt(input.perpIndex ?? 0),
-                poolIndex: BigInt(input.perpIndex ?? 0),
+                marketIndex: BigInt(input.perpIndex),
+                poolIndex: BigInt(input.perpIndex),
                 typusOracleCToken: oracle[NETWORK][TOKEN]!,
                 typusOracleTradingSymbol: oracle[NETWORK][BASE_TOKEN]!,
                 typusEcosystemVersion: client.config.version.typus,

@@ -26,25 +26,28 @@ export class TypusClient {
     config: TypusConfig;
     // user: string;
 
-    constructor(config: TypusConfig, mvr?: Experimental_SuiClientTypes.MvrOptions) {
+    // mvr?: Experimental_SuiClientTypes.MvrOptions
+    constructor(config: TypusConfig) {
         this.config = config;
         const network = config.network.toLowerCase();
+
+        const mvr = {
+            overrides: {
+                packages: {
+                    "@typus/perp": PERP_PUBLISHED_AT,
+                    "@typus/stake-pool": STAKE_PUBLISHED_AT,
+                },
+                // types: {
+                //     "@typus/perp": PERP_PACKAGE_ID,
+                //     "@typus/stake-pool": STAKE_PACKAGE_ID,
+                // },
+            },
+        };
 
         this.jsonRpcClient = new SuiClient({
             network: network,
             url: config.rpcEndpoint,
-            mvr: {
-                overrides: {
-                    packages: {
-                        "@typus/perp": PERP_PUBLISHED_AT,
-                        "@typus/stake-pool": STAKE_PUBLISHED_AT,
-                    },
-                    // types: {
-                    //     "@typus/perp": PERP_PACKAGE_ID,
-                    //     "@typus/stake-pool": STAKE_PACKAGE_ID,
-                    // },
-                },
-            },
+            mvr,
         });
 
         this.gRpcClient = new SuiGrpcClient({
@@ -52,7 +55,9 @@ export class TypusClient {
             baseUrl: `https://fullnode.${network}.sui.io:443`,
         });
         this.graphQLClient = new SuiGraphQLClient({
+            network: network,
             url: `https://graphql.${network}.sui.io/graphql`,
+            mvr,
         });
 
         this.pythClient = createPythClient(this.jsonRpcClient, this.config.network);
@@ -74,9 +79,28 @@ export class TypusClient {
         return this.jsonRpcClient.multiGetObjects(params);
     }
     devInspectTransactionBlock(params: DevInspectTransactionBlockParams) {
+        // this.gRpcClient.transactionExecutionService.simulateTransaction({ transaction: { bcs: { value: params.transactionBlock } } });
+
         return this.jsonRpcClient.devInspectTransactionBlock(params);
     }
     executeTransactionBlock(params: ExecuteTransactionBlockParams) {
+        // this.gRpcClient.transactionExecutionService.executeTransaction({
+        //     transaction: { bcs: { value: params.transactionBlock } },
+        //     signatures,
+        // });
+
+        // this.gRpcClient.transactionExecutionService.executeTransaction({
+        //     transaction: {
+        //         bcs: {
+        //             value: transactionBytes,
+        //         },
+        //     },
+        //     signatures: signatures.map((sig) => ({
+        //         bcs: { value: fromBase64(sig) },
+        //         signature: { oneofKind: undefined },
+        //     })),
+        // });
+
         return this.jsonRpcClient.executeTransactionBlock(params);
     }
     signAndExecuteTransaction(params) {
@@ -127,5 +151,13 @@ export class TypusClient {
             // console.log(x_1.childObject?.contents?.value!);
             return x_1.childObject?.contents?.value!;
         });
+    }
+
+    simulateTransaction(transactionBcs: Uint8Array<ArrayBufferLike>) {
+        return this.gRpcClient.core.dryRunTransaction({ transaction: transactionBcs });
+        // return this.gRpcClient.transactionExecutionService.simulateTransaction({
+        //     transaction: { bcs: { value: transactionBcs } },
+        //     // checks: 1,
+        // });
     }
 }

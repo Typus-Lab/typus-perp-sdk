@@ -112,6 +112,12 @@ export async function getMarkets(
 ) {
     let tx = new Transaction();
     tx.add(getMarketsBcs({ arguments: { registry: MARKET, indexes: input.indexes.map((x) => BigInt(x)) } }));
+
+    // tx.setSender(SENDER);
+    // let bcs = await tx.build({ client: client.jsonRpcClient, onlyTransactionKind: true });
+    // // console.log("bcs", bcs);
+    // let res = await client.simulateTransaction(bcs);
+
     let devInspectTransactionBlockResult = await client.devInspectTransactionBlock({ sender: SENDER, transactionBlock: tx });
     // @ts-ignore
     let bytes = devInspectTransactionBlockResult.results[0].returnValues[0][0];

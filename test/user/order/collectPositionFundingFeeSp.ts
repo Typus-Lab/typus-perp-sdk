@@ -35,6 +35,9 @@ import { getSponsoredTx } from "@typus/typus-sdk/dist/src/utils/sponsoredTx";
         suiCoins,
     });
 
+    // it willneed this `tx.build` before `buildGaslessTransaction`
+    await tx.build({ client: client.jsonRpcClient, onlyTransactionKind: true });
+
     // For Sponsored Tx
     let sponsoredResponse = await getSponsoredTx(client.jsonRpcClient, user, tx);
     let senderSig = await Transaction.from(sponsoredResponse?.txBytes).sign({ signer: keypair }); // wallet sign

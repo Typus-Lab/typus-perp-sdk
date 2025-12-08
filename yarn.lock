@@ -393,25 +393,25 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@pythnetwork/hermes-client@npm:2.1.0":
-  version: 2.1.0
-  resolution: "@pythnetwork/hermes-client@npm:2.1.0"
+"@pythnetwork/hermes-client@npm:2.0.0":
+  version: 2.0.0
+  resolution: "@pythnetwork/hermes-client@npm:2.0.0"
   dependencies:
     "@zodios/core": "npm:^10.9.6"
     eventsource: "npm:^3.0.5"
     zod: "npm:^3.23.8"
-  checksum: 10c0/6b4f2d40fb74d66afde618ae0daf3ec041744a96c1aa4f3140875fe22c2732f578a81416909de5d363ef79562b045be9da5fd37a3bb9bc7ac187c7ba3261503d
+  checksum: 10c0/2bb8b66c5292cd3244edb207ed0ba281293ccdd7966d56c7e6e3a725029cd636cfd4ca261bfda95b9269be990c3d6f88bfc771b9126116159946fdaf726bd22b
   languageName: node
   linkType: hard
 
-"@pythnetwork/pyth-sui-js@npm:^2.2.0":
-  version: 2.4.0
-  resolution: "@pythnetwork/pyth-sui-js@npm:2.4.0"
+"@pythnetwork/pyth-sui-js@npm:2.3.0":
+  version: 2.3.0
+  resolution: "@pythnetwork/pyth-sui-js@npm:2.3.0"
   dependencies:
     "@mysten/sui": "npm:^1.3.0"
-    "@pythnetwork/hermes-client": "npm:2.1.0"
+    "@pythnetwork/hermes-client": "npm:2.0.0"
     buffer: "npm:^6.0.3"
-  checksum: 10c0/517d4400546c195fc513fee8a0163a23eecc58a738f0b87cc490de8d8599fdaf24effd86e30a6c9e45d2540920db2d0f61b0060b203cd3777686d2d609a7feb7
+  checksum: 10c0/a7736bb487de3af553d94d6b6d7bd69a06bc9db58588d0a9cd013031d734d747c0946e1e53fcd526f4f325c0c2b0449894c21be37470005e03d6aed4fd6020ee
   languageName: node
   linkType: hard
 
@@ -734,7 +734,7 @@ __metadata:
     "@types/mocha": "npm:^10.0.1"
     "@types/node": "npm:^24.10.1"
     "@types/rx": "npm:^4.1.2"
-    "@typus/typus-sdk": "npm:1.8.25"
+    "@typus/typus-sdk": "npm:1.8.30"
     axios: "npm:^1.13.2"
     prettier: "npm:^3.0.0"
     ts-node: "npm:^10.9.2"
@@ -746,14 +746,14 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@typus/typus-sdk@npm:1.8.25":
-  version: 1.8.25
-  resolution: "@typus/typus-sdk@npm:1.8.25"
+"@typus/typus-sdk@npm:1.8.30":
+  version: 1.8.30
+  resolution: "@typus/typus-sdk@npm:1.8.30"
   dependencies:
     "@mysten/bcs": "npm:^1.6.1"
     "@mysten/kiosk": "npm:^0.12.6"
     "@mysten/sui": "npm:^1.30.0"
-    "@pythnetwork/pyth-sui-js": "npm:^2.2.0"
+    "@pythnetwork/pyth-sui-js": "npm:2.3.0"
     "@shinami/clients": "npm:^0.9.6"
     "@types/node": "npm:^20.5.7"
     bignumber.js: "npm:^9.1.2"
@@ -763,7 +763,7 @@ __metadata:
     lodash: "npm:^4.17.21"
     moment: "npm:^2.30.1"
     node-rsa: "npm:^1.1.1"
-  checksum: 10c0/5bb369036045aff3fbcc6ebd30ab5b26168a333b1a0de0e248edc4edfb5807c3ced1cafb0fa636a2d8d0ffcbfc5c74d3ef3fa4e3a48ae5ce4be137ac94cdf845
+  checksum: 10c0/8959ddae36a91fa06931cc1db7a5df39f6245ebda75e1bccde0e82ff5bc280b5d277a57f447e4af1b1f99506887f70e1aad99b0725592f6f19ecb28024a3eb59
   languageName: node
   linkType: hard
 

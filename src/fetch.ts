@@ -189,6 +189,9 @@ export async function getUserOrders(
     return orders;
 }
 
+export type Position = (typeof Position.$inferType);
+export type PositionWithMarketIndex = Position & { marketIndex: number };
+
 export async function getUserPositions(
     client: TypusClient,
     input: {
@@ -214,7 +217,7 @@ export async function getUserPositions(
     let res = await client.devInspectTransactionBlock({ sender: input.user, transactionBlock: tx });
     // console.log(res);
 
-    let positions: (typeof Position.$inferType)[] = [];
+    let positions: PositionWithMarketIndex[] = [];
 
     for (var x = 0; x < input.indexes.length; x++) {
         // @ts-ignore
@@ -226,9 +229,10 @@ export async function getUserPositions(
             let length = reader.readULEB();
             let bytes = reader.readBytes(length);
             let position = Position.parse(bytes);
-            // @ts-ignore
-            position.marketIndex = x;
-            positions.push(position);
+            positions.push({
+                ...position,
+                marketIndex: x,
+            });
         });
     }
     // let positions: Position[] = readVecPosition(Uint8Array.from(returnValues));

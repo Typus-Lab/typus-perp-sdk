@@ -15,6 +15,7 @@ import { Transaction } from "@mysten/sui/transactions";
 import { createPythClient, PythClient, TypusConfig } from "@typus/typus-sdk/dist/src/utils";
 import type { Experimental_SuiClientTypes } from "@mysten/sui/experimental";
 import { PERP_PACKAGE_ID, PERP_PUBLISHED_AT, STAKE_PACKAGE_ID, STAKE_PUBLISHED_AT } from "src";
+import type { RpcTransport } from "@protobuf-ts/runtime-rpc";
 
 export type Network = "MAINNET" | "TESTNET";
 
@@ -27,7 +28,7 @@ export class TypusClient {
     // user: string;
 
     // mvr?: Experimental_SuiClientTypes.MvrOptions
-    constructor(config: TypusConfig) {
+    constructor(config: TypusConfig, grpcTransport: RpcTransport) {
         this.config = config;
         const network = config.network.toLowerCase();
 
@@ -50,10 +51,17 @@ export class TypusClient {
             mvr,
         });
 
-        this.gRpcClient = new SuiGrpcClient({
-            network: network,
-            baseUrl: `https://fullnode.${network}.sui.io:443`,
-        });
+        if (grpcTransport) {
+            this.gRpcClient = new SuiGrpcClient({
+                network: network,
+                transport: grpcTransport,
+            });
+        } else {
+            this.gRpcClient = new SuiGrpcClient({
+                network: network,
+                baseUrl: `https://fullnode.${network}.sui.io:443`,
+            });
+        }
         this.graphQLClient = new SuiGraphQLClient({
             network: network,
             url: `https://graphql.${network}.sui.io/graphql`,

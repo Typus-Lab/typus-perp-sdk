@@ -16,6 +16,7 @@ import { createPythClient, PythClient, TypusConfig } from "@typus/typus-sdk/dist
 import type { Experimental_SuiClientTypes } from "@mysten/sui/experimental";
 import { PERP_PACKAGE_ID, PERP_PUBLISHED_AT, STAKE_PACKAGE_ID, STAKE_PUBLISHED_AT } from "src";
 import type { RpcTransport } from "@protobuf-ts/runtime-rpc";
+import { GrpcWebFetchTransport } from "@protobuf-ts/grpcweb-transport";
 
 export type Network = "MAINNET" | "TESTNET";
 
@@ -28,7 +29,7 @@ export class TypusClient {
     // user: string;
 
     // mvr?: Experimental_SuiClientTypes.MvrOptions
-    constructor(config: TypusConfig, grpcTransport: RpcTransport) {
+    constructor(config: TypusConfig, grpcTransport?: RpcTransport) {
         this.config = config;
         const network = config.network.toLowerCase();
 
@@ -51,17 +52,16 @@ export class TypusClient {
             mvr,
         });
 
-        if (grpcTransport) {
-            this.gRpcClient = new SuiGrpcClient({
-                network: network,
-                transport: grpcTransport,
-            });
-        } else {
-            this.gRpcClient = new SuiGrpcClient({
-                network: network,
-                baseUrl: `https://fullnode.${network}.sui.io:443`,
-            });
-        }
+        this.gRpcClient = new SuiGrpcClient({
+            network: network,
+            transport:
+                grpcTransport ??
+                new GrpcWebFetchTransport({
+                    baseUrl: `https://fullnode.${network}.sui.io:443`,
+                    // Additional transport options
+                }),
+        });
+
         this.graphQLClient = new SuiGraphQLClient({
             network: network,
             url: `https://graphql.${network}.sui.io/graphql`,

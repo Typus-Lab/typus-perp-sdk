@@ -1,5 +1,5 @@
 import {
-    createTradingOrderV2 as _createTradingOrder,
+    createTradingOrder as _createTradingOrder,
     cancelTradingOrder as _cancelTradingOrder,
     increaseCollateral as _increaseCollateral,
     releaseCollateral as _releaseCollateral,
@@ -91,9 +91,6 @@ export async function createTradingOrder(
                 poolIndex: BigInt(input.perpIndex),
                 typusOracleCToken: oracle[NETWORK][TOKEN]!,
                 typusOracleTradingSymbol: oracle[NETWORK][BASE_TOKEN]!,
-                typusEcosystemVersion: client.config.version.typus,
-                typusUserRegistry: client.config.registry.typus.user,
-                typusLeaderboardRegistry: client.config.registry.typus.leaderboard,
                 collateral: coin,
                 size: BigInt(input.size),
                 triggerPrice: BigInt(input.triggerPrice),
@@ -101,8 +98,6 @@ export async function createTradingOrder(
                 isStopOrder: input.isStopOrder,
                 reduceOnly: input.reduceOnly,
                 linkedPositionId: input.linkedPositionId ? BigInt(input.linkedPositionId) : null,
-                tailsStakingRegistry: client.config.registry.typus.tailsStaking,
-                competitionConfig: COMPETITION_CONFIG,
             },
             typeArguments: [cToken, baseToken],
         })

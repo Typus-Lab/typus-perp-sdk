@@ -37,8 +37,8 @@ export class TypusClient {
         const mvr = {
             overrides: {
                 packages: {
-                    "@typus/perp": PERP_PUBLISHED_AT,
-                    "@typus/stake-pool": STAKE_PUBLISHED_AT,
+                    "@typus/perp": config.package.perp.perp,
+                    "@typus/stake-pool": config.package.perp.stakePool,
                 },
                 // types: {
                 //     "@typus/perp": PERP_PACKAGE_ID,

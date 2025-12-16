@@ -56,6 +56,15 @@ export const SendFeeEvent = new MoveStruct({
         amount: bcs.u64(),
     },
 });
+export const ProtocolFeeEvent = new MoveStruct({
+    name: `${$moduleName}::ProtocolFeeEvent`,
+    fields: {
+        /** The type name of the token. */
+        token: type_name.TypeName,
+        /** The amount of fees charged. */
+        amount: bcs.u64(),
+    },
+});
 export interface VersionCheckArguments {
     version: RawTransactionArgument<string>;
 }
@@ -273,7 +282,7 @@ export interface ChargeFeeOptions {
     arguments: ChargeFeeArguments | [version: RawTransactionArgument<string>, balance: RawTransactionArgument<string>];
     typeArguments: [string];
 }
-/** Charges a protocol fee. WARNING: no authority check inside */
+/** Charges a protocol fee. */
 export function chargeFee(options: ChargeFeeOptions) {
     const packageAddress = options.package ?? "@typus/stake-pool";
     const argumentsTypes = [
@@ -286,57 +295,6 @@ export function chargeFee(options: ChargeFeeOptions) {
             package: packageAddress,
             module: "admin",
             function: "charge_fee",
-            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
-            typeArguments: options.typeArguments,
-        });
-}
-export interface SendLiquidatorFeeArguments {
-    version: RawTransactionArgument<string>;
-}
-export interface SendLiquidatorFeeOptions {
-    package?: string;
-    arguments: SendLiquidatorFeeArguments | [version: RawTransactionArgument<string>];
-    typeArguments: [string];
-}
-/**
- * Sends the liquidator fees to the fee address. Safe with constant address as
- * receiver
- */
-export function sendLiquidatorFee(options: SendLiquidatorFeeOptions) {
-    const packageAddress = options.package ?? "@typus/stake-pool";
-    const argumentsTypes = [`${packageAddress}::admin::Version`] satisfies string[];
-    const parameterNames = ["version"];
-    return (tx: Transaction) =>
-        tx.moveCall({
-            package: packageAddress,
-            module: "admin",
-            function: "send_liquidator_fee",
-            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
-            typeArguments: options.typeArguments,
-        });
-}
-export interface ChargeLiquidatorFeeArguments {
-    version: RawTransactionArgument<string>;
-    balance: RawTransactionArgument<string>;
-}
-export interface ChargeLiquidatorFeeOptions {
-    package?: string;
-    arguments: ChargeLiquidatorFeeArguments | [version: RawTransactionArgument<string>, balance: RawTransactionArgument<string>];
-    typeArguments: [string];
-}
-/** Charges a liquidator fee. WARNING: no authority check inside */
-export function chargeLiquidatorFee(options: ChargeLiquidatorFeeOptions) {
-    const packageAddress = options.package ?? "@typus/stake-pool";
-    const argumentsTypes = [
-        `${packageAddress}::admin::Version`,
-        `0x0000000000000000000000000000000000000000000000000000000000000002::balance::Balance<${options.typeArguments[0]}>`,
-    ] satisfies string[];
-    const parameterNames = ["version", "balance"];
-    return (tx: Transaction) =>
-        tx.moveCall({
-            package: packageAddress,
-            module: "admin",
-            function: "charge_liquidator_fee",
             arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
             typeArguments: options.typeArguments,
         });

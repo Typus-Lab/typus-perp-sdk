@@ -36,7 +36,7 @@ import { TypusClient } from "src/client";
     });
     console.log("stakes: ", stakes);
 
-    let userShareId = stakes.length > 0 ? stakes[index][0]!.user_share_id.toString() : null;
+    let userShareId = stakes[index][0] ? stakes[index][0]!.user_share_id.toString() : null;
     console.log("userShareId: ", userShareId);
 
     // INPUT

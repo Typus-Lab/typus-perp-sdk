@@ -341,24 +341,6 @@ export const ManagerCloseOptionPositionEvent = new MoveStruct({
         u64_padding: bcs.vector(bcs.u64()),
     },
 });
-export const ManagerUpdateProcessStatusAfterPositionEvent = new MoveStruct({
-    name: `${$moduleName}::ManagerUpdateProcessStatusAfterPositionEvent`,
-    fields: {
-        market_index: bcs.u64(),
-        pool_index: bcs.u64(),
-        liquidity_token: type_name.TypeName,
-        trading_base_token: type_name.TypeName,
-    },
-});
-export const ManagerUpdateProcessStatusAfterOrderEvent = new MoveStruct({
-    name: `${$moduleName}::ManagerUpdateProcessStatusAfterOrderEvent`,
-    fields: {
-        market_index: bcs.u64(),
-        pool_index: bcs.u64(),
-        liquidity_token: type_name.TypeName,
-        trading_base_token: type_name.TypeName,
-    },
-});
 export const LiquidationInfo = new MoveStruct({
     name: `${$moduleName}::LiquidationInfo`,
     fields: {
@@ -498,6 +480,7 @@ export interface AddTradingSymbolArguments {
     optionMaintenanceMarginRateBp: RawTransactionArgument<number | bigint>;
     optionTradingFeeConfig: RawTransactionArgument<number | bigint[]>;
     tradingFeeFormulaVersion: RawTransactionArgument<number | bigint>;
+    profitVaultFlag: RawTransactionArgument<number | bigint>;
 }
 export interface AddTradingSymbolOptions {
     package?: string;
@@ -523,6 +506,7 @@ export interface AddTradingSymbolOptions {
               optionMaintenanceMarginRateBp: RawTransactionArgument<number | bigint>,
               optionTradingFeeConfig: RawTransactionArgument<number | bigint[]>,
               tradingFeeFormulaVersion: RawTransactionArgument<number | bigint>,
+              profitVaultFlag: RawTransactionArgument<number | bigint>,
           ];
     typeArguments: [string];
 }
@@ -534,7 +518,7 @@ export function addTradingSymbol(options: AddTradingSymbolOptions) {
         `${packageAddress}::trading::MarketRegistry`,
         "u64",
         "u64",
-        "0x855eb2d260ee42b898266e6df90bfd3c4ed821ccb253a352c159c223244a4b8a::oracle::Oracle",
+        "0x1d17058789bd1e1e79f1a92424519a88146f191f58a06cc4d9ab23d17d46ab73::oracle::Oracle",
         "u64",
         "u64",
         "u64",
@@ -548,6 +532,7 @@ export function addTradingSymbol(options: AddTradingSymbolOptions) {
         "u64",
         "u64",
         "vector<u64>",
+        "u64",
         "u64",
         "0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock",
     ] satisfies string[];
@@ -571,6 +556,7 @@ export function addTradingSymbol(options: AddTradingSymbolOptions) {
         "optionMaintenanceMarginRateBp",
         "optionTradingFeeConfig",
         "tradingFeeFormulaVersion",
+        "profitVaultFlag",
     ];
     return (tx: Transaction) =>
         tx.moveCall({
@@ -635,6 +621,7 @@ export interface UpdateMarketConfigArguments {
     optionCollateralMaintenanceMarginRateBp: RawTransactionArgument<number | bigint | null>;
     optionCollateralTradingFeeConfig: RawTransactionArgument<number | bigint[] | null>;
     tradingFeeFormulaVersion: RawTransactionArgument<number | bigint | null>;
+    profitVaultFlag: RawTransactionArgument<number | bigint | null>;
 }
 export interface UpdateMarketConfigOptions {
     package?: string;
@@ -659,6 +646,7 @@ export interface UpdateMarketConfigOptions {
               optionCollateralMaintenanceMarginRateBp: RawTransactionArgument<number | bigint | null>,
               optionCollateralTradingFeeConfig: RawTransactionArgument<number | bigint[] | null>,
               tradingFeeFormulaVersion: RawTransactionArgument<number | bigint | null>,
+              profitVaultFlag: RawTransactionArgument<number | bigint | null>,
           ];
     typeArguments: [string];
 }
@@ -684,6 +672,7 @@ export function updateMarketConfig(options: UpdateMarketConfigOptions) {
         "0x0000000000000000000000000000000000000000000000000000000000000001::option::Option<u64>",
         "0x0000000000000000000000000000000000000000000000000000000000000001::option::Option<vector<u64>>",
         "0x0000000000000000000000000000000000000000000000000000000000000001::option::Option<u64>",
+        "0x0000000000000000000000000000000000000000000000000000000000000001::option::Option<u64>",
     ] satisfies string[];
     const parameterNames = [
         "version",
@@ -704,6 +693,7 @@ export function updateMarketConfig(options: UpdateMarketConfigOptions) {
         "optionCollateralMaintenanceMarginRateBp",
         "optionCollateralTradingFeeConfig",
         "tradingFeeFormulaVersion",
+        "profitVaultFlag",
     ];
     return (tx: Transaction) =>
         tx.moveCall({
@@ -860,7 +850,7 @@ export function removeTradingSymbol(options: RemoveTradingSymbolOptions) {
             typeArguments: options.typeArguments,
         });
 }
-export interface CreateTradingOrderV2Arguments {
+export interface CreateTradingOrderArguments {
     version: RawTransactionArgument<string>;
     registry: RawTransactionArgument<string>;
     poolRegistry: RawTransactionArgument<string>;
@@ -868,11 +858,6 @@ export interface CreateTradingOrderV2Arguments {
     typusOracleTradingSymbol: RawTransactionArgument<string>;
     marketIndex: RawTransactionArgument<number | bigint>;
     poolIndex: RawTransactionArgument<number | bigint>;
-    typusEcosystemVersion: RawTransactionArgument<string>;
-    typusUserRegistry: RawTransactionArgument<string>;
-    typusLeaderboardRegistry: RawTransactionArgument<string>;
-    tailsStakingRegistry: RawTransactionArgument<string>;
-    competitionConfig: RawTransactionArgument<string>;
     linkedPositionId: RawTransactionArgument<number | bigint | null>;
     collateral: RawTransactionArgument<string>;
     reduceOnly: RawTransactionArgument<boolean>;
@@ -881,10 +866,10 @@ export interface CreateTradingOrderV2Arguments {
     size: RawTransactionArgument<number | bigint>;
     triggerPrice: RawTransactionArgument<number | bigint>;
 }
-export interface CreateTradingOrderV2Options {
+export interface CreateTradingOrderOptions {
     package?: string;
     arguments:
-        | CreateTradingOrderV2Arguments
+        | CreateTradingOrderArguments
         | [
               version: RawTransactionArgument<string>,
               registry: RawTransactionArgument<string>,
@@ -893,11 +878,6 @@ export interface CreateTradingOrderV2Options {
               typusOracleTradingSymbol: RawTransactionArgument<string>,
               marketIndex: RawTransactionArgument<number | bigint>,
               poolIndex: RawTransactionArgument<number | bigint>,
-              typusEcosystemVersion: RawTransactionArgument<string>,
-              typusUserRegistry: RawTransactionArgument<string>,
-              typusLeaderboardRegistry: RawTransactionArgument<string>,
-              tailsStakingRegistry: RawTransactionArgument<string>,
-              competitionConfig: RawTransactionArgument<string>,
               linkedPositionId: RawTransactionArgument<number | bigint | null>,
               collateral: RawTransactionArgument<string>,
               reduceOnly: RawTransactionArgument<boolean>,
@@ -909,22 +889,17 @@ export interface CreateTradingOrderV2Options {
     typeArguments: [string, string];
 }
 /** [User Function] Creates a new trading order. */
-export function createTradingOrderV2(options: CreateTradingOrderV2Options) {
+export function createTradingOrder(options: CreateTradingOrderOptions) {
     const packageAddress = options.package ?? "@typus/perp";
     const argumentsTypes = [
         `${packageAddress}::admin::Version`,
         `${packageAddress}::trading::MarketRegistry`,
         `${packageAddress}::lp_pool::Registry`,
-        "0x855eb2d260ee42b898266e6df90bfd3c4ed821ccb253a352c159c223244a4b8a::oracle::Oracle",
-        "0x855eb2d260ee42b898266e6df90bfd3c4ed821ccb253a352c159c223244a4b8a::oracle::Oracle",
+        "0x1d17058789bd1e1e79f1a92424519a88146f191f58a06cc4d9ab23d17d46ab73::oracle::Oracle",
+        "0x1d17058789bd1e1e79f1a92424519a88146f191f58a06cc4d9ab23d17d46ab73::oracle::Oracle",
         "0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock",
         "u64",
         "u64",
-        "0x4b0f4ee1a40ce37ec81c987cc4e76a665419e74b863319492fc7d26f708b835a::ecosystem::Version",
-        "0x4b0f4ee1a40ce37ec81c987cc4e76a665419e74b863319492fc7d26f708b835a::user::TypusUserRegistry",
-        "0x4b0f4ee1a40ce37ec81c987cc4e76a665419e74b863319492fc7d26f708b835a::leaderboard::TypusLeaderboardRegistry",
-        "0x4b0f4ee1a40ce37ec81c987cc4e76a665419e74b863319492fc7d26f708b835a::tails_staking::TailsStakingRegistry",
-        `${packageAddress}::competition::CompetitionConfig`,
         "0x0000000000000000000000000000000000000000000000000000000000000001::option::Option<u64>",
         `0x0000000000000000000000000000000000000000000000000000000000000002::coin::Coin<${options.typeArguments[0]}>`,
         "bool",
@@ -941,11 +916,6 @@ export function createTradingOrderV2(options: CreateTradingOrderV2Options) {
         "typusOracleTradingSymbol",
         "marketIndex",
         "poolIndex",
-        "typusEcosystemVersion",
-        "typusUserRegistry",
-        "typusLeaderboardRegistry",
-        "tailsStakingRegistry",
-        "competitionConfig",
         "linkedPositionId",
         "collateral",
         "reduceOnly",
@@ -958,7 +928,7 @@ export function createTradingOrderV2(options: CreateTradingOrderV2Options) {
         tx.moveCall({
             package: packageAddress,
             module: "trading",
-            function: "create_trading_order_v2",
+            function: "create_trading_order",
             arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
             typeArguments: options.typeArguments,
         });
@@ -1044,8 +1014,8 @@ export function releaseCollateral(options: ReleaseCollateralOptions) {
         `${packageAddress}::admin::Version`,
         `${packageAddress}::trading::MarketRegistry`,
         `${packageAddress}::lp_pool::Registry`,
-        "0x855eb2d260ee42b898266e6df90bfd3c4ed821ccb253a352c159c223244a4b8a::oracle::Oracle",
-        "0x855eb2d260ee42b898266e6df90bfd3c4ed821ccb253a352c159c223244a4b8a::oracle::Oracle",
+        "0x1d17058789bd1e1e79f1a92424519a88146f191f58a06cc4d9ab23d17d46ab73::oracle::Oracle",
+        "0x1d17058789bd1e1e79f1a92424519a88146f191f58a06cc4d9ab23d17d46ab73::oracle::Oracle",
         "0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock",
         "u64",
         "u64",
@@ -1110,8 +1080,8 @@ export function increaseCollateral(options: IncreaseCollateralOptions) {
         `${packageAddress}::admin::Version`,
         `${packageAddress}::trading::MarketRegistry`,
         `${packageAddress}::lp_pool::Registry`,
-        "0x855eb2d260ee42b898266e6df90bfd3c4ed821ccb253a352c159c223244a4b8a::oracle::Oracle",
-        "0x855eb2d260ee42b898266e6df90bfd3c4ed821ccb253a352c159c223244a4b8a::oracle::Oracle",
+        "0x1d17058789bd1e1e79f1a92424519a88146f191f58a06cc4d9ab23d17d46ab73::oracle::Oracle",
+        "0x1d17058789bd1e1e79f1a92424519a88146f191f58a06cc4d9ab23d17d46ab73::oracle::Oracle",
         "0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock",
         "u64",
         "u64",
@@ -1171,8 +1141,8 @@ export function collectPositionFundingFee(options: CollectPositionFundingFeeOpti
         `${packageAddress}::admin::Version`,
         `${packageAddress}::trading::MarketRegistry`,
         `${packageAddress}::lp_pool::Registry`,
-        "0x855eb2d260ee42b898266e6df90bfd3c4ed821ccb253a352c159c223244a4b8a::oracle::Oracle",
-        "0x855eb2d260ee42b898266e6df90bfd3c4ed821ccb253a352c159c223244a4b8a::oracle::Oracle",
+        "0x1d17058789bd1e1e79f1a92424519a88146f191f58a06cc4d9ab23d17d46ab73::oracle::Oracle",
+        "0x1d17058789bd1e1e79f1a92424519a88146f191f58a06cc4d9ab23d17d46ab73::oracle::Oracle",
         "0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock",
         "u64",
         "u64",
@@ -1197,7 +1167,7 @@ export function collectPositionFundingFee(options: CollectPositionFundingFeeOpti
             typeArguments: options.typeArguments,
         });
 }
-export interface CreateTradingOrderWithBidReceiptV3Arguments {
+export interface CreateTradingOrderWithBidReceiptArguments {
     version: RawTransactionArgument<string>;
     registry: RawTransactionArgument<string>;
     poolRegistry: RawTransactionArgument<string>;
@@ -1214,10 +1184,10 @@ export interface CreateTradingOrderWithBidReceiptV3Arguments {
     collateralBidReceipt: RawTransactionArgument<string>;
     isLong: RawTransactionArgument<boolean>;
 }
-export interface CreateTradingOrderWithBidReceiptV3Options {
+export interface CreateTradingOrderWithBidReceiptOptions {
     package?: string;
     arguments:
-        | CreateTradingOrderWithBidReceiptV3Arguments
+        | CreateTradingOrderWithBidReceiptArguments
         | [
               version: RawTransactionArgument<string>,
               registry: RawTransactionArgument<string>,
@@ -1238,24 +1208,24 @@ export interface CreateTradingOrderWithBidReceiptV3Options {
     typeArguments: [string, string, string];
 }
 /** [User Function] Creates a new trading order with a bid receipt as collateral. */
-export function createTradingOrderWithBidReceiptV3(options: CreateTradingOrderWithBidReceiptV3Options) {
+export function createTradingOrderWithBidReceipt(options: CreateTradingOrderWithBidReceiptOptions) {
     const packageAddress = options.package ?? "@typus/perp";
     const argumentsTypes = [
         `${packageAddress}::admin::Version`,
         `${packageAddress}::trading::MarketRegistry`,
         `${packageAddress}::lp_pool::Registry`,
-        "0x321848bf1ae327a9e022ccb3701940191e02fa193ab160d9c0e49cd3c003de3a::typus_dov_single::Registry",
-        "0x855eb2d260ee42b898266e6df90bfd3c4ed821ccb253a352c159c223244a4b8a::oracle::Oracle",
-        "0x855eb2d260ee42b898266e6df90bfd3c4ed821ccb253a352c159c223244a4b8a::oracle::Oracle",
+        "0x6c9a394a43844fc09d9617bc8a8e775a4521f0e28e83de1da780d043a498671f::typus_dov_single::Registry",
+        "0x1d17058789bd1e1e79f1a92424519a88146f191f58a06cc4d9ab23d17d46ab73::oracle::Oracle",
+        "0x1d17058789bd1e1e79f1a92424519a88146f191f58a06cc4d9ab23d17d46ab73::oracle::Oracle",
         "0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock",
         "u64",
         "u64",
-        "0x4b0f4ee1a40ce37ec81c987cc4e76a665419e74b863319492fc7d26f708b835a::ecosystem::Version",
-        "0x4b0f4ee1a40ce37ec81c987cc4e76a665419e74b863319492fc7d26f708b835a::user::TypusUserRegistry",
-        "0x4b0f4ee1a40ce37ec81c987cc4e76a665419e74b863319492fc7d26f708b835a::leaderboard::TypusLeaderboardRegistry",
-        "0x4b0f4ee1a40ce37ec81c987cc4e76a665419e74b863319492fc7d26f708b835a::tails_staking::TailsStakingRegistry",
+        "0x4213e12a2220f15f1837a76897110d2260786558169bd8d0847f21e9b551f277::ecosystem::Version",
+        "0x4213e12a2220f15f1837a76897110d2260786558169bd8d0847f21e9b551f277::user::TypusUserRegistry",
+        "0x4213e12a2220f15f1837a76897110d2260786558169bd8d0847f21e9b551f277::leaderboard::TypusLeaderboardRegistry",
+        "0x4213e12a2220f15f1837a76897110d2260786558169bd8d0847f21e9b551f277::tails_staking::TailsStakingRegistry",
         `${packageAddress}::competition::CompetitionConfig`,
-        "0xb4f25230ba74837d8299e92951306100c4a532e8c48cc3d8828abe9b91c8b274::vault::TypusBidReceipt",
+        "0x908a10789a1a6953e0b73a997c10e3552f7ce4e2907afd00a334ed74bd973ded::vault::TypusBidReceipt",
         "bool",
     ] satisfies string[];
     const parameterNames = [
@@ -1279,12 +1249,12 @@ export function createTradingOrderWithBidReceiptV3(options: CreateTradingOrderWi
         tx.moveCall({
             package: packageAddress,
             module: "trading",
-            function: "create_trading_order_with_bid_receipt_v3",
+            function: "create_trading_order_with_bid_receipt",
             arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
             typeArguments: options.typeArguments,
         });
 }
-export interface ReduceOptionCollateralPositionSizeV2Arguments {
+export interface ReduceOptionCollateralPositionSizeArguments {
     version: RawTransactionArgument<string>;
     registry: RawTransactionArgument<string>;
     poolRegistry: RawTransactionArgument<string>;
@@ -1301,10 +1271,10 @@ export interface ReduceOptionCollateralPositionSizeV2Arguments {
     positionId: RawTransactionArgument<number | bigint>;
     orderSize: RawTransactionArgument<number | bigint | null>;
 }
-export interface ReduceOptionCollateralPositionSizeV2Options {
+export interface ReduceOptionCollateralPositionSizeOptions {
     package?: string;
     arguments:
-        | ReduceOptionCollateralPositionSizeV2Arguments
+        | ReduceOptionCollateralPositionSizeArguments
         | [
               version: RawTransactionArgument<string>,
               registry: RawTransactionArgument<string>,
@@ -1325,22 +1295,22 @@ export interface ReduceOptionCollateralPositionSizeV2Options {
     typeArguments: [string, string, string];
 }
 /** [User Function] Reduces the size of an option collateral position. */
-export function reduceOptionCollateralPositionSizeV2(options: ReduceOptionCollateralPositionSizeV2Options) {
+export function reduceOptionCollateralPositionSize(options: ReduceOptionCollateralPositionSizeOptions) {
     const packageAddress = options.package ?? "@typus/perp";
     const argumentsTypes = [
         `${packageAddress}::admin::Version`,
         `${packageAddress}::trading::MarketRegistry`,
         `${packageAddress}::lp_pool::Registry`,
-        "0x321848bf1ae327a9e022ccb3701940191e02fa193ab160d9c0e49cd3c003de3a::typus_dov_single::Registry",
-        "0x855eb2d260ee42b898266e6df90bfd3c4ed821ccb253a352c159c223244a4b8a::oracle::Oracle",
-        "0x855eb2d260ee42b898266e6df90bfd3c4ed821ccb253a352c159c223244a4b8a::oracle::Oracle",
+        "0x6c9a394a43844fc09d9617bc8a8e775a4521f0e28e83de1da780d043a498671f::typus_dov_single::Registry",
+        "0x1d17058789bd1e1e79f1a92424519a88146f191f58a06cc4d9ab23d17d46ab73::oracle::Oracle",
+        "0x1d17058789bd1e1e79f1a92424519a88146f191f58a06cc4d9ab23d17d46ab73::oracle::Oracle",
         "0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock",
         "u64",
         "u64",
-        "0x4b0f4ee1a40ce37ec81c987cc4e76a665419e74b863319492fc7d26f708b835a::ecosystem::Version",
-        "0x4b0f4ee1a40ce37ec81c987cc4e76a665419e74b863319492fc7d26f708b835a::user::TypusUserRegistry",
-        "0x4b0f4ee1a40ce37ec81c987cc4e76a665419e74b863319492fc7d26f708b835a::leaderboard::TypusLeaderboardRegistry",
-        "0x4b0f4ee1a40ce37ec81c987cc4e76a665419e74b863319492fc7d26f708b835a::tails_staking::TailsStakingRegistry",
+        "0x4213e12a2220f15f1837a76897110d2260786558169bd8d0847f21e9b551f277::ecosystem::Version",
+        "0x4213e12a2220f15f1837a76897110d2260786558169bd8d0847f21e9b551f277::user::TypusUserRegistry",
+        "0x4213e12a2220f15f1837a76897110d2260786558169bd8d0847f21e9b551f277::leaderboard::TypusLeaderboardRegistry",
+        "0x4213e12a2220f15f1837a76897110d2260786558169bd8d0847f21e9b551f277::tails_staking::TailsStakingRegistry",
         `${packageAddress}::competition::CompetitionConfig`,
         "u64",
         "0x0000000000000000000000000000000000000000000000000000000000000001::option::Option<u64>",
@@ -1366,15 +1336,16 @@ export function reduceOptionCollateralPositionSizeV2(options: ReduceOptionCollat
         tx.moveCall({
             package: packageAddress,
             module: "trading",
-            function: "reduce_option_collateral_position_size_v2",
+            function: "reduce_option_collateral_position_size",
             arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
             typeArguments: options.typeArguments,
         });
 }
-export interface MatchTradingOrderV2Arguments {
+export interface MatchTradingOrderArguments {
     version: RawTransactionArgument<string>;
     registry: RawTransactionArgument<string>;
     poolRegistry: RawTransactionArgument<string>;
+    profitVault: RawTransactionArgument<string>;
     typusOracleCToken: RawTransactionArgument<string>;
     typusOracleTradingSymbol: RawTransactionArgument<string>;
     marketIndex: RawTransactionArgument<number | bigint>;
@@ -1388,14 +1359,15 @@ export interface MatchTradingOrderV2Arguments {
     triggerPrice: RawTransactionArgument<number | bigint>;
     maxOperationCount: RawTransactionArgument<number | bigint>;
 }
-export interface MatchTradingOrderV2Options {
+export interface MatchTradingOrderOptions {
     package?: string;
     arguments:
-        | MatchTradingOrderV2Arguments
+        | MatchTradingOrderArguments
         | [
               version: RawTransactionArgument<string>,
               registry: RawTransactionArgument<string>,
               poolRegistry: RawTransactionArgument<string>,
+              profitVault: RawTransactionArgument<string>,
               typusOracleCToken: RawTransactionArgument<string>,
               typusOracleTradingSymbol: RawTransactionArgument<string>,
               marketIndex: RawTransactionArgument<number | bigint>,
@@ -1412,21 +1384,22 @@ export interface MatchTradingOrderV2Options {
     typeArguments: [string, string];
 }
 /** [Authorized Function] Matches trading orders. */
-export function matchTradingOrderV2(options: MatchTradingOrderV2Options) {
+export function matchTradingOrder(options: MatchTradingOrderOptions) {
     const packageAddress = options.package ?? "@typus/perp";
     const argumentsTypes = [
         `${packageAddress}::admin::Version`,
         `${packageAddress}::trading::MarketRegistry`,
         `${packageAddress}::lp_pool::Registry`,
-        "0x855eb2d260ee42b898266e6df90bfd3c4ed821ccb253a352c159c223244a4b8a::oracle::Oracle",
-        "0x855eb2d260ee42b898266e6df90bfd3c4ed821ccb253a352c159c223244a4b8a::oracle::Oracle",
+        `${packageAddress}::profit_vault::ProfitVault`,
+        "0x1d17058789bd1e1e79f1a92424519a88146f191f58a06cc4d9ab23d17d46ab73::oracle::Oracle",
+        "0x1d17058789bd1e1e79f1a92424519a88146f191f58a06cc4d9ab23d17d46ab73::oracle::Oracle",
         "0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock",
         "u64",
         "u64",
-        "0x4b0f4ee1a40ce37ec81c987cc4e76a665419e74b863319492fc7d26f708b835a::ecosystem::Version",
-        "0x4b0f4ee1a40ce37ec81c987cc4e76a665419e74b863319492fc7d26f708b835a::user::TypusUserRegistry",
-        "0x4b0f4ee1a40ce37ec81c987cc4e76a665419e74b863319492fc7d26f708b835a::leaderboard::TypusLeaderboardRegistry",
-        "0x4b0f4ee1a40ce37ec81c987cc4e76a665419e74b863319492fc7d26f708b835a::tails_staking::TailsStakingRegistry",
+        "0x4213e12a2220f15f1837a76897110d2260786558169bd8d0847f21e9b551f277::ecosystem::Version",
+        "0x4213e12a2220f15f1837a76897110d2260786558169bd8d0847f21e9b551f277::user::TypusUserRegistry",
+        "0x4213e12a2220f15f1837a76897110d2260786558169bd8d0847f21e9b551f277::leaderboard::TypusLeaderboardRegistry",
+        "0x4213e12a2220f15f1837a76897110d2260786558169bd8d0847f21e9b551f277::tails_staking::TailsStakingRegistry",
         `${packageAddress}::competition::CompetitionConfig`,
         "u8",
         "u64",
@@ -1436,6 +1409,7 @@ export function matchTradingOrderV2(options: MatchTradingOrderV2Options) {
         "version",
         "registry",
         "poolRegistry",
+        "profitVault",
         "typusOracleCToken",
         "typusOracleTradingSymbol",
         "marketIndex",
@@ -1453,7 +1427,7 @@ export function matchTradingOrderV2(options: MatchTradingOrderV2Options) {
         tx.moveCall({
             package: packageAddress,
             module: "trading",
-            function: "match_trading_order_v2",
+            function: "match_trading_order",
             arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
             typeArguments: options.typeArguments,
         });
@@ -1560,10 +1534,11 @@ export function cancelLinkedOrders(options: CancelLinkedOrdersOptions) {
             typeArguments: options.typeArguments,
         });
 }
-export interface ManagerReducePositionV2Arguments {
+export interface ManagerReducePositionArguments {
     version: RawTransactionArgument<string>;
     registry: RawTransactionArgument<string>;
     poolRegistry: RawTransactionArgument<string>;
+    profitVault: RawTransactionArgument<string>;
     typusOracleCToken: RawTransactionArgument<string>;
     typusOracleTradingSymbol: RawTransactionArgument<string>;
     marketIndex: RawTransactionArgument<number | bigint>;
@@ -1576,14 +1551,15 @@ export interface ManagerReducePositionV2Arguments {
     positionId: RawTransactionArgument<number | bigint>;
     reducedRatioBp: RawTransactionArgument<number | bigint>;
 }
-export interface ManagerReducePositionV2Options {
+export interface ManagerReducePositionOptions {
     package?: string;
     arguments:
-        | ManagerReducePositionV2Arguments
+        | ManagerReducePositionArguments
         | [
               version: RawTransactionArgument<string>,
               registry: RawTransactionArgument<string>,
               poolRegistry: RawTransactionArgument<string>,
+              profitVault: RawTransactionArgument<string>,
               typusOracleCToken: RawTransactionArgument<string>,
               typusOracleTradingSymbol: RawTransactionArgument<string>,
               marketIndex: RawTransactionArgument<number | bigint>,
@@ -1599,21 +1575,22 @@ export interface ManagerReducePositionV2Options {
     typeArguments: [string, string];
 }
 /** [Authorized Function] Reduces a position by the manager. */
-export function managerReducePositionV2(options: ManagerReducePositionV2Options) {
+export function managerReducePosition(options: ManagerReducePositionOptions) {
     const packageAddress = options.package ?? "@typus/perp";
     const argumentsTypes = [
         `${packageAddress}::admin::Version`,
         `${packageAddress}::trading::MarketRegistry`,
         `${packageAddress}::lp_pool::Registry`,
-        "0x855eb2d260ee42b898266e6df90bfd3c4ed821ccb253a352c159c223244a4b8a::oracle::Oracle",
-        "0x855eb2d260ee42b898266e6df90bfd3c4ed821ccb253a352c159c223244a4b8a::oracle::Oracle",
+        `${packageAddress}::profit_vault::ProfitVault`,
+        "0x1d17058789bd1e1e79f1a92424519a88146f191f58a06cc4d9ab23d17d46ab73::oracle::Oracle",
+        "0x1d17058789bd1e1e79f1a92424519a88146f191f58a06cc4d9ab23d17d46ab73::oracle::Oracle",
         "0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock",
         "u64",
         "u64",
-        "0x4b0f4ee1a40ce37ec81c987cc4e76a665419e74b863319492fc7d26f708b835a::ecosystem::Version",
-        "0x4b0f4ee1a40ce37ec81c987cc4e76a665419e74b863319492fc7d26f708b835a::user::TypusUserRegistry",
-        "0x4b0f4ee1a40ce37ec81c987cc4e76a665419e74b863319492fc7d26f708b835a::leaderboard::TypusLeaderboardRegistry",
-        "0x4b0f4ee1a40ce37ec81c987cc4e76a665419e74b863319492fc7d26f708b835a::tails_staking::TailsStakingRegistry",
+        "0x4213e12a2220f15f1837a76897110d2260786558169bd8d0847f21e9b551f277::ecosystem::Version",
+        "0x4213e12a2220f15f1837a76897110d2260786558169bd8d0847f21e9b551f277::user::TypusUserRegistry",
+        "0x4213e12a2220f15f1837a76897110d2260786558169bd8d0847f21e9b551f277::leaderboard::TypusLeaderboardRegistry",
+        "0x4213e12a2220f15f1837a76897110d2260786558169bd8d0847f21e9b551f277::tails_staking::TailsStakingRegistry",
         `${packageAddress}::competition::CompetitionConfig`,
         "u64",
         "u64",
@@ -1622,6 +1599,7 @@ export function managerReducePositionV2(options: ManagerReducePositionV2Options)
         "version",
         "registry",
         "poolRegistry",
+        "profitVault",
         "typusOracleCToken",
         "typusOracleTradingSymbol",
         "marketIndex",
@@ -1638,7 +1616,7 @@ export function managerReducePositionV2(options: ManagerReducePositionV2Options)
         tx.moveCall({
             package: packageAddress,
             module: "trading",
-            function: "manager_reduce_position_v2",
+            function: "manager_reduce_position",
             arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
             typeArguments: options.typeArguments,
         });
@@ -1685,7 +1663,7 @@ export function managerClearPosition(options: ManagerClearPositionOptions) {
             typeArguments: options.typeArguments,
         });
 }
-export interface ManagerCloseOptionPositionV2Arguments {
+export interface ManagerCloseOptionPositionArguments {
     version: RawTransactionArgument<string>;
     registry: RawTransactionArgument<string>;
     poolRegistry: RawTransactionArgument<string>;
@@ -1701,10 +1679,10 @@ export interface ManagerCloseOptionPositionV2Arguments {
     competitionConfig: RawTransactionArgument<string>;
     positionId: RawTransactionArgument<number | bigint>;
 }
-export interface ManagerCloseOptionPositionV2Options {
+export interface ManagerCloseOptionPositionOptions {
     package?: string;
     arguments:
-        | ManagerCloseOptionPositionV2Arguments
+        | ManagerCloseOptionPositionArguments
         | [
               version: RawTransactionArgument<string>,
               registry: RawTransactionArgument<string>,
@@ -1724,22 +1702,22 @@ export interface ManagerCloseOptionPositionV2Options {
     typeArguments: [string, string, string];
 }
 /** [Authorized Function] Closes an option position by the manager. */
-export function managerCloseOptionPositionV2(options: ManagerCloseOptionPositionV2Options) {
+export function managerCloseOptionPosition(options: ManagerCloseOptionPositionOptions) {
     const packageAddress = options.package ?? "@typus/perp";
     const argumentsTypes = [
         `${packageAddress}::admin::Version`,
         `${packageAddress}::trading::MarketRegistry`,
         `${packageAddress}::lp_pool::Registry`,
-        "0x321848bf1ae327a9e022ccb3701940191e02fa193ab160d9c0e49cd3c003de3a::typus_dov_single::Registry",
-        "0x855eb2d260ee42b898266e6df90bfd3c4ed821ccb253a352c159c223244a4b8a::oracle::Oracle",
-        "0x855eb2d260ee42b898266e6df90bfd3c4ed821ccb253a352c159c223244a4b8a::oracle::Oracle",
+        "0x6c9a394a43844fc09d9617bc8a8e775a4521f0e28e83de1da780d043a498671f::typus_dov_single::Registry",
+        "0x1d17058789bd1e1e79f1a92424519a88146f191f58a06cc4d9ab23d17d46ab73::oracle::Oracle",
+        "0x1d17058789bd1e1e79f1a92424519a88146f191f58a06cc4d9ab23d17d46ab73::oracle::Oracle",
         "0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock",
         "u64",
         "u64",
-        "0x4b0f4ee1a40ce37ec81c987cc4e76a665419e74b863319492fc7d26f708b835a::ecosystem::Version",
-        "0x4b0f4ee1a40ce37ec81c987cc4e76a665419e74b863319492fc7d26f708b835a::user::TypusUserRegistry",
-        "0x4b0f4ee1a40ce37ec81c987cc4e76a665419e74b863319492fc7d26f708b835a::leaderboard::TypusLeaderboardRegistry",
-        "0x4b0f4ee1a40ce37ec81c987cc4e76a665419e74b863319492fc7d26f708b835a::tails_staking::TailsStakingRegistry",
+        "0x4213e12a2220f15f1837a76897110d2260786558169bd8d0847f21e9b551f277::ecosystem::Version",
+        "0x4213e12a2220f15f1837a76897110d2260786558169bd8d0847f21e9b551f277::user::TypusUserRegistry",
+        "0x4213e12a2220f15f1837a76897110d2260786558169bd8d0847f21e9b551f277::leaderboard::TypusLeaderboardRegistry",
+        "0x4213e12a2220f15f1837a76897110d2260786558169bd8d0847f21e9b551f277::tails_staking::TailsStakingRegistry",
         `${packageAddress}::competition::CompetitionConfig`,
         "u64",
     ] satisfies string[];
@@ -1763,158 +1741,7 @@ export function managerCloseOptionPositionV2(options: ManagerCloseOptionPosition
         tx.moveCall({
             package: packageAddress,
             module: "trading",
-            function: "manager_close_option_position_v2",
-            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
-            typeArguments: options.typeArguments,
-        });
-}
-export interface ManagerRemovePositionV2Arguments {
-    version: RawTransactionArgument<string>;
-    registry: RawTransactionArgument<string>;
-    poolRegistry: RawTransactionArgument<string>;
-    dovRegistry: RawTransactionArgument<string>;
-    typusOracleCToken: RawTransactionArgument<string>;
-    typusOracleTradingSymbol: RawTransactionArgument<string>;
-    marketIndex: RawTransactionArgument<number | bigint>;
-    poolIndex: RawTransactionArgument<number | bigint>;
-    typusEcosystemVersion: RawTransactionArgument<string>;
-    typusUserRegistry: RawTransactionArgument<string>;
-    typusLeaderboardRegistry: RawTransactionArgument<string>;
-    tailsStakingRegistry: RawTransactionArgument<string>;
-    competitionConfig: RawTransactionArgument<string>;
-    positionId: RawTransactionArgument<number | bigint>;
-    isOptionPosition: RawTransactionArgument<boolean>;
-    process: RawTransactionArgument<string>;
-}
-export interface ManagerRemovePositionV2Options {
-    package?: string;
-    arguments:
-        | ManagerRemovePositionV2Arguments
-        | [
-              version: RawTransactionArgument<string>,
-              registry: RawTransactionArgument<string>,
-              poolRegistry: RawTransactionArgument<string>,
-              dovRegistry: RawTransactionArgument<string>,
-              typusOracleCToken: RawTransactionArgument<string>,
-              typusOracleTradingSymbol: RawTransactionArgument<string>,
-              marketIndex: RawTransactionArgument<number | bigint>,
-              poolIndex: RawTransactionArgument<number | bigint>,
-              typusEcosystemVersion: RawTransactionArgument<string>,
-              typusUserRegistry: RawTransactionArgument<string>,
-              typusLeaderboardRegistry: RawTransactionArgument<string>,
-              tailsStakingRegistry: RawTransactionArgument<string>,
-              competitionConfig: RawTransactionArgument<string>,
-              positionId: RawTransactionArgument<number | bigint>,
-              isOptionPosition: RawTransactionArgument<boolean>,
-              process: RawTransactionArgument<string>,
-          ];
-    typeArguments: [string, string, string];
-}
-export function managerRemovePositionV2(options: ManagerRemovePositionV2Options) {
-    const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [
-        `${packageAddress}::admin::Version`,
-        `${packageAddress}::trading::MarketRegistry`,
-        `${packageAddress}::lp_pool::Registry`,
-        "0x321848bf1ae327a9e022ccb3701940191e02fa193ab160d9c0e49cd3c003de3a::typus_dov_single::Registry",
-        "0x855eb2d260ee42b898266e6df90bfd3c4ed821ccb253a352c159c223244a4b8a::oracle::Oracle",
-        "0x855eb2d260ee42b898266e6df90bfd3c4ed821ccb253a352c159c223244a4b8a::oracle::Oracle",
-        "0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock",
-        "u64",
-        "u64",
-        "0x4b0f4ee1a40ce37ec81c987cc4e76a665419e74b863319492fc7d26f708b835a::ecosystem::Version",
-        "0x4b0f4ee1a40ce37ec81c987cc4e76a665419e74b863319492fc7d26f708b835a::user::TypusUserRegistry",
-        "0x4b0f4ee1a40ce37ec81c987cc4e76a665419e74b863319492fc7d26f708b835a::leaderboard::TypusLeaderboardRegistry",
-        "0x4b0f4ee1a40ce37ec81c987cc4e76a665419e74b863319492fc7d26f708b835a::tails_staking::TailsStakingRegistry",
-        `${packageAddress}::competition::CompetitionConfig`,
-        "u64",
-        "bool",
-        `${packageAddress}::lp_pool::RemoveLiquidityTokenProcess`,
-    ] satisfies string[];
-    const parameterNames = [
-        "version",
-        "registry",
-        "poolRegistry",
-        "dovRegistry",
-        "typusOracleCToken",
-        "typusOracleTradingSymbol",
-        "marketIndex",
-        "poolIndex",
-        "typusEcosystemVersion",
-        "typusUserRegistry",
-        "typusLeaderboardRegistry",
-        "tailsStakingRegistry",
-        "competitionConfig",
-        "positionId",
-        "isOptionPosition",
-        "process",
-    ];
-    return (tx: Transaction) =>
-        tx.moveCall({
-            package: packageAddress,
-            module: "trading",
-            function: "manager_remove_position_v2",
-            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
-            typeArguments: options.typeArguments,
-        });
-}
-export interface ManagerRemoveOrderArguments {
-    version: RawTransactionArgument<string>;
-    registry: RawTransactionArgument<string>;
-    poolRegistry: RawTransactionArgument<string>;
-    marketIndex: RawTransactionArgument<number | bigint>;
-    poolIndex: RawTransactionArgument<number | bigint>;
-    orderUser: RawTransactionArgument<string>;
-    orderId: RawTransactionArgument<number | bigint>;
-    triggerPrice: RawTransactionArgument<number | bigint>;
-    process: RawTransactionArgument<string>;
-}
-export interface ManagerRemoveOrderOptions {
-    package?: string;
-    arguments:
-        | ManagerRemoveOrderArguments
-        | [
-              version: RawTransactionArgument<string>,
-              registry: RawTransactionArgument<string>,
-              poolRegistry: RawTransactionArgument<string>,
-              marketIndex: RawTransactionArgument<number | bigint>,
-              poolIndex: RawTransactionArgument<number | bigint>,
-              orderUser: RawTransactionArgument<string>,
-              orderId: RawTransactionArgument<number | bigint>,
-              triggerPrice: RawTransactionArgument<number | bigint>,
-              process: RawTransactionArgument<string>,
-          ];
-    typeArguments: [string, string];
-}
-export function managerRemoveOrder(options: ManagerRemoveOrderOptions) {
-    const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [
-        `${packageAddress}::admin::Version`,
-        `${packageAddress}::trading::MarketRegistry`,
-        `${packageAddress}::lp_pool::Registry`,
-        "u64",
-        "u64",
-        "address",
-        "u64",
-        "u64",
-        `${packageAddress}::lp_pool::RemoveLiquidityTokenProcess`,
-    ] satisfies string[];
-    const parameterNames = [
-        "version",
-        "registry",
-        "poolRegistry",
-        "marketIndex",
-        "poolIndex",
-        "orderUser",
-        "orderId",
-        "triggerPrice",
-        "process",
-    ];
-    return (tx: Transaction) =>
-        tx.moveCall({
-            package: packageAddress,
-            module: "trading",
-            function: "manager_remove_order",
+            function: "manager_close_option_position",
             arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
             typeArguments: options.typeArguments,
         });
@@ -1976,9 +1803,9 @@ export function getLiquidationInfo(options: GetLiquidationInfoOptions) {
         `${packageAddress}::admin::Version`,
         `${packageAddress}::trading::MarketRegistry`,
         `${packageAddress}::lp_pool::Registry`,
-        "0x321848bf1ae327a9e022ccb3701940191e02fa193ab160d9c0e49cd3c003de3a::typus_dov_single::Registry",
-        "0x855eb2d260ee42b898266e6df90bfd3c4ed821ccb253a352c159c223244a4b8a::oracle::Oracle",
-        "0x855eb2d260ee42b898266e6df90bfd3c4ed821ccb253a352c159c223244a4b8a::oracle::Oracle",
+        "0x6c9a394a43844fc09d9617bc8a8e775a4521f0e28e83de1da780d043a498671f::typus_dov_single::Registry",
+        "0x1d17058789bd1e1e79f1a92424519a88146f191f58a06cc4d9ab23d17d46ab73::oracle::Oracle",
+        "0x1d17058789bd1e1e79f1a92424519a88146f191f58a06cc4d9ab23d17d46ab73::oracle::Oracle",
         "0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock",
         "u64",
         "u64",
@@ -2039,9 +1866,9 @@ export function liquidate(options: LiquidateOptions) {
         `${packageAddress}::admin::Version`,
         `${packageAddress}::trading::MarketRegistry`,
         `${packageAddress}::lp_pool::Registry`,
-        "0x321848bf1ae327a9e022ccb3701940191e02fa193ab160d9c0e49cd3c003de3a::typus_dov_single::Registry",
-        "0x855eb2d260ee42b898266e6df90bfd3c4ed821ccb253a352c159c223244a4b8a::oracle::Oracle",
-        "0x855eb2d260ee42b898266e6df90bfd3c4ed821ccb253a352c159c223244a4b8a::oracle::Oracle",
+        "0x6c9a394a43844fc09d9617bc8a8e775a4521f0e28e83de1da780d043a498671f::typus_dov_single::Registry",
+        "0x1d17058789bd1e1e79f1a92424519a88146f191f58a06cc4d9ab23d17d46ab73::oracle::Oracle",
+        "0x1d17058789bd1e1e79f1a92424519a88146f191f58a06cc4d9ab23d17d46ab73::oracle::Oracle",
         "u64",
         "u64",
         "0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock",
@@ -2098,8 +1925,8 @@ export function settleReceiptCollateral(options: SettleReceiptCollateralOptions)
         `${packageAddress}::admin::Version`,
         `${packageAddress}::trading::MarketRegistry`,
         `${packageAddress}::lp_pool::Registry`,
-        "0x321848bf1ae327a9e022ccb3701940191e02fa193ab160d9c0e49cd3c003de3a::typus_dov_single::Registry",
-        "0x855eb2d260ee42b898266e6df90bfd3c4ed821ccb253a352c159c223244a4b8a::oracle::Oracle",
+        "0x6c9a394a43844fc09d9617bc8a8e775a4521f0e28e83de1da780d043a498671f::typus_dov_single::Registry",
+        "0x1d17058789bd1e1e79f1a92424519a88146f191f58a06cc4d9ab23d17d46ab73::oracle::Oracle",
         "0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock",
         "u64",
         "u64",
@@ -2143,7 +1970,7 @@ export function updateFundingRate(options: UpdateFundingRateOptions) {
         `${packageAddress}::admin::Version`,
         `${packageAddress}::trading::MarketRegistry`,
         `${packageAddress}::lp_pool::Registry`,
-        "0x855eb2d260ee42b898266e6df90bfd3c4ed821ccb253a352c159c223244a4b8a::oracle::Oracle",
+        "0x1d17058789bd1e1e79f1a92424519a88146f191f58a06cc4d9ab23d17d46ab73::oracle::Oracle",
         "0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock",
         "u64",
         "u64",
@@ -2185,7 +2012,7 @@ export function getExpiredPositionInfo(options: GetExpiredPositionInfoOptions) {
         `${packageAddress}::admin::Version`,
         `${packageAddress}::trading::MarketRegistry`,
         `${packageAddress}::lp_pool::Registry`,
-        "0x321848bf1ae327a9e022ccb3701940191e02fa193ab160d9c0e49cd3c003de3a::typus_dov_single::Registry",
+        "0x6c9a394a43844fc09d9617bc8a8e775a4521f0e28e83de1da780d043a498671f::typus_dov_single::Registry",
         "u64",
         "u64",
     ] satisfies string[];
@@ -2289,6 +2116,44 @@ export function addDelegateUser(options: AddDelegateUserOptions) {
             package: packageAddress,
             module: "trading",
             function: "add_delegate_user",
+            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
+        });
+}
+export interface RemoveDelegateUserArguments {
+    version: RawTransactionArgument<string>;
+    registry: RawTransactionArgument<string>;
+    marketIndex: RawTransactionArgument<number | bigint>;
+    user: RawTransactionArgument<string>;
+}
+export interface RemoveDelegateUserOptions {
+    package?: string;
+    arguments:
+        | RemoveDelegateUserArguments
+        | [
+              version: RawTransactionArgument<string>,
+              registry: RawTransactionArgument<string>,
+              marketIndex: RawTransactionArgument<number | bigint>,
+              user: RawTransactionArgument<string>,
+          ];
+}
+/**
+ * [User Function] Remove a delegate user to a user account. Safe with
+ * `check_owner`
+ */
+export function removeDelegateUser(options: RemoveDelegateUserOptions) {
+    const packageAddress = options.package ?? "@typus/perp";
+    const argumentsTypes = [
+        `${packageAddress}::admin::Version`,
+        `${packageAddress}::trading::MarketRegistry`,
+        "u64",
+        "address",
+    ] satisfies string[];
+    const parameterNames = ["version", "registry", "marketIndex", "user"];
+    return (tx: Transaction) =>
+        tx.moveCall({
+            package: packageAddress,
+            module: "trading",
+            function: "remove_delegate_user",
             arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
         });
 }
@@ -2409,6 +2274,7 @@ export interface ExecuteOrder_Arguments {
     marketIndex: RawTransactionArgument<number | bigint>;
     symbolMarket: RawTransactionArgument<string>;
     liquidityPool: RawTransactionArgument<string>;
+    profitVault: RawTransactionArgument<string>;
     order: RawTransactionArgument<string>;
     protocolFeeShareBp: RawTransactionArgument<number | bigint>;
     collateralOraclePrice: RawTransactionArgument<number | bigint>;
@@ -2430,6 +2296,7 @@ export interface ExecuteOrder_Options {
               marketIndex: RawTransactionArgument<number | bigint>,
               symbolMarket: RawTransactionArgument<string>,
               liquidityPool: RawTransactionArgument<string>,
+              profitVault: RawTransactionArgument<string>,
               order: RawTransactionArgument<string>,
               protocolFeeShareBp: RawTransactionArgument<number | bigint>,
               collateralOraclePrice: RawTransactionArgument<number | bigint>,
@@ -2451,16 +2318,17 @@ export function executeOrder_(options: ExecuteOrder_Options) {
         "u64",
         `${packageAddress}::trading::SymbolMarket`,
         `${packageAddress}::lp_pool::LiquidityPool`,
+        `${packageAddress}::profit_vault::ProfitVault`,
         `${packageAddress}::position::TradingOrder`,
         "u64",
         "u64",
         "u64",
         "u64",
         "u64",
-        "0x4b0f4ee1a40ce37ec81c987cc4e76a665419e74b863319492fc7d26f708b835a::ecosystem::Version",
-        "0x4b0f4ee1a40ce37ec81c987cc4e76a665419e74b863319492fc7d26f708b835a::user::TypusUserRegistry",
-        "0x4b0f4ee1a40ce37ec81c987cc4e76a665419e74b863319492fc7d26f708b835a::leaderboard::TypusLeaderboardRegistry",
-        "0x4b0f4ee1a40ce37ec81c987cc4e76a665419e74b863319492fc7d26f708b835a::tails_staking::TailsStakingRegistry",
+        "0x4213e12a2220f15f1837a76897110d2260786558169bd8d0847f21e9b551f277::ecosystem::Version",
+        "0x4213e12a2220f15f1837a76897110d2260786558169bd8d0847f21e9b551f277::user::TypusUserRegistry",
+        "0x4213e12a2220f15f1837a76897110d2260786558169bd8d0847f21e9b551f277::leaderboard::TypusLeaderboardRegistry",
+        "0x4213e12a2220f15f1837a76897110d2260786558169bd8d0847f21e9b551f277::tails_staking::TailsStakingRegistry",
         `${packageAddress}::competition::CompetitionConfig`,
         "0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock",
     ] satisfies string[];
@@ -2469,6 +2337,7 @@ export function executeOrder_(options: ExecuteOrder_Options) {
         "marketIndex",
         "symbolMarket",
         "liquidityPool",
+        "profitVault",
         "order",
         "protocolFeeShareBp",
         "collateralOraclePrice",
@@ -2540,9 +2409,9 @@ export function executeOptionCollateralOrder_(options: ExecuteOptionCollateralOr
     const packageAddress = options.package ?? "@typus/perp";
     const argumentsTypes = [
         `${packageAddress}::admin::Version`,
-        "0x321848bf1ae327a9e022ccb3701940191e02fa193ab160d9c0e49cd3c003de3a::typus_dov_single::Registry",
-        "0x855eb2d260ee42b898266e6df90bfd3c4ed821ccb253a352c159c223244a4b8a::oracle::Oracle",
-        "0x855eb2d260ee42b898266e6df90bfd3c4ed821ccb253a352c159c223244a4b8a::oracle::Oracle",
+        "0x6c9a394a43844fc09d9617bc8a8e775a4521f0e28e83de1da780d043a498671f::typus_dov_single::Registry",
+        "0x1d17058789bd1e1e79f1a92424519a88146f191f58a06cc4d9ab23d17d46ab73::oracle::Oracle",
+        "0x1d17058789bd1e1e79f1a92424519a88146f191f58a06cc4d9ab23d17d46ab73::oracle::Oracle",
         `${packageAddress}::trading::SymbolMarket`,
         `${packageAddress}::lp_pool::LiquidityPool`,
         `${packageAddress}::position::TradingOrder`,
@@ -2552,10 +2421,10 @@ export function executeOptionCollateralOrder_(options: ExecuteOptionCollateralOr
         "u64",
         "u64",
         "u64",
-        "0x4b0f4ee1a40ce37ec81c987cc4e76a665419e74b863319492fc7d26f708b835a::ecosystem::Version",
-        "0x4b0f4ee1a40ce37ec81c987cc4e76a665419e74b863319492fc7d26f708b835a::user::TypusUserRegistry",
-        "0x4b0f4ee1a40ce37ec81c987cc4e76a665419e74b863319492fc7d26f708b835a::leaderboard::TypusLeaderboardRegistry",
-        "0x4b0f4ee1a40ce37ec81c987cc4e76a665419e74b863319492fc7d26f708b835a::tails_staking::TailsStakingRegistry",
+        "0x4213e12a2220f15f1837a76897110d2260786558169bd8d0847f21e9b551f277::ecosystem::Version",
+        "0x4213e12a2220f15f1837a76897110d2260786558169bd8d0847f21e9b551f277::user::TypusUserRegistry",
+        "0x4213e12a2220f15f1837a76897110d2260786558169bd8d0847f21e9b551f277::leaderboard::TypusLeaderboardRegistry",
+        "0x4213e12a2220f15f1837a76897110d2260786558169bd8d0847f21e9b551f277::tails_staking::TailsStakingRegistry",
         `${packageAddress}::competition::CompetitionConfig`,
         "0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock",
     ] satisfies string[];
@@ -2924,9 +2793,9 @@ export interface CheckOptionCollateralEnoughOptions {
 export function checkOptionCollateralEnough(options: CheckOptionCollateralEnoughOptions) {
     const packageAddress = options.package ?? "@typus/perp";
     const argumentsTypes = [
-        "0x321848bf1ae327a9e022ccb3701940191e02fa193ab160d9c0e49cd3c003de3a::typus_dov_single::Registry",
-        "0x855eb2d260ee42b898266e6df90bfd3c4ed821ccb253a352c159c223244a4b8a::oracle::Oracle",
-        "0x855eb2d260ee42b898266e6df90bfd3c4ed821ccb253a352c159c223244a4b8a::oracle::Oracle",
+        "0x6c9a394a43844fc09d9617bc8a8e775a4521f0e28e83de1da780d043a498671f::typus_dov_single::Registry",
+        "0x1d17058789bd1e1e79f1a92424519a88146f191f58a06cc4d9ab23d17d46ab73::oracle::Oracle",
+        "0x1d17058789bd1e1e79f1a92424519a88146f191f58a06cc4d9ab23d17d46ab73::oracle::Oracle",
         `${packageAddress}::trading::SymbolMarket`,
         `${packageAddress}::position::TradingOrder`,
         "u64",
@@ -3080,8 +2949,8 @@ export interface ExerciseBidReceiptsOptions {
 export function exerciseBidReceipts(options: ExerciseBidReceiptsOptions) {
     const packageAddress = options.package ?? "@typus/perp";
     const argumentsTypes = [
-        "0x321848bf1ae327a9e022ccb3701940191e02fa193ab160d9c0e49cd3c003de3a::typus_dov_single::Registry",
-        "vector<0xb4f25230ba74837d8299e92951306100c4a532e8c48cc3d8828abe9b91c8b274::vault::TypusBidReceipt>",
+        "0x6c9a394a43844fc09d9617bc8a8e775a4521f0e28e83de1da780d043a498671f::typus_dov_single::Registry",
+        "vector<0x908a10789a1a6953e0b73a997c10e3552f7ce4e2907afd00a334ed74bd973ded::vault::TypusBidReceipt>",
     ] satisfies string[];
     const parameterNames = ["dovRegistry", "bidReceipts"];
     return (tx: Transaction) =>
@@ -3362,8 +3231,8 @@ export function getMaxReleasingCollateralAmount(options: GetMaxReleasingCollater
         `${packageAddress}::admin::Version`,
         `${packageAddress}::trading::MarketRegistry`,
         `${packageAddress}::lp_pool::Registry`,
-        "0x855eb2d260ee42b898266e6df90bfd3c4ed821ccb253a352c159c223244a4b8a::oracle::Oracle",
-        "0x855eb2d260ee42b898266e6df90bfd3c4ed821ccb253a352c159c223244a4b8a::oracle::Oracle",
+        "0x1d17058789bd1e1e79f1a92424519a88146f191f58a06cc4d9ab23d17d46ab73::oracle::Oracle",
+        "0x1d17058789bd1e1e79f1a92424519a88146f191f58a06cc4d9ab23d17d46ab73::oracle::Oracle",
         "0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock",
         "u64",
         "u64",
@@ -3423,9 +3292,9 @@ export function getEstimatedLiquidationPriceAndPnl(options: GetEstimatedLiquidat
         `${packageAddress}::admin::Version`,
         `${packageAddress}::trading::MarketRegistry`,
         `${packageAddress}::lp_pool::Registry`,
-        "0x321848bf1ae327a9e022ccb3701940191e02fa193ab160d9c0e49cd3c003de3a::typus_dov_single::Registry",
-        "0x855eb2d260ee42b898266e6df90bfd3c4ed821ccb253a352c159c223244a4b8a::oracle::Oracle",
-        "0x855eb2d260ee42b898266e6df90bfd3c4ed821ccb253a352c159c223244a4b8a::oracle::Oracle",
+        "0x6c9a394a43844fc09d9617bc8a8e775a4521f0e28e83de1da780d043a498671f::typus_dov_single::Registry",
+        "0x1d17058789bd1e1e79f1a92424519a88146f191f58a06cc4d9ab23d17d46ab73::oracle::Oracle",
+        "0x1d17058789bd1e1e79f1a92424519a88146f191f58a06cc4d9ab23d17d46ab73::oracle::Oracle",
         "u64",
         "u64",
         "0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock",
@@ -3577,657 +3446,5 @@ export function deprecated(options: DeprecatedOptions = {}) {
             package: packageAddress,
             module: "trading",
             function: "deprecated",
-        });
-}
-export interface CreateTradingOrderArguments {
-    version: RawTransactionArgument<string>;
-    registry: RawTransactionArgument<string>;
-    poolRegistry: RawTransactionArgument<string>;
-    typusOracleCToken: RawTransactionArgument<string>;
-    typusOracleTradingSymbol: RawTransactionArgument<string>;
-    marketIndex: RawTransactionArgument<number | bigint>;
-    poolIndex: RawTransactionArgument<number | bigint>;
-    typusEcosystemVersion: RawTransactionArgument<string>;
-    typusUserRegistry: RawTransactionArgument<string>;
-    typusLeaderboardRegistry: RawTransactionArgument<string>;
-    linkedPositionId: RawTransactionArgument<number | bigint | null>;
-    collateral: RawTransactionArgument<string>;
-    reduceOnly: RawTransactionArgument<boolean>;
-    isLong: RawTransactionArgument<boolean>;
-    isStopOrder: RawTransactionArgument<boolean>;
-    size: RawTransactionArgument<number | bigint>;
-    triggerPrice: RawTransactionArgument<number | bigint>;
-}
-export interface CreateTradingOrderOptions {
-    package?: string;
-    arguments:
-        | CreateTradingOrderArguments
-        | [
-              version: RawTransactionArgument<string>,
-              registry: RawTransactionArgument<string>,
-              poolRegistry: RawTransactionArgument<string>,
-              typusOracleCToken: RawTransactionArgument<string>,
-              typusOracleTradingSymbol: RawTransactionArgument<string>,
-              marketIndex: RawTransactionArgument<number | bigint>,
-              poolIndex: RawTransactionArgument<number | bigint>,
-              typusEcosystemVersion: RawTransactionArgument<string>,
-              typusUserRegistry: RawTransactionArgument<string>,
-              typusLeaderboardRegistry: RawTransactionArgument<string>,
-              linkedPositionId: RawTransactionArgument<number | bigint | null>,
-              collateral: RawTransactionArgument<string>,
-              reduceOnly: RawTransactionArgument<boolean>,
-              isLong: RawTransactionArgument<boolean>,
-              isStopOrder: RawTransactionArgument<boolean>,
-              size: RawTransactionArgument<number | bigint>,
-              triggerPrice: RawTransactionArgument<number | bigint>,
-          ];
-    typeArguments: [string, string];
-}
-export function createTradingOrder(options: CreateTradingOrderOptions) {
-    const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [
-        `${packageAddress}::admin::Version`,
-        `${packageAddress}::trading::MarketRegistry`,
-        `${packageAddress}::lp_pool::Registry`,
-        "0x855eb2d260ee42b898266e6df90bfd3c4ed821ccb253a352c159c223244a4b8a::oracle::Oracle",
-        "0x855eb2d260ee42b898266e6df90bfd3c4ed821ccb253a352c159c223244a4b8a::oracle::Oracle",
-        "0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock",
-        "u64",
-        "u64",
-        "0x4b0f4ee1a40ce37ec81c987cc4e76a665419e74b863319492fc7d26f708b835a::ecosystem::Version",
-        "0x4b0f4ee1a40ce37ec81c987cc4e76a665419e74b863319492fc7d26f708b835a::user::TypusUserRegistry",
-        "0x4b0f4ee1a40ce37ec81c987cc4e76a665419e74b863319492fc7d26f708b835a::leaderboard::TypusLeaderboardRegistry",
-        "0x0000000000000000000000000000000000000000000000000000000000000001::option::Option<u64>",
-        `0x0000000000000000000000000000000000000000000000000000000000000002::coin::Coin<${options.typeArguments[0]}>`,
-        "bool",
-        "bool",
-        "bool",
-        "u64",
-        "u64",
-    ] satisfies string[];
-    const parameterNames = [
-        "version",
-        "registry",
-        "poolRegistry",
-        "typusOracleCToken",
-        "typusOracleTradingSymbol",
-        "marketIndex",
-        "poolIndex",
-        "typusEcosystemVersion",
-        "typusUserRegistry",
-        "typusLeaderboardRegistry",
-        "linkedPositionId",
-        "collateral",
-        "reduceOnly",
-        "isLong",
-        "isStopOrder",
-        "size",
-        "triggerPrice",
-    ];
-    return (tx: Transaction) =>
-        tx.moveCall({
-            package: packageAddress,
-            module: "trading",
-            function: "create_trading_order",
-            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
-            typeArguments: options.typeArguments,
-        });
-}
-export interface MatchTradingOrderArguments {
-    version: RawTransactionArgument<string>;
-    registry: RawTransactionArgument<string>;
-    poolRegistry: RawTransactionArgument<string>;
-    typusOracleCToken: RawTransactionArgument<string>;
-    typusOracleTradingSymbol: RawTransactionArgument<string>;
-    marketIndex: RawTransactionArgument<number | bigint>;
-    poolIndex: RawTransactionArgument<number | bigint>;
-    typusEcosystemVersion: RawTransactionArgument<string>;
-    typusUserRegistry: RawTransactionArgument<string>;
-    typusLeaderboardRegistry: RawTransactionArgument<string>;
-    orderTypeTag: RawTransactionArgument<number>;
-    triggerPrice: RawTransactionArgument<number | bigint>;
-    maxOperationCount: RawTransactionArgument<number | bigint>;
-}
-export interface MatchTradingOrderOptions {
-    package?: string;
-    arguments:
-        | MatchTradingOrderArguments
-        | [
-              version: RawTransactionArgument<string>,
-              registry: RawTransactionArgument<string>,
-              poolRegistry: RawTransactionArgument<string>,
-              typusOracleCToken: RawTransactionArgument<string>,
-              typusOracleTradingSymbol: RawTransactionArgument<string>,
-              marketIndex: RawTransactionArgument<number | bigint>,
-              poolIndex: RawTransactionArgument<number | bigint>,
-              typusEcosystemVersion: RawTransactionArgument<string>,
-              typusUserRegistry: RawTransactionArgument<string>,
-              typusLeaderboardRegistry: RawTransactionArgument<string>,
-              orderTypeTag: RawTransactionArgument<number>,
-              triggerPrice: RawTransactionArgument<number | bigint>,
-              maxOperationCount: RawTransactionArgument<number | bigint>,
-          ];
-    typeArguments: [string, string];
-}
-export function matchTradingOrder(options: MatchTradingOrderOptions) {
-    const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [
-        `${packageAddress}::admin::Version`,
-        `${packageAddress}::trading::MarketRegistry`,
-        `${packageAddress}::lp_pool::Registry`,
-        "0x855eb2d260ee42b898266e6df90bfd3c4ed821ccb253a352c159c223244a4b8a::oracle::Oracle",
-        "0x855eb2d260ee42b898266e6df90bfd3c4ed821ccb253a352c159c223244a4b8a::oracle::Oracle",
-        "0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock",
-        "u64",
-        "u64",
-        "0x4b0f4ee1a40ce37ec81c987cc4e76a665419e74b863319492fc7d26f708b835a::ecosystem::Version",
-        "0x4b0f4ee1a40ce37ec81c987cc4e76a665419e74b863319492fc7d26f708b835a::user::TypusUserRegistry",
-        "0x4b0f4ee1a40ce37ec81c987cc4e76a665419e74b863319492fc7d26f708b835a::leaderboard::TypusLeaderboardRegistry",
-        "u8",
-        "u64",
-        "u64",
-    ] satisfies string[];
-    const parameterNames = [
-        "version",
-        "registry",
-        "poolRegistry",
-        "typusOracleCToken",
-        "typusOracleTradingSymbol",
-        "marketIndex",
-        "poolIndex",
-        "typusEcosystemVersion",
-        "typusUserRegistry",
-        "typusLeaderboardRegistry",
-        "orderTypeTag",
-        "triggerPrice",
-        "maxOperationCount",
-    ];
-    return (tx: Transaction) =>
-        tx.moveCall({
-            package: packageAddress,
-            module: "trading",
-            function: "match_trading_order",
-            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
-            typeArguments: options.typeArguments,
-        });
-}
-export interface ManagerReducePositionArguments {
-    version: RawTransactionArgument<string>;
-    registry: RawTransactionArgument<string>;
-    poolRegistry: RawTransactionArgument<string>;
-    typusOracleCToken: RawTransactionArgument<string>;
-    typusOracleTradingSymbol: RawTransactionArgument<string>;
-    marketIndex: RawTransactionArgument<number | bigint>;
-    poolIndex: RawTransactionArgument<number | bigint>;
-    typusEcosystemVersion: RawTransactionArgument<string>;
-    typusUserRegistry: RawTransactionArgument<string>;
-    typusLeaderboardRegistry: RawTransactionArgument<string>;
-    positionId: RawTransactionArgument<number | bigint>;
-    reducedRatioBp: RawTransactionArgument<number | bigint>;
-}
-export interface ManagerReducePositionOptions {
-    package?: string;
-    arguments:
-        | ManagerReducePositionArguments
-        | [
-              version: RawTransactionArgument<string>,
-              registry: RawTransactionArgument<string>,
-              poolRegistry: RawTransactionArgument<string>,
-              typusOracleCToken: RawTransactionArgument<string>,
-              typusOracleTradingSymbol: RawTransactionArgument<string>,
-              marketIndex: RawTransactionArgument<number | bigint>,
-              poolIndex: RawTransactionArgument<number | bigint>,
-              typusEcosystemVersion: RawTransactionArgument<string>,
-              typusUserRegistry: RawTransactionArgument<string>,
-              typusLeaderboardRegistry: RawTransactionArgument<string>,
-              positionId: RawTransactionArgument<number | bigint>,
-              reducedRatioBp: RawTransactionArgument<number | bigint>,
-          ];
-    typeArguments: [string, string];
-}
-export function managerReducePosition(options: ManagerReducePositionOptions) {
-    const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [
-        `${packageAddress}::admin::Version`,
-        `${packageAddress}::trading::MarketRegistry`,
-        `${packageAddress}::lp_pool::Registry`,
-        "0x855eb2d260ee42b898266e6df90bfd3c4ed821ccb253a352c159c223244a4b8a::oracle::Oracle",
-        "0x855eb2d260ee42b898266e6df90bfd3c4ed821ccb253a352c159c223244a4b8a::oracle::Oracle",
-        "0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock",
-        "u64",
-        "u64",
-        "0x4b0f4ee1a40ce37ec81c987cc4e76a665419e74b863319492fc7d26f708b835a::ecosystem::Version",
-        "0x4b0f4ee1a40ce37ec81c987cc4e76a665419e74b863319492fc7d26f708b835a::user::TypusUserRegistry",
-        "0x4b0f4ee1a40ce37ec81c987cc4e76a665419e74b863319492fc7d26f708b835a::leaderboard::TypusLeaderboardRegistry",
-        "u64",
-        "u64",
-    ] satisfies string[];
-    const parameterNames = [
-        "version",
-        "registry",
-        "poolRegistry",
-        "typusOracleCToken",
-        "typusOracleTradingSymbol",
-        "marketIndex",
-        "poolIndex",
-        "typusEcosystemVersion",
-        "typusUserRegistry",
-        "typusLeaderboardRegistry",
-        "positionId",
-        "reducedRatioBp",
-    ];
-    return (tx: Transaction) =>
-        tx.moveCall({
-            package: packageAddress,
-            module: "trading",
-            function: "manager_reduce_position",
-            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
-            typeArguments: options.typeArguments,
-        });
-}
-export interface CreateTradingOrderWithBidReceiptArguments {
-    version: RawTransactionArgument<string>;
-    registry: RawTransactionArgument<string>;
-    poolRegistry: RawTransactionArgument<string>;
-    dovRegistry: RawTransactionArgument<string>;
-    typusOracleCToken: RawTransactionArgument<string>;
-    typusOracleTradingSymbol: RawTransactionArgument<string>;
-    marketIndex: RawTransactionArgument<number | bigint>;
-    poolIndex: RawTransactionArgument<number | bigint>;
-    typusEcosystemVersion: RawTransactionArgument<string>;
-    typusUserRegistry: RawTransactionArgument<string>;
-    typusLeaderboardRegistry: RawTransactionArgument<string>;
-    collateralBidReceipt: RawTransactionArgument<string>;
-    isLong: RawTransactionArgument<boolean>;
-    user: RawTransactionArgument<string>;
-}
-export interface CreateTradingOrderWithBidReceiptOptions {
-    package?: string;
-    arguments:
-        | CreateTradingOrderWithBidReceiptArguments
-        | [
-              version: RawTransactionArgument<string>,
-              registry: RawTransactionArgument<string>,
-              poolRegistry: RawTransactionArgument<string>,
-              dovRegistry: RawTransactionArgument<string>,
-              typusOracleCToken: RawTransactionArgument<string>,
-              typusOracleTradingSymbol: RawTransactionArgument<string>,
-              marketIndex: RawTransactionArgument<number | bigint>,
-              poolIndex: RawTransactionArgument<number | bigint>,
-              typusEcosystemVersion: RawTransactionArgument<string>,
-              typusUserRegistry: RawTransactionArgument<string>,
-              typusLeaderboardRegistry: RawTransactionArgument<string>,
-              collateralBidReceipt: RawTransactionArgument<string>,
-              isLong: RawTransactionArgument<boolean>,
-              user: RawTransactionArgument<string>,
-          ];
-    typeArguments: [string, string, string];
-}
-export function createTradingOrderWithBidReceipt(options: CreateTradingOrderWithBidReceiptOptions) {
-    const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [
-        `${packageAddress}::admin::Version`,
-        `${packageAddress}::trading::MarketRegistry`,
-        `${packageAddress}::lp_pool::Registry`,
-        "0x321848bf1ae327a9e022ccb3701940191e02fa193ab160d9c0e49cd3c003de3a::typus_dov_single::Registry",
-        "0x855eb2d260ee42b898266e6df90bfd3c4ed821ccb253a352c159c223244a4b8a::oracle::Oracle",
-        "0x855eb2d260ee42b898266e6df90bfd3c4ed821ccb253a352c159c223244a4b8a::oracle::Oracle",
-        "0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock",
-        "u64",
-        "u64",
-        "0x4b0f4ee1a40ce37ec81c987cc4e76a665419e74b863319492fc7d26f708b835a::ecosystem::Version",
-        "0x4b0f4ee1a40ce37ec81c987cc4e76a665419e74b863319492fc7d26f708b835a::user::TypusUserRegistry",
-        "0x4b0f4ee1a40ce37ec81c987cc4e76a665419e74b863319492fc7d26f708b835a::leaderboard::TypusLeaderboardRegistry",
-        "0xb4f25230ba74837d8299e92951306100c4a532e8c48cc3d8828abe9b91c8b274::vault::TypusBidReceipt",
-        "bool",
-        "address",
-    ] satisfies string[];
-    const parameterNames = [
-        "version",
-        "registry",
-        "poolRegistry",
-        "dovRegistry",
-        "typusOracleCToken",
-        "typusOracleTradingSymbol",
-        "marketIndex",
-        "poolIndex",
-        "typusEcosystemVersion",
-        "typusUserRegistry",
-        "typusLeaderboardRegistry",
-        "collateralBidReceipt",
-        "isLong",
-        "user",
-    ];
-    return (tx: Transaction) =>
-        tx.moveCall({
-            package: packageAddress,
-            module: "trading",
-            function: "create_trading_order_with_bid_receipt",
-            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
-            typeArguments: options.typeArguments,
-        });
-}
-export interface CreateTradingOrderWithBidReceiptV2Arguments {
-    version: RawTransactionArgument<string>;
-    registry: RawTransactionArgument<string>;
-    poolRegistry: RawTransactionArgument<string>;
-    dovRegistry: RawTransactionArgument<string>;
-    typusOracleCToken: RawTransactionArgument<string>;
-    typusOracleTradingSymbol: RawTransactionArgument<string>;
-    marketIndex: RawTransactionArgument<number | bigint>;
-    poolIndex: RawTransactionArgument<number | bigint>;
-    typusEcosystemVersion: RawTransactionArgument<string>;
-    typusUserRegistry: RawTransactionArgument<string>;
-    typusLeaderboardRegistry: RawTransactionArgument<string>;
-    tailsStakingRegistry: RawTransactionArgument<string>;
-    competitionConfig: RawTransactionArgument<string>;
-    collateralBidReceipt: RawTransactionArgument<string>;
-    isLong: RawTransactionArgument<boolean>;
-    user: RawTransactionArgument<string>;
-}
-export interface CreateTradingOrderWithBidReceiptV2Options {
-    package?: string;
-    arguments:
-        | CreateTradingOrderWithBidReceiptV2Arguments
-        | [
-              version: RawTransactionArgument<string>,
-              registry: RawTransactionArgument<string>,
-              poolRegistry: RawTransactionArgument<string>,
-              dovRegistry: RawTransactionArgument<string>,
-              typusOracleCToken: RawTransactionArgument<string>,
-              typusOracleTradingSymbol: RawTransactionArgument<string>,
-              marketIndex: RawTransactionArgument<number | bigint>,
-              poolIndex: RawTransactionArgument<number | bigint>,
-              typusEcosystemVersion: RawTransactionArgument<string>,
-              typusUserRegistry: RawTransactionArgument<string>,
-              typusLeaderboardRegistry: RawTransactionArgument<string>,
-              tailsStakingRegistry: RawTransactionArgument<string>,
-              competitionConfig: RawTransactionArgument<string>,
-              collateralBidReceipt: RawTransactionArgument<string>,
-              isLong: RawTransactionArgument<boolean>,
-              user: RawTransactionArgument<string>,
-          ];
-    typeArguments: [string, string, string];
-}
-export function createTradingOrderWithBidReceiptV2(options: CreateTradingOrderWithBidReceiptV2Options) {
-    const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [
-        `${packageAddress}::admin::Version`,
-        `${packageAddress}::trading::MarketRegistry`,
-        `${packageAddress}::lp_pool::Registry`,
-        "0x321848bf1ae327a9e022ccb3701940191e02fa193ab160d9c0e49cd3c003de3a::typus_dov_single::Registry",
-        "0x855eb2d260ee42b898266e6df90bfd3c4ed821ccb253a352c159c223244a4b8a::oracle::Oracle",
-        "0x855eb2d260ee42b898266e6df90bfd3c4ed821ccb253a352c159c223244a4b8a::oracle::Oracle",
-        "0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock",
-        "u64",
-        "u64",
-        "0x4b0f4ee1a40ce37ec81c987cc4e76a665419e74b863319492fc7d26f708b835a::ecosystem::Version",
-        "0x4b0f4ee1a40ce37ec81c987cc4e76a665419e74b863319492fc7d26f708b835a::user::TypusUserRegistry",
-        "0x4b0f4ee1a40ce37ec81c987cc4e76a665419e74b863319492fc7d26f708b835a::leaderboard::TypusLeaderboardRegistry",
-        "0x4b0f4ee1a40ce37ec81c987cc4e76a665419e74b863319492fc7d26f708b835a::tails_staking::TailsStakingRegistry",
-        `${packageAddress}::competition::CompetitionConfig`,
-        "0xb4f25230ba74837d8299e92951306100c4a532e8c48cc3d8828abe9b91c8b274::vault::TypusBidReceipt",
-        "bool",
-        "address",
-    ] satisfies string[];
-    const parameterNames = [
-        "version",
-        "registry",
-        "poolRegistry",
-        "dovRegistry",
-        "typusOracleCToken",
-        "typusOracleTradingSymbol",
-        "marketIndex",
-        "poolIndex",
-        "typusEcosystemVersion",
-        "typusUserRegistry",
-        "typusLeaderboardRegistry",
-        "tailsStakingRegistry",
-        "competitionConfig",
-        "collateralBidReceipt",
-        "isLong",
-        "user",
-    ];
-    return (tx: Transaction) =>
-        tx.moveCall({
-            package: packageAddress,
-            module: "trading",
-            function: "create_trading_order_with_bid_receipt_v2",
-            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
-            typeArguments: options.typeArguments,
-        });
-}
-export interface ReduceOptionCollateralPositionSizeArguments {
-    version: RawTransactionArgument<string>;
-    registry: RawTransactionArgument<string>;
-    poolRegistry: RawTransactionArgument<string>;
-    dovRegistry: RawTransactionArgument<string>;
-    typusOracleCToken: RawTransactionArgument<string>;
-    typusOracleTradingSymbol: RawTransactionArgument<string>;
-    marketIndex: RawTransactionArgument<number | bigint>;
-    poolIndex: RawTransactionArgument<number | bigint>;
-    typusEcosystemVersion: RawTransactionArgument<string>;
-    typusUserRegistry: RawTransactionArgument<string>;
-    typusLeaderboardRegistry: RawTransactionArgument<string>;
-    positionId: RawTransactionArgument<number | bigint>;
-    orderSize: RawTransactionArgument<number | bigint | null>;
-}
-export interface ReduceOptionCollateralPositionSizeOptions {
-    package?: string;
-    arguments:
-        | ReduceOptionCollateralPositionSizeArguments
-        | [
-              version: RawTransactionArgument<string>,
-              registry: RawTransactionArgument<string>,
-              poolRegistry: RawTransactionArgument<string>,
-              dovRegistry: RawTransactionArgument<string>,
-              typusOracleCToken: RawTransactionArgument<string>,
-              typusOracleTradingSymbol: RawTransactionArgument<string>,
-              marketIndex: RawTransactionArgument<number | bigint>,
-              poolIndex: RawTransactionArgument<number | bigint>,
-              typusEcosystemVersion: RawTransactionArgument<string>,
-              typusUserRegistry: RawTransactionArgument<string>,
-              typusLeaderboardRegistry: RawTransactionArgument<string>,
-              positionId: RawTransactionArgument<number | bigint>,
-              orderSize: RawTransactionArgument<number | bigint | null>,
-          ];
-    typeArguments: [string, string, string];
-}
-export function reduceOptionCollateralPositionSize(options: ReduceOptionCollateralPositionSizeOptions) {
-    const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [
-        `${packageAddress}::admin::Version`,
-        `${packageAddress}::trading::MarketRegistry`,
-        `${packageAddress}::lp_pool::Registry`,
-        "0x321848bf1ae327a9e022ccb3701940191e02fa193ab160d9c0e49cd3c003de3a::typus_dov_single::Registry",
-        "0x855eb2d260ee42b898266e6df90bfd3c4ed821ccb253a352c159c223244a4b8a::oracle::Oracle",
-        "0x855eb2d260ee42b898266e6df90bfd3c4ed821ccb253a352c159c223244a4b8a::oracle::Oracle",
-        "0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock",
-        "u64",
-        "u64",
-        "0x4b0f4ee1a40ce37ec81c987cc4e76a665419e74b863319492fc7d26f708b835a::ecosystem::Version",
-        "0x4b0f4ee1a40ce37ec81c987cc4e76a665419e74b863319492fc7d26f708b835a::user::TypusUserRegistry",
-        "0x4b0f4ee1a40ce37ec81c987cc4e76a665419e74b863319492fc7d26f708b835a::leaderboard::TypusLeaderboardRegistry",
-        "u64",
-        "0x0000000000000000000000000000000000000000000000000000000000000001::option::Option<u64>",
-    ] satisfies string[];
-    const parameterNames = [
-        "version",
-        "registry",
-        "poolRegistry",
-        "dovRegistry",
-        "typusOracleCToken",
-        "typusOracleTradingSymbol",
-        "marketIndex",
-        "poolIndex",
-        "typusEcosystemVersion",
-        "typusUserRegistry",
-        "typusLeaderboardRegistry",
-        "positionId",
-        "orderSize",
-    ];
-    return (tx: Transaction) =>
-        tx.moveCall({
-            package: packageAddress,
-            module: "trading",
-            function: "reduce_option_collateral_position_size",
-            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
-            typeArguments: options.typeArguments,
-        });
-}
-export interface ManagerRemovePositionArguments {
-    version: RawTransactionArgument<string>;
-    registry: RawTransactionArgument<string>;
-    poolRegistry: RawTransactionArgument<string>;
-    dovRegistry: RawTransactionArgument<string>;
-    typusOracleCToken: RawTransactionArgument<string>;
-    typusOracleTradingSymbol: RawTransactionArgument<string>;
-    marketIndex: RawTransactionArgument<number | bigint>;
-    poolIndex: RawTransactionArgument<number | bigint>;
-    typusEcosystemVersion: RawTransactionArgument<string>;
-    typusUserRegistry: RawTransactionArgument<string>;
-    typusLeaderboardRegistry: RawTransactionArgument<string>;
-    positionId: RawTransactionArgument<number | bigint>;
-    isOptionPosition: RawTransactionArgument<boolean>;
-    process: RawTransactionArgument<string>;
-}
-export interface ManagerRemovePositionOptions {
-    package?: string;
-    arguments:
-        | ManagerRemovePositionArguments
-        | [
-              version: RawTransactionArgument<string>,
-              registry: RawTransactionArgument<string>,
-              poolRegistry: RawTransactionArgument<string>,
-              dovRegistry: RawTransactionArgument<string>,
-              typusOracleCToken: RawTransactionArgument<string>,
-              typusOracleTradingSymbol: RawTransactionArgument<string>,
-              marketIndex: RawTransactionArgument<number | bigint>,
-              poolIndex: RawTransactionArgument<number | bigint>,
-              typusEcosystemVersion: RawTransactionArgument<string>,
-              typusUserRegistry: RawTransactionArgument<string>,
-              typusLeaderboardRegistry: RawTransactionArgument<string>,
-              positionId: RawTransactionArgument<number | bigint>,
-              isOptionPosition: RawTransactionArgument<boolean>,
-              process: RawTransactionArgument<string>,
-          ];
-    typeArguments: [string, string, string];
-}
-export function managerRemovePosition(options: ManagerRemovePositionOptions) {
-    const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [
-        `${packageAddress}::admin::Version`,
-        `${packageAddress}::trading::MarketRegistry`,
-        `${packageAddress}::lp_pool::Registry`,
-        "0x321848bf1ae327a9e022ccb3701940191e02fa193ab160d9c0e49cd3c003de3a::typus_dov_single::Registry",
-        "0x855eb2d260ee42b898266e6df90bfd3c4ed821ccb253a352c159c223244a4b8a::oracle::Oracle",
-        "0x855eb2d260ee42b898266e6df90bfd3c4ed821ccb253a352c159c223244a4b8a::oracle::Oracle",
-        "0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock",
-        "u64",
-        "u64",
-        "0x4b0f4ee1a40ce37ec81c987cc4e76a665419e74b863319492fc7d26f708b835a::ecosystem::Version",
-        "0x4b0f4ee1a40ce37ec81c987cc4e76a665419e74b863319492fc7d26f708b835a::user::TypusUserRegistry",
-        "0x4b0f4ee1a40ce37ec81c987cc4e76a665419e74b863319492fc7d26f708b835a::leaderboard::TypusLeaderboardRegistry",
-        "u64",
-        "bool",
-        `${packageAddress}::lp_pool::RemoveLiquidityTokenProcess`,
-    ] satisfies string[];
-    const parameterNames = [
-        "version",
-        "registry",
-        "poolRegistry",
-        "dovRegistry",
-        "typusOracleCToken",
-        "typusOracleTradingSymbol",
-        "marketIndex",
-        "poolIndex",
-        "typusEcosystemVersion",
-        "typusUserRegistry",
-        "typusLeaderboardRegistry",
-        "positionId",
-        "isOptionPosition",
-        "process",
-    ];
-    return (tx: Transaction) =>
-        tx.moveCall({
-            package: packageAddress,
-            module: "trading",
-            function: "manager_remove_position",
-            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
-            typeArguments: options.typeArguments,
-        });
-}
-export interface ManagerCloseOptionPositionArguments {
-    version: RawTransactionArgument<string>;
-    registry: RawTransactionArgument<string>;
-    poolRegistry: RawTransactionArgument<string>;
-    dovRegistry: RawTransactionArgument<string>;
-    typusOracleCToken: RawTransactionArgument<string>;
-    typusOracleTradingSymbol: RawTransactionArgument<string>;
-    marketIndex: RawTransactionArgument<number | bigint>;
-    poolIndex: RawTransactionArgument<number | bigint>;
-    typusEcosystemVersion: RawTransactionArgument<string>;
-    typusUserRegistry: RawTransactionArgument<string>;
-    typusLeaderboardRegistry: RawTransactionArgument<string>;
-    positionId: RawTransactionArgument<number | bigint>;
-}
-export interface ManagerCloseOptionPositionOptions {
-    package?: string;
-    arguments:
-        | ManagerCloseOptionPositionArguments
-        | [
-              version: RawTransactionArgument<string>,
-              registry: RawTransactionArgument<string>,
-              poolRegistry: RawTransactionArgument<string>,
-              dovRegistry: RawTransactionArgument<string>,
-              typusOracleCToken: RawTransactionArgument<string>,
-              typusOracleTradingSymbol: RawTransactionArgument<string>,
-              marketIndex: RawTransactionArgument<number | bigint>,
-              poolIndex: RawTransactionArgument<number | bigint>,
-              typusEcosystemVersion: RawTransactionArgument<string>,
-              typusUserRegistry: RawTransactionArgument<string>,
-              typusLeaderboardRegistry: RawTransactionArgument<string>,
-              positionId: RawTransactionArgument<number | bigint>,
-          ];
-    typeArguments: [string, string, string];
-}
-export function managerCloseOptionPosition(options: ManagerCloseOptionPositionOptions) {
-    const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [
-        `${packageAddress}::admin::Version`,
-        `${packageAddress}::trading::MarketRegistry`,
-        `${packageAddress}::lp_pool::Registry`,
-        "0x321848bf1ae327a9e022ccb3701940191e02fa193ab160d9c0e49cd3c003de3a::typus_dov_single::Registry",
-        "0x855eb2d260ee42b898266e6df90bfd3c4ed821ccb253a352c159c223244a4b8a::oracle::Oracle",
-        "0x855eb2d260ee42b898266e6df90bfd3c4ed821ccb253a352c159c223244a4b8a::oracle::Oracle",
-        "0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock",
-        "u64",
-        "u64",
-        "0x4b0f4ee1a40ce37ec81c987cc4e76a665419e74b863319492fc7d26f708b835a::ecosystem::Version",
-        "0x4b0f4ee1a40ce37ec81c987cc4e76a665419e74b863319492fc7d26f708b835a::user::TypusUserRegistry",
-        "0x4b0f4ee1a40ce37ec81c987cc4e76a665419e74b863319492fc7d26f708b835a::leaderboard::TypusLeaderboardRegistry",
-        "u64",
-    ] satisfies string[];
-    const parameterNames = [
-        "version",
-        "registry",
-        "poolRegistry",
-        "dovRegistry",
-        "typusOracleCToken",
-        "typusOracleTradingSymbol",
-        "marketIndex",
-        "poolIndex",
-        "typusEcosystemVersion",
-        "typusUserRegistry",
-        "typusLeaderboardRegistry",
-        "positionId",
-    ];
-    return (tx: Transaction) =>
-        tx.moveCall({
-            package: packageAddress,
-            module: "trading",
-            function: "manager_close_option_position",
-            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
-            typeArguments: options.typeArguments,
         });
 }

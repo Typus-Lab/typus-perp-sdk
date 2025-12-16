@@ -1,6 +1,6 @@
 import {
-    createTradingOrderWithBidReceiptV3 as _createTradingOrderWithBidReceipt,
-    reduceOptionCollateralPositionSizeV2 as _reduceOptionCollateralPositionSize,
+    createTradingOrderWithBidReceipt as _createTradingOrderWithBidReceipt,
+    reduceOptionCollateralPositionSize as _reduceOptionCollateralPositionSize,
 } from "src/generated/typus_perp/trading";
 import { Transaction } from "@mysten/sui/transactions";
 import { updatePyth, updateOracleWithPythUsd, splitCoin } from "@typus/typus-sdk/dist/src/utils";

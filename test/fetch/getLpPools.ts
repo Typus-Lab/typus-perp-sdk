@@ -11,10 +11,10 @@ import { getLpPool, getLpPools, NETWORK } from "src";
 
     console.log(lpPools.map((x) => x.lp_token_type));
 
-    // const lpPool = lpPools[0];
+    const lpPool = lpPools[0];
 
     // avaliable token types to mint the lp tokens (3 token types supported)
-    // console.log(lpPool.liquidityTokens.map((m) => m.name));
+    console.log(lpPool.liquidity_tokens.map((m) => m.name));
 
     //
     // console.log(lpPool.token_pools.map((m) => [m.token_type.name, m.state]));

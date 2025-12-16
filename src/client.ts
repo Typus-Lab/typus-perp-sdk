@@ -1,3 +1,4 @@
+import { graphql } from "@mysten/sui/graphql/schemas/latest";
 import { SuiGraphQLClient } from "@mysten/sui/graphql";
 import { SuiGrpcClient } from "@mysten/sui/grpc";
 import {
@@ -169,3 +170,35 @@ export class TypusClient {
         // });
     }
 }
+
+const dynamicFieldsQuery = graphql(`
+    query ($id: SuiAddress!) {
+        address(address: $id) {
+            dynamicFields {
+                nodes {
+                    name {
+                        ...Value
+                    }
+                    value {
+                        __typename
+                        ... on MoveValue {
+                            ...Value
+                        }
+                        ... on MoveObject {
+                            contents {
+                                ...Value
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    fragment Value on MoveValue {
+        type {
+            repr
+        }
+        json
+    }
+`);

@@ -141,7 +141,7 @@ export async function getMarkets(
     return results;
 }
 
-export type TradingOrder = (typeof TradingOrder.$inferType);
+export type TradingOrder = typeof TradingOrder.$inferType;
 export type TradingOrderWithMarketIndex = TradingOrder & { marketIndex: number };
 
 export async function getUserOrders(
@@ -189,7 +189,7 @@ export async function getUserOrders(
     return orders;
 }
 
-export type Position = (typeof Position.$inferType);
+export type Position = typeof Position.$inferType;
 export type PositionWithMarketIndex = Position & { marketIndex: number };
 
 export async function getUserPositions(
@@ -438,31 +438,31 @@ export async function getLiquidationPriceAndPnl(
 
     let results = res.results
         ? res.results!.slice(-input.positions.length).map((x) => {
-            // console.log(x);
-            let liquidationPrice = Number(bcs.u64().parse(Uint8Array.from(x.returnValues![0][0])));
-            let isProfit = bcs.bool().parse(Uint8Array.from(x.returnValues![1][0]));
-            var pnl = Number(bcs.u64().parse(Uint8Array.from(x.returnValues![2][0])));
-            pnl = isProfit ? pnl : -pnl;
-            // including closeFee
-            let isCost = bcs.bool().parse(Uint8Array.from(x.returnValues![3][0]));
-            var cost = Number(bcs.u64().parse(Uint8Array.from(x.returnValues![4][0])));
-            cost = isCost ? cost : -cost;
-            // cost = unrealized_loss + unrealized_trading_fee + unrealized_borrow_fee + unrealized_funding_fee;
-            let fundingFeeSign = bcs.bool().parse(Uint8Array.from(x.returnValues![5][0]));
-            var fundingFee = Number(bcs.u64().parse(Uint8Array.from(x.returnValues![6][0])));
-            fundingFee = fundingFeeSign ? fundingFee : -fundingFee;
-            let borrowFee = Number(bcs.u64().parse(Uint8Array.from(x.returnValues![7][0])));
-            let closeFee = Number(bcs.u64().parse(Uint8Array.from(x.returnValues![8][0])));
+              // console.log(x);
+              let liquidationPrice = Number(bcs.u64().parse(Uint8Array.from(x.returnValues![0][0])));
+              let isProfit = bcs.bool().parse(Uint8Array.from(x.returnValues![1][0]));
+              var pnl = Number(bcs.u64().parse(Uint8Array.from(x.returnValues![2][0])));
+              pnl = isProfit ? pnl : -pnl;
+              // including closeFee
+              let isCost = bcs.bool().parse(Uint8Array.from(x.returnValues![3][0]));
+              var cost = Number(bcs.u64().parse(Uint8Array.from(x.returnValues![4][0])));
+              cost = isCost ? cost : -cost;
+              // cost = unrealized_loss + unrealized_trading_fee + unrealized_borrow_fee + unrealized_funding_fee;
+              let fundingFeeSign = bcs.bool().parse(Uint8Array.from(x.returnValues![5][0]));
+              var fundingFee = Number(bcs.u64().parse(Uint8Array.from(x.returnValues![6][0])));
+              fundingFee = fundingFeeSign ? fundingFee : -fundingFee;
+              let borrowFee = Number(bcs.u64().parse(Uint8Array.from(x.returnValues![7][0])));
+              let closeFee = Number(bcs.u64().parse(Uint8Array.from(x.returnValues![8][0])));
 
-            return {
-                liquidationPrice,
-                pnl: pnl + closeFee,
-                fundingFee,
-                borrowFee,
-                closeFee,
-                pnlAfterFee: pnl - cost,
-            } as PositionInfo;
-        })
+              return {
+                  liquidationPrice,
+                  pnl: pnl + closeFee,
+                  fundingFee,
+                  borrowFee,
+                  closeFee,
+                  pnlAfterFee: pnl - cost,
+              } as PositionInfo;
+          })
         : [];
     // console.log(results);
     return results;

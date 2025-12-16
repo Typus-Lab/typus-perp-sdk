@@ -31,7 +31,7 @@ export async function getLpPools(client: TypusClient) {
         // console.log(lpPool);
         lpPools.push(lpPool);
     }
-    return lpPools;
+    return lpPools.sort((a, b) => Number(a.index) - Number(b.index));
 
     // return (await client.getDynamicObjectFieldsBcs(LIQUIDITY_POOL).then((x) => x.map((x) => LiquidityPool.parse(x)))).sort(
     //     (a, b) => Number(a.index) - Number(b.index)
@@ -71,7 +71,7 @@ export async function getStakePools(client: TypusClient) {
         stakePools.push(stakePool);
     }
 
-    return stakePools;
+    return stakePools.sort((a, b) => Number(a.pool_info.index) - Number(b.pool_info.index));
 
     // return (await client.getDynamicObjectFieldsBcs(STAKE_POOL).then((x) => x.map((x) => StakePool.parse(x)))).sort(
     //     (a, b) => Number(a.pool_info.index) - Number(b.pool_info.index)

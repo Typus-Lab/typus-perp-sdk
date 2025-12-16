@@ -22,83 +22,80 @@ import { TypusBidReceipt } from "./generated/typus_perp/deps/typus_framework/vau
 import { TypusClient } from "src/client";
 
 export async function getLpPools(client: TypusClient) {
-    // let dynamicFields = await client.getDynamicFields({
-    //     parentId: LIQUIDITY_POOL,
-    // });
+    let dynamicFields = await client.getDynamicFields({
+        parentId: LIQUIDITY_POOL,
+    });
+    let lpPools: (typeof LiquidityPool.$inferType)[] = [];
+    for (const field of dynamicFields.data) {
+        let lpPool = await getLpPool(client, field.objectId);
+        // console.log(lpPool);
+        lpPools.push(lpPool);
+    }
+    return lpPools;
 
-    // let lpPools: (typeof LiquidityPool.$inferType)[] = [];
-
-    // for (const field of dynamicFields.data) {
-    //     let lpPool = await getLpPool(client, field.objectId);
-    //     // console.log(lpPool);
-    //     lpPools.push(lpPool);
-    // }
-
-    // return lpPools;
-
-    return (await client.getDynamicObjectFieldsBcs(LIQUIDITY_POOL).then((x) => x.map((x) => LiquidityPool.parse(x)))).sort(
-        (a, b) => Number(a.index) - Number(b.index)
-    );
+    // return (await client.getDynamicObjectFieldsBcs(LIQUIDITY_POOL).then((x) => x.map((x) => LiquidityPool.parse(x)))).sort(
+    //     (a, b) => Number(a.index) - Number(b.index)
+    // );
 }
 
 export async function getLpPool(client: TypusClient, objectId: string) {
-    // const data = await client.getObject({
-    //     id: objectId,
-    //     options: {
-    //         // request the bcs data when loading your object
-    //         showBcs: true,
-    //     },
-    // });
-    // if (data.data?.bcs?.dataType !== "moveObject") {
-    //     throw new Error("Expected a move object");
-    // }
-    // // console.log(data.data.bcs.bcsBytes);
-    // return LiquidityPool.fromBase64(data.data.bcs.bcsBytes);
+    const data = await client.getObject({
+        id: objectId,
+        options: {
+            // request the bcs data when loading your object
+            showBcs: true,
+        },
+    });
+    if (data.data?.bcs?.dataType !== "moveObject") {
+        throw new Error("Expected a move object");
+    }
+    // console.log(data.data.bcs.bcsBytes);
+    return LiquidityPool.fromBase64(data.data.bcs.bcsBytes);
 
-    const bcs = await client.getObjectBcs(objectId);
-    return LiquidityPool.parse(bcs!);
+    // const bcs = await client.getObjectBcs(objectId);
+    // return LiquidityPool.parse(bcs!);
 }
 
 // getLpPool(client).then((x) => console.log(x));
 
 export async function getStakePools(client: TypusClient) {
-    // let dynamicFields = await client.getDynamicFields({
-    //     parentId: STAKE_POOL,
-    // });
+    let dynamicFields = await client.getDynamicFields({
+        parentId: STAKE_POOL,
+    });
 
-    // let stakePools: (typeof StakePool.$inferType)[] = [];
+    let stakePools: (typeof StakePool.$inferType)[] = [];
 
-    // for (const field of dynamicFields.data) {
-    //     let stakePool = await getStakePool(client, field.objectId);
-    //     // console.log(stakePool);
-    //     stakePools.push(stakePool);
-    // }
+    for (const field of dynamicFields.data) {
+        let stakePool = await getStakePool(client, field.objectId);
+        // console.log(stakePool);
+        stakePools.push(stakePool);
+    }
 
-    // return stakePools;
+    return stakePools;
 
-    return (await client.getDynamicObjectFieldsBcs(STAKE_POOL).then((x) => x.map((x) => StakePool.parse(x)))).sort(
-        (a, b) => Number(a.pool_info.index) - Number(b.pool_info.index)
-    );
+    // return (await client.getDynamicObjectFieldsBcs(STAKE_POOL).then((x) => x.map((x) => StakePool.parse(x)))).sort(
+    //     (a, b) => Number(a.pool_info.index) - Number(b.pool_info.index)
+    // );
 }
 
 export async function getStakePool(client: TypusClient, objectId: string) {
-    // const data = await client.getObject({
-    //     id: objectId,
-    //     options: {
-    //         // request the bcs data when loading your object
-    //         showBcs: true,
-    //     },
-    // });
-    // if (data.data?.bcs?.dataType !== "moveObject") {
-    //     throw new Error("Expected a move object");
-    // }
+    const data = await client.getObject({
+        id: objectId,
+        options: {
+            // request the bcs data when loading your object
+            showBcs: true,
+        },
+    });
+    if (data.data?.bcs?.dataType !== "moveObject") {
+        throw new Error("Expected a move object");
+    }
 
-    // // console.log(data.data.bcs.bcsBytes);
+    // console.log(data.data.bcs.bcsBytes);
 
-    // return StakePool.fromBase64(data.data.bcs.bcsBytes);
+    return StakePool.fromBase64(data.data.bcs.bcsBytes);
 
-    const bcs = await client.getObjectBcs(objectId);
-    return StakePool.parse(bcs!);
+    // const bcs = await client.getObjectBcs(objectId);
+    // return StakePool.parse(bcs!);
 }
 
 /**

@@ -22,20 +22,20 @@ import { TypusBidReceipt } from "./generated/typus_perp/deps/typus_framework/vau
 import { TypusClient } from "src/client";
 
 export async function getLpPools(client: TypusClient) {
-    let dynamicFields = await client.getDynamicFields({
-        parentId: LIQUIDITY_POOL,
-    });
-    let lpPools: (typeof LiquidityPool.$inferType)[] = [];
-    for (const field of dynamicFields.data) {
-        let lpPool = await getLpPool(client, field.objectId);
-        // console.log(lpPool);
-        lpPools.push(lpPool);
-    }
-    return lpPools.sort((a, b) => Number(a.index) - Number(b.index));
+    // let dynamicFields = await client.getDynamicFields({
+    //     parentId: LIQUIDITY_POOL,
+    // });
+    // let lpPools: (typeof LiquidityPool.$inferType)[] = [];
+    // for (const field of dynamicFields.data) {
+    //     let lpPool = await getLpPool(client, field.objectId);
+    //     // console.log(lpPool);
+    //     lpPools.push(lpPool);
+    // }
+    // return lpPools.sort((a, b) => Number(a.index) - Number(b.index));
 
-    // return (await client.getDynamicObjectFieldsBcs(LIQUIDITY_POOL).then((x) => x.map((x) => LiquidityPool.parse(x)))).sort(
-    //     (a, b) => Number(a.index) - Number(b.index)
-    // );
+    return (await client.getDynamicObjectFieldsBcs(LIQUIDITY_POOL).then((x) => x.map((x) => LiquidityPool.parse(x)))).sort(
+        (a, b) => Number(a.index) - Number(b.index)
+    );
 }
 
 export async function getLpPool(client: TypusClient, objectId: string) {

@@ -2,6 +2,7 @@ import * as admin from "./admin/structs";
 import * as escrow from "./escrow/structs";
 import * as lpPool from "./lp-pool/structs";
 import * as position from "./position/structs";
+import * as profitVault from "./profit-vault/structs";
 import * as symbol from "./symbol/structs";
 import * as tlp from "./tlp/structs";
 import * as trading from "./trading/structs";
@@ -15,6 +16,8 @@ export function registerClasses(loader: StructClassLoader) {
     loader.register(admin.SendFeeEvent);
     loader.register(admin.ProtocolFeeEvent);
     loader.register(escrow.UnsettledBidReceipt);
+    loader.register(profitVault.UserProfit);
+    loader.register(profitVault.LockedUserProfit);
     loader.register(treasuryCaps.TreasuryCaps);
     loader.register(tlp.LpRegistry);
     loader.register(tlp.TLP);

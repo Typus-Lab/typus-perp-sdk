@@ -5,12 +5,17 @@ import { bcs, BcsReader } from "@mysten/bcs";
 import { MarketRegistry, Markets, SymbolMarket } from "./typus_perp/trading/structs";
 import { DeactivatingShares, LiquidityPool, Registry } from "./typus_perp/lp-pool/structs";
 import { TradingOrder, Position } from "./typus_perp/position/structs";
+import { UserProfit, LockedUserProfit } from "./typus_perp/profit-vault/structs";
 import {
     getUserOrders as _getUserOrders,
     getUserPositions as _getUserPositions,
     getAllPositions as _getAllPositions,
     getEstimatedLiquidationPriceAndPnl,
 } from "./typus_perp/trading/functions";
+import {
+    getUserProfits as _getUserProfits,
+    getLockedUserProfits as _getLockedUserProfits,
+} from "./typus_perp/profit-vault/function";
 
 import { allocateIncentive, getUserShares, getUserSharesByUserShareId } from "./typus_stake_pool/stake-pool/functions";
 import { LpUserShare, StakePool } from "./typus_stake_pool/stake-pool/structs";
@@ -21,10 +26,12 @@ import { pythStateId, PythClient, updatePyth, TypusConfig, updateOracleWithPythU
 import {
     LIQUIDITY_POOL,
     LIQUIDITY_POOL_0,
+    LOCK_VAULT,
     LP_POOL,
     MARKET,
     NETWORK,
     PERP_VERSION,
+    PROFIT_VAULT,
     STAKE_POOL,
     STAKE_POOL_0,
     STAKE_POOL_VERSION,
@@ -621,4 +628,78 @@ export async function getAllPositionsWithTradingSymbol(
 
     // 5) 扁平化後回傳
     return results.flat();
+}
+
+export async function fetchUserProfits(
+    config: TypusConfig,
+    input: {
+        user: string;
+        profitVault?: string;
+    }
+): Promise<UserProfit[]> {
+    const provider = new SuiClient({ url: config.rpcEndpoint });
+    const tx = new Transaction();
+
+    _getUserProfits(tx, {
+        version: PERP_VERSION,
+        profitVault: input.profitVault ?? PROFIT_VAULT,
+        user: input.user,
+    });
+
+    const res = await provider.devInspectTransactionBlock({ sender: input.user, transactionBlock: tx });
+
+    if (!res.results?.[0]?.returnValues?.[0]?.[0]) {
+        return [];
+    }
+
+    // @ts-ignore
+    const returnValues = res.results[0].returnValues[0][0];
+
+    const reader = new BcsReader(new Uint8Array(returnValues));
+    const profits: UserProfit[] = [];
+    reader.readVec((reader) => {
+        const length = reader.readULEB();
+        const bytes = reader.readBytes(length);
+        const profit = UserProfit.fromBcs(Uint8Array.from(Array.from(bytes)));
+        profits.push(profit);
+    });
+
+    return profits;
+}
+
+export async function fetchLockedUserProfits(
+    config: TypusConfig,
+    input: {
+        user: string;
+        lockVault?: string;
+    }
+): Promise<LockedUserProfit[]> {
+    const provider = new SuiClient({ url: config.rpcEndpoint });
+    const tx = new Transaction();
+
+    _getLockedUserProfits(tx, {
+        version: PERP_VERSION,
+        lockVault: input.lockVault ?? LOCK_VAULT,
+        user: input.user,
+    });
+
+    const res = await provider.devInspectTransactionBlock({ sender: input.user, transactionBlock: tx });
+
+    if (!res.results?.[0]?.returnValues?.[0]?.[0]) {
+        return [];
+    }
+
+    // @ts-ignore
+    const returnValues = res.results[0].returnValues[0][0];
+
+    const reader = new BcsReader(new Uint8Array(returnValues));
+    const lockedProfits: LockedUserProfit[] = [];
+    reader.readVec((reader) => {
+        const length = reader.readULEB();
+        const bytes = reader.readBytes(length);
+        const lockedProfit = LockedUserProfit.fromBcs(Uint8Array.from(Array.from(bytes)));
+        lockedProfits.push(lockedProfit);
+    });
+
+    return lockedProfits;
 }

@@ -25,13 +25,15 @@ Transaction.registerGlobalSerializationPlugin("namedPackagesPlugin", plugin);
 export const PERP_PACKAGE_ID =
     NETWORK == "MAINNET"
         ? "0xe27969a70f93034de9ce16e6ad661b480324574e68d15a64b513fd90eb2423e5"
-        : "0x29d1dcc803ec1cc1b4c98a8c818c655ecf432ebd2f85757bffc21806d329e240";
+        : "0x7adddfb77658ff43ad0281e264fdb43403a1b97bc2f6328b55279dfb4253e1e0"; // TYPUS_PERP_PACKAGE
 export const PERP_PUBLISHED_AT =
-    NETWORK == "MAINNET" ? "0x9eda9afa0b42bf908766c42d02a549c271d7d0ae02c8c58c5075858f8f4d3b69" : "@typus/perp";
+    NETWORK == "MAINNET"
+        ? "0x9eda9afa0b42bf908766c42d02a549c271d7d0ae02c8c58c5075858f8f4d3b69"
+        : "@typus/perp";
 export const PERP_PKG_V1 =
     NETWORK == "MAINNET"
         ? "0xe27969a70f93034de9ce16e6ad661b480324574e68d15a64b513fd90eb2423e5"
-        : "0x585924f160f83ef16f8927ec117e4d740abb6f4e571ecfa89ff3e973042cb1b9";
+        : "0x94cd358f552e9dd5df837de85939a9d1d682e97480740a203121e6f4c0078853"; // TYPUS_PERP_PACKAGE_ORIGIN
 
 export const STAKE_PACKAGE_ID =
     NETWORK == "MAINNET"
@@ -70,7 +72,7 @@ export const MARKET =
 export const PERP_VERSION =
     NETWORK == "MAINNET"
         ? "0xa12c282a068328833ec4a9109fc77803ec1f523f8da1bb0f82bac8450335f0c9"
-        : "0xfd3699c86cda99e542e4517dc3ad4d9164806664fcbcc23981ad0d5101b87abd";
+        : "0xbb0615832168e64e301db2ebd6ad71b3fe170d7e217ccd0c08714de56b41676b"; // TYPUS_PERP_VERSION
 // LpRegistry
 export const TLP =
     NETWORK == "MAINNET"
@@ -102,3 +104,12 @@ export const COMPETITION_CONFIG =
     NETWORK == "MAINNET"
         ? "0x36056abf9adde86f81667dad680a8ac98868c9fc1cb4d519fd2222d5d4522906"
         : "0xbb246d6ee24d7c751777d81cbf95ffcfcda26910fecfdcfedab81b2b8e48dfe5";
+
+export const PROFIT_VAULT =
+    NETWORK == "MAINNET"
+        ? "" // TODO: Add mainnet PROFIT_VAULT address
+        : "0xb1d603139b24db2c46f6a423c8613ce677f329a0b159ff6e57672f3b663aec47"; // TODO: Add testnet PROFIT_VAULT address
+export const LOCK_VAULT =
+    NETWORK == "MAINNET"
+        ? "" // TODO: Add mainnet LOCK_VAULT address
+        : "0x25dd9540f031b9a62b83784a727e1ef410f9aa91ecf7e3bb27a0c61f8ceecbfb"; // TODO: Add testnet LOCK_VAULT address

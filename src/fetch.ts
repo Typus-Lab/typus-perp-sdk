@@ -703,3 +703,145 @@ export async function fetchLockedUserProfits(
 
     return lockedProfits;
 }
+
+/**
+ * Get all users from ProfitVault and their profits
+ * @returns Map<user_address, UserProfit[]>
+ */
+export async function fetchAllUserProfits(
+    config: TypusConfig,
+    input?: {
+        profitVault?: string;
+    }
+): Promise<Map<string, UserProfit[]>> {
+    const provider = new SuiClient({ url: config.rpcEndpoint });
+    const profitVaultId = input?.profitVault ?? PROFIT_VAULT;
+
+    // 1. Read ProfitVault object to get user_profits Table ID
+    const vaultResponse = await provider.getObject({
+        id: profitVaultId,
+        options: { showContent: true },
+    });
+
+    if (!vaultResponse.data?.content || vaultResponse.data.content.dataType !== "moveObject") {
+        return new Map();
+    }
+
+    const fields = (vaultResponse.data.content as any).fields;
+    const tableId = fields?.user_profits?.fields?.id?.id;
+
+    if (!tableId) {
+        return new Map();
+    }
+
+    // 2. Get all dynamic fields (user addresses) from the Table
+    let cursor: string | null = null;
+    const allUsers: string[] = [];
+
+    while (true) {
+        const dynamicFields = await provider.getDynamicFields({
+            parentId: tableId,
+            cursor,
+            limit: 50,
+        });
+
+        for (const field of dynamicFields.data) {
+            const userAddress = (field.name as any).value;
+            if (userAddress) {
+                allUsers.push(userAddress);
+            }
+        }
+
+        if (!dynamicFields.hasNextPage) {
+            break;
+        }
+        cursor = dynamicFields.nextCursor ?? null;
+    }
+
+    // 3. For each user, fetch their profits
+    const result = new Map<string, UserProfit[]>();
+
+    for (const user of allUsers) {
+        try {
+            const profits = await fetchUserProfits(config, { user, profitVault: profitVaultId });
+            if (profits.length > 0) {
+                result.set(user, profits);
+            }
+        } catch (e) {
+            console.error(`Failed to get profits for user ${user}:`, e);
+        }
+    }
+
+    return result;
+}
+
+/**
+ * Get all users from LockVault and their locked profits
+ * @returns Map<user_address, LockedUserProfit[]>
+ */
+export async function fetchAllLockedUserProfits(
+    config: TypusConfig,
+    input?: {
+        lockVault?: string;
+    }
+): Promise<Map<string, LockedUserProfit[]>> {
+    const provider = new SuiClient({ url: config.rpcEndpoint });
+    const lockVaultId = input?.lockVault ?? LOCK_VAULT;
+
+    // 1. Read LockVault object to get locked_user_profits Table ID
+    const vaultResponse = await provider.getObject({
+        id: lockVaultId,
+        options: { showContent: true },
+    });
+
+    if (!vaultResponse.data?.content || vaultResponse.data.content.dataType !== "moveObject") {
+        return new Map();
+    }
+
+    const fields = (vaultResponse.data.content as any).fields;
+    const tableId = fields?.locked_user_profits?.fields?.id?.id;
+
+    if (!tableId) {
+        return new Map();
+    }
+
+    // 2. Get all dynamic fields (user addresses) from the Table
+    let cursor: string | null = null;
+    const allUsers: string[] = [];
+
+    while (true) {
+        const dynamicFields = await provider.getDynamicFields({
+            parentId: tableId,
+            cursor,
+            limit: 50,
+        });
+
+        for (const field of dynamicFields.data) {
+            const userAddress = (field.name as any).value;
+            if (userAddress) {
+                allUsers.push(userAddress);
+            }
+        }
+
+        if (!dynamicFields.hasNextPage) {
+            break;
+        }
+        cursor = dynamicFields.nextCursor ?? null;
+    }
+
+    // 3. For each user, fetch their locked profits
+    const result = new Map<string, LockedUserProfit[]>();
+
+    for (const user of allUsers) {
+        try {
+            const profits = await fetchLockedUserProfits(config, { user, lockVault: lockVaultId });
+            if (profits.length > 0) {
+                result.set(user, profits);
+            }
+        } catch (e) {
+            console.error(`Failed to get locked profits for user ${user}:`, e);
+        }
+    }
+
+    return result;
+}

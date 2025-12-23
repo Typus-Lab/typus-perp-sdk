@@ -17,6 +17,7 @@ import { namedPackagesPlugin, Transaction } from "@mysten/sui/transactions";
 
 const mvrPlugin = NETWORK == "MAINNET" ? "https://mainnet.mvr.mystenlabs.com" : "https://testnet.mvr.mystenlabs.com";
 
+// @ts-ignore - url property may not be in type definitions but works at runtime
 const plugin = namedPackagesPlugin({ url: mvrPlugin });
 
 /** Register the MVR plugin globally (once) for our PTB construction */

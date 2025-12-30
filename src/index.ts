@@ -11,7 +11,7 @@ export const NETWORK = process.env.NEXT_PUBLIC_CLUSTER == "testnet" ? "TESTNET" 
 export const PERP_PACKAGE_ID =
     NETWORK == "MAINNET"
         ? "0xe27969a70f93034de9ce16e6ad661b480324574e68d15a64b513fd90eb2423e5"
-        : "0x94cd358f552e9dd5df837de85939a9d1d682e97480740a203121e6f4c0078853";
+        : "0x7adddfb77658ff43ad0281e264fdb43403a1b97bc2f6328b55279dfb4253e1e0";
 
 export const STAKE_PACKAGE_ID =
     NETWORK == "MAINNET"
@@ -61,3 +61,12 @@ export const COMPETITION_CONFIG =
     NETWORK == "MAINNET"
         ? "0x36056abf9adde86f81667dad680a8ac98868c9fc1cb4d519fd2222d5d4522906"
         : "0x2b811b120177839555aabdc2c28b28078170e663e855d29aa9072013d4fc918d";
+
+export const PROFIT_VAULT =
+    NETWORK == "MAINNET"
+        ? "" // TODO: Add mainnet PROFIT_VAULT address
+        : "0xb1d603139b24db2c46f6a423c8613ce677f329a0b159ff6e57672f3b663aec47"; // TODO: Add testnet PROFIT_VAULT address
+export const LOCK_VAULT =
+    NETWORK == "MAINNET"
+        ? "" // TODO: Add mainnet LOCK_VAULT address
+        : "0x25dd9540f031b9a62b83784a727e1ef410f9aa91ecf7e3bb27a0c61f8ceecbfb"; // TODO: Add testnet LOCK_VAULT address

@@ -1,10 +1,11 @@
 import { Transaction } from "@mysten/sui/transactions";
+import { SuiClient } from "@mysten/sui/client";
 import { bcs, BcsReader } from "@mysten/bcs";
 
 import { oracle, SENDER, TOKEN, tokenType, typeArgToAsset } from "@typus/typus-sdk/dist/src/constants";
-import { updatePyth, updateOracleWithPythUsd } from "@typus/typus-sdk/dist/src/utils";
+import { updatePyth, updateOracleWithPythUsd, TypusConfig } from "@typus/typus-sdk/dist/src/utils";
 
-import { LIQUIDITY_POOL, LP_POOL, MARKET, NETWORK, PERP_VERSION, STAKE_POOL, STAKE_POOL_VERSION } from ".";
+import { LIQUIDITY_POOL, LP_POOL, MARKET, NETWORK, PERP_VERSION, STAKE_POOL, STAKE_POOL_VERSION, PERP_PACKAGE_ID, PROFIT_VAULT, LOCK_VAULT } from ".";
 
 import { getMarketsBcs, Markets, SymbolMarket } from "./generated/typus_perp/trading";
 import { DeactivatingShares, getUserDeactivatingShares } from "./generated/typus_perp/lp_pool";
@@ -17,6 +18,12 @@ import {
 } from "./generated/typus_perp/trading";
 import { LiquidityPool } from "./generated/typus_perp/lp_pool";
 import { LpUserShare, StakePool, getUserShares, allocateIncentive } from "./generated/typus_stake_pool/stake_pool";
+
+import { UserProfit, LockedUserProfit } from "./generated/typus_perp/profit_vault";
+import {
+    getUserProfits as _getUserProfits,
+    getLockedUserProfits as _getLockedUserProfits,
+} from "./generated/typus_perp/profit_vault";
 
 import { TypusBidReceipt } from "./generated/typus_perp/deps/typus_framework/vault";
 import { TypusClient } from "src/client";
@@ -437,31 +444,31 @@ export async function getLiquidationPriceAndPnl(
 
     let results = res.results
         ? res.results!.slice(-input.positions.length).map((x) => {
-              // console.log(x);
-              let liquidationPrice = Number(bcs.u64().parse(Uint8Array.from(x.returnValues![0][0])));
-              let isProfit = bcs.bool().parse(Uint8Array.from(x.returnValues![1][0]));
-              var pnl = Number(bcs.u64().parse(Uint8Array.from(x.returnValues![2][0])));
-              pnl = isProfit ? pnl : -pnl;
-              // including closeFee
-              let isCost = bcs.bool().parse(Uint8Array.from(x.returnValues![3][0]));
-              var cost = Number(bcs.u64().parse(Uint8Array.from(x.returnValues![4][0])));
-              cost = isCost ? cost : -cost;
-              // cost = unrealized_loss + unrealized_trading_fee + unrealized_borrow_fee + unrealized_funding_fee;
-              let fundingFeeSign = bcs.bool().parse(Uint8Array.from(x.returnValues![5][0]));
-              var fundingFee = Number(bcs.u64().parse(Uint8Array.from(x.returnValues![6][0])));
-              fundingFee = fundingFeeSign ? fundingFee : -fundingFee;
-              let borrowFee = Number(bcs.u64().parse(Uint8Array.from(x.returnValues![7][0])));
-              let closeFee = Number(bcs.u64().parse(Uint8Array.from(x.returnValues![8][0])));
+            // console.log(x);
+            let liquidationPrice = Number(bcs.u64().parse(Uint8Array.from(x.returnValues![0][0])));
+            let isProfit = bcs.bool().parse(Uint8Array.from(x.returnValues![1][0]));
+            var pnl = Number(bcs.u64().parse(Uint8Array.from(x.returnValues![2][0])));
+            pnl = isProfit ? pnl : -pnl;
+            // including closeFee
+            let isCost = bcs.bool().parse(Uint8Array.from(x.returnValues![3][0]));
+            var cost = Number(bcs.u64().parse(Uint8Array.from(x.returnValues![4][0])));
+            cost = isCost ? cost : -cost;
+            // cost = unrealized_loss + unrealized_trading_fee + unrealized_borrow_fee + unrealized_funding_fee;
+            let fundingFeeSign = bcs.bool().parse(Uint8Array.from(x.returnValues![5][0]));
+            var fundingFee = Number(bcs.u64().parse(Uint8Array.from(x.returnValues![6][0])));
+            fundingFee = fundingFeeSign ? fundingFee : -fundingFee;
+            let borrowFee = Number(bcs.u64().parse(Uint8Array.from(x.returnValues![7][0])));
+            let closeFee = Number(bcs.u64().parse(Uint8Array.from(x.returnValues![8][0])));
 
-              return {
-                  liquidationPrice,
-                  pnl: pnl + closeFee,
-                  fundingFee,
-                  borrowFee,
-                  closeFee,
-                  pnlAfterFee: pnl - cost,
-              } as PositionInfo;
-          })
+            return {
+                liquidationPrice,
+                pnl: pnl + closeFee,
+                fundingFee,
+                borrowFee,
+                closeFee,
+                pnlAfterFee: pnl - cost,
+            } as PositionInfo;
+        })
         : [];
     // console.log(results);
     return results;
@@ -563,4 +570,251 @@ export async function getAllPositionsWithTradingSymbol(
         positions = positions.concat(pos);
     }
     return positions;
+}
+
+
+const TypeNameBcs = bcs.struct("TypeName", {
+    name: bcs.string(),
+});
+
+const UserProfitBcs = bcs.struct("UserProfit", {
+    collateral_token: TypeNameBcs,
+    base_token: TypeNameBcs,
+    position_id: bcs.u64(),
+    order_id: bcs.u64(),
+    amount: bcs.u64(),
+    create_ts_ms: bcs.u64(),
+});
+
+const LockedUserProfitBcs = bcs.struct("LockedUserProfit", {
+    user_profit: UserProfitBcs,
+    create_ts_ms: bcs.u64(),
+});
+
+export type UserProfit = {
+    collateral_token: {
+        name: string;
+    },
+    base_token: {
+        name: string;
+    },
+    position_id: string,
+    order_id: string,
+    amount: string,
+    create_ts_ms: string;
+}
+
+export type LockedUserProfit = {
+    user_profit: UserProfit;
+    create_ts_ms: string;
+}
+
+export async function fetchUserProfits(
+    client: TypusClient,
+    input: {
+        profitVault: string;
+        version: string;
+        user: string;
+    }
+) {
+    let tx = new Transaction();
+    tx.moveCall({
+        target: `${PERP_PACKAGE_ID}::profit_vault::get_user_profits`,
+        arguments: [tx.object(input.version), tx.object(input.profitVault), tx.pure.address(input.user)],
+    });
+
+    const res = await client.devInspectTransactionBlock({
+        sender: SENDER,
+        transactionBlock: tx,
+    });
+
+    if (!res.results?.[0]?.returnValues?.[0]?.[0]) {
+        return [];
+    }
+
+    const returnValues = res.results[0].returnValues[0][0];
+
+    const reader = new BcsReader(new Uint8Array(returnValues));
+
+    const profits: UserProfit[] = [];
+    reader.readVec((reader) => {
+        const length = reader.readULEB();
+        const bytes = reader.readBytes(length);
+        const profit = UserProfitBcs.parse(Uint8Array.from(Array.from(bytes)));
+        profits.push(profit);
+    });
+
+    return profits;
+}
+
+export async function fetchLockedUserProfits(
+    client: TypusClient,
+    input: {
+        lockVault: string;
+        version: string;
+        user: string;
+    }
+) {
+    let tx = new Transaction();
+    tx.moveCall({
+        target: `${PERP_PACKAGE_ID}::profit_vault::get_locked_user_profits`,
+        arguments: [tx.object(PERP_VERSION), tx.object(input.lockVault), tx.pure.address(input.user)],
+    });
+
+    const res = await client.devInspectTransactionBlock({
+        sender: SENDER,
+        transactionBlock: tx,
+    });
+
+    if (!res.results?.[0]?.returnValues?.[0]?.[0]) {
+        return [];
+    }
+
+    const returnValues = res.results[0].returnValues[0][0];
+    const reader = new BcsReader(new Uint8Array(returnValues));
+    const lockedUserProfits: LockedUserProfit[] = [];
+    reader.readVec((reader) => {
+        const length = reader.readULEB();
+        const bytes = reader.readBytes(length);
+        const profit = LockedUserProfitBcs.parse(Uint8Array.from(Array.from(bytes)));
+        lockedUserProfits.push(profit);
+    });
+
+    return lockedUserProfits;
+}
+
+export async function fetchAllUserProfits(
+    client: TypusClient,
+    input?: {
+        profitVault?: string;
+    }
+): Promise<{ user: string, profits: UserProfit[] }[]> {
+    const provider = new SuiClient({ url: client.config.rpcEndpoint });
+    const profitVaultId = input?.profitVault ?? PROFIT_VAULT;
+
+    // 1. Read ProfitVault object to get user_profits Table ID
+    const vaultResponse = await provider.getObject({
+        id: profitVaultId,
+        options: { showContent: true },
+    });
+
+    if (!vaultResponse.data?.content || vaultResponse.data.content.dataType !== "moveObject") {
+        return [];
+    }
+
+    const fields = (vaultResponse.data.content as any).fields;
+    const tableId = fields?.user_profits?.fields?.id?.id;
+
+    if (!tableId) {
+        return [];
+    }
+
+    // 2. Get all dynamic fields (user addresses) from the Table
+    let cursor: string | null = null;
+    const allUsers: string[] = [];
+
+    while (true) {
+        const dynamicFields = await provider.getDynamicFields({
+            parentId: tableId,
+            cursor,
+            limit: 50,
+        });
+
+        for (const field of dynamicFields.data) {
+            const userAddress = (field.name as any).value;
+            if (userAddress) {
+                allUsers.push(userAddress);
+            }
+        }
+
+        if (!dynamicFields.hasNextPage) {
+            break;
+        }
+        cursor = dynamicFields.nextCursor ?? null;
+    }
+
+    // 3. For each user, fetch their profits
+    const fetchUserProfitsPromises: Promise<{ user: string, profits: UserProfit[] }>[] = [];
+    for (const user of allUsers) {
+        try {
+            const fetchUserProfitsWithUser = async () => {
+                const profits = await fetchUserProfits(client, { profitVault: profitVaultId, version: PERP_VERSION, user });
+                return { user, profits };
+            }
+            fetchUserProfitsPromises.push(fetchUserProfitsWithUser());
+        } catch (e) {
+            console.error(`Failed to get profits for user ${user}:`, e);
+        }
+    }
+
+    const results = await Promise.all(fetchUserProfitsPromises);
+    return results
+}
+
+export async function fetchAllLockedUserProfits(
+    client: TypusClient,
+    input?: {
+        lockVault?: string;
+    }
+): Promise<{ user: string, lockedUserProfits: LockedUserProfit[] }[]> {
+    const provider = new SuiClient({ url: client.config.rpcEndpoint });
+
+    // 1. Read LockVault object to get locked_user_profits Table ID
+    const vaultResponse = await provider.getObject({
+        id: input?.lockVault ?? LOCK_VAULT,
+        options: { showContent: true },
+    });
+
+    if (!vaultResponse.data?.content || vaultResponse.data.content.dataType !== "moveObject") {
+        return [];
+    }
+
+    const fields = (vaultResponse.data.content as any).fields;
+    const tableId = fields?.locked_user_profits?.fields?.id?.id;
+
+    if (!tableId) {
+        return [];
+    }
+
+    // 2. Get all dynamic fields (user addresses) from the Table
+    let cursor: string | null = null;
+    const allUsers: string[] = [];
+
+    while (true) {
+        const dynamicFields = await provider.getDynamicFields({
+            parentId: tableId,
+            cursor,
+            limit: 50,
+        });
+
+        for (const field of dynamicFields.data) {
+            const userAddress = (field.name as any).value;
+            if (userAddress) {
+                allUsers.push(userAddress);
+            }
+        }
+
+        if (!dynamicFields.hasNextPage) {
+            break;
+        }
+        cursor = dynamicFields.nextCursor ?? null;
+    }
+
+    // 3. For each user, fetch their locked profits
+    const fetchLockedUserProfitsPromises: Promise<{ user: string, lockedUserProfits: LockedUserProfit[] }>[] = [];
+
+    for (const user of allUsers) {
+        try {
+            const fetchLockedUserProfitsWithUser = async () => {
+                const lockedUserProfits = await fetchLockedUserProfits(client, { lockVault: LOCK_VAULT, version: PERP_VERSION, user });
+                return { user, lockedUserProfits };
+            }
+            fetchLockedUserProfitsPromises.push(fetchLockedUserProfitsWithUser());
+        } catch (e) {
+            console.error(`Failed to get locked profits for user ${user}:`, e);
+        }
+    }
+    const results = await Promise.all(fetchLockedUserProfitsPromises);
+
+    return results;
 }

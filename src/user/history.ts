@@ -314,10 +314,10 @@ export async function parseUserHistory(raw_events) {
                         side: !related
                             ? undefined
                             : related.action === "Order Filled (Open Position)"
-                              ? related.side
-                              : related.side === "Long"
-                                ? "Short"
-                                : "Long",
+                                ? related.side
+                                : related.side === "Long"
+                                    ? "Short"
+                                    : "Long",
                         order_type: related?.order_type,
                         status: "Filled",
                         size: related?.size,
@@ -431,7 +431,7 @@ export async function getGraphQLEvents(module: string, sender: string | null, be
           `,
     });
 
-    let response = await fetch(`https://sui-${NETWORK.toLowerCase()}.mystenlabs.com/graphql`, {
+    let response = await fetch(`https://graphql.${NETWORK.toLowerCase()}.sui.io/graphql`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: graphql,
@@ -638,8 +638,8 @@ export async function getOrderMatchFromSentio(userAddress: string, startTimestam
                 x.order_type == "Open"
                     ? "Order Filled (Open Position)"
                     : x.sender == "0x978f65df8570a075298598a9965c18de9087f9e888eb3430fe20334f5c554cfd"
-                      ? "Force Close Position"
-                      : "Order Filled (Close Position)",
+                        ? "Force Close Position"
+                        : "Order Filled (Close Position)",
             typeName: "OrderFilledEvent",
             order_id: x.order_id,
             position_id: x.position_id,

@@ -8,6 +8,7 @@ import {
 } from "src/generated/typus_perp/trading";
 import { Position, TradingOrder } from "src/generated/typus_perp/position";
 import { COMPETITION_CONFIG, LP_POOL, MARKET, NETWORK, PERP_VERSION } from "..";
+import { updateOracleWithSignatureTx } from "@typus/typus-sdk/dist/src/utils";
 import { updatePyth, updateOracleWithPythUsd, splitCoins, splitCoin } from "@typus/typus-sdk/dist/src/utils";
 import { tokenType, TOKEN, typeArgToAsset, oracle } from "@typus/typus-sdk/dist/src/constants";
 import { Transaction } from "@mysten/sui/transactions";
@@ -36,6 +37,7 @@ export async function createTradingOrder(
     tx: Transaction,
     input: {
         perpIndex: string;
+        poolIndex: string;
         coins: string[];
         cToken: TOKEN;
         amount: string;
@@ -46,6 +48,7 @@ export async function createTradingOrder(
         isStopOrder: boolean;
         reduceOnly: boolean;
         linkedPositionId: string | null;
+        oracleContract?: string; // TODO: update oracle contract
         suiCoins?: string[]; // for sponsored tx
     }
 ): Promise<Transaction> {
@@ -77,10 +80,17 @@ export async function createTradingOrder(
         // no suiCoin
     }
 
-    await updatePyth(client.pythClient, tx, tokens, suiCoin);
-    for (let token of tokens) {
+    const tokensWithoutTypus = Array.from(new Set([TOKEN])).filter((token) => token !== "TYPUS");
+    await updatePyth(client.pythClient, tx, tokensWithoutTypus, suiCoin);
+    for (let token of tokensWithoutTypus) {
         updateOracleWithPythUsd(client.pythClient, tx, client.config.package.oracle, token);
     }
+
+    if (tokens.includes("TYPUS")) {
+        const oracleContract = input.oracleContract ?? "0x51fc5517f5ba4e3ba8862cd74c345e7294193c693ab41376694d1c516033e2e8";
+        tx = await updateOracleWithSignatureTx(NETWORK, tx, oracleContract, tokenType[NETWORK]["TYPUS"]);
+    }
+
     tx.add(
         _createTradingOrder({
             arguments: {
@@ -88,7 +98,7 @@ export async function createTradingOrder(
                 registry: MARKET,
                 poolRegistry: LP_POOL,
                 marketIndex: BigInt(input.perpIndex),
-                poolIndex: BigInt(input.perpIndex),
+                poolIndex: BigInt(input.poolIndex),
                 typusOracleCToken: oracle[NETWORK][TOKEN]!,
                 typusOracleTradingSymbol: oracle[NETWORK][BASE_TOKEN]!,
                 collateral: coin,

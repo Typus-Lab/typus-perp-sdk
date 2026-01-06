@@ -4,6 +4,7 @@ import { bcs, BcsReader } from "@mysten/bcs";
 
 import { oracle, SENDER, TOKEN, tokenType, typeArgToAsset } from "@typus/typus-sdk/dist/src/constants";
 import { updatePyth, updateOracleWithPythUsd, TypusConfig } from "@typus/typus-sdk/dist/src/utils";
+import { updateOracleWithSignatureTx } from "@typus/typus-sdk/dist/src/utils";
 
 import { LIQUIDITY_POOL, LP_POOL, MARKET, NETWORK, PERP_VERSION, STAKE_POOL, STAKE_POOL_VERSION, PERP_PACKAGE_ID, PROFIT_VAULT, LOCK_VAULT } from ".";
 
@@ -386,6 +387,7 @@ export async function getDeactivatingShares(
 export async function getLiquidationPriceAndPnl(
     client: TypusClient,
     input: {
+        oracle?: string;
         positions: (typeof Position.$inferType)[];
     }
 ): Promise<PositionInfo[]> {
@@ -401,9 +403,16 @@ export async function getLiquidationPriceAndPnl(
         tokens.push(BASE_TOKEN);
     }
 
-    await updatePyth(client.pythClient, tx, Array.from(new Set(tokens)));
-    for (let token of Array.from(new Set(tokens))) {
+    const tokensWithoutTypus = tokens.filter((token) => token !== "TYPUS");
+    await updatePyth(client.pythClient, tx, Array.from(new Set(tokensWithoutTypus)));
+    for (let token of Array.from(new Set(tokensWithoutTypus))) {
         updateOracleWithPythUsd(client.pythClient, tx, client.config.package.oracle, token);
+    }
+
+    if (tokens.includes("TYPUS")) {
+        // TODO: update oracle contract
+        const oracleContract = input.oracle ?? "0x51fc5517f5ba4e3ba8862cd74c345e7294193c693ab41376694d1c516033e2e8";
+        tx = await updateOracleWithSignatureTx(NETWORK, tx, oracleContract, tokenType[NETWORK]["TYPUS"]);
     }
 
     for (let position of input.positions) {

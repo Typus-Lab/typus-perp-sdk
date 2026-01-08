@@ -80,7 +80,7 @@ export async function createTradingOrder(
         // no suiCoin
     }
 
-    const tokensWithoutTypus = Array.from(new Set([TOKEN])).filter((token) => token !== "TYPUS");
+    const tokensWithoutTypus = Array.from(new Set([TOKEN, BASE_TOKEN])).filter((token) => token !== "TYPUS");
     await updatePyth(client.pythClient, tx, tokensWithoutTypus, suiCoin);
     for (let token of tokensWithoutTypus) {
         updateOracleWithPythUsd(client.pythClient, tx, client.config.package.oracle, token);

@@ -2,12 +2,12 @@ import { TOKEN } from "@typus/typus-sdk/dist/src/constants";
 import { Event, NETWORK, toSentioToken } from "src";
 
 const headers = {
-    "api-key": "ffJa6FwxeJNrQP8NZ5doEMXqdSA7XM6mT",
+    "api-key": "hCsD8shJaUbbiNLMKBG3oKhr9PL3H5EJ5",
     "Content-Type": "application/json",
 };
 
 export async function getFromSentio(event: string, userAddress: string, startTimestamp: string, cranker?: boolean): Promise<any[]> {
-    let apiUrl = "https://app.sentio.xyz/api/v1/analytics/typus/typus_perp_mainnet/sql/execute";
+    let apiUrl = "https://app.sentio.xyz/api/v1/analytics/typus/typus_perp/sql/execute";
 
     // add cranker fileter
     let crankerFilter = "";
@@ -46,7 +46,7 @@ export async function getFromSentio(event: string, userAddress: string, startTim
 }
 
 export async function getRecentTradesFromSentio(base_token?: TOKEN): Promise<any[]> {
-    let apiUrl = "https://app.sentio.xyz/api/v1/analytics/typus/typus_perp_mainnet/sql/execute";
+    let apiUrl = "https://app.sentio.xyz/api/v1/analytics/typus/typus_perp/sql/execute";
 
     let tokenFilter = "";
     if (base_token) {
@@ -148,7 +148,7 @@ export async function getTradingVolumeFromSentio(
     interval: number,
     toTimestamp?: number
 ): Promise<Map<string, Volume[]>> {
-    let apiUrl = "https://app.sentio.xyz/api/v1/insights/typus/typus_perp_mainnet/query";
+    let apiUrl = "https://app.sentio.xyz/api/v1/insights/typus/typus_perp/query";
     let requestData = {
         timeRange: {
             start: `${fromTimestamp}`,
@@ -220,7 +220,7 @@ export async function getTradingVolumeFromSentio(
 }
 
 export async function getMinuteTradingVolumeFromSentio(base_token: TOKEN, minute: number, size: number): Promise<any[]> {
-    let apiUrl = "https://app.sentio.xyz/api/v1/analytics/typus/typus_perp_mainnet/sql/execute";
+    let apiUrl = "https://app.sentio.xyz/api/v1/analytics/typus/typus_perp/sql/execute";
 
     let requestData = {
         sqlQuery: {
@@ -269,7 +269,7 @@ function parseTimestamp(s: string) {
 }
 
 export async function getTlpFeeFromSentio(fromTimestamp?: number, toTimestamp?: number): Promise<number> {
-    let apiUrl = "https://app.sentio.xyz/api/v1/insights/typus/typus_perp_mainnet/query";
+    let apiUrl = "https://app.sentio.xyz/api/v1/insights/typus/typus_perp/query";
     let requestData = {
         timeRange: {
             start: `${fromTimestamp ?? 0}`,
@@ -321,7 +321,7 @@ export async function getTlpFeeFromSentio(fromTimestamp?: number, toTimestamp?: 
 }
 
 export async function getTotalVolumeFromSentio(fromTimestamp?: number, toTimestamp?: number): Promise<number> {
-    let apiUrl = "https://app.sentio.xyz/api/v1/insights/typus/typus_perp_mainnet/query";
+    let apiUrl = "https://app.sentio.xyz/api/v1/insights/typus/typus_perp/query";
     let requestData = {
         timeRange: {
             start: `${fromTimestamp ?? 0}`,
@@ -372,7 +372,7 @@ export async function getTotalVolumeFromSentio(fromTimestamp?: number, toTimesta
 
 /** Returns Accumulated Users */
 export async function getAccumulatedUser(): Promise<number> {
-    let apiUrl = "https://app.sentio.xyz/api/v1/insights/typus/typus_perp_mainnet/query";
+    let apiUrl = "https://app.sentio.xyz/api/v1/insights/typus/typus_perp/query";
 
     let requestData = {
         timeRange: {
@@ -436,7 +436,7 @@ export async function getAccumulatedUser(): Promise<number> {
  *   { timestamp: string, value: number }[]
  */
 export async function getTlpPriceFromSentio(fromTimestamp?: number, toTimestamp?: number): Promise<{ timestamp: string; value: number }[]> {
-    let apiUrl = "https://app.sentio.xyz/api/v1/insights/typus/typus_perp_mainnet/query";
+    let apiUrl = "https://app.sentio.xyz/api/v1/insights/typus/typus_perp/query";
     let requestData = {
         timeRange: {
             start: `${fromTimestamp ?? 0}`,
@@ -481,7 +481,7 @@ export async function getTlpPriceFromSentio(fromTimestamp?: number, toTimestamp?
 }
 
 export async function getTlpComparisonFromSentio(startTimestamp: number, endTimestamp: number): Promise<tlpComparison[]> {
-    let apiUrl = "https://app.sentio.xyz/api/v1/analytics/typus/typus_perp_mainnet/sql/execute";
+    let apiUrl = "https://app.sentio.xyz/api/v1/analytics/typus/typus_perp/sql/execute";
 
     let requestData = {
         sqlQuery: {
@@ -571,7 +571,7 @@ interface tlpComparison {
 }
 
 export async function getUserPnlFromSentio(startTimestamp: number, endTimestamp: number, userAddress?: string): Promise<any[]> {
-    let apiUrl = "https://app.sentio.xyz/api/v1/analytics/typus/typus_perp_mainnet/sql/execute";
+    let apiUrl = "https://app.sentio.xyz/api/v1/analytics/typus/typus_perp/sql/execute";
 
     let userFilter = "";
     if (userAddress) {
@@ -662,7 +662,7 @@ export async function getUserPnlFromSentio(startTimestamp: number, endTimestamp:
 }
 
 export async function getLeaderboardFromSentio(startTs: number, endTs: number): Promise<any[]> {
-    let apiUrl = "https://app.sentio.xyz/api/v1/analytics/typus/typus_perp_mainnet/sql/execute";
+    let apiUrl = "https://app.sentio.xyz/api/v1/analytics/typus/typus_perp/sql/execute";
 
     let size = (10 * (endTs - startTs)) / 60 / 60 / 24; // day * 10
 

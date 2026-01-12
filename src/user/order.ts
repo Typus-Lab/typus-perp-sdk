@@ -159,6 +159,7 @@ export async function increaseCollateral(
     client: TypusClient,
     tx: Transaction,
     input: {
+        oracleContract?: string;
         coins: string[];
         amount: string;
         position: typeof Position.$inferType;
@@ -193,9 +194,15 @@ export async function increaseCollateral(
         // no suiCoin
     }
 
-    await updatePyth(client.pythClient, tx, tokens, suiCoin);
-    for (let token of tokens) {
+    const tokensWithoutTypus = Array.from(new Set([TOKEN, BASE_TOKEN])).filter((token) => token !== "TYPUS");
+    await updatePyth(client.pythClient, tx, tokensWithoutTypus, suiCoin);
+    for (let token of tokensWithoutTypus) {
         updateOracleWithPythUsd(client.pythClient, tx, client.config.package.oracle, token);
+    }
+
+    if (tokens.includes("TYPUS")) {
+        const oracleContract = input.oracleContract ?? client.config.package.oracle;
+        tx = await updateOracleWithSignatureTx(NETWORK, tx, oracleContract, tokenType[NETWORK]["TYPUS"]);
     }
     // @ts-ignore
     let marketIndex = BigInt(input.position.marketIndex);
@@ -224,6 +231,7 @@ export async function releaseCollateral(
     client: TypusClient,
     tx: Transaction,
     input: {
+        oracleContract?: string;
         position: typeof Position.$inferType;
         amount: string;
         suiCoins?: string[]; // for sponsored tx
@@ -240,9 +248,15 @@ export async function releaseCollateral(
         suiCoin = splitCoin(tx, tokenType.MAINNET.SUI, input.suiCoins!, tokens.length.toString(), client.config.sponsored);
     }
 
-    await updatePyth(client.pythClient, tx, tokens, suiCoin);
-    for (let token of tokens) {
+    const tokensWithoutTypus = Array.from(new Set([TOKEN, BASE_TOKEN])).filter((token) => token !== "TYPUS");
+    await updatePyth(client.pythClient, tx, tokensWithoutTypus, suiCoin);
+    for (let token of tokensWithoutTypus) {
         updateOracleWithPythUsd(client.pythClient, tx, client.config.package.oracle, token);
+    }
+
+    if (tokens.includes("TYPUS")) {
+        const oracleContract = input.oracleContract ?? client.config.package.oracle;
+        tx = await updateOracleWithSignatureTx(NETWORK, tx, oracleContract, tokenType[NETWORK]["TYPUS"]);
     }
 
     let cToken = tokenType[NETWORK][TOKEN];
@@ -277,6 +291,7 @@ export async function collectPositionFundingFee(
     client: TypusClient,
     tx: Transaction,
     input: {
+        oracleContract?: string;
         position: typeof Position.$inferType;
         suiCoins?: string[]; // for sponsored tx
     }
@@ -292,9 +307,15 @@ export async function collectPositionFundingFee(
         suiCoin = splitCoin(tx, tokenType.MAINNET.SUI, input.suiCoins!, tokens.length.toString(), client.config.sponsored);
     }
 
-    await updatePyth(client.pythClient, tx, tokens, suiCoin);
-    for (let token of tokens) {
+    const tokensWithoutTypus = Array.from(new Set([TOKEN, BASE_TOKEN])).filter((token) => token !== "TYPUS");
+    await updatePyth(client.pythClient, tx, tokensWithoutTypus, suiCoin);
+    for (let token of tokensWithoutTypus) {
         updateOracleWithPythUsd(client.pythClient, tx, client.config.package.oracle, token);
+    }
+
+    if (tokens.includes("TYPUS")) {
+        const oracleContract = input.oracleContract ?? client.config.package.oracle;
+        tx = await updateOracleWithSignatureTx(NETWORK, tx, oracleContract, tokenType[NETWORK]["TYPUS"]);
     }
 
     let cToken = tokenType[NETWORK][TOKEN];

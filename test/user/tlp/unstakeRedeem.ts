@@ -39,6 +39,8 @@ import { NETWORK, getLpPools, getStakePool, getStakePools, getUserStake, unstake
         user,
     });
 
+    console.dir(JSON.parse(await tx.toJSON({ client: client.jsonRpcClient })).commands[7], { depth: null });
+
     let dryrunRes = await client.devInspectTransactionBlock({
         transactionBlock: tx,
         sender: user,

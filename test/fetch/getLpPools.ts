@@ -7,7 +7,7 @@ import { getLpPool, getLpPools, NETWORK } from "src";
     let client = new TypusClient(config);
 
     let lpPools = await getLpPools(client);
-    console.log(lpPools); // 1 lpPool inclueded
+    console.dir(lpPools, { depth: null }); // 1 lpPool inclueded
 
     console.log(lpPools.map((x) => x.lp_token_type));
 

@@ -435,9 +435,13 @@ export async function getAccumulatedUser(): Promise<number> {
  * Returns
  *   { timestamp: string, value: number }[]
  */
-export async function getTlpPriceFromSentio(fromTimestamp?: number, toTimestamp?: number): Promise<{ timestamp: string; value: number }[]> {
-    let apiUrl = "https://app.sentio.xyz/api/v1/insights/typus/typus_perp/query";
+export async function getTlpPriceFromSentio(
+    fromTimestamp?: number,
+    toTimestamp?: number
+): Promise<Map<string, { timestamp: string; value: number }[]>> {
+    let apiUrl = "https://api.sentio.xyz/v1/insights/typus/typus_perp/query";
     let requestData = {
+        version: 3,
         timeRange: {
             start: `${fromTimestamp ?? 0}`,
             end: `${toTimestamp ?? now()}`,
@@ -461,6 +465,11 @@ export async function getTlpPriceFromSentio(fromTimestamp?: number, toTimestamp?
             },
         ],
         formulas: [],
+        cachePolicy: {
+            noCache: false,
+            cacheTtlSecs: 43200,
+            cacheRefreshTtlSecs: 1800,
+        },
     };
 
     let jsonData = JSON.stringify(requestData);
@@ -472,12 +481,18 @@ export async function getTlpPriceFromSentio(fromTimestamp?: number, toTimestamp?
     });
 
     let data = await response.json();
-    // console.log(data);
+    // console.dir(data, { depth: null });
 
     let samples = data.results[0].matrix.samples;
     // console.log(samples[0].values);
 
-    return samples[0].values;
+    let map = new Map<string, { timestamp: string; value: number }[]>();
+
+    samples.forEach((sample) => {
+        map.set(sample.metric.labels.index, sample.values);
+    });
+
+    return map;
 }
 
 export async function getTlpComparisonFromSentio(startTimestamp: number, endTimestamp: number): Promise<tlpComparison[]> {

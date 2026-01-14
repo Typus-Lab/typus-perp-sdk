@@ -14,7 +14,6 @@ import { tokenType, TOKEN, typeArgToAsset, oracle } from "@typus/typus-sdk/dist/
 import { Transaction } from "@mysten/sui/transactions";
 import { TypusClient } from "src/client";
 import { normalizeStructTag } from "@mysten/sui/utils";
-import { config } from "process";
 
 export function findMarketIndex(
     client: TypusClient,

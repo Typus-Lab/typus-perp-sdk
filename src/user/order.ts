@@ -14,6 +14,7 @@ import { tokenType, TOKEN, typeArgToAsset, oracle } from "@typus/typus-sdk/dist/
 import { Transaction } from "@mysten/sui/transactions";
 import { TypusClient } from "src/client";
 import { normalizeStructTag } from "@mysten/sui/utils";
+import { config } from "process";
 
 export function findMarketIndex(
     client: TypusClient,
@@ -48,7 +49,6 @@ export async function createTradingOrder(
         isStopOrder: boolean;
         reduceOnly: boolean;
         linkedPositionId: string | null;
-        oracleContract?: string; // TODO: update oracle contract
         suiCoins?: string[]; // for sponsored tx
     }
 ): Promise<Transaction> {
@@ -87,8 +87,7 @@ export async function createTradingOrder(
     }
 
     if (tokens.includes("TYPUS")) {
-        const oracleContract = input.oracleContract ?? "0x51fc5517f5ba4e3ba8862cd74c345e7294193c693ab41376694d1c516033e2e8";
-        tx = await updateOracleWithSignatureTx(NETWORK, tx, oracleContract, tokenType[NETWORK]["TYPUS"]);
+        tx = await updateOracleWithSignatureTx(NETWORK, tx, client.config.package.oracle, tokenType[NETWORK]["TYPUS"]);
     }
 
     tx.add(

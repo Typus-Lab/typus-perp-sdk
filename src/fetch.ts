@@ -410,9 +410,7 @@ export async function getLiquidationPriceAndPnl(
     }
 
     if (tokens.includes("TYPUS")) {
-        // TODO: update oracle contract
-        const oracleContract = input.oracle ?? "0x51fc5517f5ba4e3ba8862cd74c345e7294193c693ab41376694d1c516033e2e8";
-        tx = await updateOracleWithSignatureTx(NETWORK, tx, oracleContract, tokenType[NETWORK]["TYPUS"]);
+        tx = await updateOracleWithSignatureTx(NETWORK, tx, client.config.package.oracle, tokenType[NETWORK]["TYPUS"]);
     }
 
     for (let position of input.positions) {

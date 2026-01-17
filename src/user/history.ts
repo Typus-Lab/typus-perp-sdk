@@ -90,9 +90,13 @@ export async function parseUserHistory(raw_events) {
                         collateral = Number(json.collateral_in_deposit_token) / 10 ** assetToDecimal(collateral_token)!;
                     }
 
+                    const marketOrderRation = json.is_long ? 1.02 : 0.9;
+                    const isMarketOrder = Number(json.trigger_price) / Number(json.trading_pair_oracle_price) <= (marketOrderRation + 0.001)
+                        && Number(json.trigger_price) / Number(json.trading_pair_oracle_price) >= (marketOrderRation - 0.001);
+
                     var order_type: orderType = "Limit";
                     var price = json.trigger_price;
-                    if (json.filled) {
+                    if (json.filled || isMarketOrder) {
                         order_type = "Market";
                         price = json.filled_price!;
                     } else if (json.reduce_only && !json.is_stop_order) {

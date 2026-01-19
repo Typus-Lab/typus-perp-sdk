@@ -391,7 +391,7 @@ export async function getTotalVolumeFromSentio(fromTimestamp?: number, toTimesta
             {
                 metricsQuery: {
                     query: "trading_volume_usd",
-                    alias: "0",
+                    alias: "1",
                     id: "isolated_TYPUS",
                     labelSelector: {
                         base_token: "TYPUS",
@@ -411,7 +411,7 @@ export async function getTotalVolumeFromSentio(fromTimestamp?: number, toTimesta
         formulas: [
             {
                 expression: "a-isolated_TYPUS",
-                alias: "1",
+                alias: "0",
                 id: "main",
                 disabled: false,
                 functions: [],

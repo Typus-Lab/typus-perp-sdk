@@ -298,7 +298,7 @@ export async function getTlpFeeFromSentio(fromTimestamp?: number, toTimestamp?: 
             {
                 metricsQuery: {
                     query: "tlp_fee_usd",
-                    alias: "0",
+                    alias: "1",
                     id: "isolated_TYPUS",
                     labelSelector: {
                         base_token: "TYPUS",
@@ -318,7 +318,7 @@ export async function getTlpFeeFromSentio(fromTimestamp?: number, toTimestamp?: 
         formulas: [
             {
                 expression: "a-isolated_TYPUS",
-                alias: "1",
+                alias: "0",
                 id: "main",
                 disabled: false,
                 functions: [],

@@ -8,6 +8,7 @@ import {
     ManagerReducePositionEvent,
     ReleaseCollateralEvent,
 } from "../generated/typus_perp/trading";
+import { WithdrawProfitEvent } from "../generated/typus_perp/profit_vault";
 import { SwapEvent } from "../generated/typus_perp/lp_pool";
 import { getFromSentio } from "src/api/sentio";
 import { NETWORK } from "src";
@@ -25,6 +26,7 @@ export type actionType =
     | "Force Cancel Order"
     | "Force Close Position"
     | "Swap"
+    | "Claim Profit"
     | "Realize Funding";
 
 export type sideType = "Long" | "Short";
@@ -367,6 +369,38 @@ export async function parseUserHistory(raw_events) {
                     };
                     events.push(e);
                     break;
+            }
+        }
+        if (mod === "profit_vault") {
+            switch (name) {
+                case WithdrawProfitEvent.name.split("::")[2]:
+                    const profit_token = typeArgToAsset(json.token_type.name) as TOKEN;
+                    const profit_token_decimal = assetToDecimal(profit_token);
+                    const profit = Number(json.withdraw_amount) / 10 ** profit_token_decimal!;
+                    const e: Event = {
+                        action: "Claim Profit",
+                        typeName: name,
+                        order_id: undefined,
+                        position_id: undefined,
+                        market: 'TYPUS/USD',
+                        side: undefined,
+                        order_type: undefined,
+                        status: 'Filled',
+                        size: profit,
+                        base_token: profit_token,
+                        collateral: undefined,
+                        collateral_token: profit_token,
+                        price: undefined,
+                        realized_pnl: undefined,
+                        timestamp,
+                        tx_digest,
+                        dov_index: undefined,
+                        sender: "user",
+                    };
+                    console.log(e)
+                    events.push(e);
+                    break;
+
             }
         }
     });

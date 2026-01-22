@@ -13,13 +13,14 @@ import {
 } from "src";
 
 (async () => {
-    let user = "0xdc72506f269feb89822c13e66b282bc52c5724c27e575a04cbec949a13671d13";
+    let user = "0x845c22be3e771ac8d90973e9859b5088207527c158f75ba4ac9e6201ca1eedb8";
     console.log(user);
 
     // 1. pagination
     var raw_events: any[] = [];
     var beforeCursor = null;
     // get 5 pages
+    const PERP_PACKAGE_ID = "0xec30955b1e100617a02fecec432d2c845f17b2f3d68827f390563faba112513b"
     for (let i = 0; i < 5; i += 1) {
         let result = await getGraphQLEvents(PERP_PACKAGE_ID, user, beforeCursor);
         let pageInfo = result.pageInfo;
@@ -40,10 +41,10 @@ import {
     // 2. parser events
     let events = await parseUserHistory(raw_events);
     // console.log(events);
-    console.log(events.length);
-    console.log(events.at(0)?.timestamp);
+    // console.log(events.length);
+    // console.log(events.at(0)?.timestamp);
     const startTimestamp = Math.floor(new Date(events.at(0)?.timestamp!).getTime() / 1000);
-    console.log(startTimestamp);
+    //  console.log(startTimestamp);
 
     // 3. order match events from sentio
     events = await getOrderMatchFromSentio(user, startTimestamp, events);
@@ -64,7 +65,7 @@ import {
     // console.log(events);
     // console.log(events.filter((x) => x.collateral_token == "DEEP"));
 
-    saveToFile(events, "userHistory.csv");
+    // saveToFile(events, "userHistory.csv");
 })();
 
 import * as fs from "fs";

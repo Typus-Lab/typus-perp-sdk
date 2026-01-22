@@ -387,7 +387,7 @@ export async function parseUserHistory(raw_events) {
                         order_type: undefined,
                         status: 'Filled',
                         size: profit,
-                        base_token: profit_token,
+                        base_token: 'TYPUS',
                         collateral: undefined,
                         collateral_token: profit_token,
                         price: undefined,
@@ -397,7 +397,6 @@ export async function parseUserHistory(raw_events) {
                         dov_index: undefined,
                         sender: "user",
                     };
-                    console.log(e)
                     events.push(e);
                     break;
 

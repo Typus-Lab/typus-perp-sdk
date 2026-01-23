@@ -10,7 +10,7 @@ export const NETWORK = process.env.NEXT_PUBLIC_CLUSTER == "testnet" ? "TESTNET" 
 
 export const PERP_PACKAGE_ID =
     NETWORK == "MAINNET"
-        ? "0x46acca74c6bbba9d0f286e9741444485808f2be493a8baeee1bf7a6ea067c670"
+        ? "0x7809b2bb47af6244504bbee495fa44d6585f9555ee0673d089e21b14862108ed"
         : "0x94cd358f552e9dd5df837de85939a9d1d682e97480740a203121e6f4c0078853";
 
 export const STAKE_PACKAGE_ID =

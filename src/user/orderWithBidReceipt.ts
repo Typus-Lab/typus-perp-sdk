@@ -15,6 +15,7 @@ export async function createTradingOrderWithBidReceiptByAutoBid(
     tx: Transaction,
     input: {
         perpIndex: string;
+        poolIndex: string;
         cToken: TOKEN;
         tradingToken: TOKEN;
         isLong: boolean;
@@ -58,7 +59,7 @@ export async function createTradingOrderWithBidReceiptByAutoBid(
                 registry: MARKET,
                 poolRegistry: LP_POOL,
                 marketIndex: BigInt(input.perpIndex),
-                poolIndex: BigInt(input.perpIndex),
+                poolIndex: BigInt(input.poolIndex),
                 typusOracleCToken: oracle[NETWORK][TOKEN]!,
                 typusOracleTradingSymbol: oracle[NETWORK][BASE_TOKEN]!,
                 typusEcosystemVersion: client.config.version.typus,
@@ -82,6 +83,7 @@ export async function createTradingOrderWithBidReceipt(
     tx: Transaction,
     input: {
         perpIndex: string;
+        poolIndex: string;
         cToken: TOKEN;
         tradingToken: TOKEN;
         isLong: boolean;
@@ -126,7 +128,7 @@ export async function createTradingOrderWithBidReceipt(
                 registry: MARKET,
                 poolRegistry: LP_POOL,
                 marketIndex: BigInt(input.perpIndex),
-                poolIndex: BigInt(input.perpIndex),
+                poolIndex: BigInt(input.poolIndex),
                 typusOracleCToken: oracle[NETWORK][TOKEN]!,
                 typusOracleTradingSymbol: oracle[NETWORK][BASE_TOKEN]!,
                 typusEcosystemVersion: client.config.version.typus,

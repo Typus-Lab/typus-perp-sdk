@@ -32,6 +32,8 @@ export const Position = new MoveStruct({
         id: object.UID,
         /** The timestamp when the position was created. */
         create_ts_ms: bcs.u64(),
+        /** The timestamp when the position was last updated. */
+        update_ts_ms: bcs.u64(),
         /** The ID of the position. */
         position_id: bcs.u64(),
         /** A vector of the linked order IDs. */

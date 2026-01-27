@@ -102,6 +102,8 @@ export const MarketConfig = new MoveStruct({
         funding_interval_ts_ms: bcs.u64(),
         /** The experience multiplier. */
         exp_multiplier: bcs.u64(),
+        /** The cool down threshold in milliseconds. */
+        cool_down_threshold_ts_ms: bcs.u64(),
         /** Padding for future use. */
         u64_padding: bcs.vector(bcs.u64()),
     },

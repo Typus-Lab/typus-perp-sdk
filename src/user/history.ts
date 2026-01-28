@@ -676,7 +676,7 @@ export async function getOrderMatchFromSentio(userAddress: string, startTimestam
                     ? "Order Filled (Open Position)"
                     : x.sender == "0x978f65df8570a075298598a9965c18de9087f9e888eb3430fe20334f5c554cfd"
                         ? "Force Close Position"
-                        : "Order Filled (Close Position)",
+                        : x.order_type == "Increase" ? "Order Filled (Increase Position)" : "Order Filled (Close Position)",
             typeName: "OrderFilledEvent",
             order_id: x.order_id,
             position_id: x.position_id,

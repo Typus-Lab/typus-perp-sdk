@@ -2,13 +2,52 @@ import {
     createTradingOrderWithBidReceipt as _createTradingOrderWithBidReceipt,
     reduceOptionCollateralPositionSize as _reduceOptionCollateralPositionSize,
 } from "src/generated/typus_perp/trading";
-import { Transaction } from "@mysten/sui/transactions";
+import { Transaction, TransactionObjectArgument } from "@mysten/sui/transactions";
 import { updatePyth, updateOracleWithPythUsd, splitCoin } from "@typus/typus-sdk/dist/src/utils";
 import { tokenType, TOKEN, oracle } from "@typus/typus-sdk/dist/src/constants";
 import { getSplitBidReceiptTx } from "@typus/typus-sdk/dist/src/typus-dov-single-v2";
 import { getWithdrawBidReceiptTx } from "@typus/typus-sdk/dist/src/auto-bid/user-entry";
 import { COMPETITION_CONFIG, LP_POOL, MARKET, NETWORK, PERP_VERSION } from "..";
 import { TypusClient } from "src/client";
+
+export function splitBidReceiptTx(
+    client: TypusClient,
+    tx: Transaction,
+    input: {
+        index: string;
+        receipts: TransactionObjectArgument[];
+        share?: string;
+        recipient: string;
+    }
+) {
+    let result = tx.moveCall({
+        target: `${client.config.package.dovSingle}::tds_user_entry::simple_split_bid_receipt`,
+        typeArguments: [],
+        arguments: [
+            tx.object(client.config.registry.dov.dovSingle),
+            tx.pure.u64(input.index),
+            tx.makeMoveVec({
+                type: `${client.config.packageOrigin.framework}::vault::TypusBidReceipt`,
+                elements: input.receipts.map((receipt) => tx.object(receipt)),
+            }),
+            tx.pure.option("u64", input.share),
+        ],
+    });
+
+    let unwrap0 = tx.moveCall({
+        target: `0x1::option::destroy_some`,
+        typeArguments: [`${client.config.packageOrigin.framework}::vault::TypusBidReceipt`],
+        arguments: [tx.object(result[0])],
+    });
+
+    tx.moveCall({
+        target: `${client.config.package.framework}::vault::transfer_bid_receipt`,
+        typeArguments: [],
+        arguments: [tx.object(result[1]), tx.pure.address(input.recipient)],
+    });
+
+    return unwrap0;
+}
 
 export async function createTradingOrderWithBidReceiptByAutoBid(
     client: TypusClient,
@@ -43,12 +82,25 @@ export async function createTradingOrderWithBidReceiptByAutoBid(
         updateOracleWithPythUsd(client.pythClient, tx, client.config.package.oracle, token);
     }
 
-    let collateralBidReceipt = getWithdrawBidReceiptTx(client.config, tx, {
+    let withdrawBidReceipt = getWithdrawBidReceiptTx(client.config, tx, {
         vaultIndex: input.dovIndex,
         signalIndex: input.signalIndex,
         strategyIndex: input.strategyIndex,
         user: input.user,
     });
+
+    let collateralBidReceipt = withdrawBidReceipt;
+
+    // split bid receipt
+    if (input.share) {
+        let splitBidReceipt = splitBidReceiptTx(client, tx, {
+            index: input.dovIndex,
+            receipts: [withdrawBidReceipt],
+            share: input.share, // if undefined, merge all receipts
+            recipient: input.user,
+        });
+        collateralBidReceipt = splitBidReceipt;
+    }
 
     let cToken = tokenType[NETWORK][TOKEN];
     let bToken = tokenType[NETWORK][input.bToken];

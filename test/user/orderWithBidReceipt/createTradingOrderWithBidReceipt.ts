@@ -34,6 +34,7 @@ import { TOKEN } from "@typus/typus-sdk/dist/src/constants";
 
     tx = await createTradingOrderWithBidReceipt(client, tx, {
         perpIndex: perpIndex!.toString(),
+        poolIndex: perpIndex!.toString(),
         cToken,
         tradingToken,
         isLong,

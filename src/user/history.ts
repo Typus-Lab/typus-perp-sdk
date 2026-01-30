@@ -666,7 +666,6 @@ export async function getCancelOrderFromSentio(userAddress: string, startTimesta
 
 export async function getOrderMatchFromSentio(userAddress: string, startTimestamp: number, events: Event[]): Promise<Event[]> {
     const datas = await getFromSentio("OrderFilled", userAddress, startTimestamp.toString(), true);
-    // console.log(datas);
     let order_match = datas.map((x) => {
         let base_token = toToken(x.base_token);
 
@@ -676,7 +675,7 @@ export async function getOrderMatchFromSentio(userAddress: string, startTimestam
                     ? "Order Filled (Open Position)"
                     : x.sender == "0x978f65df8570a075298598a9965c18de9087f9e888eb3430fe20334f5c554cfd"
                         ? "Force Close Position"
-                        : x.order_type == "Increase" ? "Order Filled (Increase Position)" : "Order Filled (Close Position)",
+                        : "Order Filled (Close Position)",
             typeName: "OrderFilledEvent",
             order_id: x.order_id,
             position_id: x.position_id,
@@ -709,6 +708,12 @@ export async function getOrderMatchFromSentio(userAddress: string, startTimestam
             x.order_type = related.order_type;
             x.collateral = related.collateral;
             x.dov_index = related.dov_index;
+            // it mean filled by matching cranker
+            if (x.action === "Order Filled (Close Position)") {
+                if (x.side === related.side) {
+                    x.action = "Order Filled (Increase Position)"
+                }
+            }
         } else {
             x.order_type = "Market";
             let related = events.findLast((e) => e.position_id == x.position_id && e.market == x.market);

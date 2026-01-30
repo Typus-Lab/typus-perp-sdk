@@ -1,1 +1,0 @@
-export { PERP_PACKAGE_ID as PACKAGE_ID, PERP_PUBLISHED_AT as PUBLISHED_AT, PERP_PKG_V1 as PKG_V1 } from "../index";

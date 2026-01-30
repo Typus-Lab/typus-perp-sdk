@@ -1,18 +1,20 @@
 import { TypusConfig } from "@typus/typus-sdk/dist/src/utils";
-import { getUserStake, getDeactivatingShares, NETWORK, getUserStakeById } from "src";
+import { TypusClient } from "src/client";
+import { getUserStake, getDeactivatingShares, NETWORK } from "src";
 
 (async () => {
     let config = await TypusConfig.default(NETWORK, null);
+    let client = new TypusClient(config);
 
-    let user = "0xd15f079d5f60b8fdfdcf3ca66c0d3473790c758b04b6418929d5d2991c5443ee";
+    let user = "0xb6c7e3b1c61ee81516a8317f221daa035f1503e0ac3ae7a50b61834bc7a3ead9";
     console.log(user);
 
-    let stakes = await getUserStake(config, user);
+    let stakes = await getUserStake(client, {
+        user,
+        indexes: ["0", "1"],
+    });
     console.dir(stakes, { depth: null });
 
-    // let stakes = await getUserStakeById(config, "54");
-    // console.dir(stakes, { depth: null });
-
-    let deactivatingShares = await getDeactivatingShares(config, user);
+    let deactivatingShares = await getDeactivatingShares(client, { user, indexes: [] });
     console.dir(deactivatingShares, { depth: null });
 })();

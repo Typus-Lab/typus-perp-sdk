@@ -1,50 +1,54 @@
 import "@typus/typus-sdk/dist/src/utils/load_env";
 import { TypusConfig } from "@typus/typus-sdk/dist/src/utils";
-import { SuiClient } from "@mysten/sui/client";
+import { TypusClient } from "src/client";
+
 import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519";
 import { Transaction } from "@mysten/sui/transactions";
-import { NETWORK, getLpPools, getStakePool, getUserStake, unstake } from "src";
-import { createPythClient } from "@typus/typus-sdk/dist/src/utils";
+import { NETWORK, getLpPools, getStakePool, getStakePools, getUserStake, unstake } from "src";
 
 (async () => {
     let keypair = Ed25519Keypair.deriveKeypair(String(process.env.MNEMONIC));
     let config = await TypusConfig.default(NETWORK, null);
-    let provider = new SuiClient({ url: config.rpcEndpoint });
+    let client = new TypusClient(config);
 
     let user = keypair.toSuiAddress();
     console.log(user);
 
-    let lpPools = await getLpPools(config);
-    let lpPool = lpPools[0];
+    const index = 0;
+
+    let lpPools = await getLpPools(client);
+    let lpPool = lpPools[index];
     // console.log(lpPool);
 
-    let pythClient = createPythClient(provider, NETWORK);
+    let stakePools = await getStakePools(client);
+    console.log(stakePools);
+
+    let stakePool = stakePools[index];
+    console.log(stakePool);
 
     // 1. Get user's stake
-    let stake = await getUserStake(config, user);
-    console.log(stake);
-
-    // 2. StakePool
-    let stakePool = await getStakePool(config);
-    // console.log(stakePool);
+    let stakes = await getUserStake(client, { user, indexes: ["0", "1"] });
+    console.log(stakes);
 
     let tx = new Transaction();
 
-    await unstake(config, tx, {
-        userShareId: stake![0].userShareId.toString(),
+    await unstake(client, tx, {
+        userShareId: stakes[0][0]!.user_share_id.toString(),
         lpPool,
         stakePool,
-        share: "1000000000",
+        share: "10000000",
         user,
     });
 
-    let dryrunRes = await provider.devInspectTransactionBlock({
+    console.dir(JSON.parse(await tx.toJSON({ client: client.jsonRpcClient })).commands[0], { depth: null });
+
+    let dryrunRes = await client.devInspectTransactionBlock({
         transactionBlock: tx,
         sender: user,
     });
     console.log(dryrunRes.events.filter((e) => e.type.endsWith("UnstakeEvent")));
 
-    let res = await provider.signAndExecuteTransaction({ signer: keypair, transaction: tx });
+    let res = await client.signAndExecuteTransaction({ signer: keypair, transaction: tx });
     console.log(res);
     // https://testnet.suivision.xyz/txblock/EvBgQwKFay8YMYDG9WtStsfvR7MzhPa4nu5aKMgeptzX?tab=Events
 })();

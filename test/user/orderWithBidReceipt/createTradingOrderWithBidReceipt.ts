@@ -1,21 +1,18 @@
 import { TypusConfig } from "@typus/typus-sdk/dist/src/utils";
-import { SuiClient } from "@mysten/sui/client";
+import { TypusClient } from "src/client";
 import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519";
 import { Transaction } from "@mysten/sui/transactions";
-import { createTradingOrderWithBidReceipt, NETWORK } from "src";
-import { createPythClient } from "@typus/typus-sdk/dist/src/utils";
+import { createTradingOrderWithBidReceipt, findMarketIndex, getMarkets, NETWORK } from "src";
 import "@typus/typus-sdk/dist/src/utils/load_env";
 import { TOKEN } from "@typus/typus-sdk/dist/src/constants";
 
 (async () => {
     let keypair = Ed25519Keypair.deriveKeypair(String(process.env.MNEMONIC));
     let config = await TypusConfig.default(NETWORK, null);
-    let provider = new SuiClient({ url: config.rpcEndpoint });
+    let client = new TypusClient(config);
 
     let user = keypair.toSuiAddress();
     console.log(user);
-
-    let pythClient = createPythClient(provider, NETWORK);
 
     var tx = new Transaction();
 
@@ -30,7 +27,13 @@ import { TOKEN } from "@typus/typus-sdk/dist/src/constants";
     let isLong = false; // call => short, put => long
     let share: string | undefined = "300000";
 
-    tx = await createTradingOrderWithBidReceipt(config, tx, pythClient, {
+    let markets = await getMarkets(client, { indexes: ["0", "1"] });
+    let marketsOnly = markets.map((x) => x[0]);
+    let perpIndex = findMarketIndex(client, { markets: marketsOnly, tradingToken });
+    console.log("perpIndex: ", perpIndex);
+
+    tx = await createTradingOrderWithBidReceipt(client, tx, {
+        perpIndex: perpIndex!.toString(),
         cToken,
         tradingToken,
         isLong,
@@ -41,14 +44,16 @@ import { TOKEN } from "@typus/typus-sdk/dist/src/constants";
         share,
     });
 
-    let dryrunRes = await provider.devInspectTransactionBlock({
+    console.log(tx);
+
+    let dryrunRes = await client.devInspectTransactionBlock({
         transactionBlock: tx,
         sender: user,
     });
     console.log(dryrunRes.events.filter((e) => e.type.endsWith("CreateTradingOrderWithBidReceiptsEvent")));
     console.log(dryrunRes.events.filter((e) => e.type.endsWith("OrderFilledEvent"))); // if the order is not filled, there will be no OrderFilledEvent
 
-    let res = await provider.signAndExecuteTransaction({ signer: keypair, transaction: tx });
+    let res = await client.signAndExecuteTransaction({ signer: keypair, transaction: tx });
     console.log(res);
     // https://testnet.suivision.xyz/txblock/9BwZRXhRqYxeP6k3NavsVX1yQQjTfJbPBYijDPfaPHPH
 })();

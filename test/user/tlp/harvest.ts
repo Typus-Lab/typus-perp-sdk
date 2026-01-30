@@ -1,35 +1,45 @@
 import "@typus/typus-sdk/dist/src/utils/load_env";
 import { TypusConfig } from "@typus/typus-sdk/dist/src/utils";
-import { SuiClient } from "@mysten/sui/client";
+import { TypusClient } from "src/client";
+
 import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519";
 import { Transaction } from "@mysten/sui/transactions";
-import { getStakePool, getUserStake, harvestStakeReward, NETWORK } from "src";
+import { getStakePool, getStakePools, getUserStake, harvestStakeReward, NETWORK } from "src";
 
 (async () => {
     let keypair = Ed25519Keypair.deriveKeypair(String(process.env.MNEMONIC));
     let config = await TypusConfig.default(NETWORK, null);
-    let provider = new SuiClient({ url: config.rpcEndpoint });
+    let client = new TypusClient(config);
 
     let user = keypair.toSuiAddress();
     console.log(user);
 
-    // 1. Get user's stake
-    let stake = await getUserStake(config, user);
-    console.log(stake);
+    const index = 0;
 
-    // 2. StakePool
-    let stakePool = await getStakePool(config);
+    let stakePools = await getStakePools(client);
+    let stakePool = stakePools[index];
+
     console.log(stakePool);
+
+    let stakes = await getUserStake(client, {
+        user,
+        indexes: [
+            ...Array(stakePools.length)
+                .keys()
+                .map((x) => x.toString()),
+        ],
+    });
+    console.log(stakes);
 
     let tx = new Transaction();
 
-    harvestStakeReward(config, tx, {
+    harvestStakeReward(client, tx, {
         stakePool,
         userShareId: "0",
         user,
     });
 
-    let dryrunRes = await provider.devInspectTransactionBlock({
+    let dryrunRes = await client.devInspectTransactionBlock({
         transactionBlock: tx,
         sender: user,
     });
@@ -42,7 +52,7 @@ import { getStakePool, getUserStake, harvestStakeReward, NETWORK } from "src";
         console.log(`Sui incentive amount: ${harvest_amount / 10e9}`);
     }
 
-    let res = await provider.signAndExecuteTransaction({ signer: keypair, transaction: tx });
+    let res = await client.signAndExecuteTransaction({ signer: keypair, transaction: tx });
     console.log(res);
     // https://testnet.suivision.xyz/txblock/EvBgQwKFay8YMYDG9WtStsfvR7MzhPa4nu5aKMgeptzX?tab=Events
 })();

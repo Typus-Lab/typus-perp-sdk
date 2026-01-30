@@ -1,19 +1,28 @@
 {
     "name": "@typus/typus-perp-sdk",
-    "version": "1.1.32",
+    "version": "1.1.32-codegen-exp35",
     "repository": "https://github.com/Typus-Lab/typus-perp-sdk.git",
     "author": "Typus",
     "description": "typus perp sdk",
     "license": "MIT",
     "dependencies": {
-        "@typus/typus-sdk": "1.8.24"
+        "@mysten/bcs": "1.9.2",
+        "@mysten/sui": "1.44.0",
+        "@typus/typus-sdk": "1.8.32"
+    },
+    "resolutions": {
+        "@mysten/bcs": "1.9.2",
+        "@mysten/sui": "1.44.0",
+        "@pythnetwork/pyth-sui-js": "2.3.0"
     },
     "devDependencies": {
         "@types/bs58": "^4.0.1",
         "@types/camelcase-keys-deep": "^0.1.2",
         "@types/expect": "^24.3.0",
         "@types/mocha": "^10.0.1",
+        "@types/node": "^24.10.1",
         "@types/rx": "^4.1.2",
+        "axios": "^1.13.2",
         "prettier": "^3.0.0",
         "ts-node": "^10.9.2",
         "tsc-alias": "^1.8.10",

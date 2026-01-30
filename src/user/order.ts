@@ -1,21 +1,43 @@
 import {
-    createTradingOrderV2 as _createTradingOrder,
+    createTradingOrder as _createTradingOrder,
     cancelTradingOrder as _cancelTradingOrder,
     increaseCollateral as _increaseCollateral,
     releaseCollateral as _releaseCollateral,
     collectPositionFundingFee as _collectPositionFundingFee,
-} from "../typus_perp/trading/functions";
-import { Position, TradingOrder } from "../typus_perp/position/structs";
+    Markets,
+} from "src/generated/typus_perp/trading";
+import { Position, TradingOrder } from "src/generated/typus_perp/position";
 import { COMPETITION_CONFIG, LP_POOL, MARKET, NETWORK, PERP_VERSION } from "..";
-import { PythClient, updatePyth, TypusConfig, updateOracleWithPythUsd, splitCoins, splitCoin } from "@typus/typus-sdk/dist/src/utils";
-import { CLOCK, tokenType, TOKEN, typeArgToAsset, oracle } from "@typus/typus-sdk/dist/src/constants";
-import { Argument, Transaction } from "@mysten/sui/transactions";
+import { updateOracleWithSignatureTx } from "@typus/typus-sdk/dist/src/utils";
+import { updatePyth, updateOracleWithPythUsd, splitCoins, splitCoin } from "@typus/typus-sdk/dist/src/utils";
+import { tokenType, TOKEN, typeArgToAsset, oracle } from "@typus/typus-sdk/dist/src/constants";
+import { Transaction } from "@mysten/sui/transactions";
+import { TypusClient } from "src/client";
+import { normalizeStructTag } from "@mysten/sui/utils";
+
+export function findMarketIndex(
+    client: TypusClient,
+    input: {
+        markets: (typeof Markets.$inferType)[];
+        tradingToken: TOKEN;
+    }
+) {
+    let target = tokenType[client.config.network][input.tradingToken];
+    for (let i = 0; i < input.markets.length; i++) {
+        for (let symbol of input.markets[i].symbols) {
+            if (normalizeStructTag(symbol.name) == target) {
+                return i;
+            }
+        }
+    }
+}
 
 export async function createTradingOrder(
-    config: TypusConfig,
+    client: TypusClient,
     tx: Transaction,
-    pythClient: PythClient,
     input: {
+        perpIndex: string;
+        poolIndex: string;
         coins: string[];
         cToken: TOKEN;
         amount: string;
@@ -40,44 +62,54 @@ export async function createTradingOrder(
     let coin;
     let suiCoin;
 
-    if (TOKEN == "SUI" && config.sponsored) {
+    if (TOKEN == "SUI" && client.config.sponsored) {
         // split together
-        [coin, suiCoin] = splitCoins(tx, tokenType.MAINNET.SUI, input.coins, [input.amount, tokens.length.toString()], config.sponsored);
-    } else if (config.sponsored) {
-        coin = splitCoin(tx, cToken, input.coins, input.amount, config.sponsored);
-        suiCoin = splitCoin(tx, tokenType.MAINNET.SUI, input.suiCoins!, tokens.length.toString(), config.sponsored);
+        [coin, suiCoin] = splitCoins(
+            tx,
+            tokenType.MAINNET.SUI,
+            input.coins,
+            [input.amount, tokens.length.toString()],
+            client.config.sponsored
+        );
+    } else if (client.config.sponsored) {
+        coin = splitCoin(tx, cToken, input.coins, input.amount, client.config.sponsored);
+        suiCoin = splitCoin(tx, tokenType.MAINNET.SUI, input.suiCoins!, tokens.length.toString(), client.config.sponsored);
     } else {
-        coin = splitCoin(tx, cToken, input.coins, input.amount, config.sponsored);
+        coin = splitCoin(tx, cToken, input.coins, input.amount, client.config.sponsored);
         // no suiCoin
     }
 
-    await updatePyth(pythClient, tx, tokens, suiCoin);
-    for (let token of tokens) {
-        updateOracleWithPythUsd(pythClient, tx, config.package.oracle, token);
+    const tokensWithoutTypus = Array.from(new Set([TOKEN, BASE_TOKEN])).filter((token) => token !== "TYPUS");
+    await updatePyth(client.pythClient, tx, tokensWithoutTypus, suiCoin);
+    for (let token of tokensWithoutTypus) {
+        updateOracleWithPythUsd(client.pythClient, tx, client.config.package.oracle, token);
     }
 
-    _createTradingOrder(tx, [cToken, baseToken], {
-        version: PERP_VERSION,
-        registry: MARKET,
-        poolRegistry: LP_POOL,
-        marketIndex: BigInt(0),
-        poolIndex: BigInt(0),
-        typusOracleCToken: oracle[NETWORK][TOKEN]!,
-        typusOracleTradingSymbol: oracle[NETWORK][BASE_TOKEN]!,
-        clock: CLOCK,
-        typusEcosystemVersion: config.version.typus,
-        typusUserRegistry: config.registry.typus.user,
-        typusLeaderboardRegistry: config.registry.typus.leaderboard,
-        collateral: coin,
-        size: BigInt(input.size),
-        triggerPrice: BigInt(input.triggerPrice),
-        isLong: input.isLong,
-        isStopOrder: input.isStopOrder,
-        reduceOnly: input.reduceOnly,
-        linkedPositionId: input.linkedPositionId ? BigInt(input.linkedPositionId) : null,
-        tailsStakingRegistry: config.registry.typus.tailsStaking,
-        competitionConfig: COMPETITION_CONFIG,
-    });
+    if (tokens.includes("TYPUS")) {
+        tx = await updateOracleWithSignatureTx(NETWORK, tx, client.config.package.oracle, tokenType[NETWORK]["TYPUS"]);
+    }
+
+    tx.add(
+        _createTradingOrder({
+            arguments: {
+                version: PERP_VERSION,
+                registry: MARKET,
+                poolRegistry: LP_POOL,
+                marketIndex: BigInt(input.perpIndex),
+                poolIndex: BigInt(input.poolIndex),
+                typusOracleCToken: oracle[NETWORK][TOKEN]!,
+                typusOracleTradingSymbol: oracle[NETWORK][BASE_TOKEN]!,
+                collateral: coin,
+                size: BigInt(input.size),
+                triggerPrice: BigInt(input.triggerPrice),
+                isLong: input.isLong,
+                isStopOrder: input.isStopOrder,
+                reduceOnly: input.reduceOnly,
+                linkedPositionId: input.linkedPositionId ? BigInt(input.linkedPositionId) : null,
+            },
+            typeArguments: [cToken, baseToken],
+        })
+    );
 
     return tx;
 }
@@ -91,24 +123,30 @@ export function zeroCoin(tx: Transaction, typeArgs: [string]) {
 }
 
 export async function cancelTradingOrder(
-    config: TypusConfig,
+    client: TypusClient,
     tx: Transaction,
     input: {
-        order: TradingOrder;
+        order: typeof TradingOrder.$inferType;
         user: string;
     }
 ): Promise<Transaction> {
-    let cToken = "0x" + input.order.collateralToken.name;
-    let BASE_TOKEN = "0x" + input.order.symbol.baseToken.name;
+    let cToken = "0x" + input.order.collateral_token.name;
+    let BASE_TOKEN = "0x" + input.order.symbol.base_token.name;
 
-    let coin = _cancelTradingOrder(tx, [cToken, BASE_TOKEN], {
-        version: PERP_VERSION,
-        registry: MARKET,
-        marketIndex: BigInt(0),
-        orderId: input.order.orderId,
-        triggerPrice: input.order.triggerPrice,
-        orderUser: null,
-    });
+    let coin = tx.add(
+        _cancelTradingOrder({
+            arguments: {
+                version: PERP_VERSION,
+                registry: MARKET,
+                // @ts-ignore
+                marketIndex: BigInt(input.order.marketIndex),
+                orderId: BigInt(input.order.order_id),
+                triggerPrice: BigInt(input.order.trigger_price),
+                orderUser: null,
+            },
+            typeArguments: [cToken, BASE_TOKEN],
+        })
+    );
 
     tx.transferObjects([coin], input.user);
 
@@ -116,19 +154,19 @@ export async function cancelTradingOrder(
 }
 
 export async function increaseCollateral(
-    config: TypusConfig,
+    client: TypusClient,
     tx: Transaction,
-    pythClient: PythClient,
     input: {
+        oracleContract?: string;
         coins: string[];
         amount: string;
-        position: Position;
+        position: typeof Position.$inferType;
         suiCoins?: string[]; // for sponsored tx
     }
 ): Promise<Transaction> {
     // parse from Position
-    let TOKEN = typeArgToAsset(input.position.collateralToken.name);
-    let BASE_TOKEN = typeArgToAsset(input.position.symbol.baseToken.name);
+    let TOKEN = typeArgToAsset(input.position.collateral_token.name);
+    let BASE_TOKEN = typeArgToAsset(input.position.symbol.base_token.name);
     let tokens = Array.from(new Set([TOKEN, BASE_TOKEN]));
 
     let cToken = tokenType[NETWORK][TOKEN];
@@ -137,79 +175,110 @@ export async function increaseCollateral(
     let coin;
     let suiCoin;
 
-    if (TOKEN == "SUI" && config.sponsored) {
+    if (TOKEN == "SUI" && client.config.sponsored) {
         // split together
-        [coin, suiCoin] = splitCoins(tx, tokenType.MAINNET.SUI, input.coins, [input.amount, tokens.length.toString()], config.sponsored);
-    } else if (config.sponsored) {
-        coin = splitCoin(tx, cToken, input.coins, input.amount, config.sponsored);
-        suiCoin = splitCoin(tx, tokenType.MAINNET.SUI, input.suiCoins!, tokens.length.toString(), config.sponsored);
+        [coin, suiCoin] = splitCoins(
+            tx,
+            tokenType.MAINNET.SUI,
+            input.coins,
+            [input.amount, tokens.length.toString()],
+            client.config.sponsored
+        );
+    } else if (client.config.sponsored) {
+        coin = splitCoin(tx, cToken, input.coins, input.amount, client.config.sponsored);
+        suiCoin = splitCoin(tx, tokenType.MAINNET.SUI, input.suiCoins!, tokens.length.toString(), client.config.sponsored);
     } else {
-        coin = splitCoin(tx, cToken, input.coins, input.amount, config.sponsored);
+        coin = splitCoin(tx, cToken, input.coins, input.amount, client.config.sponsored);
         // no suiCoin
     }
 
-    await updatePyth(pythClient, tx, tokens, suiCoin);
-    for (let token of tokens) {
-        updateOracleWithPythUsd(pythClient, tx, config.package.oracle, token);
+    const tokensWithoutTypus = Array.from(new Set([TOKEN, BASE_TOKEN])).filter((token) => token !== "TYPUS");
+    await updatePyth(client.pythClient, tx, tokensWithoutTypus, suiCoin);
+    for (let token of tokensWithoutTypus) {
+        updateOracleWithPythUsd(client.pythClient, tx, client.config.package.oracle, token);
     }
 
-    _increaseCollateral(tx, [cToken, baseToken], {
-        version: PERP_VERSION,
-        registry: MARKET,
-        poolRegistry: LP_POOL,
-        marketIndex: BigInt(0),
-        poolIndex: BigInt(0),
-        typusOracleCToken: oracle[NETWORK][TOKEN]!,
-        typusOracleTradingSymbol: oracle[NETWORK][BASE_TOKEN]!,
-        clock: CLOCK,
-        positionId: BigInt(input.position.positionId),
-        collateral: coin,
-    });
+    if (tokens.includes("TYPUS")) {
+        const oracleContract = input.oracleContract ?? client.config.package.oracle;
+        tx = await updateOracleWithSignatureTx(NETWORK, tx, oracleContract, tokenType[NETWORK]["TYPUS"]);
+    }
+    // @ts-ignore
+    let marketIndex = BigInt(input.position.marketIndex);
+
+    tx.add(
+        _increaseCollateral({
+            arguments: {
+                version: PERP_VERSION,
+                registry: MARKET,
+                poolRegistry: LP_POOL,
+                marketIndex: marketIndex,
+                poolIndex: marketIndex,
+                typusOracleCToken: oracle[NETWORK][TOKEN]!,
+                typusOracleTradingSymbol: oracle[NETWORK][BASE_TOKEN]!,
+                positionId: BigInt(input.position.position_id),
+                collateral: coin,
+            },
+            typeArguments: [cToken, baseToken],
+        })
+    );
 
     return tx;
 }
 
 export async function releaseCollateral(
-    config: TypusConfig,
+    client: TypusClient,
     tx: Transaction,
-    pythClient: PythClient,
     input: {
-        position: Position;
+        oracleContract?: string;
+        position: typeof Position.$inferType;
         amount: string;
         suiCoins?: string[]; // for sponsored tx
     }
 ): Promise<Transaction> {
     // parse from Position
-    let TOKEN = typeArgToAsset(input.position.collateralToken.name);
-    let BASE_TOKEN = typeArgToAsset(input.position.symbol.baseToken.name);
+    let TOKEN = typeArgToAsset(input.position.collateral_token.name);
+    let BASE_TOKEN = typeArgToAsset(input.position.symbol.base_token.name);
 
     let tokens = Array.from(new Set([TOKEN, BASE_TOKEN]));
 
     let suiCoin;
-    if (config.sponsored) {
-        suiCoin = splitCoin(tx, tokenType.MAINNET.SUI, input.suiCoins!, tokens.length.toString(), config.sponsored);
+    if (client.config.sponsored) {
+        suiCoin = splitCoin(tx, tokenType.MAINNET.SUI, input.suiCoins!, tokens.length.toString(), client.config.sponsored);
     }
 
-    await updatePyth(pythClient, tx, tokens, suiCoin);
-    for (let token of tokens) {
-        updateOracleWithPythUsd(pythClient, tx, config.package.oracle, token);
+    const tokensWithoutTypus = Array.from(new Set([TOKEN, BASE_TOKEN])).filter((token) => token !== "TYPUS");
+    await updatePyth(client.pythClient, tx, tokensWithoutTypus, suiCoin);
+    for (let token of tokensWithoutTypus) {
+        updateOracleWithPythUsd(client.pythClient, tx, client.config.package.oracle, token);
+    }
+
+    if (tokens.includes("TYPUS")) {
+        const oracleContract = input.oracleContract ?? client.config.package.oracle;
+        tx = await updateOracleWithSignatureTx(NETWORK, tx, oracleContract, tokenType[NETWORK]["TYPUS"]);
     }
 
     let cToken = tokenType[NETWORK][TOKEN];
     let baseToken = tokenType[NETWORK][BASE_TOKEN];
 
-    let coin = _releaseCollateral(tx, [cToken, baseToken], {
-        version: PERP_VERSION,
-        registry: MARKET,
-        poolRegistry: LP_POOL,
-        marketIndex: BigInt(0),
-        poolIndex: BigInt(0),
-        typusOracleCToken: oracle[NETWORK][TOKEN]!,
-        typusOracleTradingSymbol: oracle[NETWORK][BASE_TOKEN]!,
-        clock: CLOCK,
-        positionId: BigInt(input.position.positionId),
-        releaseAmount: BigInt(input.amount),
-    });
+    // @ts-ignore
+    let marketIndex = BigInt(input.position.marketIndex);
+
+    let coin = tx.add(
+        _releaseCollateral({
+            arguments: {
+                version: PERP_VERSION,
+                registry: MARKET,
+                poolRegistry: LP_POOL,
+                marketIndex: marketIndex,
+                poolIndex: marketIndex,
+                typusOracleCToken: oracle[NETWORK][TOKEN]!,
+                typusOracleTradingSymbol: oracle[NETWORK][BASE_TOKEN]!,
+                positionId: BigInt(input.position.position_id),
+                releaseAmount: BigInt(input.amount),
+            },
+            typeArguments: [cToken, baseToken],
+        })
+    );
 
     tx.transferObjects([coin], input.position.user);
 
@@ -217,44 +286,57 @@ export async function releaseCollateral(
 }
 
 export async function collectPositionFundingFee(
-    config: TypusConfig,
+    client: TypusClient,
     tx: Transaction,
-    pythClient: PythClient,
     input: {
-        position: Position;
+        oracleContract?: string;
+        position: typeof Position.$inferType;
         suiCoins?: string[]; // for sponsored tx
     }
 ): Promise<Transaction> {
     // parse from Position
-    let TOKEN = typeArgToAsset(input.position.collateralToken.name);
-    let BASE_TOKEN = typeArgToAsset(input.position.symbol.baseToken.name);
+    let TOKEN = typeArgToAsset(input.position.collateral_token.name);
+    let BASE_TOKEN = typeArgToAsset(input.position.symbol.base_token.name);
 
     let tokens = Array.from(new Set([TOKEN, BASE_TOKEN]));
 
     let suiCoin;
-    if (config.sponsored) {
-        suiCoin = splitCoin(tx, tokenType.MAINNET.SUI, input.suiCoins!, tokens.length.toString(), config.sponsored);
+    if (client.config.sponsored) {
+        suiCoin = splitCoin(tx, tokenType.MAINNET.SUI, input.suiCoins!, tokens.length.toString(), client.config.sponsored);
     }
 
-    await updatePyth(pythClient, tx, tokens, suiCoin);
-    for (let token of tokens) {
-        updateOracleWithPythUsd(pythClient, tx, config.package.oracle, token);
+    const tokensWithoutTypus = Array.from(new Set([TOKEN, BASE_TOKEN])).filter((token) => token !== "TYPUS");
+    await updatePyth(client.pythClient, tx, tokensWithoutTypus, suiCoin);
+    for (let token of tokensWithoutTypus) {
+        updateOracleWithPythUsd(client.pythClient, tx, client.config.package.oracle, token);
+    }
+
+    if (tokens.includes("TYPUS")) {
+        const oracleContract = input.oracleContract ?? client.config.package.oracle;
+        tx = await updateOracleWithSignatureTx(NETWORK, tx, oracleContract, tokenType[NETWORK]["TYPUS"]);
     }
 
     let cToken = tokenType[NETWORK][TOKEN];
     let baseToken = tokenType[NETWORK][BASE_TOKEN];
 
-    _collectPositionFundingFee(tx, [cToken, baseToken], {
-        version: PERP_VERSION,
-        registry: MARKET,
-        poolRegistry: LP_POOL,
-        marketIndex: BigInt(0),
-        poolIndex: BigInt(0),
-        typusOracleCToken: oracle[NETWORK][TOKEN]!,
-        typusOracleTradingSymbol: oracle[NETWORK][BASE_TOKEN]!,
-        clock: CLOCK,
-        positionId: BigInt(input.position.positionId),
-    });
+    // @ts-ignore
+    let marketIndex = BigInt(input.position.marketIndex);
+
+    tx.add(
+        _collectPositionFundingFee({
+            arguments: {
+                version: PERP_VERSION,
+                registry: MARKET,
+                poolRegistry: LP_POOL,
+                marketIndex: marketIndex,
+                poolIndex: marketIndex,
+                typusOracleCToken: oracle[NETWORK][TOKEN]!,
+                typusOracleTradingSymbol: oracle[NETWORK][BASE_TOKEN]!,
+                positionId: BigInt(input.position.position_id),
+            },
+            typeArguments: [cToken, baseToken],
+        })
+    );
 
     return tx;
 }

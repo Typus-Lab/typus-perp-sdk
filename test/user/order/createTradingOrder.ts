@@ -1,19 +1,18 @@
 import "@typus/typus-sdk/dist/src/utils/load_env";
 import { TypusConfig } from "@typus/typus-sdk/dist/src/utils";
-import { SuiClient } from "@mysten/sui/client";
+import { TypusClient } from "src/client";
 import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519";
 import { Transaction } from "@mysten/sui/transactions";
-import { createTradingOrder, NETWORK } from "src";
-import { createPythClient } from "@typus/typus-sdk/dist/src/utils";
+import { createTradingOrder, findMarketIndex, getMarkets, NETWORK } from "src";
 import { TOKEN, tokenType } from "@typus/typus-sdk/dist/src/constants";
 import { getSponsoredTx } from "@typus/typus-sdk/dist/src/utils/sponsoredTx";
 
 (async () => {
     let config = await TypusConfig.default(NETWORK, null);
-    config.sponsored = true;
+    let client = new TypusClient(config);
+    config.sponsored = false;
 
     let keypair = Ed25519Keypair.deriveKeypair(String(process.env.MNEMONIC));
-    let provider = new SuiClient({ url: config.rpcEndpoint });
 
     let user = keypair.toSuiAddress();
     console.log(user);
@@ -21,26 +20,30 @@ import { getSponsoredTx } from "@typus/typus-sdk/dist/src/utils/sponsoredTx";
     var tx = new Transaction();
 
     // INPUTS
-    let cToken: TOKEN = "SUI";
+    let cToken: TOKEN = "wUSDT";
     let tradingToken: TOKEN = "SUI";
 
-    let pythClient = createPythClient(provider, NETWORK);
-
     let coins = (
-        await provider.getCoins({
+        await client.getCoins({
             owner: user,
             coinType: tokenType[NETWORK][cToken],
         })
     ).data.map((coin) => coin.coinObjectId);
 
     let suiCoins = (
-        await provider.getCoins({
+        await client.getCoins({
             owner: user,
             coinType: tokenType[NETWORK]["SUI"],
         })
     ).data.map((coin) => coin.coinObjectId);
 
-    tx = await createTradingOrder(config, tx, pythClient, {
+    let markets = await getMarkets(client, { indexes: ["0", "1"] });
+    let marketsOnly = markets.map((x) => x[0]);
+    let perpIndex = findMarketIndex(client, { markets: marketsOnly, tradingToken });
+    console.log("perpIndex: ", perpIndex);
+
+    tx = await createTradingOrder(client, tx, {
+        perpIndex: perpIndex!.toString(),
         coins,
         cToken,
         amount: "1000000000",
@@ -54,28 +57,15 @@ import { getSponsoredTx } from "@typus/typus-sdk/dist/src/utils/sponsoredTx";
         suiCoins,
     });
 
-    // let dryrunRes = await provider.devInspectTransactionBlock({
-    //     transactionBlock: tx,
-    //     sender: user,
-    // });
-    // console.log(dryrunRes);
-    // console.log(dryrunRes.events.filter((e) => e.type.endsWith("CreateTradingOrderEvent"))[0].parsedJson); //
-    // console.log(dryrunRes.events.filter((e) => e.type.endsWith("RealizeFundingEvent"))); // only exists if the order size is reduced ( with linked_position_id provided)
-    // console.log(dryrunRes.events.filter((e) => e.type.endsWith("OrderFilledEvent"))); // if the order is not filled, there will be no OrderFilledEvent
+    let dryrunRes = await client.devInspectTransactionBlock({
+        transactionBlock: tx,
+        sender: user,
+    });
+    console.log(dryrunRes);
+    console.log(dryrunRes.events.filter((e) => e.type.endsWith("CreateTradingOrderEvent"))[0].parsedJson); //
+    console.log(dryrunRes.events.filter((e) => e.type.endsWith("RealizeFundingEvent"))); // only exists if the order size is reduced ( with linked_position_id provided)
+    console.log(dryrunRes.events.filter((e) => e.type.endsWith("OrderFilledEvent"))); // if the order is not filled, there will be no OrderFilledEvent
 
-    // let res = await provider.signAndExecuteTransaction({ signer: keypair, transaction: tx });
-    // console.log(res);
-
-    // For Sponsored Tx
-    let sponsoredResponse = await getSponsoredTx(provider, user, tx);
-    if (sponsoredResponse.txBytes) {
-        let senderSig = await Transaction.from(sponsoredResponse.txBytes).sign({ signer: keypair }); // wallet sign
-        let res = await provider.executeTransactionBlock({
-            transactionBlock: sponsoredResponse.txBytes,
-            signature: [senderSig?.signature, sponsoredResponse.sponsorSig],
-        });
-        console.log(res);
-    } else {
-        console.log(sponsoredResponse);
-    }
+    let res = await client.signAndExecuteTransaction({ signer: keypair, transaction: tx });
+    console.log(res);
 })();

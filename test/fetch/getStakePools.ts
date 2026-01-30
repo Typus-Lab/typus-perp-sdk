@@ -1,19 +1,18 @@
 import { TypusConfig } from "@typus/typus-sdk/dist/src/utils";
+import { TypusClient } from "src/client";
 import { getStakePool, getStakePools, NETWORK } from "src";
 
 (async () => {
     let config = await TypusConfig.default(NETWORK, null);
+    let client = new TypusClient(config);
 
-    // let stakePools = await getStakePools(config);
-    // console.log(stakePools); // 1 lpPool inclueded
-    // let stakePool = stakePools[0];
-
-    let stakePool = await getStakePool(config);
-    console.log(stakePool);
+    let stakePools = await getStakePools(client);
+    console.dir(stakePools, { depth: null }); // 1 lpPool inclueded
+    let stakePool = stakePools[0];
 
     console.log(
         "Incentives: ",
-        stakePool.incentives.map((i) => i.tokenType.name)
+        stakePool.incentives.map((i) => i.token_type.name)
     );
 
     if (stakePool.incentives.length > 0) {

@@ -305,7 +305,6 @@ export async function getUserStake(
 
             var reader = new BcsReader(new Uint8Array(returnValues));
             let length = reader.readULEB();
-            console.log(length);
             if (length == 0) {
                 results.push([null, []]);
                 continue;

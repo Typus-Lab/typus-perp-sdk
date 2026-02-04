@@ -93,8 +93,8 @@ export async function parseUserHistory(raw_events) {
                     }
 
                     const marketOrderRation = json.is_long ? 1.02 : 0.9;
-                    const isMarketOrder = Number(json.trigger_price) / Number(json.trading_pair_oracle_price) <= (marketOrderRation + 0.001)
-                        && Number(json.trigger_price) / Number(json.trading_pair_oracle_price) >= (marketOrderRation - 0.001);
+                    const isMarketOrder = Number(json.trigger_price) / Number(json.trading_pair_oracle_price) <= (marketOrderRation + 0.005)
+                        && Number(json.trigger_price) / Number(json.trading_pair_oracle_price) >= (marketOrderRation - 0.005);
 
                     var order_type: orderType = "Limit";
                     var price = json.trigger_price;

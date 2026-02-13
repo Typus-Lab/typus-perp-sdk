@@ -109,7 +109,7 @@ export const DeactivatingShares = new MoveStruct({
         /** The timestamp when the shares can be unlocked. */
         unlocked_ts_ms: bcs.u64(),
         /** The unsubscribed incentive price index. */
-        unsubscribed_incentive_price_index: vec_map.VecMap(type_name.TypeName, bcs.u64()),
+        unsubscribed_incentive_price_index: bcs.vector(bcs.u64()),
         /** Padding for future use. */
         u64_padding: bcs.vector(bcs.u64()),
     },
@@ -130,7 +130,7 @@ export const LpUserShare = new MoveStruct({
         /** A vector of deactivating shares. */
         deactivating_shares: bcs.vector(DeactivatingShares),
         /** The last incentive price index. */
-        last_incentive_price_index: vec_map.VecMap(type_name.TypeName, bcs.u64()),
+        last_incentive_price_index: bcs.vector(bcs.u64()),
         /** The last snapshot ts for exp. */
         snapshot_ts_ms: bcs.u64(),
         /** old tlp price for exp with decimal 4 */
@@ -267,7 +267,7 @@ export const StakeEvent = new MoveStruct({
         stake_amount: bcs.u64(),
         user_share_id: bcs.u64(),
         stake_ts_ms: bcs.u64(),
-        last_incentive_price_index: vec_map.VecMap(type_name.TypeName, bcs.u64()),
+        last_incentive_price_index: bcs.vector(bcs.u64()),
         u64_padding: bcs.vector(bcs.u64()),
     },
 });
@@ -1126,8 +1126,8 @@ export interface HarvestProgressUpdatedOptions {
 export function harvestProgressUpdated(options: HarvestProgressUpdatedOptions) {
     const packageAddress = options.package ?? "@typus/stake-pool";
     const argumentsTypes = [
-        "0x0000000000000000000000000000000000000000000000000000000000000002::vec_map::VecMap<0x0000000000000000000000000000000000000000000000000000000000000001::type_name::TypeName, u64>",
-        "0x0000000000000000000000000000000000000000000000000000000000000002::vec_map::VecMap<0x0000000000000000000000000000000000000000000000000000000000000001::type_name::TypeName, u64>",
+        "0x0000000000000000000000000000000000000000000000000000000000000001::vector::vector<u64>",
+        "0x0000000000000000000000000000000000000000000000000000000000000001::vector::vector<u64>",
     ] satisfies string[];
     const parameterNames = ["current", "user"];
     return (tx: Transaction) =>

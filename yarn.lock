@@ -728,7 +728,7 @@ __metadata:
     "@types/mocha": "npm:^10.0.1"
     "@types/node": "npm:^24.10.1"
     "@types/rx": "npm:^4.1.2"
-    "@typus/typus-sdk": "npm:1.8.34"
+    "@typus/typus-sdk": "npm:1.8.35"
     axios: "npm:^1.13.2"
     prettier: "npm:^3.0.0"
     ts-node: "npm:^10.9.2"
@@ -740,9 +740,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@typus/typus-sdk@npm:1.8.34":
-  version: 1.8.34
-  resolution: "@typus/typus-sdk@npm:1.8.34"
+"@typus/typus-sdk@npm:1.8.35":
+  version: 1.8.35
+  resolution: "@typus/typus-sdk@npm:1.8.35"
   dependencies:
     "@mysten/bcs": "npm:^1.6.1"
     "@mysten/kiosk": "npm:^0.12.6"
@@ -758,7 +758,7 @@ __metadata:
     lodash: "npm:^4.17.21"
     moment: "npm:^2.30.1"
     node-rsa: "npm:^1.1.1"
-  checksum: 10c0/1d6e6f3db4b2a668607a5bba95f6d91521cfeb678d5de98a56717ece2b19e7039a7321ca75ef5aed41cb372e4a0fba0f33d86c925359296bdfcfe32e03aac1d8
+  checksum: 10c0/ae56807efb6b2d62b25da618a0ddc276d257b8169f3c3ca7b262868f0c7665849691ec1cfb7c4f48cb3967cca05815fa21b7f3167e15c21dd8c8a39e6a41ab38
   languageName: node
   linkType: hard
 

@@ -1,3 +1,4 @@
+import BigNumber from "bignumber.js";
 import { assetToDecimal, TOKEN, typeArgToAsset } from "@typus/typus-sdk/dist/src/constants";
 import { OrderFilledEvent, RealizeFundingEvent, RemovePositionEvent } from "../generated/typus_perp/position";
 import {
@@ -58,7 +59,7 @@ export interface Event {
     sender: "user" | "cranker";
 }
 
-export async function parseUserHistory(raw_events) {
+export async function parseUserHistory(raw_events, matchingDatas) {
     const events: Event[] = [];
 
     raw_events.forEach((event) => {
@@ -105,6 +106,26 @@ export async function parseUserHistory(raw_events) {
                         order_type = "Take Profit";
                     } else if (json.reduce_only && json.is_stop_order) {
                         order_type = "Stop Loss";
+                        if (json.linked_position_id != undefined) {
+                            const related = matchingDatas.findLast((e) =>
+                                e.position_id === json.linked_position_id &&
+                                e.base_token === base_token
+                            );
+                            if (related) {
+                                const positionFilledPrice = related.filled_price;
+                                const orderTriggerPrice = BigNumber(json.trigger_price).div(BigNumber(10).pow(8));
+
+                                if (related.side === "Long") {
+                                    if (BigNumber(orderTriggerPrice).gt(positionFilledPrice)) {
+                                        order_type = 'Take Profit'
+                                    }
+                                } else {
+                                    if (BigNumber(orderTriggerPrice).lt(positionFilledPrice)) {
+                                        order_type = 'Take Profit'
+                                    }
+                                }
+                            }
+                        }
                     }
 
                     var e: Event = {
@@ -664,8 +685,8 @@ export async function getCancelOrderFromSentio(userAddress: string, startTimesta
     return events;
 }
 
-export async function getOrderMatchFromSentio(userAddress: string, startTimestamp: number, events: Event[]): Promise<Event[]> {
-    const datas = await getFromSentio("OrderFilled", userAddress, startTimestamp.toString(), true);
+export async function getOrderMatchFromSentio(userAddress: string, startTimestamp: number, events: Event[], datas?: any[]): Promise<Event[]> {
+    if (!datas) datas = await getFromSentio("OrderFilled", userAddress, startTimestamp.toString(), true);
     let order_match = datas.map((x) => {
         let base_token = toToken(x.base_token);
 

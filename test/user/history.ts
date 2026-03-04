@@ -1,4 +1,5 @@
 import "@typus/typus-sdk/dist/src/utils/load_env";
+import { getFromSentio } from "src/api/sentio";
 import {
     getCancelOrderFromSentio,
     getGraphQLEvents,
@@ -20,7 +21,7 @@ import {
     var raw_events: any[] = [];
     var beforeCursor = null;
     // get 5 pages
-    const PERP_PACKAGE_ID = "0xec30955b1e100617a02fecec432d2c845f17b2f3d68827f390563faba112513b"
+    const PERP_PACKAGE_ID = "0x9003219180252ae6b81d2893b41d430488669027219537236675c0c2924c94d9"
     for (let i = 0; i < 5; i += 1) {
         let result = await getGraphQLEvents(PERP_PACKAGE_ID, user, beforeCursor);
         let pageInfo = result.pageInfo;
@@ -38,16 +39,16 @@ import {
     console.log(raw_events.length);
     // console.log(raw_events.map((x) => x.contents.json));
 
+    const startTimestamp = Math.floor(new Date(raw_events.at(0)?.timestamp!).getTime() / 1000);
+    const matchingDatas = await getFromSentio("OrderFilled", user, startTimestamp.toString(), true)
     // 2. parser events
-    let events = await parseUserHistory(raw_events);
-    // console.log(events);
+    let events = await parseUserHistory(raw_events, matchingDatas);
     // console.log(events.length);
     // console.log(events.at(0)?.timestamp);
-    const startTimestamp = Math.floor(new Date(events.at(0)?.timestamp!).getTime() / 1000);
     //  console.log(startTimestamp);
 
     // 3. order match events from sentio
-    events = await getOrderMatchFromSentio(user, startTimestamp, events);
+    events = await getOrderMatchFromSentio(user, startTimestamp, events, matchingDatas);
 
     // 4. liquidate events from sentio
     events = await getLiquidateFromSentio(user, startTimestamp, events);
@@ -62,19 +63,10 @@ import {
     events = await getRealizeFundingFromSentio(user, startTimestamp, events);
     events = await getRemovePositionFromSentio(user, startTimestamp, events);
 
-    // console.log(events);
+    // console.log(events.filter(e => e.market === "XAG/USD"));
     // console.log(events.filter((x) => x.collateral_token == "DEEP"));
 
     // saveToFile(events, "userHistory.csv");
 })();
 
-import * as fs from "fs";
 
-function saveToFile(data: any[], filename: string) {
-    const headers = Object.keys(data[0]);
-
-    const csvRows = [headers.join(","), ...data.map((d) => Object.values(d).join(","))];
-
-    const csvContent = csvRows.join("\n");
-    fs.writeFileSync(filename, csvContent);
-}

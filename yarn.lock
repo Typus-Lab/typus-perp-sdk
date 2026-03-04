@@ -730,6 +730,7 @@ __metadata:
     "@types/rx": "npm:^4.1.2"
     "@typus/typus-sdk": "npm:1.8.36"
     axios: "npm:^1.13.2"
+    bignumber.js: "npm:9.1.2"
     prettier: "npm:^3.0.0"
     ts-node: "npm:^10.9.2"
     tsc-alias: "npm:^1.8.10"
@@ -909,6 +910,13 @@ __metadata:
   version: 1.5.1
   resolution: "base64-js@npm:1.5.1"
   checksum: 10c0/f23823513b63173a001030fae4f2dabe283b99a9d324ade3ad3d148e218134676f1ee8568c877cd79ec1c53158dcf2d2ba527a97c606618928ba99dd930102bf
+  languageName: node
+  linkType: hard
+
+"bignumber.js@npm:9.1.2":
+  version: 9.1.2
+  resolution: "bignumber.js@npm:9.1.2"
+  checksum: 10c0/e17786545433f3110b868725c449fa9625366a6e675cd70eb39b60938d6adbd0158cb4b3ad4f306ce817165d37e63f4aa3098ba4110db1d9a3b9f66abfbaf10d
   languageName: node
   linkType: hard
 

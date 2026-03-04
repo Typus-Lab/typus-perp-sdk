@@ -23,6 +23,7 @@
         "@types/node": "^24.10.1",
         "@types/rx": "^4.1.2",
         "axios": "^1.13.2",
+        "bignumber.js": "9.1.2",
         "prettier": "^3.0.0",
         "ts-node": "^10.9.2",
         "tsc-alias": "^1.8.10",

@@ -76,7 +76,7 @@ export interface CreateUnsettledBidReceiptOptions {
 export function createUnsettledBidReceipt(options: CreateUnsettledBidReceiptOptions) {
     const packageAddress = options.package ?? "@typus/perp";
     const argumentsTypes = [
-        "vector<0x908a10789a1a6953e0b73a997c10e3552f7ce4e2907afd00a334ed74bd973ded::vault::TypusBidReceipt>",
+        "vector<0xb4f25230ba74837d8299e92951306100c4a532e8c48cc3d8828abe9b91c8b274::vault::TypusBidReceipt>",
         "u64",
         "address",
         "vector<0x0000000000000000000000000000000000000000000000000000000000000001::type_name::TypeName>",

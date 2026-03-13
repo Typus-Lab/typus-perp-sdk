@@ -1035,6 +1035,19 @@ export function invalidUserAccount(options: InvalidUserAccountOptions = {}) {
             function: "invalid_user_account",
         });
 }
+export interface OptionCollateralPositionNotSupportedOptions {
+    package?: string;
+    arguments?: [];
+}
+export function optionCollateralPositionNotSupported(options: OptionCollateralPositionNotSupportedOptions = {}) {
+    const packageAddress = options.package ?? "@typus/perp";
+    return (tx: Transaction) =>
+        tx.moveCall({
+            package: packageAddress,
+            module: "error",
+            function: "option_collateral_position_not_supported",
+        });
+}
 export interface NotUserAccountOwnerOptions {
     package?: string;
     arguments?: [];
@@ -1137,5 +1150,44 @@ export function whitelistNotExisted(options: WhitelistNotExistedOptions = {}) {
             package: packageAddress,
             module: "error",
             function: "whitelist_not_existed",
+        });
+}
+export interface InvalidReferralCodeOptions {
+    package?: string;
+    arguments?: [];
+}
+export function invalidReferralCode(options: InvalidReferralCodeOptions = {}) {
+    const packageAddress = options.package ?? "@typus/perp";
+    return (tx: Transaction) =>
+        tx.moveCall({
+            package: packageAddress,
+            module: "error",
+            function: "invalid_referral_code",
+        });
+}
+export interface ReferralCodeAlreadySetOptions {
+    package?: string;
+    arguments?: [];
+}
+export function referralCodeAlreadySet(options: ReferralCodeAlreadySetOptions = {}) {
+    const packageAddress = options.package ?? "@typus/perp";
+    return (tx: Transaction) =>
+        tx.moveCall({
+            package: packageAddress,
+            module: "error",
+            function: "referral_code_already_set",
+        });
+}
+export interface InvalidUserOptions {
+    package?: string;
+    arguments?: [];
+}
+export function invalidUser(options: InvalidUserOptions = {}) {
+    const packageAddress = options.package ?? "@typus/perp";
+    return (tx: Transaction) =>
+        tx.moveCall({
+            package: packageAddress,
+            module: "error",
+            function: "invalid_user",
         });
 }

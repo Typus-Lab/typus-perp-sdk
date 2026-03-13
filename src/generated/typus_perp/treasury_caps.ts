@@ -17,19 +17,6 @@ export const TreasuryCaps = new MoveStruct({
         id: object.UID,
     },
 });
-export interface InitOptions {
-    package?: string;
-    arguments?: [];
-}
-export function init(options: InitOptions = {}) {
-    const packageAddress = options.package ?? "@typus/perp";
-    return (tx: Transaction) =>
-        tx.moveCall({
-            package: packageAddress,
-            module: "treasury_caps",
-            function: "init",
-        });
-}
 export interface GetMutTreasuryCapArguments {
     treasuryCaps: RawTransactionArgument<string>;
 }

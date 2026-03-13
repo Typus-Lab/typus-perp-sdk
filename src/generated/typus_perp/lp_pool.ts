@@ -367,6 +367,41 @@ export const ResumeTokenPoolEvent = new MoveStruct({
         u64_padding: bcs.vector(bcs.u64()),
     },
 });
+export const DepositLendingEvent = new MoveStruct({
+    name: `${$moduleName}::DepositLendingEvent`,
+    fields: {
+        index: bcs.u64(),
+        lending_index: bcs.u64(),
+        c_token_type: type_name.TypeName,
+        deposit_amount: bcs.u64(),
+        minted_market_coin_amount: bcs.u64(),
+        latest_lending_amount: bcs.u64(),
+        latest_market_coin_amount: bcs.u64(),
+        latest_reserved_amount: bcs.u64(),
+        latest_liquidity_amount: bcs.u64(),
+        u64_padding: bcs.vector(bcs.u64()),
+    },
+});
+export const WithdrawLendingEvent = new MoveStruct({
+    name: `${$moduleName}::WithdrawLendingEvent`,
+    fields: {
+        index: bcs.u64(),
+        lending_index: bcs.u64(),
+        c_token_type: type_name.TypeName,
+        r_token_type: type_name.TypeName,
+        withdraw_amount: bcs.u64(),
+        withdrawn_collateral_amount: bcs.u64(),
+        latest_lending_amount: bcs.u64(),
+        latest_market_coin_amount: bcs.u64(),
+        latest_reserved_amount: bcs.u64(),
+        latest_liquidity_amount: bcs.u64(),
+        lending_interest: bcs.u64(),
+        protocol_share: bcs.u64(),
+        lending_reward: bcs.u64(),
+        reward_protocol_share: bcs.u64(),
+        u64_padding: bcs.vector(bcs.u64()),
+    },
+});
 export const ManagerRemoveLiquidityTokenEvent = new MoveStruct({
     name: `${$moduleName}::ManagerRemoveLiquidityTokenEvent`,
     fields: {
@@ -612,7 +647,7 @@ export function addLiquidityToken(options: AddLiquidityTokenOptions) {
         `${packageAddress}::admin::Version`,
         `${packageAddress}::lp_pool::Registry`,
         "u64",
-        "0x1d17058789bd1e1e79f1a92424519a88146f191f58a06cc4d9ab23d17d46ab73::oracle::Oracle",
+        "0x855eb2d260ee42b898266e6df90bfd3c4ed821ccb253a352c159c223244a4b8a::oracle::Oracle",
         "u64",
         "u64",
         "u64",
@@ -913,7 +948,7 @@ export function mintLp(options: MintLpOptions) {
         `${packageAddress}::admin::Version`,
         `${packageAddress}::lp_pool::Registry`,
         `${packageAddress}::treasury_caps::TreasuryCaps`,
-        "0x1d17058789bd1e1e79f1a92424519a88146f191f58a06cc4d9ab23d17d46ab73::oracle::Oracle",
+        "0x855eb2d260ee42b898266e6df90bfd3c4ed821ccb253a352c159c223244a4b8a::oracle::Oracle",
         "u64",
         `0x0000000000000000000000000000000000000000000000000000000000000002::coin::Coin<${options.typeArguments[0]}>`,
         "0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock",
@@ -992,8 +1027,8 @@ export function swap(options: SwapOptions) {
         `${packageAddress}::admin::Version`,
         `${packageAddress}::lp_pool::Registry`,
         "u64",
-        "0x1d17058789bd1e1e79f1a92424519a88146f191f58a06cc4d9ab23d17d46ab73::oracle::Oracle",
-        "0x1d17058789bd1e1e79f1a92424519a88146f191f58a06cc4d9ab23d17d46ab73::oracle::Oracle",
+        "0x855eb2d260ee42b898266e6df90bfd3c4ed821ccb253a352c159c223244a4b8a::oracle::Oracle",
+        "0x855eb2d260ee42b898266e6df90bfd3c4ed821ccb253a352c159c223244a4b8a::oracle::Oracle",
         `0x0000000000000000000000000000000000000000000000000000000000000002::coin::Coin<${options.typeArguments[0]}>`,
         "u64",
         "0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock",
@@ -1074,7 +1109,7 @@ export function claim(options: ClaimOptions) {
         `${packageAddress}::lp_pool::Registry`,
         "u64",
         `${packageAddress}::treasury_caps::TreasuryCaps`,
-        "0x1d17058789bd1e1e79f1a92424519a88146f191f58a06cc4d9ab23d17d46ab73::oracle::Oracle",
+        "0x855eb2d260ee42b898266e6df90bfd3c4ed821ccb253a352c159c223244a4b8a::oracle::Oracle",
         "0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock",
     ] satisfies string[];
     const parameterNames = ["version", "registry", "index", "treasuryCaps", "oracle"];
@@ -1203,6 +1238,273 @@ export function resumeTokenPool(options: ResumeTokenPoolOptions) {
             typeArguments: options.typeArguments,
         });
 }
+export interface ManagerDepositScallopArguments {
+    version: RawTransactionArgument<string>;
+    registry: RawTransactionArgument<string>;
+    index: RawTransactionArgument<number | bigint>;
+    scallopVersion: RawTransactionArgument<string>;
+    scallopMarket: RawTransactionArgument<string>;
+    lendingAmount: RawTransactionArgument<number | bigint | null>;
+}
+export interface ManagerDepositScallopOptions {
+    package?: string;
+    arguments:
+        | ManagerDepositScallopArguments
+        | [
+              version: RawTransactionArgument<string>,
+              registry: RawTransactionArgument<string>,
+              index: RawTransactionArgument<number | bigint>,
+              scallopVersion: RawTransactionArgument<string>,
+              scallopMarket: RawTransactionArgument<string>,
+              lendingAmount: RawTransactionArgument<number | bigint | null>,
+          ];
+    typeArguments: [string];
+}
+/** [Authorized Function] Manager deposits to Scallop. */
+export function managerDepositScallop(options: ManagerDepositScallopOptions) {
+    const packageAddress = options.package ?? "@typus/perp";
+    const argumentsTypes = [
+        `${packageAddress}::admin::Version`,
+        `${packageAddress}::lp_pool::Registry`,
+        "u64",
+        "0xefe8b36d5b2e43728cc323298626b83177803521d195cfb11e15b910e892fddf::version::Version",
+        "0xefe8b36d5b2e43728cc323298626b83177803521d195cfb11e15b910e892fddf::market::Market",
+        "0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock",
+        "0x0000000000000000000000000000000000000000000000000000000000000001::option::Option<u64>",
+    ] satisfies string[];
+    const parameterNames = ["version", "registry", "index", "scallopVersion", "scallopMarket", "lendingAmount"];
+    return (tx: Transaction) =>
+        tx.moveCall({
+            package: packageAddress,
+            module: "lp_pool",
+            function: "manager_deposit_scallop",
+            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
+            typeArguments: options.typeArguments,
+        });
+}
+export interface ManagerDepositNaviArguments {
+    version: RawTransactionArgument<string>;
+    registry: RawTransactionArgument<string>;
+    index: RawTransactionArgument<number | bigint>;
+    storage: RawTransactionArgument<string>;
+    pool: RawTransactionArgument<string>;
+    asset: RawTransactionArgument<number>;
+    incentiveV2: RawTransactionArgument<string>;
+    incentiveV3: RawTransactionArgument<string>;
+    lendingAmount: RawTransactionArgument<number | bigint | null>;
+}
+export interface ManagerDepositNaviOptions {
+    package?: string;
+    arguments:
+        | ManagerDepositNaviArguments
+        | [
+              version: RawTransactionArgument<string>,
+              registry: RawTransactionArgument<string>,
+              index: RawTransactionArgument<number | bigint>,
+              storage: RawTransactionArgument<string>,
+              pool: RawTransactionArgument<string>,
+              asset: RawTransactionArgument<number>,
+              incentiveV2: RawTransactionArgument<string>,
+              incentiveV3: RawTransactionArgument<string>,
+              lendingAmount: RawTransactionArgument<number | bigint | null>,
+          ];
+    typeArguments: [string];
+}
+export function managerDepositNavi(options: ManagerDepositNaviOptions) {
+    const packageAddress = options.package ?? "@typus/perp";
+    const argumentsTypes = [
+        `${packageAddress}::admin::Version`,
+        `${packageAddress}::lp_pool::Registry`,
+        "u64",
+        "0xd899cf7d2b5db716bd2cf55599fb0d5ee38a3061e7b6bb6eebf73fa5bc4c81ca::storage::Storage",
+        `0xd899cf7d2b5db716bd2cf55599fb0d5ee38a3061e7b6bb6eebf73fa5bc4c81ca::pool::Pool<${options.typeArguments[0]}>`,
+        "u8",
+        "0xd899cf7d2b5db716bd2cf55599fb0d5ee38a3061e7b6bb6eebf73fa5bc4c81ca::incentive_v2::Incentive",
+        "0xd899cf7d2b5db716bd2cf55599fb0d5ee38a3061e7b6bb6eebf73fa5bc4c81ca::incentive_v3::Incentive",
+        "0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock",
+        "0x0000000000000000000000000000000000000000000000000000000000000001::option::Option<u64>",
+    ] satisfies string[];
+    const parameterNames = ["version", "registry", "index", "storage", "pool", "asset", "incentiveV2", "incentiveV3", "lendingAmount"];
+    return (tx: Transaction) =>
+        tx.moveCall({
+            package: packageAddress,
+            module: "lp_pool",
+            function: "manager_deposit_navi",
+            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
+            typeArguments: options.typeArguments,
+        });
+}
+export interface ManagerWithdrawScallopArguments {
+    version: RawTransactionArgument<string>;
+    registry: RawTransactionArgument<string>;
+    index: RawTransactionArgument<number | bigint>;
+    scallopVersion: RawTransactionArgument<string>;
+    scallopMarket: RawTransactionArgument<string>;
+    withdrawAmount: RawTransactionArgument<number | bigint | null>;
+}
+export interface ManagerWithdrawScallopOptions {
+    package?: string;
+    arguments:
+        | ManagerWithdrawScallopArguments
+        | [
+              version: RawTransactionArgument<string>,
+              registry: RawTransactionArgument<string>,
+              index: RawTransactionArgument<number | bigint>,
+              scallopVersion: RawTransactionArgument<string>,
+              scallopMarket: RawTransactionArgument<string>,
+              withdrawAmount: RawTransactionArgument<number | bigint | null>,
+          ];
+    typeArguments: [string];
+}
+/** [Authorized Function] Manager withdraws from Scallop. */
+export function managerWithdrawScallop(options: ManagerWithdrawScallopOptions) {
+    const packageAddress = options.package ?? "@typus/perp";
+    const argumentsTypes = [
+        `${packageAddress}::admin::Version`,
+        `${packageAddress}::lp_pool::Registry`,
+        "u64",
+        "0xefe8b36d5b2e43728cc323298626b83177803521d195cfb11e15b910e892fddf::version::Version",
+        "0xefe8b36d5b2e43728cc323298626b83177803521d195cfb11e15b910e892fddf::market::Market",
+        "0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock",
+        "0x0000000000000000000000000000000000000000000000000000000000000001::option::Option<u64>",
+    ] satisfies string[];
+    const parameterNames = ["version", "registry", "index", "scallopVersion", "scallopMarket", "withdrawAmount"];
+    return (tx: Transaction) =>
+        tx.moveCall({
+            package: packageAddress,
+            module: "lp_pool",
+            function: "manager_withdraw_scallop",
+            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
+            typeArguments: options.typeArguments,
+        });
+}
+export interface ManagerWithdrawNaviArguments {
+    version: RawTransactionArgument<string>;
+    registry: RawTransactionArgument<string>;
+    index: RawTransactionArgument<number | bigint>;
+    oracleConfig: RawTransactionArgument<string>;
+    priceOracle: RawTransactionArgument<string>;
+    supraOracleHolder: RawTransactionArgument<string>;
+    pythPriceInfo: RawTransactionArgument<string>;
+    feedAddress: RawTransactionArgument<string>;
+    storage: RawTransactionArgument<string>;
+    pool: RawTransactionArgument<string>;
+    asset: RawTransactionArgument<number>;
+    incentiveV2: RawTransactionArgument<string>;
+    incentiveV3: RawTransactionArgument<string>;
+}
+export interface ManagerWithdrawNaviOptions {
+    package?: string;
+    arguments:
+        | ManagerWithdrawNaviArguments
+        | [
+              version: RawTransactionArgument<string>,
+              registry: RawTransactionArgument<string>,
+              index: RawTransactionArgument<number | bigint>,
+              oracleConfig: RawTransactionArgument<string>,
+              priceOracle: RawTransactionArgument<string>,
+              supraOracleHolder: RawTransactionArgument<string>,
+              pythPriceInfo: RawTransactionArgument<string>,
+              feedAddress: RawTransactionArgument<string>,
+              storage: RawTransactionArgument<string>,
+              pool: RawTransactionArgument<string>,
+              asset: RawTransactionArgument<number>,
+              incentiveV2: RawTransactionArgument<string>,
+              incentiveV3: RawTransactionArgument<string>,
+          ];
+    typeArguments: [string];
+}
+export function managerWithdrawNavi(options: ManagerWithdrawNaviOptions) {
+    const packageAddress = options.package ?? "@typus/perp";
+    const argumentsTypes = [
+        `${packageAddress}::admin::Version`,
+        `${packageAddress}::lp_pool::Registry`,
+        "u64",
+        "0xca441b44943c16be0e6e23c5a955bb971537ea3289ae8016fbf33fffe1fd210f::config::OracleConfig",
+        "0xca441b44943c16be0e6e23c5a955bb971537ea3289ae8016fbf33fffe1fd210f::oracle::PriceOracle",
+        "0x5d8fbbf6f908a4af8c6d072669a462d53e03eb3c1d863bd0359dc818c69ea706::SupraSValueFeed::OracleHolder",
+        "0x8d97f1cd6ac663735be08d1d2b6d02a159e711586461306ce60a2b7a6a565a9e::price_info::PriceInfoObject",
+        "address",
+        "0xd899cf7d2b5db716bd2cf55599fb0d5ee38a3061e7b6bb6eebf73fa5bc4c81ca::storage::Storage",
+        `0xd899cf7d2b5db716bd2cf55599fb0d5ee38a3061e7b6bb6eebf73fa5bc4c81ca::pool::Pool<${options.typeArguments[0]}>`,
+        "u8",
+        "0xd899cf7d2b5db716bd2cf55599fb0d5ee38a3061e7b6bb6eebf73fa5bc4c81ca::incentive_v2::Incentive",
+        "0xd899cf7d2b5db716bd2cf55599fb0d5ee38a3061e7b6bb6eebf73fa5bc4c81ca::incentive_v3::Incentive",
+        "0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock",
+    ] satisfies string[];
+    const parameterNames = [
+        "version",
+        "registry",
+        "index",
+        "oracleConfig",
+        "priceOracle",
+        "supraOracleHolder",
+        "pythPriceInfo",
+        "feedAddress",
+        "storage",
+        "pool",
+        "asset",
+        "incentiveV2",
+        "incentiveV3",
+    ];
+    return (tx: Transaction) =>
+        tx.moveCall({
+            package: packageAddress,
+            module: "lp_pool",
+            function: "manager_withdraw_navi",
+            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
+            typeArguments: options.typeArguments,
+        });
+}
+export interface ManagerRewardNaviArguments {
+    version: RawTransactionArgument<string>;
+    registry: RawTransactionArgument<string>;
+    index: RawTransactionArgument<number | bigint>;
+    storage: RawTransactionArgument<string>;
+    rewardFund: RawTransactionArgument<string>;
+    coinTypes: RawTransactionArgument<string[]>;
+    ruleIds: RawTransactionArgument<string[]>;
+    incentiveV3: RawTransactionArgument<string>;
+}
+export interface ManagerRewardNaviOptions {
+    package?: string;
+    arguments:
+        | ManagerRewardNaviArguments
+        | [
+              version: RawTransactionArgument<string>,
+              registry: RawTransactionArgument<string>,
+              index: RawTransactionArgument<number | bigint>,
+              storage: RawTransactionArgument<string>,
+              rewardFund: RawTransactionArgument<string>,
+              coinTypes: RawTransactionArgument<string[]>,
+              ruleIds: RawTransactionArgument<string[]>,
+              incentiveV3: RawTransactionArgument<string>,
+          ];
+    typeArguments: [string];
+}
+export function managerRewardNavi(options: ManagerRewardNaviOptions) {
+    const packageAddress = options.package ?? "@typus/perp";
+    const argumentsTypes = [
+        `${packageAddress}::admin::Version`,
+        `${packageAddress}::lp_pool::Registry`,
+        "u64",
+        "0xd899cf7d2b5db716bd2cf55599fb0d5ee38a3061e7b6bb6eebf73fa5bc4c81ca::storage::Storage",
+        `0xd899cf7d2b5db716bd2cf55599fb0d5ee38a3061e7b6bb6eebf73fa5bc4c81ca::incentive_v3::RewardFund<${options.typeArguments[0]}>`,
+        "vector<0x0000000000000000000000000000000000000000000000000000000000000001::ascii::String>",
+        "vector<address>",
+        "0xd899cf7d2b5db716bd2cf55599fb0d5ee38a3061e7b6bb6eebf73fa5bc4c81ca::incentive_v3::Incentive",
+        "0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock",
+    ] satisfies string[];
+    const parameterNames = ["version", "registry", "index", "storage", "rewardFund", "coinTypes", "ruleIds", "incentiveV3"];
+    return (tx: Transaction) =>
+        tx.moveCall({
+            package: packageAddress,
+            module: "lp_pool",
+            function: "manager_reward_navi",
+            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
+            typeArguments: options.typeArguments,
+        });
+}
 export interface ManagerRemoveLiquidityTokenArguments {
     version: RawTransactionArgument<string>;
     registry: RawTransactionArgument<string>;
@@ -1310,8 +1612,8 @@ export function rebalance(options: RebalanceOptions) {
         `${packageAddress}::admin::Version`,
         `${packageAddress}::lp_pool::Registry`,
         "u64",
-        "0x1d17058789bd1e1e79f1a92424519a88146f191f58a06cc4d9ab23d17d46ab73::oracle::Oracle",
-        "0x1d17058789bd1e1e79f1a92424519a88146f191f58a06cc4d9ab23d17d46ab73::oracle::Oracle",
+        "0x855eb2d260ee42b898266e6df90bfd3c4ed821ccb253a352c159c223244a4b8a::oracle::Oracle",
+        "0x855eb2d260ee42b898266e6df90bfd3c4ed821ccb253a352c159c223244a4b8a::oracle::Oracle",
         "u64",
         "0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock",
     ] satisfies string[];
@@ -1356,8 +1658,8 @@ export function completeRebalancing(options: CompleteRebalancingOptions) {
         `${packageAddress}::admin::Version`,
         `${packageAddress}::lp_pool::Registry`,
         "u64",
-        "0x1d17058789bd1e1e79f1a92424519a88146f191f58a06cc4d9ab23d17d46ab73::oracle::Oracle",
-        "0x1d17058789bd1e1e79f1a92424519a88146f191f58a06cc4d9ab23d17d46ab73::oracle::Oracle",
+        "0x855eb2d260ee42b898266e6df90bfd3c4ed821ccb253a352c159c223244a4b8a::oracle::Oracle",
+        "0x855eb2d260ee42b898266e6df90bfd3c4ed821ccb253a352c159c223244a4b8a::oracle::Oracle",
         `0x0000000000000000000000000000000000000000000000000000000000000002::balance::Balance<${options.typeArguments[1]}>`,
         `${packageAddress}::lp_pool::RebalanceProcess`,
         "0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock",
@@ -1430,7 +1732,7 @@ export function updateLiquidityValue(options: UpdateLiquidityValueOptions) {
         `${packageAddress}::admin::Version`,
         `${packageAddress}::lp_pool::Registry`,
         "u64",
-        "0x1d17058789bd1e1e79f1a92424519a88146f191f58a06cc4d9ab23d17d46ab73::oracle::Oracle",
+        "0x855eb2d260ee42b898266e6df90bfd3c4ed821ccb253a352c159c223244a4b8a::oracle::Oracle",
         "0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock",
     ] satisfies string[];
     const parameterNames = ["version", "registry", "index", "oracle"];
@@ -1497,7 +1799,7 @@ export function updateTvl(options: UpdateTvlOptions) {
         `${packageAddress}::admin::Version`,
         `${packageAddress}::lp_pool::LiquidityPool`,
         "0x0000000000000000000000000000000000000000000000000000000000000001::type_name::TypeName",
-        "0x1d17058789bd1e1e79f1a92424519a88146f191f58a06cc4d9ab23d17d46ab73::oracle::Oracle",
+        "0x855eb2d260ee42b898266e6df90bfd3c4ed821ccb253a352c159c223244a4b8a::oracle::Oracle",
         "0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock",
     ] satisfies string[];
     const parameterNames = ["version", "liquidityPool", "tokenType", "oracle"];
@@ -1802,6 +2104,43 @@ export function calculateLpFee(options: CalculateLpFeeOptions) {
             arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
         });
 }
+export interface NormalSafetyCheckArguments {
+    version: RawTransactionArgument<string>;
+    registry: RawTransactionArgument<string>;
+    index: RawTransactionArgument<number | bigint>;
+    oracle: RawTransactionArgument<string>;
+}
+export interface NormalSafetyCheckOptions {
+    package?: string;
+    arguments:
+        | NormalSafetyCheckArguments
+        | [
+              version: RawTransactionArgument<string>,
+              registry: RawTransactionArgument<string>,
+              index: RawTransactionArgument<number | bigint>,
+              oracle: RawTransactionArgument<string>,
+          ];
+    typeArguments: [string, string];
+}
+export function normalSafetyCheck(options: NormalSafetyCheckOptions) {
+    const packageAddress = options.package ?? "@typus/perp";
+    const argumentsTypes = [
+        `${packageAddress}::admin::Version`,
+        `${packageAddress}::lp_pool::Registry`,
+        "u64",
+        "0x855eb2d260ee42b898266e6df90bfd3c4ed821ccb253a352c159c223244a4b8a::oracle::Oracle",
+        "0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock",
+    ] satisfies string[];
+    const parameterNames = ["version", "registry", "index", "oracle"];
+    return (tx: Transaction) =>
+        tx.moveCall({
+            package: packageAddress,
+            module: "lp_pool",
+            function: "normal_safety_check",
+            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
+            typeArguments: options.typeArguments,
+        });
+}
 export interface CalculateSwapFeeArguments {
     liquidityPool: RawTransactionArgument<string>;
     tokenType: RawTransactionArgument<string>;
@@ -1861,6 +2200,274 @@ export function checkTvlUpdated(options: CheckTvlUpdatedOptions) {
             arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
         });
 }
+export interface CalculateLendingAmountCappedArguments {
+    tokenPool: RawTransactionArgument<string>;
+    lendingAmount: RawTransactionArgument<number | bigint | null>;
+}
+export interface CalculateLendingAmountCappedOptions {
+    package?: string;
+    arguments:
+        | CalculateLendingAmountCappedArguments
+        | [tokenPool: RawTransactionArgument<string>, lendingAmount: RawTransactionArgument<number | bigint | null>];
+}
+export function calculateLendingAmountCapped(options: CalculateLendingAmountCappedOptions) {
+    const packageAddress = options.package ?? "@typus/perp";
+    const argumentsTypes = [
+        `${packageAddress}::lp_pool::TokenPool`,
+        "0x0000000000000000000000000000000000000000000000000000000000000001::option::Option<u64>",
+    ] satisfies string[];
+    const parameterNames = ["tokenPool", "lendingAmount"];
+    return (tx: Transaction) =>
+        tx.moveCall({
+            package: packageAddress,
+            module: "lp_pool",
+            function: "calculate_lending_amount_capped",
+            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
+        });
+}
+export interface DepositScallopBasicArguments {
+    liquidityPool: RawTransactionArgument<string>;
+    scallopVersion: RawTransactionArgument<string>;
+    scallopMarket: RawTransactionArgument<string>;
+    depositAmount: RawTransactionArgument<number | bigint>;
+}
+export interface DepositScallopBasicOptions {
+    package?: string;
+    arguments:
+        | DepositScallopBasicArguments
+        | [
+              liquidityPool: RawTransactionArgument<string>,
+              scallopVersion: RawTransactionArgument<string>,
+              scallopMarket: RawTransactionArgument<string>,
+              depositAmount: RawTransactionArgument<number | bigint>,
+          ];
+    typeArguments: [string];
+}
+export function depositScallopBasic(options: DepositScallopBasicOptions) {
+    const packageAddress = options.package ?? "@typus/perp";
+    const argumentsTypes = [
+        `${packageAddress}::lp_pool::LiquidityPool`,
+        "0xefe8b36d5b2e43728cc323298626b83177803521d195cfb11e15b910e892fddf::version::Version",
+        "0xefe8b36d5b2e43728cc323298626b83177803521d195cfb11e15b910e892fddf::market::Market",
+        "0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock",
+        "u64",
+    ] satisfies string[];
+    const parameterNames = ["liquidityPool", "scallopVersion", "scallopMarket", "depositAmount"];
+    return (tx: Transaction) =>
+        tx.moveCall({
+            package: packageAddress,
+            module: "lp_pool",
+            function: "deposit_scallop_basic",
+            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
+            typeArguments: options.typeArguments,
+        });
+}
+export interface WithdrawScallopBasicArguments {
+    version: RawTransactionArgument<string>;
+    liquidityPool: RawTransactionArgument<string>;
+    scallopVersion: RawTransactionArgument<string>;
+    scallopMarket: RawTransactionArgument<string>;
+    withdrawAmount: RawTransactionArgument<number | bigint>;
+}
+export interface WithdrawScallopBasicOptions {
+    package?: string;
+    arguments:
+        | WithdrawScallopBasicArguments
+        | [
+              version: RawTransactionArgument<string>,
+              liquidityPool: RawTransactionArgument<string>,
+              scallopVersion: RawTransactionArgument<string>,
+              scallopMarket: RawTransactionArgument<string>,
+              withdrawAmount: RawTransactionArgument<number | bigint>,
+          ];
+    typeArguments: [string];
+}
+export function withdrawScallopBasic(options: WithdrawScallopBasicOptions) {
+    const packageAddress = options.package ?? "@typus/perp";
+    const argumentsTypes = [
+        `${packageAddress}::admin::Version`,
+        `${packageAddress}::lp_pool::LiquidityPool`,
+        "0xefe8b36d5b2e43728cc323298626b83177803521d195cfb11e15b910e892fddf::version::Version",
+        "0xefe8b36d5b2e43728cc323298626b83177803521d195cfb11e15b910e892fddf::market::Market",
+        "0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock",
+        "u64",
+    ] satisfies string[];
+    const parameterNames = ["version", "liquidityPool", "scallopVersion", "scallopMarket", "withdrawAmount"];
+    return (tx: Transaction) =>
+        tx.moveCall({
+            package: packageAddress,
+            module: "lp_pool",
+            function: "withdraw_scallop_basic",
+            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
+            typeArguments: options.typeArguments,
+        });
+}
+export interface DepositNaviArguments {
+    liquidityPool: RawTransactionArgument<string>;
+    storage: RawTransactionArgument<string>;
+    pool: RawTransactionArgument<string>;
+    asset: RawTransactionArgument<number>;
+    incentiveV2: RawTransactionArgument<string>;
+    incentiveV3: RawTransactionArgument<string>;
+    depositAmount: RawTransactionArgument<number | bigint>;
+}
+export interface DepositNaviOptions {
+    package?: string;
+    arguments:
+        | DepositNaviArguments
+        | [
+              liquidityPool: RawTransactionArgument<string>,
+              storage: RawTransactionArgument<string>,
+              pool: RawTransactionArgument<string>,
+              asset: RawTransactionArgument<number>,
+              incentiveV2: RawTransactionArgument<string>,
+              incentiveV3: RawTransactionArgument<string>,
+              depositAmount: RawTransactionArgument<number | bigint>,
+          ];
+    typeArguments: [string];
+}
+export function depositNavi(options: DepositNaviOptions) {
+    const packageAddress = options.package ?? "@typus/perp";
+    const argumentsTypes = [
+        `${packageAddress}::lp_pool::LiquidityPool`,
+        "0xd899cf7d2b5db716bd2cf55599fb0d5ee38a3061e7b6bb6eebf73fa5bc4c81ca::storage::Storage",
+        `0xd899cf7d2b5db716bd2cf55599fb0d5ee38a3061e7b6bb6eebf73fa5bc4c81ca::pool::Pool<${options.typeArguments[0]}>`,
+        "u8",
+        "0xd899cf7d2b5db716bd2cf55599fb0d5ee38a3061e7b6bb6eebf73fa5bc4c81ca::incentive_v2::Incentive",
+        "0xd899cf7d2b5db716bd2cf55599fb0d5ee38a3061e7b6bb6eebf73fa5bc4c81ca::incentive_v3::Incentive",
+        "0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock",
+        "u64",
+    ] satisfies string[];
+    const parameterNames = ["liquidityPool", "storage", "pool", "asset", "incentiveV2", "incentiveV3", "depositAmount"];
+    return (tx: Transaction) =>
+        tx.moveCall({
+            package: packageAddress,
+            module: "lp_pool",
+            function: "deposit_navi",
+            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
+            typeArguments: options.typeArguments,
+        });
+}
+export interface WithdrawNaviArguments {
+    version: RawTransactionArgument<string>;
+    liquidityPool: RawTransactionArgument<string>;
+    oracleConfig: RawTransactionArgument<string>;
+    priceOracle: RawTransactionArgument<string>;
+    supraOracleHolder: RawTransactionArgument<string>;
+    pythPriceInfo: RawTransactionArgument<string>;
+    feedAddress: RawTransactionArgument<string>;
+    storage: RawTransactionArgument<string>;
+    pool: RawTransactionArgument<string>;
+    asset: RawTransactionArgument<number>;
+    incentiveV2: RawTransactionArgument<string>;
+    incentiveV3: RawTransactionArgument<string>;
+}
+export interface WithdrawNaviOptions {
+    package?: string;
+    arguments:
+        | WithdrawNaviArguments
+        | [
+              version: RawTransactionArgument<string>,
+              liquidityPool: RawTransactionArgument<string>,
+              oracleConfig: RawTransactionArgument<string>,
+              priceOracle: RawTransactionArgument<string>,
+              supraOracleHolder: RawTransactionArgument<string>,
+              pythPriceInfo: RawTransactionArgument<string>,
+              feedAddress: RawTransactionArgument<string>,
+              storage: RawTransactionArgument<string>,
+              pool: RawTransactionArgument<string>,
+              asset: RawTransactionArgument<number>,
+              incentiveV2: RawTransactionArgument<string>,
+              incentiveV3: RawTransactionArgument<string>,
+          ];
+    typeArguments: [string];
+}
+export function withdrawNavi(options: WithdrawNaviOptions) {
+    const packageAddress = options.package ?? "@typus/perp";
+    const argumentsTypes = [
+        `${packageAddress}::admin::Version`,
+        `${packageAddress}::lp_pool::LiquidityPool`,
+        "0xca441b44943c16be0e6e23c5a955bb971537ea3289ae8016fbf33fffe1fd210f::config::OracleConfig",
+        "0xca441b44943c16be0e6e23c5a955bb971537ea3289ae8016fbf33fffe1fd210f::oracle::PriceOracle",
+        "0x5d8fbbf6f908a4af8c6d072669a462d53e03eb3c1d863bd0359dc818c69ea706::SupraSValueFeed::OracleHolder",
+        "0x8d97f1cd6ac663735be08d1d2b6d02a159e711586461306ce60a2b7a6a565a9e::price_info::PriceInfoObject",
+        "address",
+        "0xd899cf7d2b5db716bd2cf55599fb0d5ee38a3061e7b6bb6eebf73fa5bc4c81ca::storage::Storage",
+        `0xd899cf7d2b5db716bd2cf55599fb0d5ee38a3061e7b6bb6eebf73fa5bc4c81ca::pool::Pool<${options.typeArguments[0]}>`,
+        "u8",
+        "0xd899cf7d2b5db716bd2cf55599fb0d5ee38a3061e7b6bb6eebf73fa5bc4c81ca::incentive_v2::Incentive",
+        "0xd899cf7d2b5db716bd2cf55599fb0d5ee38a3061e7b6bb6eebf73fa5bc4c81ca::incentive_v3::Incentive",
+        "0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock",
+    ] satisfies string[];
+    const parameterNames = [
+        "version",
+        "liquidityPool",
+        "oracleConfig",
+        "priceOracle",
+        "supraOracleHolder",
+        "pythPriceInfo",
+        "feedAddress",
+        "storage",
+        "pool",
+        "asset",
+        "incentiveV2",
+        "incentiveV3",
+    ];
+    return (tx: Transaction) =>
+        tx.moveCall({
+            package: packageAddress,
+            module: "lp_pool",
+            function: "withdraw_navi",
+            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
+            typeArguments: options.typeArguments,
+        });
+}
+export interface RewardNaviArguments {
+    version: RawTransactionArgument<string>;
+    liquidityPool: RawTransactionArgument<string>;
+    storage: RawTransactionArgument<string>;
+    rewardFund: RawTransactionArgument<string>;
+    coinTypes: RawTransactionArgument<string[]>;
+    ruleIds: RawTransactionArgument<string[]>;
+    incentiveV3: RawTransactionArgument<string>;
+}
+export interface RewardNaviOptions {
+    package?: string;
+    arguments:
+        | RewardNaviArguments
+        | [
+              version: RawTransactionArgument<string>,
+              liquidityPool: RawTransactionArgument<string>,
+              storage: RawTransactionArgument<string>,
+              rewardFund: RawTransactionArgument<string>,
+              coinTypes: RawTransactionArgument<string[]>,
+              ruleIds: RawTransactionArgument<string[]>,
+              incentiveV3: RawTransactionArgument<string>,
+          ];
+    typeArguments: [string];
+}
+export function rewardNavi(options: RewardNaviOptions) {
+    const packageAddress = options.package ?? "@typus/perp";
+    const argumentsTypes = [
+        `${packageAddress}::admin::Version`,
+        `${packageAddress}::lp_pool::LiquidityPool`,
+        "0xd899cf7d2b5db716bd2cf55599fb0d5ee38a3061e7b6bb6eebf73fa5bc4c81ca::storage::Storage",
+        `0xd899cf7d2b5db716bd2cf55599fb0d5ee38a3061e7b6bb6eebf73fa5bc4c81ca::incentive_v3::RewardFund<${options.typeArguments[0]}>`,
+        "vector<0x0000000000000000000000000000000000000000000000000000000000000001::ascii::String>",
+        "vector<address>",
+        "0xd899cf7d2b5db716bd2cf55599fb0d5ee38a3061e7b6bb6eebf73fa5bc4c81ca::incentive_v3::Incentive",
+        "0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock",
+    ] satisfies string[];
+    const parameterNames = ["version", "liquidityPool", "storage", "rewardFund", "coinTypes", "ruleIds", "incentiveV3"];
+    return (tx: Transaction) =>
+        tx.moveCall({
+            package: packageAddress,
+            module: "lp_pool",
+            function: "reward_navi",
+            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
+            typeArguments: options.typeArguments,
+        });
+}
 export interface BurnLp_Arguments {
     version: RawTransactionArgument<string>;
     registry: RawTransactionArgument<string>;
@@ -1890,7 +2497,7 @@ export function burnLp_(options: BurnLp_Options) {
         `${packageAddress}::lp_pool::Registry`,
         "u64",
         `${packageAddress}::treasury_caps::TreasuryCaps`,
-        "0x1d17058789bd1e1e79f1a92424519a88146f191f58a06cc4d9ab23d17d46ab73::oracle::Oracle",
+        "0x855eb2d260ee42b898266e6df90bfd3c4ed821ccb253a352c159c223244a4b8a::oracle::Oracle",
         `0x0000000000000000000000000000000000000000000000000000000000000002::balance::Balance<${options.typeArguments[0]}>`,
         "0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock",
     ] satisfies string[];
@@ -1932,8 +2539,8 @@ export function viewSwapResult(options: ViewSwapResultOptions) {
         `${packageAddress}::admin::Version`,
         `${packageAddress}::lp_pool::Registry`,
         "u64",
-        "0x1d17058789bd1e1e79f1a92424519a88146f191f58a06cc4d9ab23d17d46ab73::oracle::Oracle",
-        "0x1d17058789bd1e1e79f1a92424519a88146f191f58a06cc4d9ab23d17d46ab73::oracle::Oracle",
+        "0x855eb2d260ee42b898266e6df90bfd3c4ed821ccb253a352c159c223244a4b8a::oracle::Oracle",
+        "0x855eb2d260ee42b898266e6df90bfd3c4ed821ccb253a352c159c223244a4b8a::oracle::Oracle",
         "u64",
         "0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock",
     ] satisfies string[];
@@ -1988,7 +2595,7 @@ export function getExpiredReceiptCollateralBcs(options: GetExpiredReceiptCollate
     const packageAddress = options.package ?? "@typus/perp";
     const argumentsTypes = [
         `${packageAddress}::lp_pool::Registry`,
-        "0x6c9a394a43844fc09d9617bc8a8e775a4521f0e28e83de1da780d043a498671f::typus_dov_single::Registry",
+        "0x321848bf1ae327a9e022ccb3701940191e02fa193ab160d9c0e49cd3c003de3a::typus_dov_single::Registry",
         "u64",
     ] satisfies string[];
     const parameterNames = ["registry", "dovRegistry", "index"];
@@ -2327,19 +2934,6 @@ export function getBorrowRateDecimal(options: GetBorrowRateDecimalOptions = {}) 
             package: packageAddress,
             module: "lp_pool",
             function: "get_borrow_rate_decimal",
-        });
-}
-export interface DeprecatedOptions {
-    package?: string;
-    arguments?: [];
-}
-export function deprecated(options: DeprecatedOptions = {}) {
-    const packageAddress = options.package ?? "@typus/perp";
-    return (tx: Transaction) =>
-        tx.moveCall({
-            package: packageAddress,
-            module: "lp_pool",
-            function: "deprecated",
         });
 }
 export interface GetUserDeactivatingSharesArguments {

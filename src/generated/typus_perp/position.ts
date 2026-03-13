@@ -32,8 +32,6 @@ export const Position = new MoveStruct({
         id: object.UID,
         /** The timestamp when the position was created. */
         create_ts_ms: bcs.u64(),
-        /** The timestamp when the position was last updated. */
-        update_ts_ms: bcs.u64(),
         /** The ID of the position. */
         position_id: bcs.u64(),
         /** A vector of the linked order IDs. */
@@ -485,6 +483,8 @@ export interface OrderFilledArguments {
     cumulativeFundingRateIndexSign: RawTransactionArgument<boolean>;
     cumulativeFundingRateIndex: RawTransactionArgument<number | bigint>;
     tradingFeeMbp: RawTransactionArgument<number | bigint>;
+    referralCodeId: RawTransactionArgument<number | bigint>;
+    feeReductionBp: RawTransactionArgument<number | bigint>;
 }
 export interface OrderFilledOptions {
     package?: string;
@@ -507,6 +507,8 @@ export interface OrderFilledOptions {
               cumulativeFundingRateIndexSign: RawTransactionArgument<boolean>,
               cumulativeFundingRateIndex: RawTransactionArgument<number | bigint>,
               tradingFeeMbp: RawTransactionArgument<number | bigint>,
+              referralCodeId: RawTransactionArgument<number | bigint>,
+              feeReductionBp: RawTransactionArgument<number | bigint>,
           ];
     typeArguments: [string];
 }
@@ -515,9 +517,9 @@ export function orderFilled(options: OrderFilledOptions) {
     const packageAddress = options.package ?? "@typus/perp";
     const argumentsTypes = [
         `${packageAddress}::admin::Version`,
-        "0x4213e12a2220f15f1837a76897110d2260786558169bd8d0847f21e9b551f277::ecosystem::Version",
-        "0x4213e12a2220f15f1837a76897110d2260786558169bd8d0847f21e9b551f277::leaderboard::TypusLeaderboardRegistry",
-        "0x4213e12a2220f15f1837a76897110d2260786558169bd8d0847f21e9b551f277::tails_staking::TailsStakingRegistry",
+        "0x4b0f4ee1a40ce37ec81c987cc4e76a665419e74b863319492fc7d26f708b835a::ecosystem::Version",
+        "0x4b0f4ee1a40ce37ec81c987cc4e76a665419e74b863319492fc7d26f708b835a::leaderboard::TypusLeaderboardRegistry",
+        "0x4b0f4ee1a40ce37ec81c987cc4e76a665419e74b863319492fc7d26f708b835a::tails_staking::TailsStakingRegistry",
         `${packageAddress}::competition::CompetitionConfig`,
         `${packageAddress}::position::TradingOrder`,
         `0x0000000000000000000000000000000000000000000000000000000000000001::option::Option<${packageAddress}::position::Position>`,
@@ -528,6 +530,8 @@ export function orderFilled(options: OrderFilledOptions) {
         "u64",
         "u64",
         "bool",
+        "u64",
+        "u64",
         "u64",
         "u64",
         "0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock",
@@ -549,6 +553,8 @@ export function orderFilled(options: OrderFilledOptions) {
         "cumulativeFundingRateIndexSign",
         "cumulativeFundingRateIndex",
         "tradingFeeMbp",
+        "referralCodeId",
+        "feeReductionBp",
     ];
     return (tx: Transaction) =>
         tx.moveCall({
@@ -956,7 +962,7 @@ export function createOrderWithBidReceipts(options: CreateOrderWithBidReceiptsOp
         "u64",
         "u64",
         "u64",
-        "vector<0x908a10789a1a6953e0b73a997c10e3552f7ce4e2907afd00a334ed74bd973ded::vault::TypusBidReceipt>",
+        "vector<0xb4f25230ba74837d8299e92951306100c4a532e8c48cc3d8828abe9b91c8b274::vault::TypusBidReceipt>",
         "u64",
         "0x0000000000000000000000000000000000000000000000000000000000000001::option::Option<u64>",
         "u64",
@@ -1032,6 +1038,8 @@ export interface OrderFilledWithBidReceiptsCollateralArguments {
     cumulativeFundingRateIndexSign: RawTransactionArgument<boolean>;
     cumulativeFundingRateIndex: RawTransactionArgument<number | bigint>;
     tradingFeeMbp: RawTransactionArgument<number | bigint>;
+    referralCodeId: RawTransactionArgument<number | bigint>;
+    feeReductionBp: RawTransactionArgument<number | bigint>;
 }
 export interface OrderFilledWithBidReceiptsCollateralOptions {
     package?: string;
@@ -1058,6 +1066,8 @@ export interface OrderFilledWithBidReceiptsCollateralOptions {
               cumulativeFundingRateIndexSign: RawTransactionArgument<boolean>,
               cumulativeFundingRateIndex: RawTransactionArgument<number | bigint>,
               tradingFeeMbp: RawTransactionArgument<number | bigint>,
+              referralCodeId: RawTransactionArgument<number | bigint>,
+              feeReductionBp: RawTransactionArgument<number | bigint>,
           ];
     typeArguments: [string, string];
 }
@@ -1065,14 +1075,14 @@ export function orderFilledWithBidReceiptsCollateral(options: OrderFilledWithBid
     const packageAddress = options.package ?? "@typus/perp";
     const argumentsTypes = [
         `${packageAddress}::admin::Version`,
-        "0x4213e12a2220f15f1837a76897110d2260786558169bd8d0847f21e9b551f277::ecosystem::Version",
-        "0x4213e12a2220f15f1837a76897110d2260786558169bd8d0847f21e9b551f277::leaderboard::TypusLeaderboardRegistry",
-        "0x4213e12a2220f15f1837a76897110d2260786558169bd8d0847f21e9b551f277::tails_staking::TailsStakingRegistry",
+        "0x4b0f4ee1a40ce37ec81c987cc4e76a665419e74b863319492fc7d26f708b835a::ecosystem::Version",
+        "0x4b0f4ee1a40ce37ec81c987cc4e76a665419e74b863319492fc7d26f708b835a::leaderboard::TypusLeaderboardRegistry",
+        "0x4b0f4ee1a40ce37ec81c987cc4e76a665419e74b863319492fc7d26f708b835a::tails_staking::TailsStakingRegistry",
         `${packageAddress}::competition::CompetitionConfig`,
         `${packageAddress}::lp_pool::LiquidityPool`,
-        "0x6c9a394a43844fc09d9617bc8a8e775a4521f0e28e83de1da780d043a498671f::typus_dov_single::Registry",
-        "0x1d17058789bd1e1e79f1a92424519a88146f191f58a06cc4d9ab23d17d46ab73::oracle::Oracle",
-        "0x1d17058789bd1e1e79f1a92424519a88146f191f58a06cc4d9ab23d17d46ab73::oracle::Oracle",
+        "0x321848bf1ae327a9e022ccb3701940191e02fa193ab160d9c0e49cd3c003de3a::typus_dov_single::Registry",
+        "0x855eb2d260ee42b898266e6df90bfd3c4ed821ccb253a352c159c223244a4b8a::oracle::Oracle",
+        "0x855eb2d260ee42b898266e6df90bfd3c4ed821ccb253a352c159c223244a4b8a::oracle::Oracle",
         `${packageAddress}::position::TradingOrder`,
         `0x0000000000000000000000000000000000000000000000000000000000000001::option::Option<${packageAddress}::position::Position>`,
         "u64",
@@ -1082,6 +1092,8 @@ export function orderFilledWithBidReceiptsCollateral(options: OrderFilledWithBid
         "u64",
         "u64",
         "bool",
+        "u64",
+        "u64",
         "u64",
         "u64",
         "0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock",
@@ -1107,6 +1119,8 @@ export function orderFilledWithBidReceiptsCollateral(options: OrderFilledWithBid
         "cumulativeFundingRateIndexSign",
         "cumulativeFundingRateIndex",
         "tradingFeeMbp",
+        "referralCodeId",
+        "feeReductionBp",
     ];
     return (tx: Transaction) =>
         tx.moveCall({
@@ -1129,6 +1143,8 @@ export interface CheckOptionCollateralPositionLiquidatedArguments {
     tradingFeeMbp: RawTransactionArgument<number | bigint>;
     maintenanceMarginRateBp: RawTransactionArgument<number | bigint>;
     cumulativeBorrowRate: RawTransactionArgument<number | bigint>;
+    cumulativeFundingRateIndexSign: RawTransactionArgument<boolean>;
+    cumulativeFundingRateIndex: RawTransactionArgument<number | bigint>;
 }
 export interface CheckOptionCollateralPositionLiquidatedOptions {
     package?: string;
@@ -1146,15 +1162,17 @@ export interface CheckOptionCollateralPositionLiquidatedOptions {
               tradingFeeMbp: RawTransactionArgument<number | bigint>,
               maintenanceMarginRateBp: RawTransactionArgument<number | bigint>,
               cumulativeBorrowRate: RawTransactionArgument<number | bigint>,
+              cumulativeFundingRateIndexSign: RawTransactionArgument<boolean>,
+              cumulativeFundingRateIndex: RawTransactionArgument<number | bigint>,
           ];
     typeArguments: [string];
 }
 export function checkOptionCollateralPositionLiquidated(options: CheckOptionCollateralPositionLiquidatedOptions) {
     const packageAddress = options.package ?? "@typus/perp";
     const argumentsTypes = [
-        "0x6c9a394a43844fc09d9617bc8a8e775a4521f0e28e83de1da780d043a498671f::typus_dov_single::Registry",
-        "0x1d17058789bd1e1e79f1a92424519a88146f191f58a06cc4d9ab23d17d46ab73::oracle::Oracle",
-        "0x1d17058789bd1e1e79f1a92424519a88146f191f58a06cc4d9ab23d17d46ab73::oracle::Oracle",
+        "0x321848bf1ae327a9e022ccb3701940191e02fa193ab160d9c0e49cd3c003de3a::typus_dov_single::Registry",
+        "0x855eb2d260ee42b898266e6df90bfd3c4ed821ccb253a352c159c223244a4b8a::oracle::Oracle",
+        "0x855eb2d260ee42b898266e6df90bfd3c4ed821ccb253a352c159c223244a4b8a::oracle::Oracle",
         `${packageAddress}::position::Position`,
         "u64",
         "u64",
@@ -1162,6 +1180,8 @@ export function checkOptionCollateralPositionLiquidated(options: CheckOptionColl
         "u64",
         "u64",
         "u64",
+        "u64",
+        "bool",
         "u64",
         "0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock",
     ] satisfies string[];
@@ -1177,6 +1197,8 @@ export function checkOptionCollateralPositionLiquidated(options: CheckOptionColl
         "tradingFeeMbp",
         "maintenanceMarginRateBp",
         "cumulativeBorrowRate",
+        "cumulativeFundingRateIndexSign",
+        "cumulativeFundingRateIndex",
     ];
     return (tx: Transaction) =>
         tx.moveCall({
@@ -1313,9 +1335,9 @@ export interface UpdateOptionPositionCollateralAmountOptions {
 export function updateOptionPositionCollateralAmount(options: UpdateOptionPositionCollateralAmountOptions) {
     const packageAddress = options.package ?? "@typus/perp";
     const argumentsTypes = [
-        "0x6c9a394a43844fc09d9617bc8a8e775a4521f0e28e83de1da780d043a498671f::typus_dov_single::Registry",
-        "0x1d17058789bd1e1e79f1a92424519a88146f191f58a06cc4d9ab23d17d46ab73::oracle::Oracle",
-        "0x1d17058789bd1e1e79f1a92424519a88146f191f58a06cc4d9ab23d17d46ab73::oracle::Oracle",
+        "0x321848bf1ae327a9e022ccb3701940191e02fa193ab160d9c0e49cd3c003de3a::typus_dov_single::Registry",
+        "0x855eb2d260ee42b898266e6df90bfd3c4ed821ccb253a352c159c223244a4b8a::oracle::Oracle",
+        "0x855eb2d260ee42b898266e6df90bfd3c4ed821ccb253a352c159c223244a4b8a::oracle::Oracle",
         `${packageAddress}::position::Position`,
         "0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock",
     ] satisfies string[];
@@ -1416,10 +1438,10 @@ export interface CalculateIntrinsicValueOptions {
 export function calculateIntrinsicValue(options: CalculateIntrinsicValueOptions) {
     const packageAddress = options.package ?? "@typus/perp";
     const argumentsTypes = [
-        "0x6c9a394a43844fc09d9617bc8a8e775a4521f0e28e83de1da780d043a498671f::typus_dov_single::Registry",
-        "0x1d17058789bd1e1e79f1a92424519a88146f191f58a06cc4d9ab23d17d46ab73::oracle::Oracle",
-        "0x1d17058789bd1e1e79f1a92424519a88146f191f58a06cc4d9ab23d17d46ab73::oracle::Oracle",
-        "vector<0x908a10789a1a6953e0b73a997c10e3552f7ce4e2907afd00a334ed74bd973ded::vault::TypusBidReceipt>",
+        "0x321848bf1ae327a9e022ccb3701940191e02fa193ab160d9c0e49cd3c003de3a::typus_dov_single::Registry",
+        "0x855eb2d260ee42b898266e6df90bfd3c4ed821ccb253a352c159c223244a4b8a::oracle::Oracle",
+        "0x855eb2d260ee42b898266e6df90bfd3c4ed821ccb253a352c159c223244a4b8a::oracle::Oracle",
+        "vector<0xb4f25230ba74837d8299e92951306100c4a532e8c48cc3d8828abe9b91c8b274::vault::TypusBidReceipt>",
         "0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock",
     ] satisfies string[];
     const parameterNames = ["dovRegistry", "typusOracleTradingSymbol", "typusOracleCToken", "receipts"];
@@ -1430,52 +1452,6 @@ export function calculateIntrinsicValue(options: CalculateIntrinsicValueOptions)
             function: "calculate_intrinsic_value",
             arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
             typeArguments: options.typeArguments,
-        });
-}
-export interface CalculateTradingFeeArguments {
-    size: RawTransactionArgument<number | bigint>;
-    sizeDecimal: RawTransactionArgument<number | bigint>;
-    collateralOraclePrice: RawTransactionArgument<number | bigint>;
-    collateralOraclePriceDecimal: RawTransactionArgument<number | bigint>;
-    tradingPairOraclePrice: RawTransactionArgument<number | bigint>;
-    tradingPairOraclePriceDecimal: RawTransactionArgument<number | bigint>;
-    tradingFeeMbp: RawTransactionArgument<number | bigint>;
-    collateralTokenDecimal: RawTransactionArgument<number | bigint>;
-}
-export interface CalculateTradingFeeOptions {
-    package?: string;
-    arguments:
-        | CalculateTradingFeeArguments
-        | [
-              size: RawTransactionArgument<number | bigint>,
-              sizeDecimal: RawTransactionArgument<number | bigint>,
-              collateralOraclePrice: RawTransactionArgument<number | bigint>,
-              collateralOraclePriceDecimal: RawTransactionArgument<number | bigint>,
-              tradingPairOraclePrice: RawTransactionArgument<number | bigint>,
-              tradingPairOraclePriceDecimal: RawTransactionArgument<number | bigint>,
-              tradingFeeMbp: RawTransactionArgument<number | bigint>,
-              collateralTokenDecimal: RawTransactionArgument<number | bigint>,
-          ];
-}
-export function calculateTradingFee(options: CalculateTradingFeeOptions) {
-    const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = ["u64", "u64", "u64", "u64", "u64", "u64", "u64", "u64"] satisfies string[];
-    const parameterNames = [
-        "size",
-        "sizeDecimal",
-        "collateralOraclePrice",
-        "collateralOraclePriceDecimal",
-        "tradingPairOraclePrice",
-        "tradingPairOraclePriceDecimal",
-        "tradingFeeMbp",
-        "collateralTokenDecimal",
-    ];
-    return (tx: Transaction) =>
-        tx.moveCall({
-            package: packageAddress,
-            module: "position",
-            function: "calculate_trading_fee",
-            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
         });
 }
 export interface CollateralWithPnlArguments {
@@ -1558,6 +1534,52 @@ export function calculatePositionFundingRate(options: CalculatePositionFundingRa
             package: packageAddress,
             module: "position",
             function: "calculate_position_funding_rate",
+            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
+        });
+}
+export interface CalculateReserveAmountArguments {
+    newSize: RawTransactionArgument<number | bigint>;
+    sizeDecimal: RawTransactionArgument<number | bigint>;
+    collateralAmount: RawTransactionArgument<number | bigint>;
+    collateralTokenDecimal: RawTransactionArgument<number | bigint>;
+    collateralOraclePrice: RawTransactionArgument<number | bigint>;
+    collateralOraclePriceDecimal: RawTransactionArgument<number | bigint>;
+    tradingPairOraclePrice: RawTransactionArgument<number | bigint>;
+    tradingPairOraclePriceDecimal: RawTransactionArgument<number | bigint>;
+}
+export interface CalculateReserveAmountOptions {
+    package?: string;
+    arguments:
+        | CalculateReserveAmountArguments
+        | [
+              newSize: RawTransactionArgument<number | bigint>,
+              sizeDecimal: RawTransactionArgument<number | bigint>,
+              collateralAmount: RawTransactionArgument<number | bigint>,
+              collateralTokenDecimal: RawTransactionArgument<number | bigint>,
+              collateralOraclePrice: RawTransactionArgument<number | bigint>,
+              collateralOraclePriceDecimal: RawTransactionArgument<number | bigint>,
+              tradingPairOraclePrice: RawTransactionArgument<number | bigint>,
+              tradingPairOraclePriceDecimal: RawTransactionArgument<number | bigint>,
+          ];
+}
+export function calculateReserveAmount(options: CalculateReserveAmountOptions) {
+    const packageAddress = options.package ?? "@typus/perp";
+    const argumentsTypes = ["u64", "u64", "u64", "u64", "u64", "u64", "u64", "u64"] satisfies string[];
+    const parameterNames = [
+        "newSize",
+        "sizeDecimal",
+        "collateralAmount",
+        "collateralTokenDecimal",
+        "collateralOraclePrice",
+        "collateralOraclePriceDecimal",
+        "tradingPairOraclePrice",
+        "tradingPairOraclePriceDecimal",
+    ];
+    return (tx: Transaction) =>
+        tx.moveCall({
+            package: packageAddress,
+            module: "position",
+            function: "calculate_reserve_amount",
             arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
         });
 }
@@ -1831,9 +1853,9 @@ export interface GetOptionCollateralOrderCollateralAmountOptions {
 export function getOptionCollateralOrderCollateralAmount(options: GetOptionCollateralOrderCollateralAmountOptions) {
     const packageAddress = options.package ?? "@typus/perp";
     const argumentsTypes = [
-        "0x6c9a394a43844fc09d9617bc8a8e775a4521f0e28e83de1da780d043a498671f::typus_dov_single::Registry",
-        "0x1d17058789bd1e1e79f1a92424519a88146f191f58a06cc4d9ab23d17d46ab73::oracle::Oracle",
-        "0x1d17058789bd1e1e79f1a92424519a88146f191f58a06cc4d9ab23d17d46ab73::oracle::Oracle",
+        "0x321848bf1ae327a9e022ccb3701940191e02fa193ab160d9c0e49cd3c003de3a::typus_dov_single::Registry",
+        "0x855eb2d260ee42b898266e6df90bfd3c4ed821ccb253a352c159c223244a4b8a::oracle::Oracle",
+        "0x855eb2d260ee42b898266e6df90bfd3c4ed821ccb253a352c159c223244a4b8a::oracle::Oracle",
         `${packageAddress}::position::TradingOrder`,
         "0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock",
     ] satisfies string[];
@@ -1847,43 +1869,49 @@ export function getOptionCollateralOrderCollateralAmount(options: GetOptionColla
             typeArguments: options.typeArguments,
         });
 }
-export interface GetOrderFilledFeeArguments {
-    order: RawTransactionArgument<string>;
+export interface CalculateTradingFeeArguments {
+    size: RawTransactionArgument<number | bigint>;
+    sizeDecimal: RawTransactionArgument<number | bigint>;
     collateralOraclePrice: RawTransactionArgument<number | bigint>;
     collateralOraclePriceDecimal: RawTransactionArgument<number | bigint>;
     tradingPairOraclePrice: RawTransactionArgument<number | bigint>;
     tradingPairOraclePriceDecimal: RawTransactionArgument<number | bigint>;
     tradingFeeMbp: RawTransactionArgument<number | bigint>;
+    collateralTokenDecimal: RawTransactionArgument<number | bigint>;
 }
-export interface GetOrderFilledFeeOptions {
+export interface CalculateTradingFeeOptions {
     package?: string;
     arguments:
-        | GetOrderFilledFeeArguments
+        | CalculateTradingFeeArguments
         | [
-              order: RawTransactionArgument<string>,
+              size: RawTransactionArgument<number | bigint>,
+              sizeDecimal: RawTransactionArgument<number | bigint>,
               collateralOraclePrice: RawTransactionArgument<number | bigint>,
               collateralOraclePriceDecimal: RawTransactionArgument<number | bigint>,
               tradingPairOraclePrice: RawTransactionArgument<number | bigint>,
               tradingPairOraclePriceDecimal: RawTransactionArgument<number | bigint>,
               tradingFeeMbp: RawTransactionArgument<number | bigint>,
+              collateralTokenDecimal: RawTransactionArgument<number | bigint>,
           ];
 }
-export function getOrderFilledFee(options: GetOrderFilledFeeOptions) {
+export function calculateTradingFee(options: CalculateTradingFeeOptions) {
     const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [`${packageAddress}::position::TradingOrder`, "u64", "u64", "u64", "u64", "u64"] satisfies string[];
+    const argumentsTypes = ["u64", "u64", "u64", "u64", "u64", "u64", "u64", "u64"] satisfies string[];
     const parameterNames = [
-        "order",
+        "size",
+        "sizeDecimal",
         "collateralOraclePrice",
         "collateralOraclePriceDecimal",
         "tradingPairOraclePrice",
         "tradingPairOraclePriceDecimal",
         "tradingFeeMbp",
+        "collateralTokenDecimal",
     ];
     return (tx: Transaction) =>
         tx.moveCall({
             package: packageAddress,
             module: "position",
-            function: "get_order_filled_fee",
+            function: "calculate_trading_fee",
             arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
         });
 }
@@ -1905,7 +1933,7 @@ export interface SplitBidReceiptOptions {
 export function splitBidReceipt(options: SplitBidReceiptOptions) {
     const packageAddress = options.package ?? "@typus/perp";
     const argumentsTypes = [
-        "0x6c9a394a43844fc09d9617bc8a8e775a4521f0e28e83de1da780d043a498671f::typus_dov_single::Registry",
+        "0x321848bf1ae327a9e022ccb3701940191e02fa193ab160d9c0e49cd3c003de3a::typus_dov_single::Registry",
         `${packageAddress}::position::Position`,
         "u64",
     ] satisfies string[];
@@ -2262,9 +2290,9 @@ export interface GetOptionPositionCollateralAmountOptions {
 export function getOptionPositionCollateralAmount(options: GetOptionPositionCollateralAmountOptions) {
     const packageAddress = options.package ?? "@typus/perp";
     const argumentsTypes = [
-        "0x6c9a394a43844fc09d9617bc8a8e775a4521f0e28e83de1da780d043a498671f::typus_dov_single::Registry",
-        "0x1d17058789bd1e1e79f1a92424519a88146f191f58a06cc4d9ab23d17d46ab73::oracle::Oracle",
-        "0x1d17058789bd1e1e79f1a92424519a88146f191f58a06cc4d9ab23d17d46ab73::oracle::Oracle",
+        "0x321848bf1ae327a9e022ccb3701940191e02fa193ab160d9c0e49cd3c003de3a::typus_dov_single::Registry",
+        "0x855eb2d260ee42b898266e6df90bfd3c4ed821ccb253a352c159c223244a4b8a::oracle::Oracle",
+        "0x855eb2d260ee42b898266e6df90bfd3c4ed821ccb253a352c159c223244a4b8a::oracle::Oracle",
         `${packageAddress}::position::Position`,
         "0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock",
     ] satisfies string[];
@@ -2291,7 +2319,7 @@ export interface OptionPositionBidReceiptsExpiredOptions {
 export function optionPositionBidReceiptsExpired(options: OptionPositionBidReceiptsExpiredOptions) {
     const packageAddress = options.package ?? "@typus/perp";
     const argumentsTypes = [
-        "0x6c9a394a43844fc09d9617bc8a8e775a4521f0e28e83de1da780d043a498671f::typus_dov_single::Registry",
+        "0x321848bf1ae327a9e022ccb3701940191e02fa193ab160d9c0e49cd3c003de3a::typus_dov_single::Registry",
         `${packageAddress}::position::Position`,
     ] satisfies string[];
     const parameterNames = ["dovRegistry", "position"];
@@ -2324,9 +2352,9 @@ export interface GetOptionPositionExerciseValueOptions {
 export function getOptionPositionExerciseValue(options: GetOptionPositionExerciseValueOptions) {
     const packageAddress = options.package ?? "@typus/perp";
     const argumentsTypes = [
-        "0x6c9a394a43844fc09d9617bc8a8e775a4521f0e28e83de1da780d043a498671f::typus_dov_single::Registry",
-        "0x1d17058789bd1e1e79f1a92424519a88146f191f58a06cc4d9ab23d17d46ab73::oracle::Oracle",
-        "0x1d17058789bd1e1e79f1a92424519a88146f191f58a06cc4d9ab23d17d46ab73::oracle::Oracle",
+        "0x321848bf1ae327a9e022ccb3701940191e02fa193ab160d9c0e49cd3c003de3a::typus_dov_single::Registry",
+        "0x855eb2d260ee42b898266e6df90bfd3c4ed821ccb253a352c159c223244a4b8a::oracle::Oracle",
+        "0x855eb2d260ee42b898266e6df90bfd3c4ed821ccb253a352c159c223244a4b8a::oracle::Oracle",
         `${packageAddress}::position::Position`,
         "0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock",
     ] satisfies string[];

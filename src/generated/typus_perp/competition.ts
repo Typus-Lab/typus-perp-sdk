@@ -23,37 +23,6 @@ export const CompetitionConfig = new MoveStruct({
         u64_padding: bcs.vector(bcs.u64()),
     },
 });
-export interface NewCompetitionConfigArguments {
-    version: RawTransactionArgument<string>;
-    boostBp: RawTransactionArgument<number | bigint[]>;
-    programName: RawTransactionArgument<string>;
-}
-export interface NewCompetitionConfigOptions {
-    package?: string;
-    arguments:
-        | NewCompetitionConfigArguments
-        | [
-              version: RawTransactionArgument<string>,
-              boostBp: RawTransactionArgument<number | bigint[]>,
-              programName: RawTransactionArgument<string>,
-          ];
-}
-export function newCompetitionConfig(options: NewCompetitionConfigOptions) {
-    const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [
-        `${packageAddress}::admin::Version`,
-        "vector<u64>",
-        "0x0000000000000000000000000000000000000000000000000000000000000001::ascii::String",
-    ] satisfies string[];
-    const parameterNames = ["version", "boostBp", "programName"];
-    return (tx: Transaction) =>
-        tx.moveCall({
-            package: packageAddress,
-            module: "competition",
-            function: "new_competition_config",
-            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
-        });
-}
 export interface AddScoreArguments {
     version: RawTransactionArgument<string>;
     ecosystemVersion: RawTransactionArgument<string>;
@@ -82,9 +51,9 @@ export function addScore(options: AddScoreOptions) {
     const packageAddress = options.package ?? "@typus/perp";
     const argumentsTypes = [
         `${packageAddress}::admin::Version`,
-        "0x4213e12a2220f15f1837a76897110d2260786558169bd8d0847f21e9b551f277::ecosystem::Version",
-        "0x4213e12a2220f15f1837a76897110d2260786558169bd8d0847f21e9b551f277::leaderboard::TypusLeaderboardRegistry",
-        "0x4213e12a2220f15f1837a76897110d2260786558169bd8d0847f21e9b551f277::tails_staking::TailsStakingRegistry",
+        "0x4b0f4ee1a40ce37ec81c987cc4e76a665419e74b863319492fc7d26f708b835a::ecosystem::Version",
+        "0x4b0f4ee1a40ce37ec81c987cc4e76a665419e74b863319492fc7d26f708b835a::leaderboard::TypusLeaderboardRegistry",
+        "0x4b0f4ee1a40ce37ec81c987cc4e76a665419e74b863319492fc7d26f708b835a::tails_staking::TailsStakingRegistry",
         `${packageAddress}::competition::CompetitionConfig`,
         "u64",
         "address",

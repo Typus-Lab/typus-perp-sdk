@@ -115,19 +115,6 @@ export function upgrade(options: UpgradeOptions) {
             arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
         });
 }
-export interface InitOptions {
-    package?: string;
-    arguments?: [];
-}
-export function init(options: InitOptions = {}) {
-    const packageAddress = options.package ?? "@typus/perp";
-    return (tx: Transaction) =>
-        tx.moveCall({
-            package: packageAddress,
-            module: "admin",
-            function: "init",
-        });
-}
 export interface VerifyArguments {
     version: RawTransactionArgument<string>;
 }
@@ -145,77 +132,6 @@ export function verify(options: VerifyOptions) {
             package: packageAddress,
             module: "admin",
             function: "verify",
-            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
-        });
-}
-export interface AddAuthorizedUserArguments {
-    version: RawTransactionArgument<string>;
-    userAddress: RawTransactionArgument<string>;
-}
-export interface AddAuthorizedUserOptions {
-    package?: string;
-    arguments: AddAuthorizedUserArguments | [version: RawTransactionArgument<string>, userAddress: RawTransactionArgument<string>];
-}
-/** [Authorized Function] Adds an authorized user. */
-export function addAuthorizedUser(options: AddAuthorizedUserOptions) {
-    const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [`${packageAddress}::admin::Version`, "address"] satisfies string[];
-    const parameterNames = ["version", "userAddress"];
-    return (tx: Transaction) =>
-        tx.moveCall({
-            package: packageAddress,
-            module: "admin",
-            function: "add_authorized_user",
-            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
-        });
-}
-export interface RemoveAuthorizedUserArguments {
-    version: RawTransactionArgument<string>;
-    userAddress: RawTransactionArgument<string>;
-}
-export interface RemoveAuthorizedUserOptions {
-    package?: string;
-    arguments: RemoveAuthorizedUserArguments | [version: RawTransactionArgument<string>, userAddress: RawTransactionArgument<string>];
-}
-/** [Authorized Function] Removes an authorized user. */
-export function removeAuthorizedUser(options: RemoveAuthorizedUserOptions) {
-    const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [`${packageAddress}::admin::Version`, "address"] satisfies string[];
-    const parameterNames = ["version", "userAddress"];
-    return (tx: Transaction) =>
-        tx.moveCall({
-            package: packageAddress,
-            module: "admin",
-            function: "remove_authorized_user",
-            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
-        });
-}
-export interface InstallEcosystemManagerCapEntryArguments {
-    version: RawTransactionArgument<string>;
-    typusEcosystemVersion: RawTransactionArgument<string>;
-}
-export interface InstallEcosystemManagerCapEntryOptions {
-    package?: string;
-    arguments:
-        | InstallEcosystemManagerCapEntryArguments
-        | [version: RawTransactionArgument<string>, typusEcosystemVersion: RawTransactionArgument<string>];
-}
-/**
- * [Authorized Function] Installs the ecosystem manager cap. TODO: can be remove
- * after install
- */
-export function installEcosystemManagerCapEntry(options: InstallEcosystemManagerCapEntryOptions) {
-    const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [
-        `${packageAddress}::admin::Version`,
-        "0x4213e12a2220f15f1837a76897110d2260786558169bd8d0847f21e9b551f277::ecosystem::Version",
-    ] satisfies string[];
-    const parameterNames = ["version", "typusEcosystemVersion"];
-    return (tx: Transaction) =>
-        tx.moveCall({
-            package: packageAddress,
-            module: "admin",
-            function: "install_ecosystem_manager_cap_entry",
             arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
         });
 }
@@ -246,9 +162,9 @@ export function addTailsExpAndLeaderboard(options: AddTailsExpAndLeaderboardOpti
     const packageAddress = options.package ?? "@typus/perp";
     const argumentsTypes = [
         `${packageAddress}::admin::Version`,
-        "0x4213e12a2220f15f1837a76897110d2260786558169bd8d0847f21e9b551f277::ecosystem::Version",
-        "0x4213e12a2220f15f1837a76897110d2260786558169bd8d0847f21e9b551f277::user::TypusUserRegistry",
-        "0x4213e12a2220f15f1837a76897110d2260786558169bd8d0847f21e9b551f277::leaderboard::TypusLeaderboardRegistry",
+        "0x4b0f4ee1a40ce37ec81c987cc4e76a665419e74b863319492fc7d26f708b835a::ecosystem::Version",
+        "0x4b0f4ee1a40ce37ec81c987cc4e76a665419e74b863319492fc7d26f708b835a::user::TypusUserRegistry",
+        "0x4b0f4ee1a40ce37ec81c987cc4e76a665419e74b863319492fc7d26f708b835a::leaderboard::TypusLeaderboardRegistry",
         "address",
         "u64",
         "u64",
@@ -297,8 +213,8 @@ export function addCompetitionLeaderboard(options: AddCompetitionLeaderboardOpti
     const packageAddress = options.package ?? "@typus/perp";
     const argumentsTypes = [
         `${packageAddress}::admin::Version`,
-        "0x4213e12a2220f15f1837a76897110d2260786558169bd8d0847f21e9b551f277::ecosystem::Version",
-        "0x4213e12a2220f15f1837a76897110d2260786558169bd8d0847f21e9b551f277::leaderboard::TypusLeaderboardRegistry",
+        "0x4b0f4ee1a40ce37ec81c987cc4e76a665419e74b863319492fc7d26f708b835a::ecosystem::Version",
+        "0x4b0f4ee1a40ce37ec81c987cc4e76a665419e74b863319492fc7d26f708b835a::leaderboard::TypusLeaderboardRegistry",
         "0x0000000000000000000000000000000000000000000000000000000000000001::ascii::String",
         "address",
         "u64",

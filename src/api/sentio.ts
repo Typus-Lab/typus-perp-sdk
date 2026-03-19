@@ -807,7 +807,7 @@ export async function getLeaderboardFromSentio(startTs: number, endTs: number): 
                     t.distinct_id as Address,
                     t.total_volume as Trading_Vol,
                     cast(t.total_volume AS Decimal256(18)) / cast(s.top10_total_volume AS Decimal256(18)) AS Volume_Share_Top10,
-                    Volume_Share_Top10 * 150 as PrizePool_Share
+                    Volume_Share_Top10 * 350 as PrizePool_Share
                 FROM top10 t
                 JOIN top10_sum s ON t.logical_date = s.logical_date
                 WHERE Date >= ${startTs} AND Date < ${endTs}

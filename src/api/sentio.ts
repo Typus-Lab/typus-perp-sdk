@@ -758,7 +758,7 @@ export async function getUserPnlFromSentio(startTimestamp: number, endTimestamp:
     }
 }
 
-export async function getLeaderboardFromSentio(startTs: number, endTs: number): Promise<any[]> {
+export async function getLeaderboardFromSentio(startTs: number, endTs: number, checkRwaOnly: boolean = false): Promise<any[]> {
     let apiUrl = "https://app.sentio.xyz/api/v1/analytics/typus/typus_perp/sql/execute";
 
     let size = (10 * (endTs - startTs)) / 60 / 60 / 24; // day * 10
@@ -821,6 +821,68 @@ export async function getLeaderboardFromSentio(startTs: number, endTs: number): 
         },
     };
 
+    if (checkRwaOnly) {
+        requestData = {
+            sqlQuery: {
+                sql: `
+                    WITH
+                    event AS (
+                        SELECT
+                            s.timestamp,
+                            toDate(s.timestamp - INTERVAL 3 HOUR) AS logical_date,
+                            s.score / power(10, 9) AS volume,
+                            s.distinct_id
+                        FROM Score s
+                        LEFT JOIN OrderFilled o ON s.transaction_hash = o.transaction_hash
+                        WHERE o.base_token IN (
+                            'XAU', 'XAG', 'USOIL', 'JPY', 'SPYX', 'QQQX',
+                            'TSLAX', 'NVDAX', 'AAPLX', 'GOOGLX', 'MEATAX'
+                        )
+                    ),
+                    sum_vol AS (
+                        SELECT
+                            logical_date,
+                            distinct_id,
+                            sum(volume) AS total_volume
+                        FROM event
+                        GROUP BY logical_date, distinct_id
+                    ),
+                    ranked AS (
+                        SELECT
+                            *,
+                            row_number() OVER (PARTITION BY logical_date ORDER BY total_volume DESC) AS rk
+                        FROM sum_vol
+                    ),
+                    top10 AS (
+                        SELECT *
+                        FROM ranked
+                        WHERE rk <= 10
+                    ),
+                    top10_sum AS (
+                        SELECT
+                            logical_date,
+                            sum(total_volume) AS top10_total_volume
+                        FROM top10
+                        GROUP BY logical_date
+                    )
+                    SELECT
+                        toDateTime(logical_date + INTERVAL 3 HOUR) AS Date,
+                        t.distinct_id AS Address,
+                        t.total_volume AS Trading_Vol,
+                        CAST(t.total_volume AS Decimal256(18)) / CAST(s.top10_total_volume AS Decimal256(18)) AS Volume_Share_Top10,
+                        Volume_Share_Top10 * 350 AS PrizePool_Share
+                    FROM top10 t
+                    JOIN top10_sum s ON t.logical_date = s.logical_date
+                    WHERE Date >= ${startTs} AND Date < ${endTs}
+                    ORDER BY
+                        Date DESC,
+                        t.rk ASC
+                `,
+                size,
+            }
+        }
+    }
+
     let jsonData = JSON.stringify(requestData);
 
     let response = await fetch(apiUrl, {
@@ -830,7 +892,7 @@ export async function getLeaderboardFromSentio(startTs: number, endTs: number): 
     });
 
     let data = await response.json();
-    // console.log(data);
+    // console.log(data.result.rows);
 
     if (data.result) {
         return data.result.rows as any[];

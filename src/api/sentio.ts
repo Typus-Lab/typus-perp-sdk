@@ -758,7 +758,18 @@ export async function getUserPnlFromSentio(startTimestamp: number, endTimestamp:
     }
 }
 
-export async function getLeaderboardFromSentio(startTs: number, endTs: number, checkRwaOnly: boolean = false): Promise<any[]> {
+export enum LeaderboardType {
+    RWA = "rwa",
+    CRYPTO = "crypto",
+}
+export type LeaderboardData = {
+    Address: string;
+    Trading_Vol: number;
+    Volume_Share_Top10: number;
+    PrizePool_Share: number;
+}
+
+export async function getLeaderboardFromSentio(startTs: number, endTs: number, type: LeaderboardType = LeaderboardType.CRYPTO): Promise<LeaderboardData[]> {
     let apiUrl = "https://app.sentio.xyz/api/v1/analytics/typus/typus_perp/sql/execute";
 
     let size = 10;
@@ -769,10 +780,15 @@ export async function getLeaderboardFromSentio(startTs: number, endTs: number, c
                 WITH
                 event AS (
                     SELECT
-                        score/power(10, 9) AS volume,
-                        distinct_id
-                    FROM Score
-                    WHERE timestamp >= ${startTs} AND timestamp < ${endTs}
+                        s.score / power(10, 9) AS volume,
+                        s.distinct_id
+                    FROM Score s
+                    LEFT JOIN OrderFilled o ON s.transaction_hash = o.transaction_hash
+                    WHERE o.base_token NOT IN (
+                        'XAU', 'XAG', 'USOIL', 'JPY', 'SPYX', 'QQQX',
+                        'TSLAX', 'NVDAX', 'AAPLX', 'GOOGLX', 'METAX'
+                    )
+                    AND s.timestamp >= ${startTs} AND s.timestamp < ${endTs}
                 ),
                 sum_vol AS (
                     SELECT
@@ -811,7 +827,7 @@ export async function getLeaderboardFromSentio(startTs: number, endTs: number, c
         },
     };
 
-    if (checkRwaOnly) {
+    if (type === LeaderboardType.RWA) {
         requestData = {
             sqlQuery: {
                 sql: `

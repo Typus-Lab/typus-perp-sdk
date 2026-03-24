@@ -14,7 +14,7 @@ import {
 } from "src";
 
 (async () => {
-    let user = "0x845c22be3e771ac8d90973e9859b5088207527c158f75ba4ac9e6201ca1eedb8";
+    let user = "0xdc72506f269feb89822c13e66b282bc52c5724c27e575a04cbec949a13671d13";
     console.log(user);
 
     // 1. pagination
@@ -39,7 +39,7 @@ import {
     console.log(raw_events.length);
     // console.log(raw_events.map((x) => x.contents.json));
 
-    const startTimestamp = Math.floor(new Date(raw_events.at(0)?.timestamp!).getTime() / 1000);
+    const startTimestamp = Math.floor((Date.now() - 60 * 24 * 60 * 60 * 1000) / 1000); // 60 days ago timestamp
     const matchingDatas = await getFromSentio("OrderFilled", user, startTimestamp.toString(), true)
     // 2. parser events
     let events = await parseUserHistory(raw_events, matchingDatas);
@@ -49,6 +49,7 @@ import {
 
     // 3. order match events from sentio
     events = await getOrderMatchFromSentio(user, startTimestamp, events, matchingDatas);
+
 
     // 4. liquidate events from sentio
     events = await getLiquidateFromSentio(user, startTimestamp, events);
@@ -66,6 +67,7 @@ import {
     // console.log(events.filter(e => e.market === "XAG/USD"));
     // console.log(events.filter((x) => x.collateral_token == "DEEP"));
 
+    console.log({ events: events.filter(e => e.tx_digest === "EtMcGSPY6JkD1aGJmE932jdsAGgFW3dCaQwoR4Kfyhqb") })
     // saveToFile(events, "userHistory.csv");
 })();
 

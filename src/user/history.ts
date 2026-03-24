@@ -719,15 +719,25 @@ export async function getOrderMatchFromSentio(userAddress: string, startTimestam
         return txHistory;
     });
 
+
     // deduplicate
     order_match = order_match.filter((x) => events.findIndex((y) => y.tx_digest == x.tx_digest) == -1);
     order_match = order_match.map((x) => {
         // find related order
         let related = events.findLast((e) => e.order_id == x.order_id && e.market == x.market);
+
+
+
         // console.log(x, related);
         if (related) {
             x.order_type = related.order_type;
-            x.collateral = related.collateral;
+            if (related?.position_id !== null) {
+                const origin_order_filled_event = order_match.findLast(e => e.market == x.market && e.position_id == related?.position_id)
+                if (origin_order_filled_event) {
+                    const origin_order_place_event = events.findLast((e) => e.order_id == origin_order_filled_event?.order_id && e.market == origin_order_filled_event?.market)
+                    x.collateral = origin_order_place_event?.collateral ?? related.collateral
+                }
+            }
             x.dov_index = related.dov_index;
             // it mean filled by matching cranker
             if (x.action === "Order Filled (Close Position)") {
@@ -740,6 +750,7 @@ export async function getOrderMatchFromSentio(userAddress: string, startTimestam
             let related = events.findLast((e) => e.position_id == x.position_id && e.market == x.market);
             x.dov_index = related?.dov_index;
         }
+
         return x;
     });
     // console.log(order_match);

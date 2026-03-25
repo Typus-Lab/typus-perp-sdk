@@ -786,7 +786,8 @@ export async function getLeaderboardFromSentio(startTs: number, endTs: number, t
                     LEFT JOIN OrderFilled o ON s.transaction_hash = o.transaction_hash
                     WHERE o.base_token NOT IN (
                         'XAU', 'XAG', 'USOIL', 'JPY', 'SPYX', 'QQQX',
-                        'TSLAX', 'NVDAX', 'AAPLX', 'GOOGLX', 'METAX'
+                        'TSLAX', 'NVDAX', 'AAPLX', 'GOOGLX', 'METAX',
+                        'COINX', 'CRCLX'
                     )
                     AND s.timestamp >= ${startTs} AND s.timestamp < ${endTs}
                 ),
@@ -840,7 +841,8 @@ export async function getLeaderboardFromSentio(startTs: number, endTs: number, t
                         LEFT JOIN OrderFilled o ON s.transaction_hash = o.transaction_hash
                         WHERE o.base_token IN (
                             'XAU', 'XAG', 'USOIL', 'JPY', 'SPYX', 'QQQX',
-                            'TSLAX', 'NVDAX', 'AAPLX', 'GOOGLX', 'METAX'
+                            'TSLAX', 'NVDAX', 'AAPLX', 'GOOGLX', 'METAX',
+                            'COINX', 'CRCLX'
                         )
                         AND s.timestamp >= ${startTs} AND s.timestamp < ${endTs}
                     ),

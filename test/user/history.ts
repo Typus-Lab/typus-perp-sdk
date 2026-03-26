@@ -2,6 +2,7 @@ import "@typus/typus-sdk/dist/src/utils/load_env";
 import { getFromSentio } from "src/api/sentio";
 import {
     getCancelOrderFromSentio,
+    getArchivePlaceOrderEvents,
     getGraphQLEvents,
     getLiquidateFromSentio,
     getOrderMatchFromSentio,
@@ -22,10 +23,9 @@ import {
     var beforeCursor = null;
     // get 5 pages
     const PERP_PACKAGE_ID = "0x9003219180252ae6b81d2893b41d430488669027219537236675c0c2924c94d9"
-    for (let i = 0; i < 5; i += 1) {
+    for (let i = 0; i < 20; i += 1) {
         let result = await getGraphQLEvents(PERP_PACKAGE_ID, user, beforeCursor);
         let pageInfo = result.pageInfo;
-        // console.log(pageInfo);
         beforeCursor = pageInfo.startCursor;
         raw_events.push(...result.nodes);
         if (!pageInfo.hasPreviousPage) {
@@ -39,8 +39,10 @@ import {
     console.log(raw_events.length);
     // console.log(raw_events.map((x) => x.contents.json));
 
-    const startTimestamp = Math.floor((Date.now() - 60 * 24 * 60 * 60 * 1000) / 1000); // 60 days ago timestamp
-    const matchingDatas = await getFromSentio("OrderFilled", user, startTimestamp.toString(), true)
+    const startTimestamp = Math.floor((Date.now() - 90 * 24 * 60 * 60 * 1000) / 1000); // 60 days ago timestamp
+    const endTimestamp = Math.floor((Date.now() - 30 * 24 * 60 * 60 * 1000) / 1000);
+    const placeOrderEvents = await getArchivePlaceOrderEvents(user, startTimestamp, endTimestamp, []);
+    const matchingDatas = await getFromSentio("OrderFilled", user, startTimestamp.toString(), undefined, true)
     // 2. parser events
     let events = await parseUserHistory(raw_events, matchingDatas);
     // console.log(events.length);
@@ -48,7 +50,7 @@ import {
     //  console.log(startTimestamp);
 
     // 3. order match events from sentio
-    events = await getOrderMatchFromSentio(user, startTimestamp, events, matchingDatas);
+    events = await getOrderMatchFromSentio(user, startTimestamp, events, matchingDatas, placeOrderEvents);
 
 
     // 4. liquidate events from sentio
@@ -67,7 +69,7 @@ import {
     // console.log(events.filter(e => e.market === "XAG/USD"));
     // console.log(events.filter((x) => x.collateral_token == "DEEP"));
 
-    console.log({ events: events.filter(e => e.tx_digest === "EtMcGSPY6JkD1aGJmE932jdsAGgFW3dCaQwoR4Kfyhqb") })
+    console.log({ events: events.filter(e => e.tx_digest === "Gdy7iuXHanyM5ockfEZJPR5bQY1wdJXKxcaf6bxnbmFt") })
     // saveToFile(events, "userHistory.csv");
 })();
 

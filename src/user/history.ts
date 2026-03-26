@@ -504,6 +504,36 @@ export async function getGraphQLEvents(module: string, sender: string | null, be
     }
 }
 
+export async function getArchivePlaceOrderEvents(userAddress: string, startTimestamp: number, endTimestamp: number, events: Event[]) {
+    const datas = await getFromSentio("PlaceOrder", userAddress, startTimestamp.toString(), endTimestamp.toString(), false);
+    let placeOrders = datas.map((x) => {
+        let base_token = toToken(x.base_token);
+        let txHistory: Event = {
+            action: "Place Order",
+            typeName: "PlaceOrderEvent",
+            order_id: x.order_id,
+            position_id: x.position_id,
+            market: `${base_token}/USD`,
+            side: undefined,
+            order_type: x.order_type,
+            status: x.status,
+            size: Number(x.position_size),
+            base_token,
+            collateral: x.collateral,
+            collateral_token: x.collateral_token,
+            price: Number(x.trading_price),
+            realized_pnl: undefined,
+            timestamp: x.timestamp,
+            tx_digest: x.transaction_hash,
+            dov_index: undefined,
+            sender: "user",
+        };
+
+        return txHistory;
+    });
+    return placeOrders
+}
+
 export async function getLiquidateFromSentio(userAddress: string, startTimestamp: number, events: Event[]): Promise<Event[]> {
     const datas = await getFromSentio("Liquidate", userAddress, startTimestamp.toString());
     // console.log(datas);
@@ -636,7 +666,7 @@ export async function getRemovePositionFromSentio(userAddress: string, startTime
 }
 
 export async function getCancelOrderFromSentio(userAddress: string, startTimestamp: number, events: Event[]): Promise<Event[]> {
-    const datas = await getFromSentio("CancelOrder", userAddress, startTimestamp.toString(), true);
+    const datas = await getFromSentio("CancelOrder", userAddress, startTimestamp.toString(), undefined, true);
     // console.log(datas);
     let cancelOrder = datas.map((x) => {
         let collateral = Number(x.released_collateral_amount);
@@ -685,8 +715,8 @@ export async function getCancelOrderFromSentio(userAddress: string, startTimesta
     return events;
 }
 
-export async function getOrderMatchFromSentio(userAddress: string, startTimestamp: number, events: Event[], datas?: any[]): Promise<Event[]> {
-    if (!datas) datas = await getFromSentio("OrderFilled", userAddress, startTimestamp.toString(), true);
+export async function getOrderMatchFromSentio(userAddress: string, startTimestamp: number, events: Event[], datas?: any[], archiveDatas?: Event[]): Promise<Event[]> {
+    if (!datas) datas = await getFromSentio("OrderFilled", userAddress, startTimestamp.toString(), undefined, true);
     let order_match = datas.map((x) => {
         let base_token = toToken(x.base_token);
 
@@ -727,15 +757,17 @@ export async function getOrderMatchFromSentio(userAddress: string, startTimestam
         let related = events.findLast((e) => e.order_id == x.order_id && e.market == x.market);
 
 
-
-        // console.log(x, related);
         if (related) {
             x.order_type = related.order_type;
             if (related?.position_id !== null) {
                 const origin_order_filled_event = order_match.findLast(e => e.market == x.market && e.position_id == related?.position_id)
                 if (origin_order_filled_event) {
-                    const origin_order_place_event = events.findLast((e) => e.order_id == origin_order_filled_event?.order_id && e.market == origin_order_filled_event?.market)
-                    x.collateral = origin_order_place_event?.collateral ?? related.collateral
+                    let origin_order_place_event = events.findLast((e) => e.order_id == origin_order_filled_event?.order_id && e.market == origin_order_filled_event.market)
+                    if (!origin_order_place_event && archiveDatas) {
+                        origin_order_place_event = archiveDatas.findLast((e) => e.order_id == origin_order_filled_event?.order_id && e.base_token == origin_order_filled_event.base_token)
+                    }
+                    const related_collateral = origin_order_place_event?.collateral ?? 0
+                    x.collateral = BigNumber(x.collateral ?? 0).plus(related_collateral).toNumber()
                 }
             }
             x.dov_index = related.dov_index;

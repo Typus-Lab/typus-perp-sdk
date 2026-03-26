@@ -644,8 +644,8 @@ export async function getRealizeFundingFromSentio(userAddress: string, startTime
     return events;
 }
 
-export async function getRemovePositionFromSentio(userAddress: string, startTimestamp: number, events: Event[]): Promise<Event[]> {
-    const datas = await getFromSentio("RemovePosition", userAddress, startTimestamp.toString());
+export async function getRemovePositionFromSentio(userAddress: string, startTimestamp: number, events: Event[], datas?: any[]): Promise<Event[]> {
+    if (!datas) datas = await getFromSentio("RemovePosition", userAddress, startTimestamp.toString());
     // console.log(datas);
     datas.forEach((x) => {
         // console.log(x);
@@ -715,7 +715,7 @@ export async function getCancelOrderFromSentio(userAddress: string, startTimesta
     return events;
 }
 
-export async function getOrderMatchFromSentio(userAddress: string, startTimestamp: number, events: Event[], datas?: any[], archiveDatas?: Event[]): Promise<Event[]> {
+export async function getOrderMatchFromSentio(userAddress: string, startTimestamp: number, events: Event[], removeEventDatas: any[], datas?: any[], archiveDatas?: Event[]): Promise<Event[]> {
     if (!datas) datas = await getFromSentio("OrderFilled", userAddress, startTimestamp.toString(), undefined, true);
     let order_match = datas.map((x) => {
         let base_token = toToken(x.base_token);
@@ -767,7 +767,15 @@ export async function getOrderMatchFromSentio(userAddress: string, startTimestam
                         origin_order_place_event = archiveDatas.findLast((e) => e.order_id == origin_order_filled_event?.order_id && e.base_token == origin_order_filled_event.base_token)
                     }
                     const related_collateral = origin_order_place_event?.collateral ?? 0
-                    x.collateral = BigNumber(x.collateral ?? 0).plus(related_collateral).toNumber()
+                    const isPartialClose = removeEventDatas.findIndex(r => r.transaction_hash === x.tx_digest)
+                    if (isPartialClose !== -1) {
+                        x.collateral = BigNumber(x.collateral ?? 0).plus(related_collateral).toNumber()
+                    } else if (x.collateral) {
+                        if (x.collateral < 0) {
+                            x.collateral = undefined
+                        }
+                    }
+
                 }
             }
             x.dov_index = related.dov_index;

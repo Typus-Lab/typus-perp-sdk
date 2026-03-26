@@ -15,7 +15,7 @@ import {
 } from "src";
 
 (async () => {
-    let user = "0xdc72506f269feb89822c13e66b282bc52c5724c27e575a04cbec949a13671d13";
+    let user = "0x845c22be3e771ac8d90973e9859b5088207527c158f75ba4ac9e6201ca1eedb8";
     console.log(user);
 
     // 1. pagination
@@ -43,6 +43,8 @@ import {
     const endTimestamp = Math.floor((Date.now() - 30 * 24 * 60 * 60 * 1000) / 1000);
     const placeOrderEvents = await getArchivePlaceOrderEvents(user, startTimestamp, endTimestamp, []);
     const matchingDatas = await getFromSentio("OrderFilled", user, startTimestamp.toString(), undefined, true)
+    const removePositionDatas = await getFromSentio("RemovePosition", user, startTimestamp.toString());
+    //console.log({ removePositionDatas })
     // 2. parser events
     let events = await parseUserHistory(raw_events, matchingDatas);
     // console.log(events.length);
@@ -50,7 +52,7 @@ import {
     //  console.log(startTimestamp);
 
     // 3. order match events from sentio
-    events = await getOrderMatchFromSentio(user, startTimestamp, events, matchingDatas, placeOrderEvents);
+    events = await getOrderMatchFromSentio(user, startTimestamp, events, removePositionDatas, matchingDatas, placeOrderEvents);
 
 
     // 4. liquidate events from sentio
@@ -64,12 +66,12 @@ import {
 
     // 7.
     events = await getRealizeFundingFromSentio(user, startTimestamp, events);
-    events = await getRemovePositionFromSentio(user, startTimestamp, events);
+    events = await getRemovePositionFromSentio(user, startTimestamp, events, removePositionDatas);
 
     // console.log(events.filter(e => e.market === "XAG/USD"));
     // console.log(events.filter((x) => x.collateral_token == "DEEP"));
 
-    console.log({ events: events.filter(e => e.tx_digest === "Gdy7iuXHanyM5ockfEZJPR5bQY1wdJXKxcaf6bxnbmFt") })
+    console.log({ events: events.filter(e => e.tx_digest === "AGSzoHsPyinnvqGihoFP9gN4Tdk2CLiP4vrPG5rVGbgV") })
     // saveToFile(events, "userHistory.csv");
 })();
 

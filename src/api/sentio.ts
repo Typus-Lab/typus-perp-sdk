@@ -787,7 +787,7 @@ export async function getLeaderboardFromSentio(startTs: number, endTs: number, t
                     WHERE o.base_token NOT IN (
                         'XAU', 'XAG', 'USOIL', 'JPY', 'SPYX', 'QQQX',
                         'TSLAX', 'NVDAX', 'AAPLX', 'GOOGLX', 'METAX',
-                        'COINX', 'CRCLX'
+                        'COINX', 'CRCLX', 'MSTRX', 'HOODX'
                     )
                     AND s.timestamp >= ${startTs} AND s.timestamp < ${endTs}
                 ),
@@ -842,7 +842,7 @@ export async function getLeaderboardFromSentio(startTs: number, endTs: number, t
                         WHERE o.base_token IN (
                             'XAU', 'XAG', 'USOIL', 'JPY', 'SPYX', 'QQQX',
                             'TSLAX', 'NVDAX', 'AAPLX', 'GOOGLX', 'METAX',
-                            'COINX', 'CRCLX'
+                            'COINX', 'CRCLX', 'MSTRX', 'HOODX'
                         )
                         AND s.timestamp >= ${startTs} AND s.timestamp < ${endTs}
                     ),

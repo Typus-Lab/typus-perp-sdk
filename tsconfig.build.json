@@ -1,15 +1,16 @@
 {
     "compilerOptions": {
         "target": "ES2020",
-        "module": "CommonJS",
+        "module": "NodeNext",
         "lib": ["dom", "esnext"],
         "declaration": true,
         "outDir": "./dist",
         "downlevelIteration": true,
-        /* Modules */ /* Specify what module code is generated. */ "rootDir": "." /* Specify the root folder within your source files. */,
-        "moduleResolution": "node" /* Specify how TypeScript looks up a file from a given module specifier. */,
+        /* Modules */ /* Specify what module code is generated. */
+        "moduleResolution": "NodeNext" /* Specify how TypeScript looks up a file from a given module specifier. */,
         "baseUrl": "./" /* Specify the base directory to resolve non-relative module names. */,
         "paths": {} /* Specify a set of entries that re-map imports to additional lookup locations. */,
+        "rootDir": "." /* Specify the root folder within your source files. */,
         "rootDirs": ["src"] /* Allow multiple folders to be treated as one when resolving modules. */,
         // "types": ["node", "mocha"],
         // "allowUmdGlobalAccess": true,                     /* Allow accessing UMD globals from modules. */
@@ -29,9 +30,6 @@
         /* Skip type checking all .d.ts files. */
         "types": ["node"],
         "typeRoots": ["node_modules/@types"]
-    },
-    "ts-node": {
-        "require": ["tsconfig-paths/register"]
     },
     "include": ["src"],
     "exclude": ["node_modules", "**/__tests__/*", "scripts", "_deprecated", "test"]

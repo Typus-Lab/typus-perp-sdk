@@ -94,8 +94,9 @@ export async function parseUserHistory(raw_events, matchingDatas) {
                     }
 
                     const marketOrderRation = json.is_long ? 1.02 : 0.9;
-                    const isMarketOrder = Number(json.trigger_price) / Number(json.trading_pair_oracle_price) <= (marketOrderRation + 0.005)
-                        && Number(json.trigger_price) / Number(json.trading_pair_oracle_price) >= (marketOrderRation - 0.005);
+                    const isMarketOrder =
+                        Number(json.trigger_price) / Number(json.trading_pair_oracle_price) <= marketOrderRation + 0.005 &&
+                        Number(json.trigger_price) / Number(json.trading_pair_oracle_price) >= marketOrderRation - 0.005;
 
                     var order_type: orderType = "Limit";
                     var price = json.trigger_price;
@@ -107,9 +108,8 @@ export async function parseUserHistory(raw_events, matchingDatas) {
                     } else if (json.reduce_only && json.is_stop_order) {
                         order_type = "Stop Loss";
                         if (json.linked_position_id != undefined) {
-                            const related = matchingDatas.findLast((e) =>
-                                e.position_id === json.linked_position_id &&
-                                e.base_token === base_token
+                            const related = matchingDatas.findLast(
+                                (e) => e.position_id === json.linked_position_id && e.base_token === base_token
                             );
                             if (related) {
                                 const positionFilledPrice = related.filled_price;
@@ -117,11 +117,11 @@ export async function parseUserHistory(raw_events, matchingDatas) {
 
                                 if (related.side === "Long") {
                                     if (BigNumber(orderTriggerPrice).gt(positionFilledPrice)) {
-                                        order_type = 'Take Profit'
+                                        order_type = "Take Profit";
                                     }
                                 } else {
                                     if (BigNumber(orderTriggerPrice).lt(positionFilledPrice)) {
-                                        order_type = 'Take Profit'
+                                        order_type = "Take Profit";
                                     }
                                 }
                             }
@@ -341,10 +341,10 @@ export async function parseUserHistory(raw_events, matchingDatas) {
                         side: !related
                             ? undefined
                             : related.action === "Order Filled (Open Position)"
-                                ? related.side
-                                : related.side === "Long"
-                                    ? "Short"
-                                    : "Long",
+                              ? related.side
+                              : related.side === "Long"
+                                ? "Short"
+                                : "Long",
                         order_type: related?.order_type,
                         status: "Filled",
                         size: related?.size,
@@ -403,12 +403,12 @@ export async function parseUserHistory(raw_events, matchingDatas) {
                         typeName: name,
                         order_id: undefined,
                         position_id: undefined,
-                        market: 'TYPUS/USD',
+                        market: "TYPUS/USD",
                         side: undefined,
                         order_type: undefined,
-                        status: 'Filled',
+                        status: "Filled",
                         size: undefined,
-                        base_token: 'TYPUS',
+                        base_token: "TYPUS",
                         collateral: profit,
                         collateral_token: profit_token,
                         price: undefined,
@@ -420,7 +420,6 @@ export async function parseUserHistory(raw_events, matchingDatas) {
                     };
                     events.push(e);
                     break;
-
             }
         }
     });
@@ -531,7 +530,7 @@ export async function getArchivePlaceOrderEvents(userAddress: string, startTimes
 
         return txHistory;
     });
-    return placeOrders
+    return placeOrders;
 }
 
 export async function getLiquidateFromSentio(userAddress: string, startTimestamp: number, events: Event[]): Promise<Event[]> {
@@ -644,7 +643,12 @@ export async function getRealizeFundingFromSentio(userAddress: string, startTime
     return events;
 }
 
-export async function getRemovePositionFromSentio(userAddress: string, startTimestamp: number, events: Event[], datas?: any[]): Promise<Event[]> {
+export async function getRemovePositionFromSentio(
+    userAddress: string,
+    startTimestamp: number,
+    events: Event[],
+    datas?: any[]
+): Promise<Event[]> {
     if (!datas) datas = await getFromSentio("RemovePosition", userAddress, startTimestamp.toString());
     // console.log(datas);
     datas.forEach((x) => {
@@ -715,7 +719,14 @@ export async function getCancelOrderFromSentio(userAddress: string, startTimesta
     return events;
 }
 
-export async function getOrderMatchFromSentio(userAddress: string, startTimestamp: number, events: Event[], removeEventDatas: any[], datas?: any[], archiveDatas?: Event[]): Promise<Event[]> {
+export async function getOrderMatchFromSentio(
+    userAddress: string,
+    startTimestamp: number,
+    events: Event[],
+    removeEventDatas: any[],
+    datas?: any[],
+    archiveDatas?: Event[]
+): Promise<Event[]> {
     if (!datas) datas = await getFromSentio("OrderFilled", userAddress, startTimestamp.toString(), undefined, true);
     let order_match = datas.map((x) => {
         let base_token = toToken(x.base_token);
@@ -725,8 +736,8 @@ export async function getOrderMatchFromSentio(userAddress: string, startTimestam
                 x.order_type == "Open"
                     ? "Order Filled (Open Position)"
                     : x.sender == "0x978f65df8570a075298598a9965c18de9087f9e888eb3430fe20334f5c554cfd"
-                        ? "Force Close Position"
-                        : "Order Filled (Close Position)",
+                      ? "Force Close Position"
+                      : "Order Filled (Close Position)",
             typeName: "OrderFilledEvent",
             order_id: x.order_id,
             position_id: x.position_id,
@@ -749,40 +760,45 @@ export async function getOrderMatchFromSentio(userAddress: string, startTimestam
         return txHistory;
     });
 
-
     // deduplicate
     order_match = order_match.filter((x) => events.findIndex((y) => y.tx_digest == x.tx_digest) == -1);
     order_match = order_match.map((x) => {
         // find related order
         let related = events.findLast((e) => e.order_id == x.order_id && e.market == x.market);
 
-
         if (related) {
             x.order_type = related.order_type;
             if (related?.position_id !== null) {
-                const origin_order_filled_event = order_match.findLast(e => e.market == x.market && e.position_id == related?.position_id)
+                const origin_order_filled_event = order_match.findLast(
+                    (e) => e.market == x.market && e.position_id == related?.position_id
+                );
                 if (origin_order_filled_event) {
-                    let origin_order_place_event = events.findLast((e) => e.order_id == origin_order_filled_event?.order_id && e.market == origin_order_filled_event.market)
+                    let origin_order_place_event = events.findLast(
+                        (e) => e.order_id == origin_order_filled_event?.order_id && e.market == origin_order_filled_event.market
+                    );
                     if (!origin_order_place_event && archiveDatas) {
-                        origin_order_place_event = archiveDatas.findLast((e) => e.order_id == origin_order_filled_event?.order_id && e.base_token == origin_order_filled_event.base_token)
+                        origin_order_place_event = archiveDatas.findLast(
+                            (e) => e.order_id == origin_order_filled_event?.order_id && e.base_token == origin_order_filled_event.base_token
+                        );
                     }
-                    const related_collateral = origin_order_place_event?.collateral ?? 0
-                    const isPartialClose = removeEventDatas.findIndex(r => r.transaction_hash === x.tx_digest)
+                    const related_collateral = origin_order_place_event?.collateral ?? 0;
+                    const isPartialClose = removeEventDatas.findIndex((r) => r.transaction_hash === x.tx_digest);
                     if (isPartialClose !== -1) {
-                        x.collateral = BigNumber(x.collateral ?? 0).plus(related_collateral).toNumber()
+                        x.collateral = BigNumber(x.collateral ?? 0)
+                            .plus(related_collateral)
+                            .toNumber();
                     } else if (x.collateral) {
                         if (x.collateral < 0) {
-                            x.collateral = undefined
+                            x.collateral = undefined;
                         }
                     }
-
                 }
             }
             x.dov_index = related.dov_index;
             // it mean filled by matching cranker
             if (x.action === "Order Filled (Close Position)") {
                 if (x.side === related.side) {
-                    x.action = "Order Filled (Increase Position)"
+                    x.action = "Order Filled (Increase Position)";
                 }
             }
         } else {

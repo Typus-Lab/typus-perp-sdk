@@ -6,7 +6,13 @@ const headers = {
     "Content-Type": "application/json",
 };
 
-export async function getFromSentio(event: string, userAddress: string, startTimestamp: string, endTimestamp?: string, cranker?: boolean): Promise<any[]> {
+export async function getFromSentio(
+    event: string,
+    userAddress: string,
+    startTimestamp: string,
+    endTimestamp?: string,
+    cranker?: boolean
+): Promise<any[]> {
     let apiUrl = "https://app.sentio.xyz/api/v1/analytics/typus/typus_perp/sql/execute";
 
     // add cranker fileter
@@ -20,7 +26,7 @@ export async function getFromSentio(event: string, userAddress: string, startTim
             sql: `
                 SELECT *
                 FROM ${event}
-                WHERE distinct_id = '${userAddress}' AND timestamp >= ${startTimestamp} ${endTimestamp ? `AND timestamp <= ${endTimestamp}` : ''} ${crankerFilter}
+                WHERE distinct_id = '${userAddress}' AND timestamp >= ${startTimestamp} ${endTimestamp ? `AND timestamp <= ${endTimestamp}` : ""} ${crankerFilter}
                 ORDER BY timestamp DESC;
             `,
             size: 1000,
@@ -767,9 +773,13 @@ export type LeaderboardData = {
     Trading_Vol: number;
     Volume_Share_Top10: number;
     PrizePool_Share: number;
-}
+};
 
-export async function getLeaderboardFromSentio(startTs: number, endTs: number, type: LeaderboardType = LeaderboardType.CRYPTO): Promise<LeaderboardData[]> {
+export async function getLeaderboardFromSentio(
+    startTs: number,
+    endTs: number,
+    type: LeaderboardType = LeaderboardType.CRYPTO
+): Promise<LeaderboardData[]> {
     let apiUrl = "https://app.sentio.xyz/api/v1/analytics/typus/typus_perp/sql/execute";
 
     let size = 10;
@@ -880,8 +890,8 @@ export async function getLeaderboardFromSentio(startTs: number, endTs: number, t
                         t.rk ASC
                 `,
                 size,
-            }
-        }
+            },
+        };
     }
 
     let jsonData = JSON.stringify(requestData);

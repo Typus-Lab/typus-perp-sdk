@@ -9,20 +9,20 @@
  * maintaining a mapping from keys to indices in a `Table`.
  */
 
-import { MoveStruct } from "../../../utils/index";
+import { MoveStruct } from "../../../utils/index.js";
 import { bcs } from "@mysten/sui/bcs";
-import * as object from "../sui/object";
-import * as type_name from "../std/type_name";
+import * as type_name from "../std/type_name.js";
+import * as type_name_1 from "../std/type_name.js";
 const $moduleName = "typus::keyed_big_vector";
 export const KeyedBigVector = new MoveStruct({
     name: `${$moduleName}::KeyedBigVector`,
     fields: {
         /** The unique identifier of the KeyedBigVector object. */
-        id: object.UID,
+        id: bcs.Address,
         /** The type name of the keys. */
         key_type: type_name.TypeName,
         /** The type name of the values. */
-        value_type: type_name.TypeName,
+        value_type: type_name_1.TypeName,
         /** The index of the latest slice. */
         slice_idx: bcs.u16(),
         /** The maximum size of each slice. */

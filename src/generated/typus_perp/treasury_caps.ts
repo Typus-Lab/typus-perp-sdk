@@ -7,14 +7,14 @@
  * object that stores the treasury caps for the TLP tokens.
  */
 
-import { MoveStruct, normalizeMoveArguments, type RawTransactionArgument } from "../utils/index";
+import { MoveStruct, normalizeMoveArguments, type RawTransactionArgument } from "../utils/index.js";
+import { bcs } from "@mysten/sui/bcs";
 import { type Transaction } from "@mysten/sui/transactions";
-import * as object from "./deps/sui/object";
 const $moduleName = "@typus/perp::treasury_caps";
 export const TreasuryCaps = new MoveStruct({
     name: `${$moduleName}::TreasuryCaps`,
     fields: {
-        id: object.UID,
+        id: bcs.Address,
     },
 });
 export interface InitOptions {
@@ -41,7 +41,7 @@ export interface GetMutTreasuryCapOptions {
 /** Gets a mutable reference to a treasury cap. WARNING: no authority check inside */
 export function getMutTreasuryCap(options: GetMutTreasuryCapOptions) {
     const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [`${packageAddress}::treasury_caps::TreasuryCaps`] satisfies string[];
+    const argumentsTypes = [null] satisfies (string | null)[];
     const parameterNames = ["treasuryCaps"];
     return (tx: Transaction) =>
         tx.moveCall({
@@ -70,11 +70,7 @@ export interface ManagerStoreTreasuryCapOptions {
 }
 export function managerStoreTreasuryCap(options: ManagerStoreTreasuryCapOptions) {
     const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [
-        `${packageAddress}::admin::Version`,
-        `${packageAddress}::treasury_caps::TreasuryCaps`,
-        `0x0000000000000000000000000000000000000000000000000000000000000002::coin::TreasuryCap<${options.typeArguments[0]}>`,
-    ] satisfies string[];
+    const argumentsTypes = [null, null, null] satisfies (string | null)[];
     const parameterNames = ["version", "treasuryCaps", "treasuryCap"];
     return (tx: Transaction) =>
         tx.moveCall({

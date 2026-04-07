@@ -1,21 +1,59 @@
 /**************************************************************
  * THIS FILE IS GENERATED AND SHOULD NOT BE MANUALLY MODIFIED *
  **************************************************************/
-import { MoveStruct, normalizeMoveArguments, type RawTransactionArgument } from "../utils/index";
+import { MoveStruct, normalizeMoveArguments, type RawTransactionArgument } from "../utils/index.js";
 import { bcs } from "@mysten/sui/bcs";
 import { type Transaction } from "@mysten/sui/transactions";
-import * as object from "./deps/sui/object";
-import * as linked_object_table from "./deps/typus/linked_object_table";
-import * as type_name from "./deps/std/type_name";
-import * as object_table from "./deps/sui/object_table";
-import * as keyed_big_vector from "./deps/typus/keyed_big_vector";
+import * as linked_object_table from "./deps/typus/linked_object_table.js";
+import * as type_name from "./deps/std/type_name.js";
+import * as type_name_1 from "./deps/std/type_name.js";
+import * as type_name_2 from "./deps/std/type_name.js";
+import * as object_table from "./deps/sui/object_table.js";
+import * as keyed_big_vector from "./deps/typus/keyed_big_vector.js";
+import * as type_name_3 from "./deps/std/type_name.js";
+import * as type_name_4 from "./deps/std/type_name.js";
+import * as type_name_5 from "./deps/std/type_name.js";
+import * as type_name_6 from "./deps/std/type_name.js";
+import * as type_name_7 from "./deps/std/type_name.js";
+import * as type_name_8 from "./deps/std/type_name.js";
+import * as type_name_9 from "./deps/std/type_name.js";
+import * as type_name_10 from "./deps/std/type_name.js";
+import * as type_name_11 from "./deps/std/type_name.js";
+import * as type_name_12 from "./deps/std/type_name.js";
+import * as type_name_13 from "./deps/std/type_name.js";
+import * as type_name_14 from "./deps/std/type_name.js";
+import * as type_name_15 from "./deps/std/type_name.js";
+import * as type_name_16 from "./deps/std/type_name.js";
+import * as type_name_17 from "./deps/std/type_name.js";
+import * as type_name_18 from "./deps/std/type_name.js";
+import * as type_name_19 from "./deps/std/type_name.js";
+import * as type_name_20 from "./deps/std/type_name.js";
+import * as type_name_21 from "./deps/std/type_name.js";
+import * as type_name_22 from "./deps/std/type_name.js";
+import * as type_name_23 from "./deps/std/type_name.js";
+import * as type_name_24 from "./deps/std/type_name.js";
+import * as type_name_25 from "./deps/std/type_name.js";
+import * as type_name_26 from "./deps/std/type_name.js";
+import * as type_name_27 from "./deps/std/type_name.js";
+import * as type_name_28 from "./deps/std/type_name.js";
+import * as type_name_29 from "./deps/std/type_name.js";
+import * as type_name_30 from "./deps/std/type_name.js";
+import * as type_name_31 from "./deps/std/type_name.js";
+import * as type_name_32 from "./deps/std/type_name.js";
+import * as type_name_33 from "./deps/std/type_name.js";
+import * as type_name_34 from "./deps/std/type_name.js";
+import * as type_name_35 from "./deps/std/type_name.js";
+import * as type_name_36 from "./deps/std/type_name.js";
+import * as type_name_37 from "./deps/std/type_name.js";
+import * as type_name_38 from "./deps/std/type_name.js";
+import * as type_name_39 from "./deps/std/type_name.js";
 const $moduleName = "@typus/perp::trading";
 export const MarketRegistry = new MoveStruct({
     name: `${$moduleName}::MarketRegistry`,
     fields: {
-        id: object.UID,
+        id: bcs.Address,
         /** The UID of the referral registry. */
-        referral_registry: object.UID,
+        referral_registry: bcs.Address,
         /** A linked object table of markets. */
         markets: linked_object_table.LinkedObjectTable(bcs.u64()),
         /** The number of markets. */
@@ -27,19 +65,19 @@ export const MarketRegistry = new MoveStruct({
 export const Markets = new MoveStruct({
     name: `${$moduleName}::Markets`,
     fields: {
-        id: object.UID,
+        id: bcs.Address,
         /** The index of the market. */
         index: bcs.u64(),
         /** The type name of the LP token. */
         lp_token_type: type_name.TypeName,
         /** The type name of the quote token. */
-        quote_token_type: type_name.TypeName,
+        quote_token_type: type_name_1.TypeName,
         /** Whether the market is active. */
         is_active: bcs.bool(),
         /** The protocol's share of the trading fee in basis points. */
         protocol_fee_share_bp: bcs.u64(),
         /** A vector of the symbols in the market. */
-        symbols: bcs.vector(type_name.TypeName),
+        symbols: bcs.vector(type_name_2.TypeName),
         /** An object table of the symbol markets. */
         symbol_markets: object_table.ObjectTable,
         /** Padding for future use. */
@@ -102,7 +140,7 @@ export const MarketConfig = new MoveStruct({
         funding_interval_ts_ms: bcs.u64(),
         /** The experience multiplier. */
         exp_multiplier: bcs.u64(),
-        /** The cool down threshold in milliseconds. */
+        /** The position cool-down threshold in milliseconds. */
         cool_down_threshold_ts_ms: bcs.u64(),
         /** Padding for future use. */
         u64_padding: bcs.vector(bcs.u64()),
@@ -111,13 +149,13 @@ export const MarketConfig = new MoveStruct({
 export const SymbolMarket = new MoveStruct({
     name: `${$moduleName}::SymbolMarket`,
     fields: {
-        id: object.UID,
+        id: bcs.Address,
         /** A keyed big vector of user positions. */
         user_positions: keyed_big_vector.KeyedBigVector,
         /** The UID of the token collateral orders. */
-        token_collateral_orders: object.UID,
+        token_collateral_orders: bcs.Address,
         /** The UID of the option collateral orders. */
-        option_collateral_orders: object.UID,
+        option_collateral_orders: bcs.Address,
         /** Information about the market. */
         market_info: MarketInfo,
         /** Configuration for the market. */
@@ -134,8 +172,8 @@ export const NewMarketsEvent = new MoveStruct({
     name: `${$moduleName}::NewMarketsEvent`,
     fields: {
         index: bcs.u64(),
-        lp_token_type: type_name.TypeName,
-        quote_token_type: type_name.TypeName,
+        lp_token_type: type_name_3.TypeName,
+        quote_token_type: type_name_4.TypeName,
         protocol_fee_share_bp: bcs.u64(),
         u64_padding: bcs.vector(bcs.u64()),
     },
@@ -144,7 +182,7 @@ export const AddTradingSymbolEvent = new MoveStruct({
     name: `${$moduleName}::AddTradingSymbolEvent`,
     fields: {
         index: bcs.u64(),
-        base_token_type: type_name.TypeName,
+        base_token_type: type_name_5.TypeName,
         market_info: MarketInfo,
         market_config: MarketConfig,
         u64_padding: bcs.vector(bcs.u64()),
@@ -163,7 +201,7 @@ export const UpdateMarketConfigEvent = new MoveStruct({
     name: `${$moduleName}::UpdateMarketConfigEvent`,
     fields: {
         index: bcs.u64(),
-        base_token_type: type_name.TypeName,
+        base_token_type: type_name_6.TypeName,
         previous_market_config: MarketConfig,
         new_market_config: MarketConfig,
         u64_padding: bcs.vector(bcs.u64()),
@@ -187,7 +225,7 @@ export const SuspendTradingSymbolEvent = new MoveStruct({
     name: `${$moduleName}::SuspendTradingSymbolEvent`,
     fields: {
         index: bcs.u64(),
-        suspended_base_token: type_name.TypeName,
+        suspended_base_token: type_name_7.TypeName,
         u64_padding: bcs.vector(bcs.u64()),
     },
 });
@@ -195,7 +233,7 @@ export const ResumeTradingSymbolEvent = new MoveStruct({
     name: `${$moduleName}::ResumeTradingSymbolEvent`,
     fields: {
         index: bcs.u64(),
-        resumed_base_token: type_name.TypeName,
+        resumed_base_token: type_name_8.TypeName,
         u64_padding: bcs.vector(bcs.u64()),
     },
 });
@@ -205,8 +243,8 @@ export const CreateTradingOrderEvent = new MoveStruct({
         user: bcs.Address,
         market_index: bcs.u64(),
         pool_index: bcs.u64(),
-        collateral_token: type_name.TypeName,
-        base_token: type_name.TypeName,
+        collateral_token: type_name_9.TypeName,
+        base_token: type_name_10.TypeName,
         order_id: bcs.u64(),
         linked_position_id: bcs.option(bcs.u64()),
         collateral_amount: bcs.u64(),
@@ -216,8 +254,22 @@ export const CreateTradingOrderEvent = new MoveStruct({
         is_stop_order: bcs.bool(),
         size: bcs.u64(),
         trigger_price: bcs.u64(),
+        trading_pair_oracle_price: bcs.u64(),
         filled: bcs.bool(),
         filled_price: bcs.option(bcs.u64()),
+        u64_padding: bcs.vector(bcs.u64()),
+    },
+});
+export const ManagerCancelOrdersEvent = new MoveStruct({
+    name: `${$moduleName}::ManagerCancelOrdersEvent`,
+    fields: {
+        reason: bcs.string(),
+        collateral_token: type_name_11.TypeName,
+        base_token: type_name_12.TypeName,
+        order_type_tag: bcs.u8(),
+        order_id: bcs.u64(),
+        order_size: bcs.u64(),
+        order_price: bcs.u64(),
         u64_padding: bcs.vector(bcs.u64()),
     },
 });
@@ -228,8 +280,8 @@ export const CancelTradingOrderEvent = new MoveStruct({
         market_index: bcs.u64(),
         order_id: bcs.u64(),
         trigger_price: bcs.u64(),
-        collateral_token: type_name.TypeName,
-        base_token: type_name.TypeName,
+        collateral_token: type_name_13.TypeName,
+        base_token: type_name_14.TypeName,
         released_collateral_amount: bcs.u64(),
         u64_padding: bcs.vector(bcs.u64()),
     },
@@ -241,8 +293,8 @@ export const ReleaseCollateralEvent = new MoveStruct({
         market_index: bcs.u64(),
         pool_index: bcs.u64(),
         position_id: bcs.u64(),
-        collateral_token: type_name.TypeName,
-        base_token: type_name.TypeName,
+        collateral_token: type_name_15.TypeName,
+        base_token: type_name_16.TypeName,
         released_collateral_amount: bcs.u64(),
         remaining_collateral_amount: bcs.u64(),
         u64_padding: bcs.vector(bcs.u64()),
@@ -255,8 +307,8 @@ export const IncreaseCollateralEvent = new MoveStruct({
         market_index: bcs.u64(),
         pool_index: bcs.u64(),
         position_id: bcs.u64(),
-        collateral_token: type_name.TypeName,
-        base_token: type_name.TypeName,
+        collateral_token: type_name_17.TypeName,
+        base_token: type_name_18.TypeName,
         increased_collateral_amount: bcs.u64(),
         remaining_collateral_amount: bcs.u64(),
         u64_padding: bcs.vector(bcs.u64()),
@@ -269,8 +321,8 @@ export const CreateTradingOrderWithBidReceiptsEvent = new MoveStruct({
         market_index: bcs.u64(),
         pool_index: bcs.u64(),
         dov_index: bcs.u64(),
-        collateral_token: type_name.TypeName,
-        base_token: type_name.TypeName,
+        collateral_token: type_name_19.TypeName,
+        base_token: type_name_20.TypeName,
         order_id: bcs.u64(),
         collateral_in_deposit_token: bcs.u64(),
         is_long: bcs.bool(),
@@ -284,22 +336,9 @@ export const CreateTradingOrderWithBidReceiptsEvent = new MoveStruct({
 export const MatchTradingOrderEvent = new MoveStruct({
     name: `${$moduleName}::MatchTradingOrderEvent`,
     fields: {
-        collateral_token: type_name.TypeName,
-        base_token: type_name.TypeName,
+        collateral_token: type_name_21.TypeName,
+        base_token: type_name_22.TypeName,
         matched_order_ids: bcs.vector(bcs.u64()),
-        u64_padding: bcs.vector(bcs.u64()),
-    },
-});
-export const ManagerCancelOrdersEvent = new MoveStruct({
-    name: `${$moduleName}::ManagerCancelOrdersEvent`,
-    fields: {
-        reason: bcs.string(),
-        collateral_token: type_name.TypeName,
-        base_token: type_name.TypeName,
-        order_type_tag: bcs.u8(),
-        order_ids: bcs.vector(bcs.u64()),
-        order_sizes: bcs.vector(bcs.u64()),
-        order_prices: bcs.vector(bcs.u64()),
         u64_padding: bcs.vector(bcs.u64()),
     },
 });
@@ -307,8 +346,8 @@ export const ManagerReducePositionEvent = new MoveStruct({
     name: `${$moduleName}::ManagerReducePositionEvent`,
     fields: {
         user: bcs.Address,
-        collateral_token: type_name.TypeName,
-        base_token: type_name.TypeName,
+        collateral_token: type_name_23.TypeName,
+        base_token: type_name_24.TypeName,
         position_id: bcs.u64(),
         reduced_size: bcs.u64(),
         collateral_price: bcs.u64(),
@@ -321,8 +360,8 @@ export const ManagerClearPositionEvent = new MoveStruct({
     name: `${$moduleName}::ManagerClearPositionEvent`,
     fields: {
         user: bcs.Address,
-        collateral_token: type_name.TypeName,
-        base_token: type_name.TypeName,
+        collateral_token: type_name_25.TypeName,
+        base_token: type_name_26.TypeName,
         position_id: bcs.u64(),
         removed_size: bcs.u64(),
         cancelled_order_ids: bcs.vector(bcs.u64()),
@@ -333,8 +372,8 @@ export const ManagerCloseOptionPositionEvent = new MoveStruct({
     name: `${$moduleName}::ManagerCloseOptionPositionEvent`,
     fields: {
         user: bcs.Address,
-        collateral_token: type_name.TypeName,
-        base_token: type_name.TypeName,
+        collateral_token: type_name_27.TypeName,
+        base_token: type_name_28.TypeName,
         position_id: bcs.u64(),
         order_size: bcs.u64(),
         collateral_price: bcs.u64(),
@@ -348,15 +387,15 @@ export const LiquidationInfo = new MoveStruct({
     fields: {
         position_id: bcs.u64(),
         dov_index: bcs.option(bcs.u64()),
-        bid_token: bcs.option(type_name.TypeName),
+        bid_token: bcs.option(type_name_29.TypeName),
     },
 });
 export const LiquidateEvent = new MoveStruct({
     name: `${$moduleName}::LiquidateEvent`,
     fields: {
         user: bcs.Address,
-        collateral_token: type_name.TypeName,
-        base_token: type_name.TypeName,
+        collateral_token: type_name_30.TypeName,
+        base_token: type_name_31.TypeName,
         position_id: bcs.u64(),
         collateral_price: bcs.u64(),
         trading_price: bcs.u64(),
@@ -369,8 +408,8 @@ export const SettleReceiptCollateralEvent = new MoveStruct({
     name: `${$moduleName}::SettleReceiptCollateralEvent`,
     fields: {
         user: bcs.Address,
-        collateral_token: type_name.TypeName,
-        bid_token: type_name.TypeName,
+        collateral_token: type_name_32.TypeName,
+        bid_token: type_name_33.TypeName,
         position_id: bcs.u64(),
         realized_liquidator_fee: bcs.u64(),
         remaining_unrealized_sign: bcs.bool(),
@@ -382,7 +421,7 @@ export const SettleReceiptCollateralEvent = new MoveStruct({
 export const UpdateFundingRateEvent = new MoveStruct({
     name: `${$moduleName}::UpdateFundingRateEvent`,
     fields: {
-        base_token: type_name.TypeName,
+        base_token: type_name_34.TypeName,
         new_funding_ts_ms: bcs.u64(),
         intervals_count: bcs.u64(),
         previous_cumulative_funding_rate_index_sign: bcs.bool(),
@@ -397,9 +436,9 @@ export const ExpiredPositionInfo = new MoveStruct({
     fields: {
         position_id: bcs.u64(),
         dov_index: bcs.u64(),
-        collateral_token: type_name.TypeName,
-        bid_token: type_name.TypeName,
-        base_token: type_name.TypeName,
+        collateral_token: type_name_35.TypeName,
+        bid_token: type_name_36.TypeName,
+        base_token: type_name_37.TypeName,
     },
 });
 export const RealizeOptionPositionEvent = new MoveStruct({
@@ -407,8 +446,8 @@ export const RealizeOptionPositionEvent = new MoveStruct({
     fields: {
         position_user: bcs.Address,
         position_id: bcs.u64(),
-        trading_symbol: type_name.TypeName,
-        realize_balance_token_type: type_name.TypeName,
+        trading_symbol: type_name_38.TypeName,
+        realize_balance_token_type: type_name_39.TypeName,
         exercise_balance_value: bcs.u64(),
         user_remaining_value: bcs.u64(),
         user_remaining_in_usd: bcs.u64(),
@@ -451,7 +490,7 @@ export interface NewMarketsOptions {
 /** [Authorized Function] Creates a new market. */
 export function newMarkets(options: NewMarketsOptions) {
     const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [`${packageAddress}::admin::Version`, `${packageAddress}::trading::MarketRegistry`, "u64"] satisfies string[];
+    const argumentsTypes = [null, null, "u64"] satisfies (string | null)[];
     const parameterNames = ["version", "registry", "protocolFeeShareBp"];
     return (tx: Transaction) =>
         tx.moveCall({
@@ -476,6 +515,7 @@ export interface AddTradingSymbolArguments {
     basicFundingRate: RawTransactionArgument<number | bigint>;
     fundingIntervalTsMs: RawTransactionArgument<number | bigint>;
     expMultiplier: RawTransactionArgument<number | bigint>;
+    coolDownThresholdTsMs: RawTransactionArgument<number | bigint>;
     maxBuyOpenInterest: RawTransactionArgument<number | bigint>;
     maxSellOpenInterest: RawTransactionArgument<number | bigint>;
     maintenanceMarginRateBp: RawTransactionArgument<number | bigint>;
@@ -502,6 +542,7 @@ export interface AddTradingSymbolOptions {
               basicFundingRate: RawTransactionArgument<number | bigint>,
               fundingIntervalTsMs: RawTransactionArgument<number | bigint>,
               expMultiplier: RawTransactionArgument<number | bigint>,
+              coolDownThresholdTsMs: RawTransactionArgument<number | bigint>,
               maxBuyOpenInterest: RawTransactionArgument<number | bigint>,
               maxSellOpenInterest: RawTransactionArgument<number | bigint>,
               maintenanceMarginRateBp: RawTransactionArgument<number | bigint>,
@@ -516,19 +557,11 @@ export interface AddTradingSymbolOptions {
 export function addTradingSymbol(options: AddTradingSymbolOptions) {
     const packageAddress = options.package ?? "@typus/perp";
     const argumentsTypes = [
-        `${packageAddress}::admin::Version`,
-        `${packageAddress}::trading::MarketRegistry`,
+        null,
+        null,
         "u64",
         "u64",
-        "0x1d17058789bd1e1e79f1a92424519a88146f191f58a06cc4d9ab23d17d46ab73::oracle::Oracle",
-        "u64",
-        "u64",
-        "u64",
-        "u64",
-        "vector<u64>",
-        "u64",
-        "u64",
-        "u64",
+        null,
         "u64",
         "u64",
         "u64",
@@ -536,8 +569,17 @@ export function addTradingSymbol(options: AddTradingSymbolOptions) {
         "vector<u64>",
         "u64",
         "u64",
-        "0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock",
-    ] satisfies string[];
+        "u64",
+        "u64",
+        "u64",
+        "u64",
+        "u64",
+        "u64",
+        "vector<u64>",
+        "u64",
+        "u64",
+        "0x2::clock::Clock",
+    ] satisfies (string | null)[];
     const parameterNames = [
         "version",
         "registry",
@@ -552,6 +594,7 @@ export function addTradingSymbol(options: AddTradingSymbolOptions) {
         "basicFundingRate",
         "fundingIntervalTsMs",
         "expMultiplier",
+        "coolDownThresholdTsMs",
         "maxBuyOpenInterest",
         "maxSellOpenInterest",
         "maintenanceMarginRateBp",
@@ -589,12 +632,7 @@ export interface UpdateProtocolFeeShareBpOptions {
 /** [Authorized Function] Updates the protocol fee share. */
 export function updateProtocolFeeShareBp(options: UpdateProtocolFeeShareBpOptions) {
     const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [
-        `${packageAddress}::admin::Version`,
-        `${packageAddress}::trading::MarketRegistry`,
-        "u64",
-        "u64",
-    ] satisfies string[];
+    const argumentsTypes = [null, null, "u64", "u64"] satisfies (string | null)[];
     const parameterNames = ["version", "registry", "marketIndex", "protocolFeeShareBp"];
     return (tx: Transaction) =>
         tx.moveCall({
@@ -617,6 +655,7 @@ export interface UpdateMarketConfigArguments {
     basicFundingRate: RawTransactionArgument<number | bigint | null>;
     fundingIntervalTsMs: RawTransactionArgument<number | bigint | null>;
     expMultiplier: RawTransactionArgument<number | bigint | null>;
+    coolDownThresholdTsMs: RawTransactionArgument<number | bigint | null>;
     maxBuyOpenInterest: RawTransactionArgument<number | bigint | null>;
     maxSellOpenInterest: RawTransactionArgument<number | bigint | null>;
     maintenanceMarginRateBp: RawTransactionArgument<number | bigint | null>;
@@ -642,6 +681,7 @@ export interface UpdateMarketConfigOptions {
               basicFundingRate: RawTransactionArgument<number | bigint | null>,
               fundingIntervalTsMs: RawTransactionArgument<number | bigint | null>,
               expMultiplier: RawTransactionArgument<number | bigint | null>,
+              coolDownThresholdTsMs: RawTransactionArgument<number | bigint | null>,
               maxBuyOpenInterest: RawTransactionArgument<number | bigint | null>,
               maxSellOpenInterest: RawTransactionArgument<number | bigint | null>,
               maintenanceMarginRateBp: RawTransactionArgument<number | bigint | null>,
@@ -656,26 +696,27 @@ export interface UpdateMarketConfigOptions {
 export function updateMarketConfig(options: UpdateMarketConfigOptions) {
     const packageAddress = options.package ?? "@typus/perp";
     const argumentsTypes = [
-        `${packageAddress}::admin::Version`,
-        `${packageAddress}::trading::MarketRegistry`,
+        null,
+        null,
         "u64",
-        "0x0000000000000000000000000000000000000000000000000000000000000001::option::Option<address>",
-        "0x0000000000000000000000000000000000000000000000000000000000000001::option::Option<u64>",
-        "0x0000000000000000000000000000000000000000000000000000000000000001::option::Option<u64>",
-        "0x0000000000000000000000000000000000000000000000000000000000000001::option::Option<u64>",
-        "0x0000000000000000000000000000000000000000000000000000000000000001::option::Option<u64>",
-        "0x0000000000000000000000000000000000000000000000000000000000000001::option::Option<vector<u64>>",
-        "0x0000000000000000000000000000000000000000000000000000000000000001::option::Option<u64>",
-        "0x0000000000000000000000000000000000000000000000000000000000000001::option::Option<u64>",
-        "0x0000000000000000000000000000000000000000000000000000000000000001::option::Option<u64>",
-        "0x0000000000000000000000000000000000000000000000000000000000000001::option::Option<u64>",
-        "0x0000000000000000000000000000000000000000000000000000000000000001::option::Option<u64>",
-        "0x0000000000000000000000000000000000000000000000000000000000000001::option::Option<u64>",
-        "0x0000000000000000000000000000000000000000000000000000000000000001::option::Option<u64>",
-        "0x0000000000000000000000000000000000000000000000000000000000000001::option::Option<vector<u64>>",
-        "0x0000000000000000000000000000000000000000000000000000000000000001::option::Option<u64>",
-        "0x0000000000000000000000000000000000000000000000000000000000000001::option::Option<u64>",
-    ] satisfies string[];
+        "0x1::option::Option<address>",
+        "0x1::option::Option<u64>",
+        "0x1::option::Option<u64>",
+        "0x1::option::Option<u64>",
+        "0x1::option::Option<u64>",
+        "0x1::option::Option<vector<u64>>",
+        "0x1::option::Option<u64>",
+        "0x1::option::Option<u64>",
+        "0x1::option::Option<u64>",
+        "0x1::option::Option<u64>",
+        "0x1::option::Option<u64>",
+        "0x1::option::Option<u64>",
+        "0x1::option::Option<u64>",
+        "0x1::option::Option<u64>",
+        "0x1::option::Option<vector<u64>>",
+        "0x1::option::Option<u64>",
+        "0x1::option::Option<u64>",
+    ] satisfies (string | null)[];
     const parameterNames = [
         "version",
         "registry",
@@ -689,6 +730,7 @@ export function updateMarketConfig(options: UpdateMarketConfigOptions) {
         "basicFundingRate",
         "fundingIntervalTsMs",
         "expMultiplier",
+        "coolDownThresholdTsMs",
         "maxBuyOpenInterest",
         "maxSellOpenInterest",
         "maintenanceMarginRateBp",
@@ -724,7 +766,7 @@ export interface SuspendMarketOptions {
 /** [Authorized Function] Suspends a market. */
 export function suspendMarket(options: SuspendMarketOptions) {
     const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [`${packageAddress}::admin::Version`, `${packageAddress}::trading::MarketRegistry`, "u64"] satisfies string[];
+    const argumentsTypes = [null, null, "u64"] satisfies (string | null)[];
     const parameterNames = ["version", "registry", "marketIndex"];
     return (tx: Transaction) =>
         tx.moveCall({
@@ -752,7 +794,7 @@ export interface ResumeMarketOptions {
 /** [Authorized Function] Resumes a market. */
 export function resumeMarket(options: ResumeMarketOptions) {
     const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [`${packageAddress}::admin::Version`, `${packageAddress}::trading::MarketRegistry`, "u64"] satisfies string[];
+    const argumentsTypes = [null, null, "u64"] satisfies (string | null)[];
     const parameterNames = ["version", "registry", "marketIndex"];
     return (tx: Transaction) =>
         tx.moveCall({
@@ -781,7 +823,7 @@ export interface SuspendTradingSymbolOptions {
 /** [Authorized Function] Suspends a trading symbol. */
 export function suspendTradingSymbol(options: SuspendTradingSymbolOptions) {
     const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [`${packageAddress}::admin::Version`, `${packageAddress}::trading::MarketRegistry`, "u64"] satisfies string[];
+    const argumentsTypes = [null, null, "u64"] satisfies (string | null)[];
     const parameterNames = ["version", "registry", "marketIndex"];
     return (tx: Transaction) =>
         tx.moveCall({
@@ -811,7 +853,7 @@ export interface ResumeTradingSymbolOptions {
 /** [Authorized Function] Resumes a trading symbol. */
 export function resumeTradingSymbol(options: ResumeTradingSymbolOptions) {
     const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [`${packageAddress}::admin::Version`, `${packageAddress}::trading::MarketRegistry`, "u64"] satisfies string[];
+    const argumentsTypes = [null, null, "u64"] satisfies (string | null)[];
     const parameterNames = ["version", "registry", "marketIndex"];
     return (tx: Transaction) =>
         tx.moveCall({
@@ -841,7 +883,7 @@ export interface RemoveTradingSymbolOptions {
 /** [Authorized Function] Removes a trading symbol from a market. */
 export function removeTradingSymbol(options: RemoveTradingSymbolOptions) {
     const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [`${packageAddress}::admin::Version`, `${packageAddress}::trading::MarketRegistry`, "u64"] satisfies string[];
+    const argumentsTypes = [null, null, "u64"] satisfies (string | null)[];
     const parameterNames = ["version", "registry", "marketIndex"];
     return (tx: Transaction) =>
         tx.moveCall({
@@ -894,22 +936,22 @@ export interface CreateTradingOrderOptions {
 export function createTradingOrder(options: CreateTradingOrderOptions) {
     const packageAddress = options.package ?? "@typus/perp";
     const argumentsTypes = [
-        `${packageAddress}::admin::Version`,
-        `${packageAddress}::trading::MarketRegistry`,
-        `${packageAddress}::lp_pool::Registry`,
-        "0x1d17058789bd1e1e79f1a92424519a88146f191f58a06cc4d9ab23d17d46ab73::oracle::Oracle",
-        "0x1d17058789bd1e1e79f1a92424519a88146f191f58a06cc4d9ab23d17d46ab73::oracle::Oracle",
-        "0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock",
+        null,
+        null,
+        null,
+        null,
+        null,
+        "0x2::clock::Clock",
         "u64",
         "u64",
-        "0x0000000000000000000000000000000000000000000000000000000000000001::option::Option<u64>",
-        `0x0000000000000000000000000000000000000000000000000000000000000002::coin::Coin<${options.typeArguments[0]}>`,
+        "0x1::option::Option<u64>",
+        null,
         "bool",
         "bool",
         "bool",
         "u64",
         "u64",
-    ] satisfies string[];
+    ] satisfies (string | null)[];
     const parameterNames = [
         "version",
         "registry",
@@ -960,14 +1002,7 @@ export interface CancelTradingOrderOptions {
 /** [User Function] Cancels a trading order. */
 export function cancelTradingOrder(options: CancelTradingOrderOptions) {
     const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [
-        `${packageAddress}::admin::Version`,
-        `${packageAddress}::trading::MarketRegistry`,
-        "u64",
-        "u64",
-        "u64",
-        "0x0000000000000000000000000000000000000000000000000000000000000001::option::Option<address>",
-    ] satisfies string[];
+    const argumentsTypes = [null, null, "u64", "u64", "u64", "0x1::option::Option<address>"] satisfies (string | null)[];
     const parameterNames = ["version", "registry", "marketIndex", "orderId", "triggerPrice", "orderUser"];
     return (tx: Transaction) =>
         tx.moveCall({
@@ -1012,18 +1047,7 @@ export interface ReleaseCollateralOptions {
  */
 export function releaseCollateral(options: ReleaseCollateralOptions) {
     const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [
-        `${packageAddress}::admin::Version`,
-        `${packageAddress}::trading::MarketRegistry`,
-        `${packageAddress}::lp_pool::Registry`,
-        "0x1d17058789bd1e1e79f1a92424519a88146f191f58a06cc4d9ab23d17d46ab73::oracle::Oracle",
-        "0x1d17058789bd1e1e79f1a92424519a88146f191f58a06cc4d9ab23d17d46ab73::oracle::Oracle",
-        "0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock",
-        "u64",
-        "u64",
-        "u64",
-        "u64",
-    ] satisfies string[];
+    const argumentsTypes = [null, null, null, null, null, "0x2::clock::Clock", "u64", "u64", "u64", "u64"] satisfies (string | null)[];
     const parameterNames = [
         "version",
         "registry",
@@ -1078,18 +1102,7 @@ export interface IncreaseCollateralOptions {
  */
 export function increaseCollateral(options: IncreaseCollateralOptions) {
     const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [
-        `${packageAddress}::admin::Version`,
-        `${packageAddress}::trading::MarketRegistry`,
-        `${packageAddress}::lp_pool::Registry`,
-        "0x1d17058789bd1e1e79f1a92424519a88146f191f58a06cc4d9ab23d17d46ab73::oracle::Oracle",
-        "0x1d17058789bd1e1e79f1a92424519a88146f191f58a06cc4d9ab23d17d46ab73::oracle::Oracle",
-        "0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock",
-        "u64",
-        "u64",
-        "u64",
-        `0x0000000000000000000000000000000000000000000000000000000000000002::coin::Coin<${options.typeArguments[0]}>`,
-    ] satisfies string[];
+    const argumentsTypes = [null, null, null, null, null, "0x2::clock::Clock", "u64", "u64", "u64", null] satisfies (string | null)[];
     const parameterNames = [
         "version",
         "registry",
@@ -1139,17 +1152,7 @@ export interface CollectPositionFundingFeeOptions {
 /** Collects the funding fee for a position. Safe with `check_position_user_matched` */
 export function collectPositionFundingFee(options: CollectPositionFundingFeeOptions) {
     const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [
-        `${packageAddress}::admin::Version`,
-        `${packageAddress}::trading::MarketRegistry`,
-        `${packageAddress}::lp_pool::Registry`,
-        "0x1d17058789bd1e1e79f1a92424519a88146f191f58a06cc4d9ab23d17d46ab73::oracle::Oracle",
-        "0x1d17058789bd1e1e79f1a92424519a88146f191f58a06cc4d9ab23d17d46ab73::oracle::Oracle",
-        "0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock",
-        "u64",
-        "u64",
-        "u64",
-    ] satisfies string[];
+    const argumentsTypes = [null, null, null, null, null, "0x2::clock::Clock", "u64", "u64", "u64"] satisfies (string | null)[];
     const parameterNames = [
         "version",
         "registry",
@@ -1213,23 +1216,23 @@ export interface CreateTradingOrderWithBidReceiptOptions {
 export function createTradingOrderWithBidReceipt(options: CreateTradingOrderWithBidReceiptOptions) {
     const packageAddress = options.package ?? "@typus/perp";
     const argumentsTypes = [
-        `${packageAddress}::admin::Version`,
-        `${packageAddress}::trading::MarketRegistry`,
-        `${packageAddress}::lp_pool::Registry`,
-        "0x6c9a394a43844fc09d9617bc8a8e775a4521f0e28e83de1da780d043a498671f::typus_dov_single::Registry",
-        "0x1d17058789bd1e1e79f1a92424519a88146f191f58a06cc4d9ab23d17d46ab73::oracle::Oracle",
-        "0x1d17058789bd1e1e79f1a92424519a88146f191f58a06cc4d9ab23d17d46ab73::oracle::Oracle",
-        "0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock",
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        "0x2::clock::Clock",
         "u64",
         "u64",
-        "0x4213e12a2220f15f1837a76897110d2260786558169bd8d0847f21e9b551f277::ecosystem::Version",
-        "0x4213e12a2220f15f1837a76897110d2260786558169bd8d0847f21e9b551f277::user::TypusUserRegistry",
-        "0x4213e12a2220f15f1837a76897110d2260786558169bd8d0847f21e9b551f277::leaderboard::TypusLeaderboardRegistry",
-        "0x4213e12a2220f15f1837a76897110d2260786558169bd8d0847f21e9b551f277::tails_staking::TailsStakingRegistry",
-        `${packageAddress}::competition::CompetitionConfig`,
-        "0x908a10789a1a6953e0b73a997c10e3552f7ce4e2907afd00a334ed74bd973ded::vault::TypusBidReceipt",
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
         "bool",
-    ] satisfies string[];
+    ] satisfies (string | null)[];
     const parameterNames = [
         "version",
         "registry",
@@ -1300,23 +1303,23 @@ export interface ReduceOptionCollateralPositionSizeOptions {
 export function reduceOptionCollateralPositionSize(options: ReduceOptionCollateralPositionSizeOptions) {
     const packageAddress = options.package ?? "@typus/perp";
     const argumentsTypes = [
-        `${packageAddress}::admin::Version`,
-        `${packageAddress}::trading::MarketRegistry`,
-        `${packageAddress}::lp_pool::Registry`,
-        "0x6c9a394a43844fc09d9617bc8a8e775a4521f0e28e83de1da780d043a498671f::typus_dov_single::Registry",
-        "0x1d17058789bd1e1e79f1a92424519a88146f191f58a06cc4d9ab23d17d46ab73::oracle::Oracle",
-        "0x1d17058789bd1e1e79f1a92424519a88146f191f58a06cc4d9ab23d17d46ab73::oracle::Oracle",
-        "0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock",
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        "0x2::clock::Clock",
         "u64",
         "u64",
-        "0x4213e12a2220f15f1837a76897110d2260786558169bd8d0847f21e9b551f277::ecosystem::Version",
-        "0x4213e12a2220f15f1837a76897110d2260786558169bd8d0847f21e9b551f277::user::TypusUserRegistry",
-        "0x4213e12a2220f15f1837a76897110d2260786558169bd8d0847f21e9b551f277::leaderboard::TypusLeaderboardRegistry",
-        "0x4213e12a2220f15f1837a76897110d2260786558169bd8d0847f21e9b551f277::tails_staking::TailsStakingRegistry",
-        `${packageAddress}::competition::CompetitionConfig`,
+        null,
+        null,
+        null,
+        null,
+        null,
         "u64",
-        "0x0000000000000000000000000000000000000000000000000000000000000001::option::Option<u64>",
-    ] satisfies string[];
+        "0x1::option::Option<u64>",
+    ] satisfies (string | null)[];
     const parameterNames = [
         "version",
         "registry",
@@ -1389,24 +1392,24 @@ export interface MatchTradingOrderOptions {
 export function matchTradingOrder(options: MatchTradingOrderOptions) {
     const packageAddress = options.package ?? "@typus/perp";
     const argumentsTypes = [
-        `${packageAddress}::admin::Version`,
-        `${packageAddress}::trading::MarketRegistry`,
-        `${packageAddress}::lp_pool::Registry`,
-        `${packageAddress}::profit_vault::ProfitVault`,
-        "0x1d17058789bd1e1e79f1a92424519a88146f191f58a06cc4d9ab23d17d46ab73::oracle::Oracle",
-        "0x1d17058789bd1e1e79f1a92424519a88146f191f58a06cc4d9ab23d17d46ab73::oracle::Oracle",
-        "0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock",
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        "0x2::clock::Clock",
         "u64",
         "u64",
-        "0x4213e12a2220f15f1837a76897110d2260786558169bd8d0847f21e9b551f277::ecosystem::Version",
-        "0x4213e12a2220f15f1837a76897110d2260786558169bd8d0847f21e9b551f277::user::TypusUserRegistry",
-        "0x4213e12a2220f15f1837a76897110d2260786558169bd8d0847f21e9b551f277::leaderboard::TypusLeaderboardRegistry",
-        "0x4213e12a2220f15f1837a76897110d2260786558169bd8d0847f21e9b551f277::tails_staking::TailsStakingRegistry",
-        `${packageAddress}::competition::CompetitionConfig`,
+        null,
+        null,
+        null,
+        null,
+        null,
         "u8",
         "u64",
         "u64",
-    ] satisfies string[];
+    ] satisfies (string | null)[];
     const parameterNames = [
         "version",
         "registry",
@@ -1430,65 +1433,6 @@ export function matchTradingOrder(options: MatchTradingOrderOptions) {
             package: packageAddress,
             module: "trading",
             function: "match_trading_order",
-            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
-            typeArguments: options.typeArguments,
-        });
-}
-export interface ManagerCancelOrderByOpenInterestLimitArguments {
-    version: RawTransactionArgument<string>;
-    registry: RawTransactionArgument<string>;
-    poolRegistry: RawTransactionArgument<string>;
-    marketIndex: RawTransactionArgument<number | bigint>;
-    poolIndex: RawTransactionArgument<number | bigint>;
-    orderTypeTag: RawTransactionArgument<number>;
-    triggerPrice: RawTransactionArgument<number | bigint>;
-    maxOperationCount: RawTransactionArgument<number | bigint>;
-}
-export interface ManagerCancelOrderByOpenInterestLimitOptions {
-    package?: string;
-    arguments:
-        | ManagerCancelOrderByOpenInterestLimitArguments
-        | [
-              version: RawTransactionArgument<string>,
-              registry: RawTransactionArgument<string>,
-              poolRegistry: RawTransactionArgument<string>,
-              marketIndex: RawTransactionArgument<number | bigint>,
-              poolIndex: RawTransactionArgument<number | bigint>,
-              orderTypeTag: RawTransactionArgument<number>,
-              triggerPrice: RawTransactionArgument<number | bigint>,
-              maxOperationCount: RawTransactionArgument<number | bigint>,
-          ];
-    typeArguments: [string, string];
-}
-/** [Authorized Function] Cancels orders by the manager due to open interest limit. */
-export function managerCancelOrderByOpenInterestLimit(options: ManagerCancelOrderByOpenInterestLimitOptions) {
-    const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [
-        `${packageAddress}::admin::Version`,
-        `${packageAddress}::trading::MarketRegistry`,
-        `${packageAddress}::lp_pool::Registry`,
-        "0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock",
-        "u64",
-        "u64",
-        "u8",
-        "u64",
-        "u64",
-    ] satisfies string[];
-    const parameterNames = [
-        "version",
-        "registry",
-        "poolRegistry",
-        "marketIndex",
-        "poolIndex",
-        "orderTypeTag",
-        "triggerPrice",
-        "maxOperationCount",
-    ];
-    return (tx: Transaction) =>
-        tx.moveCall({
-            package: packageAddress,
-            module: "trading",
-            function: "manager_cancel_order_by_open_interest_limit",
             arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
             typeArguments: options.typeArguments,
         });
@@ -1518,14 +1462,7 @@ export interface CancelLinkedOrdersOptions {
 /** [Authorized Function] Cancels linked orders. */
 export function cancelLinkedOrders(options: CancelLinkedOrdersOptions) {
     const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [
-        `${packageAddress}::admin::Version`,
-        `${packageAddress}::trading::MarketRegistry`,
-        "u64",
-        "vector<u64>",
-        "vector<u64>",
-        "address",
-    ] satisfies string[];
+    const argumentsTypes = [null, null, "u64", "vector<u64>", "vector<u64>", "address"] satisfies (string | null)[];
     const parameterNames = ["version", "registry", "marketIndex", "linkedOrderIds", "linkedOrderPrices", "user"];
     return (tx: Transaction) =>
         tx.moveCall({
@@ -1580,23 +1517,23 @@ export interface ManagerReducePositionOptions {
 export function managerReducePosition(options: ManagerReducePositionOptions) {
     const packageAddress = options.package ?? "@typus/perp";
     const argumentsTypes = [
-        `${packageAddress}::admin::Version`,
-        `${packageAddress}::trading::MarketRegistry`,
-        `${packageAddress}::lp_pool::Registry`,
-        `${packageAddress}::profit_vault::ProfitVault`,
-        "0x1d17058789bd1e1e79f1a92424519a88146f191f58a06cc4d9ab23d17d46ab73::oracle::Oracle",
-        "0x1d17058789bd1e1e79f1a92424519a88146f191f58a06cc4d9ab23d17d46ab73::oracle::Oracle",
-        "0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock",
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        "0x2::clock::Clock",
         "u64",
         "u64",
-        "0x4213e12a2220f15f1837a76897110d2260786558169bd8d0847f21e9b551f277::ecosystem::Version",
-        "0x4213e12a2220f15f1837a76897110d2260786558169bd8d0847f21e9b551f277::user::TypusUserRegistry",
-        "0x4213e12a2220f15f1837a76897110d2260786558169bd8d0847f21e9b551f277::leaderboard::TypusLeaderboardRegistry",
-        "0x4213e12a2220f15f1837a76897110d2260786558169bd8d0847f21e9b551f277::tails_staking::TailsStakingRegistry",
-        `${packageAddress}::competition::CompetitionConfig`,
+        null,
+        null,
+        null,
+        null,
+        null,
         "u64",
         "u64",
-    ] satisfies string[];
+    ] satisfies (string | null)[];
     const parameterNames = [
         "version",
         "registry",
@@ -1647,14 +1584,7 @@ export interface ManagerClearPositionOptions {
 }
 export function managerClearPosition(options: ManagerClearPositionOptions) {
     const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [
-        `${packageAddress}::admin::Version`,
-        `${packageAddress}::trading::MarketRegistry`,
-        `${packageAddress}::lp_pool::Registry`,
-        "u64",
-        "u64",
-        "u64",
-    ] satisfies string[];
+    const argumentsTypes = [null, null, null, "u64", "u64", "u64"] satisfies (string | null)[];
     const parameterNames = ["version", "registry", "poolRegistry", "marketIndex", "poolIndex", "positionId"];
     return (tx: Transaction) =>
         tx.moveCall({
@@ -1707,22 +1637,22 @@ export interface ManagerCloseOptionPositionOptions {
 export function managerCloseOptionPosition(options: ManagerCloseOptionPositionOptions) {
     const packageAddress = options.package ?? "@typus/perp";
     const argumentsTypes = [
-        `${packageAddress}::admin::Version`,
-        `${packageAddress}::trading::MarketRegistry`,
-        `${packageAddress}::lp_pool::Registry`,
-        "0x6c9a394a43844fc09d9617bc8a8e775a4521f0e28e83de1da780d043a498671f::typus_dov_single::Registry",
-        "0x1d17058789bd1e1e79f1a92424519a88146f191f58a06cc4d9ab23d17d46ab73::oracle::Oracle",
-        "0x1d17058789bd1e1e79f1a92424519a88146f191f58a06cc4d9ab23d17d46ab73::oracle::Oracle",
-        "0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock",
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        "0x2::clock::Clock",
         "u64",
         "u64",
-        "0x4213e12a2220f15f1837a76897110d2260786558169bd8d0847f21e9b551f277::ecosystem::Version",
-        "0x4213e12a2220f15f1837a76897110d2260786558169bd8d0847f21e9b551f277::user::TypusUserRegistry",
-        "0x4213e12a2220f15f1837a76897110d2260786558169bd8d0847f21e9b551f277::leaderboard::TypusLeaderboardRegistry",
-        "0x4213e12a2220f15f1837a76897110d2260786558169bd8d0847f21e9b551f277::tails_staking::TailsStakingRegistry",
-        `${packageAddress}::competition::CompetitionConfig`,
+        null,
+        null,
+        null,
+        null,
+        null,
         "u64",
-    ] satisfies string[];
+    ] satisfies (string | null)[];
     const parameterNames = [
         "version",
         "registry",
@@ -1760,7 +1690,7 @@ export interface GetTradingFeeConfigOptions {
 }
 export function getTradingFeeConfig(options: GetTradingFeeConfigOptions) {
     const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [`${packageAddress}::trading::MarketConfig`, "bool"] satisfies string[];
+    const argumentsTypes = [null, "bool"] satisfies (string | null)[];
     const parameterNames = ["marketConfig", "isOptionPosition"];
     return (tx: Transaction) =>
         tx.moveCall({
@@ -1801,18 +1731,7 @@ export interface GetLiquidationInfoOptions {
 /** [View Function] Gets the liquidation information for a position. */
 export function getLiquidationInfo(options: GetLiquidationInfoOptions) {
     const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [
-        `${packageAddress}::admin::Version`,
-        `${packageAddress}::trading::MarketRegistry`,
-        `${packageAddress}::lp_pool::Registry`,
-        "0x6c9a394a43844fc09d9617bc8a8e775a4521f0e28e83de1da780d043a498671f::typus_dov_single::Registry",
-        "0x1d17058789bd1e1e79f1a92424519a88146f191f58a06cc4d9ab23d17d46ab73::oracle::Oracle",
-        "0x1d17058789bd1e1e79f1a92424519a88146f191f58a06cc4d9ab23d17d46ab73::oracle::Oracle",
-        "0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock",
-        "u64",
-        "u64",
-        "bool",
-    ] satisfies string[];
+    const argumentsTypes = [null, null, null, null, null, null, "0x2::clock::Clock", "u64", "u64", "bool"] satisfies (string | null)[];
     const parameterNames = [
         "version",
         "registry",
@@ -1864,18 +1783,7 @@ export interface LiquidateOptions {
 /** [Authorized Function] Liquidates a position. */
 export function liquidate(options: LiquidateOptions) {
     const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [
-        `${packageAddress}::admin::Version`,
-        `${packageAddress}::trading::MarketRegistry`,
-        `${packageAddress}::lp_pool::Registry`,
-        "0x6c9a394a43844fc09d9617bc8a8e775a4521f0e28e83de1da780d043a498671f::typus_dov_single::Registry",
-        "0x1d17058789bd1e1e79f1a92424519a88146f191f58a06cc4d9ab23d17d46ab73::oracle::Oracle",
-        "0x1d17058789bd1e1e79f1a92424519a88146f191f58a06cc4d9ab23d17d46ab73::oracle::Oracle",
-        "u64",
-        "u64",
-        "0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock",
-        "u64",
-    ] satisfies string[];
+    const argumentsTypes = [null, null, null, null, null, null, "u64", "u64", "0x2::clock::Clock", "u64"] satisfies (string | null)[];
     const parameterNames = [
         "version",
         "registry",
@@ -1923,16 +1831,7 @@ export interface SettleReceiptCollateralOptions {
 /** [Authorized Function] Settles receipt collateral. */
 export function settleReceiptCollateral(options: SettleReceiptCollateralOptions) {
     const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [
-        `${packageAddress}::admin::Version`,
-        `${packageAddress}::trading::MarketRegistry`,
-        `${packageAddress}::lp_pool::Registry`,
-        "0x6c9a394a43844fc09d9617bc8a8e775a4521f0e28e83de1da780d043a498671f::typus_dov_single::Registry",
-        "0x1d17058789bd1e1e79f1a92424519a88146f191f58a06cc4d9ab23d17d46ab73::oracle::Oracle",
-        "0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock",
-        "u64",
-        "u64",
-    ] satisfies string[];
+    const argumentsTypes = [null, null, null, null, null, "0x2::clock::Clock", "u64", "u64"] satisfies (string | null)[];
     const parameterNames = ["version", "registry", "poolRegistry", "dovRegistry", "typusOracleCToken", "marketIndex", "poolIndex"];
     return (tx: Transaction) =>
         tx.moveCall({
@@ -1968,15 +1867,7 @@ export interface UpdateFundingRateOptions {
 /** [Authorized Function] Updates the funding rate. */
 export function updateFundingRate(options: UpdateFundingRateOptions) {
     const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [
-        `${packageAddress}::admin::Version`,
-        `${packageAddress}::trading::MarketRegistry`,
-        `${packageAddress}::lp_pool::Registry`,
-        "0x1d17058789bd1e1e79f1a92424519a88146f191f58a06cc4d9ab23d17d46ab73::oracle::Oracle",
-        "0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock",
-        "u64",
-        "u64",
-    ] satisfies string[];
+    const argumentsTypes = [null, null, null, null, "0x2::clock::Clock", "u64", "u64"] satisfies (string | null)[];
     const parameterNames = ["version", "registry", "poolRegistry", "typusOracleTradingSymbol", "marketIndex", "poolIndex"];
     return (tx: Transaction) =>
         tx.moveCall({
@@ -2010,14 +1901,7 @@ export interface GetExpiredPositionInfoOptions {
 }
 export function getExpiredPositionInfo(options: GetExpiredPositionInfoOptions) {
     const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [
-        `${packageAddress}::admin::Version`,
-        `${packageAddress}::trading::MarketRegistry`,
-        `${packageAddress}::lp_pool::Registry`,
-        "0x6c9a394a43844fc09d9617bc8a8e775a4521f0e28e83de1da780d043a498671f::typus_dov_single::Registry",
-        "u64",
-        "u64",
-    ] satisfies string[];
+    const argumentsTypes = [null, null, null, null, "u64", "u64"] satisfies (string | null)[];
     const parameterNames = ["version", "registry", "poolRegistry", "dovRegistry", "marketIndex", "poolIndex"];
     return (tx: Transaction) =>
         tx.moveCall({
@@ -2027,246 +1911,31 @@ export function getExpiredPositionInfo(options: GetExpiredPositionInfoOptions) {
             arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
         });
 }
-export interface InitUserAccountTableArguments {
-    version: RawTransactionArgument<string>;
-    registry: RawTransactionArgument<string>;
-    marketIndex: RawTransactionArgument<number | bigint>;
+export interface PrepareOrderExecutionArguments {
+    symbolMarket: RawTransactionArgument<string>;
+    liquidityPool: RawTransactionArgument<string>;
+    order: RawTransactionArgument<string>;
 }
-export interface InitUserAccountTableOptions {
+export interface PrepareOrderExecutionOptions {
     package?: string;
     arguments:
-        | InitUserAccountTableArguments
+        | PrepareOrderExecutionArguments
         | [
-              version: RawTransactionArgument<string>,
-              registry: RawTransactionArgument<string>,
-              marketIndex: RawTransactionArgument<number | bigint>,
-          ];
-}
-/**
- * [Authorized Function] Initializes the user account table. TODO: can be removed,
- * only use once.
- */
-export function initUserAccountTable(options: InitUserAccountTableOptions) {
-    const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [`${packageAddress}::admin::Version`, `${packageAddress}::trading::MarketRegistry`, "u64"] satisfies string[];
-    const parameterNames = ["version", "registry", "marketIndex"];
-    return (tx: Transaction) =>
-        tx.moveCall({
-            package: packageAddress,
-            module: "trading",
-            function: "init_user_account_table",
-            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
-        });
-}
-export interface CreateUserAccountArguments {
-    version: RawTransactionArgument<string>;
-    registry: RawTransactionArgument<string>;
-    marketIndex: RawTransactionArgument<number | bigint>;
-}
-export interface CreateUserAccountOptions {
-    package?: string;
-    arguments:
-        | CreateUserAccountArguments
-        | [
-              version: RawTransactionArgument<string>,
-              registry: RawTransactionArgument<string>,
-              marketIndex: RawTransactionArgument<number | bigint>,
-          ];
-}
-/** [User Function] Creates a new user account. */
-export function createUserAccount(options: CreateUserAccountOptions) {
-    const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [`${packageAddress}::admin::Version`, `${packageAddress}::trading::MarketRegistry`, "u64"] satisfies string[];
-    const parameterNames = ["version", "registry", "marketIndex"];
-    return (tx: Transaction) =>
-        tx.moveCall({
-            package: packageAddress,
-            module: "trading",
-            function: "create_user_account",
-            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
-        });
-}
-export interface AddDelegateUserArguments {
-    version: RawTransactionArgument<string>;
-    registry: RawTransactionArgument<string>;
-    marketIndex: RawTransactionArgument<number | bigint>;
-    user: RawTransactionArgument<string>;
-}
-export interface AddDelegateUserOptions {
-    package?: string;
-    arguments:
-        | AddDelegateUserArguments
-        | [
-              version: RawTransactionArgument<string>,
-              registry: RawTransactionArgument<string>,
-              marketIndex: RawTransactionArgument<number | bigint>,
-              user: RawTransactionArgument<string>,
-          ];
-}
-/** [User Function] Adds a delegate user to a user account. Safe with `check_owner` */
-export function addDelegateUser(options: AddDelegateUserOptions) {
-    const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [
-        `${packageAddress}::admin::Version`,
-        `${packageAddress}::trading::MarketRegistry`,
-        "u64",
-        "address",
-    ] satisfies string[];
-    const parameterNames = ["version", "registry", "marketIndex", "user"];
-    return (tx: Transaction) =>
-        tx.moveCall({
-            package: packageAddress,
-            module: "trading",
-            function: "add_delegate_user",
-            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
-        });
-}
-export interface RemoveDelegateUserArguments {
-    version: RawTransactionArgument<string>;
-    registry: RawTransactionArgument<string>;
-    marketIndex: RawTransactionArgument<number | bigint>;
-    user: RawTransactionArgument<string>;
-}
-export interface RemoveDelegateUserOptions {
-    package?: string;
-    arguments:
-        | RemoveDelegateUserArguments
-        | [
-              version: RawTransactionArgument<string>,
-              registry: RawTransactionArgument<string>,
-              marketIndex: RawTransactionArgument<number | bigint>,
-              user: RawTransactionArgument<string>,
-          ];
-}
-/**
- * [User Function] Remove a delegate user to a user account. Safe with
- * `check_owner`
- */
-export function removeDelegateUser(options: RemoveDelegateUserOptions) {
-    const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [
-        `${packageAddress}::admin::Version`,
-        `${packageAddress}::trading::MarketRegistry`,
-        "u64",
-        "address",
-    ] satisfies string[];
-    const parameterNames = ["version", "registry", "marketIndex", "user"];
-    return (tx: Transaction) =>
-        tx.moveCall({
-            package: packageAddress,
-            module: "trading",
-            function: "remove_delegate_user",
-            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
-        });
-}
-export interface RemoveUserAccountArguments {
-    version: RawTransactionArgument<string>;
-    registry: RawTransactionArgument<string>;
-    marketIndex: RawTransactionArgument<number | bigint>;
-    userAccountCap: RawTransactionArgument<string>;
-}
-export interface RemoveUserAccountOptions {
-    package?: string;
-    arguments:
-        | RemoveUserAccountArguments
-        | [
-              version: RawTransactionArgument<string>,
-              registry: RawTransactionArgument<string>,
-              marketIndex: RawTransactionArgument<number | bigint>,
-              userAccountCap: RawTransactionArgument<string>,
-          ];
-}
-/** [User Function] Removes a user account. Safe with `UserAccountCap` */
-export function removeUserAccount(options: RemoveUserAccountOptions) {
-    const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [
-        `${packageAddress}::admin::Version`,
-        `${packageAddress}::trading::MarketRegistry`,
-        "u64",
-        `${packageAddress}::user_account::UserAccountCap`,
-    ] satisfies string[];
-    const parameterNames = ["version", "registry", "marketIndex", "userAccountCap"];
-    return (tx: Transaction) =>
-        tx.moveCall({
-            package: packageAddress,
-            module: "trading",
-            function: "remove_user_account",
-            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
-        });
-}
-export interface DepositUserAccountArguments {
-    version: RawTransactionArgument<string>;
-    registry: RawTransactionArgument<string>;
-    marketIndex: RawTransactionArgument<number | bigint>;
-    collateral: RawTransactionArgument<string>;
-}
-export interface DepositUserAccountOptions {
-    package?: string;
-    arguments:
-        | DepositUserAccountArguments
-        | [
-              version: RawTransactionArgument<string>,
-              registry: RawTransactionArgument<string>,
-              marketIndex: RawTransactionArgument<number | bigint>,
-              collateral: RawTransactionArgument<string>,
+              symbolMarket: RawTransactionArgument<string>,
+              liquidityPool: RawTransactionArgument<string>,
+              order: RawTransactionArgument<string>,
           ];
     typeArguments: [string];
 }
-/** Deposits collateral into a user account. Safe with `check_owner` */
-export function depositUserAccount(options: DepositUserAccountOptions) {
+export function prepareOrderExecution(options: PrepareOrderExecutionOptions) {
     const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [
-        `${packageAddress}::admin::Version`,
-        `${packageAddress}::trading::MarketRegistry`,
-        "u64",
-        `0x0000000000000000000000000000000000000000000000000000000000000002::coin::Coin<${options.typeArguments[0]}>`,
-    ] satisfies string[];
-    const parameterNames = ["version", "registry", "marketIndex", "collateral"];
+    const argumentsTypes = [null, null, null] satisfies (string | null)[];
+    const parameterNames = ["symbolMarket", "liquidityPool", "order"];
     return (tx: Transaction) =>
         tx.moveCall({
             package: packageAddress,
             module: "trading",
-            function: "deposit_user_account",
-            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
-            typeArguments: options.typeArguments,
-        });
-}
-export interface WithdrawUserAccountArguments {
-    version: RawTransactionArgument<string>;
-    registry: RawTransactionArgument<string>;
-    marketIndex: RawTransactionArgument<number | bigint>;
-    amount: RawTransactionArgument<number | bigint | null>;
-    userAccountCap: RawTransactionArgument<string>;
-}
-export interface WithdrawUserAccountOptions {
-    package?: string;
-    arguments:
-        | WithdrawUserAccountArguments
-        | [
-              version: RawTransactionArgument<string>,
-              registry: RawTransactionArgument<string>,
-              marketIndex: RawTransactionArgument<number | bigint>,
-              amount: RawTransactionArgument<number | bigint | null>,
-              userAccountCap: RawTransactionArgument<string>,
-          ];
-    typeArguments: [string];
-}
-/** Withdraws collateral from a user account. Safe with `UserAccountCap` */
-export function withdrawUserAccount(options: WithdrawUserAccountOptions) {
-    const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [
-        `${packageAddress}::admin::Version`,
-        `${packageAddress}::trading::MarketRegistry`,
-        "u64",
-        "0x0000000000000000000000000000000000000000000000000000000000000001::option::Option<u64>",
-        `${packageAddress}::user_account::UserAccountCap`,
-    ] satisfies string[];
-    const parameterNames = ["version", "registry", "marketIndex", "amount", "userAccountCap"];
-    return (tx: Transaction) =>
-        tx.moveCall({
-            package: packageAddress,
-            module: "trading",
-            function: "withdraw_user_account",
+            function: "prepare_order_execution",
             arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
             typeArguments: options.typeArguments,
         });
@@ -2316,24 +1985,24 @@ export interface ExecuteOrder_Options {
 export function executeOrder_(options: ExecuteOrder_Options) {
     const packageAddress = options.package ?? "@typus/perp";
     const argumentsTypes = [
-        `${packageAddress}::admin::Version`,
+        null,
         "u64",
-        `${packageAddress}::trading::SymbolMarket`,
-        `${packageAddress}::lp_pool::LiquidityPool`,
-        `${packageAddress}::profit_vault::ProfitVault`,
-        `${packageAddress}::position::TradingOrder`,
-        "u64",
-        "u64",
+        null,
+        null,
+        null,
+        null,
         "u64",
         "u64",
         "u64",
-        "0x4213e12a2220f15f1837a76897110d2260786558169bd8d0847f21e9b551f277::ecosystem::Version",
-        "0x4213e12a2220f15f1837a76897110d2260786558169bd8d0847f21e9b551f277::user::TypusUserRegistry",
-        "0x4213e12a2220f15f1837a76897110d2260786558169bd8d0847f21e9b551f277::leaderboard::TypusLeaderboardRegistry",
-        "0x4213e12a2220f15f1837a76897110d2260786558169bd8d0847f21e9b551f277::tails_staking::TailsStakingRegistry",
-        `${packageAddress}::competition::CompetitionConfig`,
-        "0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock",
-    ] satisfies string[];
+        "u64",
+        "u64",
+        null,
+        null,
+        null,
+        null,
+        null,
+        "0x2::clock::Clock",
+    ] satisfies (string | null)[];
     const parameterNames = [
         "version",
         "marketIndex",
@@ -2410,26 +2079,26 @@ export interface ExecuteOptionCollateralOrder_Options {
 export function executeOptionCollateralOrder_(options: ExecuteOptionCollateralOrder_Options) {
     const packageAddress = options.package ?? "@typus/perp";
     const argumentsTypes = [
-        `${packageAddress}::admin::Version`,
-        "0x6c9a394a43844fc09d9617bc8a8e775a4521f0e28e83de1da780d043a498671f::typus_dov_single::Registry",
-        "0x1d17058789bd1e1e79f1a92424519a88146f191f58a06cc4d9ab23d17d46ab73::oracle::Oracle",
-        "0x1d17058789bd1e1e79f1a92424519a88146f191f58a06cc4d9ab23d17d46ab73::oracle::Oracle",
-        `${packageAddress}::trading::SymbolMarket`,
-        `${packageAddress}::lp_pool::LiquidityPool`,
-        `${packageAddress}::position::TradingOrder`,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
         "u64",
         "u64",
         "u64",
         "u64",
         "u64",
         "u64",
-        "0x4213e12a2220f15f1837a76897110d2260786558169bd8d0847f21e9b551f277::ecosystem::Version",
-        "0x4213e12a2220f15f1837a76897110d2260786558169bd8d0847f21e9b551f277::user::TypusUserRegistry",
-        "0x4213e12a2220f15f1837a76897110d2260786558169bd8d0847f21e9b551f277::leaderboard::TypusLeaderboardRegistry",
-        "0x4213e12a2220f15f1837a76897110d2260786558169bd8d0847f21e9b551f277::tails_staking::TailsStakingRegistry",
-        `${packageAddress}::competition::CompetitionConfig`,
-        "0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock",
-    ] satisfies string[];
+        null,
+        null,
+        null,
+        null,
+        null,
+        "0x2::clock::Clock",
+    ] satisfies (string | null)[];
     const parameterNames = [
         "version",
         "dovRegistry",
@@ -2483,14 +2152,7 @@ export interface RemoveLinkedOrdersOptions {
 }
 export function removeLinkedOrders(options: RemoveLinkedOrdersOptions) {
     const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [
-        `${packageAddress}::admin::Version`,
-        "u64",
-        `${packageAddress}::trading::SymbolMarket`,
-        "vector<u64>",
-        "vector<u64>",
-        "address",
-    ] satisfies string[];
+    const argumentsTypes = [null, "u64", null, "vector<u64>", "vector<u64>", "address"] satisfies (string | null)[];
     const parameterNames = ["version", "marketIndex", "symbolMarket", "linkedOrderIds", "linkedOrderPrices", "user"];
     return (tx: Transaction) =>
         tx.moveCall({
@@ -2523,13 +2185,7 @@ export interface RemoveLinkedOrder_Options {
 }
 export function removeLinkedOrder_(options: RemoveLinkedOrder_Options) {
     const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [
-        `${packageAddress}::admin::Version`,
-        "u64",
-        `${packageAddress}::trading::SymbolMarket`,
-        `${packageAddress}::position::TradingOrder`,
-        "address",
-    ] satisfies string[];
+    const argumentsTypes = [null, "u64", null, null, "address"] satisfies (string | null)[];
     const parameterNames = ["version", "marketIndex", "symbolMarket", "order", "user"];
     return (tx: Transaction) =>
         tx.moveCall({
@@ -2557,7 +2213,7 @@ export interface GetMutOrdersOptions {
 }
 export function getMutOrders(options: GetMutOrdersOptions) {
     const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [`${packageAddress}::trading::SymbolMarket`, "bool", "u8"] satisfies string[];
+    const argumentsTypes = [null, "bool", "u8"] satisfies (string | null)[];
     const parameterNames = ["symbolMarket", "isTokenCollateral", "orderTypeTag"];
     return (tx: Transaction) =>
         tx.moveCall({
@@ -2584,13 +2240,32 @@ export interface GetOrdersOptions {
 }
 export function getOrders(options: GetOrdersOptions) {
     const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [`${packageAddress}::trading::SymbolMarket`, "bool", "u8"] satisfies string[];
+    const argumentsTypes = [null, "bool", "u8"] satisfies (string | null)[];
     const parameterNames = ["symbolMarket", "isTokenCollateral", "orderTypeTag"];
     return (tx: Transaction) =>
         tx.moveCall({
             package: packageAddress,
             module: "trading",
             function: "get_orders",
+            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
+        });
+}
+export interface GetOrderKeyArguments {
+    orderTypeTag: RawTransactionArgument<number>;
+}
+export interface GetOrderKeyOptions {
+    package?: string;
+    arguments: GetOrderKeyArguments | [orderTypeTag: RawTransactionArgument<number>];
+}
+export function getOrderKey(options: GetOrderKeyOptions) {
+    const packageAddress = options.package ?? "@typus/perp";
+    const argumentsTypes = ["u8"] satisfies (string | null)[];
+    const parameterNames = ["orderTypeTag"];
+    return (tx: Transaction) =>
+        tx.moveCall({
+            package: packageAddress,
+            module: "trading",
+            function: "get_order_key",
             arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
         });
 }
@@ -2615,7 +2290,7 @@ export interface TakeOrderByOrderIdAndPriceOptions {
 }
 export function takeOrderByOrderIdAndPrice(options: TakeOrderByOrderIdAndPriceOptions) {
     const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [`${packageAddress}::trading::SymbolMarket`, "u64", "u64", "bool", "address"] satisfies string[];
+    const argumentsTypes = [null, "u64", "u64", "bool", "address"] satisfies (string | null)[];
     const parameterNames = ["symbolMarket", "triggerPrice", "orderId", "isTokenCollateral", "user"];
     return (tx: Transaction) =>
         tx.moveCall({
@@ -2642,11 +2317,7 @@ export interface GetLinkedPositionOptions {
 }
 export function getLinkedPosition(options: GetLinkedPositionOptions) {
     const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [
-        `${packageAddress}::trading::SymbolMarket`,
-        "0x0000000000000000000000000000000000000000000000000000000000000001::option::Option<u64>",
-        "address",
-    ] satisfies string[];
+    const argumentsTypes = [null, "0x1::option::Option<u64>", "address"] satisfies (string | null)[];
     const parameterNames = ["symbolMarket", "linkedPositionId", "user"];
     return (tx: Transaction) =>
         tx.moveCall({
@@ -2682,15 +2353,7 @@ export interface CheckCollateralEnoughWhenAddingPositionOptions {
 }
 export function checkCollateralEnoughWhenAddingPosition(options: CheckCollateralEnoughWhenAddingPositionOptions) {
     const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [
-        `${packageAddress}::trading::SymbolMarket`,
-        `${packageAddress}::position::TradingOrder`,
-        "u64",
-        "u64",
-        "u64",
-        "u64",
-        "u64",
-    ] satisfies string[];
+    const argumentsTypes = [null, null, "u64", "u64", "u64", "u64", "u64"] satisfies (string | null)[];
     const parameterNames = [
         "symbolMarket",
         "order",
@@ -2735,15 +2398,7 @@ export interface CheckCollateralEnoughWhenReducingPositionOptions {
 }
 export function checkCollateralEnoughWhenReducingPosition(options: CheckCollateralEnoughWhenReducingPositionOptions) {
     const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [
-        `${packageAddress}::trading::SymbolMarket`,
-        `${packageAddress}::position::TradingOrder`,
-        "u64",
-        "u64",
-        "u64",
-        "u64",
-        "u64",
-    ] satisfies string[];
+    const argumentsTypes = [null, null, "u64", "u64", "u64", "u64", "u64"] satisfies (string | null)[];
     const parameterNames = [
         "symbolMarket",
         "order",
@@ -2794,19 +2449,10 @@ export interface CheckOptionCollateralEnoughOptions {
 }
 export function checkOptionCollateralEnough(options: CheckOptionCollateralEnoughOptions) {
     const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [
-        "0x6c9a394a43844fc09d9617bc8a8e775a4521f0e28e83de1da780d043a498671f::typus_dov_single::Registry",
-        "0x1d17058789bd1e1e79f1a92424519a88146f191f58a06cc4d9ab23d17d46ab73::oracle::Oracle",
-        "0x1d17058789bd1e1e79f1a92424519a88146f191f58a06cc4d9ab23d17d46ab73::oracle::Oracle",
-        `${packageAddress}::trading::SymbolMarket`,
-        `${packageAddress}::position::TradingOrder`,
-        "u64",
-        "u64",
-        "u64",
-        "u64",
-        "u64",
-        "0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock",
-    ] satisfies string[];
+    const argumentsTypes = [null, null, null, null, null, "u64", "u64", "u64", "u64", "u64", "0x2::clock::Clock"] satisfies (
+        | string
+        | null
+    )[];
     const parameterNames = [
         "dovRegistry",
         "typusOracleTradingSymbol",
@@ -2854,15 +2500,7 @@ export interface CheckReserveEnoughOptions {
 }
 export function checkReserveEnough(options: CheckReserveEnoughOptions) {
     const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [
-        `${packageAddress}::trading::SymbolMarket`,
-        `${packageAddress}::lp_pool::LiquidityPool`,
-        `${packageAddress}::position::TradingOrder`,
-        "u64",
-        "u64",
-        "u64",
-        "u64",
-    ] satisfies string[];
+    const argumentsTypes = [null, null, null, "u64", "u64", "u64", "u64"] satisfies (string | null)[];
     const parameterNames = [
         "symbolMarket",
         "liquidityPool",
@@ -2879,6 +2517,125 @@ export function checkReserveEnough(options: CheckReserveEnoughOptions) {
             function: "check_reserve_enough",
             arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
             typeArguments: options.typeArguments,
+        });
+}
+export interface GetMaxReleasingCollateralAmount_Arguments {
+    liquidityPool: RawTransactionArgument<string>;
+    position: RawTransactionArgument<string>;
+    marketInfo: RawTransactionArgument<string>;
+    marketConfig: RawTransactionArgument<string>;
+    collateralToken: RawTransactionArgument<string>;
+    collateralOraclePrice: RawTransactionArgument<number | bigint>;
+    collateralOraclePriceDecimal: RawTransactionArgument<number | bigint>;
+    tradingPairOraclePrice: RawTransactionArgument<number | bigint>;
+    tradingPairOraclePriceDecimal: RawTransactionArgument<number | bigint>;
+    cumulativeBorrowRate: RawTransactionArgument<number | bigint>;
+}
+export interface GetMaxReleasingCollateralAmount_Options {
+    package?: string;
+    arguments:
+        | GetMaxReleasingCollateralAmount_Arguments
+        | [
+              liquidityPool: RawTransactionArgument<string>,
+              position: RawTransactionArgument<string>,
+              marketInfo: RawTransactionArgument<string>,
+              marketConfig: RawTransactionArgument<string>,
+              collateralToken: RawTransactionArgument<string>,
+              collateralOraclePrice: RawTransactionArgument<number | bigint>,
+              collateralOraclePriceDecimal: RawTransactionArgument<number | bigint>,
+              tradingPairOraclePrice: RawTransactionArgument<number | bigint>,
+              tradingPairOraclePriceDecimal: RawTransactionArgument<number | bigint>,
+              cumulativeBorrowRate: RawTransactionArgument<number | bigint>,
+          ];
+}
+export function getMaxReleasingCollateralAmount_(options: GetMaxReleasingCollateralAmount_Options) {
+    const packageAddress = options.package ?? "@typus/perp";
+    const argumentsTypes = [null, null, null, null, null, "u64", "u64", "u64", "u64", "u64"] satisfies (string | null)[];
+    const parameterNames = [
+        "liquidityPool",
+        "position",
+        "marketInfo",
+        "marketConfig",
+        "collateralToken",
+        "collateralOraclePrice",
+        "collateralOraclePriceDecimal",
+        "tradingPairOraclePrice",
+        "tradingPairOraclePriceDecimal",
+        "cumulativeBorrowRate",
+    ];
+    return (tx: Transaction) =>
+        tx.moveCall({
+            package: packageAddress,
+            module: "trading",
+            function: "get_max_releasing_collateral_amount_",
+            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
+        });
+}
+export interface NormalSafetyCheckArguments {
+    version: RawTransactionArgument<string>;
+    registry: RawTransactionArgument<string>;
+    poolRegistry: RawTransactionArgument<string>;
+    typusOracleCToken: RawTransactionArgument<string>;
+    typusOracleTradingSymbol: RawTransactionArgument<string>;
+    marketIndex: RawTransactionArgument<number | bigint>;
+    poolIndex: RawTransactionArgument<number | bigint>;
+    positionId: RawTransactionArgument<number | bigint | null>;
+}
+export interface NormalSafetyCheckOptions {
+    package?: string;
+    arguments:
+        | NormalSafetyCheckArguments
+        | [
+              version: RawTransactionArgument<string>,
+              registry: RawTransactionArgument<string>,
+              poolRegistry: RawTransactionArgument<string>,
+              typusOracleCToken: RawTransactionArgument<string>,
+              typusOracleTradingSymbol: RawTransactionArgument<string>,
+              marketIndex: RawTransactionArgument<number | bigint>,
+              poolIndex: RawTransactionArgument<number | bigint>,
+              positionId: RawTransactionArgument<number | bigint | null>,
+          ];
+    typeArguments: [string, string];
+}
+export function normalSafetyCheck(options: NormalSafetyCheckOptions) {
+    const packageAddress = options.package ?? "@typus/perp";
+    const argumentsTypes = [null, null, null, null, null, "u64", "u64", "0x1::option::Option<u64>"] satisfies (string | null)[];
+    const parameterNames = [
+        "version",
+        "registry",
+        "poolRegistry",
+        "typusOracleCToken",
+        "typusOracleTradingSymbol",
+        "marketIndex",
+        "poolIndex",
+        "positionId",
+    ];
+    return (tx: Transaction) =>
+        tx.moveCall({
+            package: packageAddress,
+            module: "trading",
+            function: "normal_safety_check",
+            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
+            typeArguments: options.typeArguments,
+        });
+}
+export interface ValidateTradingFeeConfigArguments {
+    config: RawTransactionArgument<number | bigint[]>;
+}
+export interface ValidateTradingFeeConfigOptions {
+    package?: string;
+    arguments: ValidateTradingFeeConfigArguments | [config: RawTransactionArgument<number | bigint[]>];
+}
+export function validateTradingFeeConfig(options: ValidateTradingFeeConfigOptions) {
+    const packageAddress = options.package ?? "@typus/perp";
+    const argumentsTypes = ["vector<u64>"] satisfies (string | null)[];
+    const parameterNames = ["config"];
+    return (tx: Transaction) =>
+        tx.moveCall({
+            package: packageAddress,
+            module: "trading",
+            function: "validate_trading_fee_config",
+            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
         });
 }
 export interface AdjustMarketInfoUserOrderSizeArguments {
@@ -2900,7 +2657,7 @@ export interface AdjustMarketInfoUserOrderSizeOptions {
 }
 export function adjustMarketInfoUserOrderSize(options: AdjustMarketInfoUserOrderSizeOptions) {
     const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [`${packageAddress}::trading::SymbolMarket`, "bool", "bool", "u64"] satisfies string[];
+    const argumentsTypes = [null, "bool", "bool", "u64"] satisfies (string | null)[];
     const parameterNames = ["symbolMarket", "long", "filledOrCancelled", "size"];
     return (tx: Transaction) =>
         tx.moveCall({
@@ -2929,7 +2686,7 @@ export interface AdjustMarketInfoUserPositionSizeOptions {
 }
 export function adjustMarketInfoUserPositionSize(options: AdjustMarketInfoUserPositionSizeOptions) {
     const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [`${packageAddress}::trading::SymbolMarket`, "bool", "bool", "u64"] satisfies string[];
+    const argumentsTypes = [null, "bool", "bool", "u64"] satisfies (string | null)[];
     const parameterNames = ["symbolMarket", "filledOrderIsLong", "reducingPosition", "size"];
     return (tx: Transaction) =>
         tx.moveCall({
@@ -2950,10 +2707,7 @@ export interface ExerciseBidReceiptsOptions {
 }
 export function exerciseBidReceipts(options: ExerciseBidReceiptsOptions) {
     const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [
-        "0x6c9a394a43844fc09d9617bc8a8e775a4521f0e28e83de1da780d043a498671f::typus_dov_single::Registry",
-        "vector<0x908a10789a1a6953e0b73a997c10e3552f7ce4e2907afd00a334ed74bd973ded::vault::TypusBidReceipt>",
-    ] satisfies string[];
+    const argumentsTypes = [null, "vector<null>"] satisfies (string | null)[];
     const parameterNames = ["dovRegistry", "bidReceipts"];
     return (tx: Transaction) =>
         tx.moveCall({
@@ -2965,25 +2719,18 @@ export function exerciseBidReceipts(options: ExerciseBidReceiptsOptions) {
         });
 }
 export interface ReturnToUserArguments {
-    marketId: RawTransactionArgument<string>;
     balance: RawTransactionArgument<string>;
     user: RawTransactionArgument<string>;
 }
 export interface ReturnToUserOptions {
     package?: string;
-    arguments:
-        | ReturnToUserArguments
-        | [marketId: RawTransactionArgument<string>, balance: RawTransactionArgument<string>, user: RawTransactionArgument<string>];
+    arguments: ReturnToUserArguments | [balance: RawTransactionArgument<string>, user: RawTransactionArgument<string>];
     typeArguments: [string];
 }
 export function returnToUser(options: ReturnToUserOptions) {
     const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [
-        "0x0000000000000000000000000000000000000000000000000000000000000002::object::UID",
-        `0x0000000000000000000000000000000000000000000000000000000000000002::balance::Balance<${options.typeArguments[0]}>`,
-        "address",
-    ] satisfies string[];
-    const parameterNames = ["marketId", "balance", "user"];
+    const argumentsTypes = [null, "address"] satisfies (string | null)[];
+    const parameterNames = ["balance", "user"];
     return (tx: Transaction) =>
         tx.moveCall({
             package: packageAddress,
@@ -3003,7 +2750,7 @@ export interface CheckPositionUserMatchedOptions {
 }
 export function checkPositionUserMatched(options: CheckPositionUserMatchedOptions) {
     const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [`${packageAddress}::position::Position`, "address"] satisfies string[];
+    const argumentsTypes = [null, "address"] satisfies (string | null)[];
     const parameterNames = ["position", "user"];
     return (tx: Transaction) =>
         tx.moveCall({
@@ -3033,12 +2780,7 @@ export interface GetUserOrdersOptions {
 /** [View Function] Gets the user's orders. */
 export function getUserOrders(options: GetUserOrdersOptions) {
     const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [
-        `${packageAddress}::admin::Version`,
-        `${packageAddress}::trading::MarketRegistry`,
-        "u64",
-        "address",
-    ] satisfies string[];
+    const argumentsTypes = [null, null, "u64", "address"] satisfies (string | null)[];
     const parameterNames = ["version", "registry", "marketIndex", "user"];
     return (tx: Transaction) =>
         tx.moveCall({
@@ -3068,12 +2810,7 @@ export interface GetUserPositionsOptions {
 /** [View Function] Gets the user's positions. */
 export function getUserPositions(options: GetUserPositionsOptions) {
     const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [
-        `${packageAddress}::admin::Version`,
-        `${packageAddress}::trading::MarketRegistry`,
-        "u64",
-        "address",
-    ] satisfies string[];
+    const argumentsTypes = [null, null, "u64", "address"] satisfies (string | null)[];
     const parameterNames = ["version", "registry", "marketIndex", "user"];
     return (tx: Transaction) =>
         tx.moveCall({
@@ -3144,55 +2881,13 @@ export interface GetActiveOrdersByOrderTagOptions {
 /** [View Function] Gets active orders by order type tag. */
 export function getActiveOrdersByOrderTag(options: GetActiveOrdersByOrderTagOptions) {
     const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [
-        `${packageAddress}::admin::Version`,
-        `${packageAddress}::trading::MarketRegistry`,
-        "u64",
-        "u8",
-    ] satisfies string[];
+    const argumentsTypes = [null, null, "u64", "u8"] satisfies (string | null)[];
     const parameterNames = ["version", "registry", "marketIndex", "orderTypeTag"];
     return (tx: Transaction) =>
         tx.moveCall({
             package: packageAddress,
             module: "trading",
             function: "get_active_orders_by_order_tag",
-            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
-            typeArguments: options.typeArguments,
-        });
-}
-export interface GetActiveOrdersByOrderTagAndCtokenArguments {
-    version: RawTransactionArgument<string>;
-    registry: RawTransactionArgument<string>;
-    marketIndex: RawTransactionArgument<number | bigint>;
-    orderTypeTag: RawTransactionArgument<number>;
-}
-export interface GetActiveOrdersByOrderTagAndCtokenOptions {
-    package?: string;
-    arguments:
-        | GetActiveOrdersByOrderTagAndCtokenArguments
-        | [
-              version: RawTransactionArgument<string>,
-              registry: RawTransactionArgument<string>,
-              marketIndex: RawTransactionArgument<number | bigint>,
-              orderTypeTag: RawTransactionArgument<number>,
-          ];
-    typeArguments: [string, string];
-}
-/** [View Function] Gets active orders by order type tag and collateral token. */
-export function getActiveOrdersByOrderTagAndCtoken(options: GetActiveOrdersByOrderTagAndCtokenOptions) {
-    const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [
-        `${packageAddress}::admin::Version`,
-        `${packageAddress}::trading::MarketRegistry`,
-        "u64",
-        "u8",
-    ] satisfies string[];
-    const parameterNames = ["version", "registry", "marketIndex", "orderTypeTag"];
-    return (tx: Transaction) =>
-        tx.moveCall({
-            package: packageAddress,
-            module: "trading",
-            function: "get_active_orders_by_order_tag_and_ctoken",
             arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
             typeArguments: options.typeArguments,
         });
@@ -3229,17 +2924,7 @@ export interface GetMaxReleasingCollateralAmountOptions {
  */
 export function getMaxReleasingCollateralAmount(options: GetMaxReleasingCollateralAmountOptions) {
     const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [
-        `${packageAddress}::admin::Version`,
-        `${packageAddress}::trading::MarketRegistry`,
-        `${packageAddress}::lp_pool::Registry`,
-        "0x1d17058789bd1e1e79f1a92424519a88146f191f58a06cc4d9ab23d17d46ab73::oracle::Oracle",
-        "0x1d17058789bd1e1e79f1a92424519a88146f191f58a06cc4d9ab23d17d46ab73::oracle::Oracle",
-        "0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock",
-        "u64",
-        "u64",
-        "u64",
-    ] satisfies string[];
+    const argumentsTypes = [null, null, null, null, null, "0x2::clock::Clock", "u64", "u64", "u64"] satisfies (string | null)[];
     const parameterNames = [
         "version",
         "registry",
@@ -3290,18 +2975,7 @@ export interface GetEstimatedLiquidationPriceAndPnlOptions {
 /** [View Functio Only] Gets the estimated liquidation price and PnL for a position. */
 export function getEstimatedLiquidationPriceAndPnl(options: GetEstimatedLiquidationPriceAndPnlOptions) {
     const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [
-        `${packageAddress}::admin::Version`,
-        `${packageAddress}::trading::MarketRegistry`,
-        `${packageAddress}::lp_pool::Registry`,
-        "0x6c9a394a43844fc09d9617bc8a8e775a4521f0e28e83de1da780d043a498671f::typus_dov_single::Registry",
-        "0x1d17058789bd1e1e79f1a92424519a88146f191f58a06cc4d9ab23d17d46ab73::oracle::Oracle",
-        "0x1d17058789bd1e1e79f1a92424519a88146f191f58a06cc4d9ab23d17d46ab73::oracle::Oracle",
-        "u64",
-        "u64",
-        "0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock",
-        "u64",
-    ] satisfies string[];
+    const argumentsTypes = [null, null, null, null, null, null, "u64", "u64", "0x2::clock::Clock", "u64"] satisfies (string | null)[];
     const parameterNames = [
         "version",
         "registry",
@@ -3353,7 +3027,7 @@ export interface CalculateTradingFeeRateMbpOptions {
 }
 export function calculateTradingFeeRateMbp(options: CalculateTradingFeeRateMbpOptions) {
     const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = ["u64", "u64", "u64", "u64", "u64", "u64", "u64", "bool", "u64", "vector<u64>"] satisfies string[];
+    const argumentsTypes = ["u64", "u64", "u64", "u64", "u64", "u64", "u64", "bool", "u64", "vector<u64>"] satisfies (string | null)[];
     const parameterNames = [
         "formulaVersion",
         "userLongPositionSize",
@@ -3385,7 +3059,7 @@ export interface GetMarketsBcsOptions {
 /** [View Function] Gets the BCS-serialized markets. */
 export function getMarketsBcs(options: GetMarketsBcsOptions) {
     const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [`${packageAddress}::trading::MarketRegistry`, "vector<u64>"] satisfies string[];
+    const argumentsTypes = [null, "vector<u64>"] satisfies (string | null)[];
     const parameterNames = ["registry", "indexes"];
     return (tx: Transaction) =>
         tx.moveCall({
@@ -3406,7 +3080,7 @@ export interface GetMutMarketIdOptions {
 /** Gets a mutable reference to the market ID. WARNING: no authority check inside */
 export function getMutMarketId(options: GetMutMarketIdOptions) {
     const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [`${packageAddress}::trading::MarketRegistry`, "u64"] satisfies string[];
+    const argumentsTypes = [null, "u64"] satisfies (string | null)[];
     const parameterNames = ["registry", "marketIndex"];
     return (tx: Transaction) =>
         tx.moveCall({
@@ -3426,7 +3100,7 @@ export interface TradingSymbolExistsOptions {
 }
 export function tradingSymbolExists(options: TradingSymbolExistsOptions) {
     const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [`${packageAddress}::trading::Markets`] satisfies string[];
+    const argumentsTypes = [null] satisfies (string | null)[];
     const parameterNames = ["market"];
     return (tx: Transaction) =>
         tx.moveCall({

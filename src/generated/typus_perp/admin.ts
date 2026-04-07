@@ -8,12 +8,14 @@
  * handling.
  */
 
-import { MoveStruct, normalizeMoveArguments, type RawTransactionArgument } from "../utils/index";
+import { MoveStruct, normalizeMoveArguments, type RawTransactionArgument } from "../utils/index.js";
 import { bcs } from "@mysten/sui/bcs";
 import { type Transaction } from "@mysten/sui/transactions";
-import * as type_name from "./deps/std/type_name";
-import * as object from "./deps/sui/object";
-import * as vec_set from "./deps/sui/vec_set";
+import * as type_name from "./deps/std/type_name.js";
+import * as vec_set from "./deps/sui/vec_set.js";
+import * as type_name_1 from "./deps/std/type_name.js";
+import * as type_name_2 from "./deps/std/type_name.js";
+import * as type_name_3 from "./deps/std/type_name.js";
 const $moduleName = "@typus/perp::admin";
 export const FeeInfo = new MoveStruct({
     name: `${$moduleName}::FeeInfo`,
@@ -27,7 +29,7 @@ export const FeeInfo = new MoveStruct({
 export const FeePool = new MoveStruct({
     name: `${$moduleName}::FeePool`,
     fields: {
-        id: object.UID,
+        id: bcs.Address,
         /** A vector of `FeeInfo` structs. */
         fee_infos: bcs.vector(FeeInfo),
     },
@@ -35,7 +37,7 @@ export const FeePool = new MoveStruct({
 export const Version = new MoveStruct({
     name: `${$moduleName}::Version`,
     fields: {
-        id: object.UID,
+        id: bcs.Address,
         /** The version number. */
         value: bcs.u64(),
         /** The fee pool for protocol fees. */
@@ -52,7 +54,7 @@ export const SendFeeEvent = new MoveStruct({
     name: `${$moduleName}::SendFeeEvent`,
     fields: {
         /** The type name of the token. */
-        token: type_name.TypeName,
+        token: type_name_1.TypeName,
         /** The amount of fees sent. */
         amount: bcs.u64(),
     },
@@ -61,7 +63,7 @@ export const ProtocolFeeEvent = new MoveStruct({
     name: `${$moduleName}::ProtocolFeeEvent`,
     fields: {
         /** The type name of the token. */
-        token: type_name.TypeName,
+        token: type_name_2.TypeName,
         /** The amount of fees charged. */
         amount: bcs.u64(),
     },
@@ -70,7 +72,7 @@ export const PutInsuranceFundEvent = new MoveStruct({
     name: `${$moduleName}::PutInsuranceFundEvent`,
     fields: {
         /** The type name of the token. */
-        token: type_name.TypeName,
+        token: type_name_3.TypeName,
         /** The amount of funds put into the insurance fund. */
         amount: bcs.u64(),
     },
@@ -85,7 +87,7 @@ export interface VersionCheckOptions {
 /** Checks if the contract version is valid. */
 export function versionCheck(options: VersionCheckOptions) {
     const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [`${packageAddress}::admin::Version`] satisfies string[];
+    const argumentsTypes = [null] satisfies (string | null)[];
     const parameterNames = ["version"];
     return (tx: Transaction) =>
         tx.moveCall({
@@ -105,7 +107,7 @@ export interface UpgradeOptions {
 /** Upgrades the contract version. WARNING: no authority check inside */
 export function upgrade(options: UpgradeOptions) {
     const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [`${packageAddress}::admin::Version`] satisfies string[];
+    const argumentsTypes = [null] satisfies (string | null)[];
     const parameterNames = ["version"];
     return (tx: Transaction) =>
         tx.moveCall({
@@ -138,7 +140,7 @@ export interface VerifyOptions {
 /** [Authorized Function] Verifies if the sender is an authorized user. */
 export function verify(options: VerifyOptions) {
     const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [`${packageAddress}::admin::Version`] satisfies string[];
+    const argumentsTypes = [null] satisfies (string | null)[];
     const parameterNames = ["version"];
     return (tx: Transaction) =>
         tx.moveCall({
@@ -156,10 +158,9 @@ export interface AddAuthorizedUserOptions {
     package?: string;
     arguments: AddAuthorizedUserArguments | [version: RawTransactionArgument<string>, userAddress: RawTransactionArgument<string>];
 }
-/** [Authorized Function] Adds an authorized user. */
 export function addAuthorizedUser(options: AddAuthorizedUserOptions) {
     const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [`${packageAddress}::admin::Version`, "address"] satisfies string[];
+    const argumentsTypes = [null, "address"] satisfies (string | null)[];
     const parameterNames = ["version", "userAddress"];
     return (tx: Transaction) =>
         tx.moveCall({
@@ -177,10 +178,9 @@ export interface RemoveAuthorizedUserOptions {
     package?: string;
     arguments: RemoveAuthorizedUserArguments | [version: RawTransactionArgument<string>, userAddress: RawTransactionArgument<string>];
 }
-/** [Authorized Function] Removes an authorized user. */
 export function removeAuthorizedUser(options: RemoveAuthorizedUserOptions) {
     const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [`${packageAddress}::admin::Version`, "address"] satisfies string[];
+    const argumentsTypes = [null, "address"] satisfies (string | null)[];
     const parameterNames = ["version", "userAddress"];
     return (tx: Transaction) =>
         tx.moveCall({
@@ -206,10 +206,7 @@ export interface InstallEcosystemManagerCapEntryOptions {
  */
 export function installEcosystemManagerCapEntry(options: InstallEcosystemManagerCapEntryOptions) {
     const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [
-        `${packageAddress}::admin::Version`,
-        "0x4213e12a2220f15f1837a76897110d2260786558169bd8d0847f21e9b551f277::ecosystem::Version",
-    ] satisfies string[];
+    const argumentsTypes = [null, null] satisfies (string | null)[];
     const parameterNames = ["version", "typusEcosystemVersion"];
     return (tx: Transaction) =>
         tx.moveCall({
@@ -244,16 +241,7 @@ export interface AddTailsExpAndLeaderboardOptions {
 }
 export function addTailsExpAndLeaderboard(options: AddTailsExpAndLeaderboardOptions) {
     const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [
-        `${packageAddress}::admin::Version`,
-        "0x4213e12a2220f15f1837a76897110d2260786558169bd8d0847f21e9b551f277::ecosystem::Version",
-        "0x4213e12a2220f15f1837a76897110d2260786558169bd8d0847f21e9b551f277::user::TypusUserRegistry",
-        "0x4213e12a2220f15f1837a76897110d2260786558169bd8d0847f21e9b551f277::leaderboard::TypusLeaderboardRegistry",
-        "address",
-        "u64",
-        "u64",
-        "0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock",
-    ] satisfies string[];
+    const argumentsTypes = [null, null, null, null, "address", "u64", "u64", "0x2::clock::Clock"] satisfies (string | null)[];
     const parameterNames = [
         "version",
         "typusEcosystemVersion",
@@ -295,15 +283,7 @@ export interface AddCompetitionLeaderboardOptions {
 /** Adds a score to the competition leaderboard. */
 export function addCompetitionLeaderboard(options: AddCompetitionLeaderboardOptions) {
     const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [
-        `${packageAddress}::admin::Version`,
-        "0x4213e12a2220f15f1837a76897110d2260786558169bd8d0847f21e9b551f277::ecosystem::Version",
-        "0x4213e12a2220f15f1837a76897110d2260786558169bd8d0847f21e9b551f277::leaderboard::TypusLeaderboardRegistry",
-        "0x0000000000000000000000000000000000000000000000000000000000000001::ascii::String",
-        "address",
-        "u64",
-        "0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock",
-    ] satisfies string[];
+    const argumentsTypes = [null, null, null, "0x1::string::String", "address", "u64", "0x2::clock::Clock"] satisfies (string | null)[];
     const parameterNames = ["version", "typusEcosystemVersion", "typusLeaderboardRegistry", "leaderboardKey", "user", "score"];
     return (tx: Transaction) =>
         tx.moveCall({
@@ -327,7 +307,7 @@ export interface SendFeeOptions {
  */
 export function sendFee(options: SendFeeOptions) {
     const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [`${packageAddress}::admin::Version`] satisfies string[];
+    const argumentsTypes = [null] satisfies (string | null)[];
     const parameterNames = ["version"];
     return (tx: Transaction) =>
         tx.moveCall({
@@ -350,10 +330,7 @@ export interface ChargeFeeOptions {
 /** Charges a protocol fee. */
 export function chargeFee(options: ChargeFeeOptions) {
     const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [
-        `${packageAddress}::admin::Version`,
-        `0x0000000000000000000000000000000000000000000000000000000000000002::balance::Balance<${options.typeArguments[0]}>`,
-    ] satisfies string[];
+    const argumentsTypes = [null, null] satisfies (string | null)[];
     const parameterNames = ["version", "balance"];
     return (tx: Transaction) =>
         tx.moveCall({
@@ -378,7 +355,7 @@ export interface SendLiquidatorFeeOptions {
  */
 export function sendLiquidatorFee(options: SendLiquidatorFeeOptions) {
     const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [`${packageAddress}::admin::Version`] satisfies string[];
+    const argumentsTypes = [null] satisfies (string | null)[];
     const parameterNames = ["version"];
     return (tx: Transaction) =>
         tx.moveCall({
@@ -401,10 +378,7 @@ export interface ChargeLiquidatorFeeOptions {
 /** Charges a liquidator fee. */
 export function chargeLiquidatorFee(options: ChargeLiquidatorFeeOptions) {
     const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [
-        `${packageAddress}::admin::Version`,
-        `0x0000000000000000000000000000000000000000000000000000000000000002::balance::Balance<${options.typeArguments[0]}>`,
-    ] satisfies string[];
+    const argumentsTypes = [null, null] satisfies (string | null)[];
     const parameterNames = ["version", "balance"];
     return (tx: Transaction) =>
         tx.moveCall({

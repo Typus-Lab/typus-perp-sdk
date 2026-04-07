@@ -8,11 +8,11 @@
  * and `Balance`s.
  */
 
-import { MoveStruct } from "../../../utils/index";
+import { MoveStruct } from "../../../utils/index.js";
 import { bcs } from "@mysten/sui/bcs";
 const $moduleName = "0x2::balance";
 export const Balance = new MoveStruct({
-    name: `${$moduleName}::Balance`,
+    name: `${$moduleName}::Balance<phantom T>`,
     fields: {
         value: bcs.u64(),
     },

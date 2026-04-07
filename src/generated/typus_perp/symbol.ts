@@ -7,9 +7,10 @@
  * pair.
  */
 
-import { MoveStruct, normalizeMoveArguments, type RawTransactionArgument } from "../utils/index";
+import { MoveStruct, normalizeMoveArguments, type RawTransactionArgument } from "../utils/index.js";
 import { type Transaction } from "@mysten/sui/transactions";
-import * as type_name from "./deps/std/type_name";
+import * as type_name from "./deps/std/type_name.js";
+import * as type_name_1 from "./deps/std/type_name.js";
 const $moduleName = "@typus/perp::symbol";
 export const Symbol = new MoveStruct({
     name: `${$moduleName}::Symbol`,
@@ -17,7 +18,7 @@ export const Symbol = new MoveStruct({
         /** The base token of the trading pair. */
         base_token: type_name.TypeName,
         /** The quote token of the trading pair. */
-        quote_token: type_name.TypeName,
+        quote_token: type_name_1.TypeName,
     },
 });
 export interface CreateArguments {
@@ -31,10 +32,7 @@ export interface CreateOptions {
 /** Creates a new `Symbol` from `TypeName`s. */
 export function create(options: CreateOptions) {
     const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [
-        "0x0000000000000000000000000000000000000000000000000000000000000001::type_name::TypeName",
-        "0x0000000000000000000000000000000000000000000000000000000000000001::type_name::TypeName",
-    ] satisfies string[];
+    const argumentsTypes = [null, null] satisfies (string | null)[];
     const parameterNames = ["baseToken", "quoteToken"];
     return (tx: Transaction) =>
         tx.moveCall({
@@ -54,7 +52,7 @@ export interface BaseTokenOptions {
 /** Gets the base token of a `Symbol`. */
 export function baseToken(options: BaseTokenOptions) {
     const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [`${packageAddress}::symbol::Symbol`] satisfies string[];
+    const argumentsTypes = [null] satisfies (string | null)[];
     const parameterNames = ["self"];
     return (tx: Transaction) =>
         tx.moveCall({
@@ -74,7 +72,7 @@ export interface QuoteTokenOptions {
 /** Gets the quote token of a `Symbol`. */
 export function quoteToken(options: QuoteTokenOptions) {
     const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [`${packageAddress}::symbol::Symbol`] satisfies string[];
+    const argumentsTypes = [null] satisfies (string | null)[];
     const parameterNames = ["self"];
     return (tx: Transaction) =>
         tx.moveCall({

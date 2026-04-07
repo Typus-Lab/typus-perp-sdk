@@ -593,6 +593,19 @@ export function tooManyLinkedOrders(options: TooManyLinkedOrdersOptions = {}) {
             function: "too_many_linked_orders",
         });
 }
+export interface PositionCoolDownThresholdOptions {
+    package?: string;
+    arguments?: [];
+}
+export function positionCoolDownThreshold(options: PositionCoolDownThresholdOptions = {}) {
+    const packageAddress = options.package ?? "@typus/perp";
+    return (tx: Transaction) =>
+        tx.moveCall({
+            package: packageAddress,
+            module: "error",
+            function: "position_cool_down_threshold",
+        });
+}
 export interface TradingSymbolExistedOptions {
     package?: string;
     arguments?: [];
@@ -1033,6 +1046,19 @@ export function invalidUserAccount(options: InvalidUserAccountOptions = {}) {
             package: packageAddress,
             module: "error",
             function: "invalid_user_account",
+        });
+}
+export interface OptionCollateralPositionNotSupportedOptions {
+    package?: string;
+    arguments?: [];
+}
+export function optionCollateralPositionNotSupported(options: OptionCollateralPositionNotSupportedOptions = {}) {
+    const packageAddress = options.package ?? "@typus/perp";
+    return (tx: Transaction) =>
+        tx.moveCall({
+            package: packageAddress,
+            module: "error",
+            function: "option_collateral_position_not_supported",
         });
 }
 export interface NotUserAccountOwnerOptions {

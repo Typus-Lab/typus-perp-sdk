@@ -19,7 +19,7 @@ import mne from "mnemonic.json";
     console.log(user);
 
     var hasNextPage = true;
-    var nextCursor: string | null = null;
+    var cursor: string | null = null;
 
     var total = 0;
     let users: { user: string; total_shares: number; active_shares: number }[] = [];
@@ -28,11 +28,11 @@ import mne from "mnemonic.json";
         var res = await provider.getDynamicFields({
             parentId: "0x0ad369d88f8072ae5f8a3a9f7c197778bfd0f5ca8eca4c51336ddc4be3104f0c",
             // parentId: "0xaaeb8ee5148b7ee3eefc6733e3fe2eb48f5d8d187d7d79f9cc21aa59902f077d",
-            cursor: nextCursor,
+            cursor: cursor,
         });
         // console.log(res);
         hasNextPage = res.hasNextPage;
-        nextCursor = res.nextCursor;
+        cursor = res.cursor;
 
         var res2 = await provider.multiGetObjects({ ids: res.data.map((x) => x.objectId), options: { showContent: true } });
 

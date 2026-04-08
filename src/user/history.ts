@@ -77,12 +77,19 @@ export async function parseUserHistory(raw_events, matchingDatas) {
 
         const [pkg, mod, name] = type.split("::");
 
+        let baseTokenAddress: string;
+        let collateralTokenAddress: string;
+
         if (mod == "trading") {
             switch (name) {
                 case CreateTradingOrderEvent.name.split("::")[2]:
                 case CreateTradingOrderWithBidReceiptsEvent.name.split("::")[2]:
-                    var base_token = typeArgToAsset(json.base_token.name) as TOKEN;
-                    var collateral_token = typeArgToAsset(json.collateral_token.name) as TOKEN;
+                    baseTokenAddress = json.base_token.name ?? json.base_token;
+                    collateralTokenAddress = json.collateral_token.name ?? json.collateral_token;
+
+                    var base_token = typeArgToAsset(baseTokenAddress) as TOKEN;
+                    var collateral_token = typeArgToAsset(collateralTokenAddress) as TOKEN;
+
                     var market = `${base_token}/USD`;
 
                     var size = Number(json.size) / 10 ** assetToDecimal(base_token)!;
@@ -154,8 +161,11 @@ export async function parseUserHistory(raw_events, matchingDatas) {
                     break;
 
                 case OrderFilledEvent.name.split("::")[2]:
-                    var base_token = typeArgToAsset(json.symbol.base_token.name) as TOKEN;
-                    var collateral_token = typeArgToAsset(json.collateral_token.name) as TOKEN;
+                    baseTokenAddress = json.symbol.base_token.name ?? json.symbol.base_token;
+                    collateralTokenAddress = json.collateral_token.name ?? json.collateral_token;
+
+                    var base_token = typeArgToAsset(baseTokenAddress) as TOKEN;
+                    var collateral_token = typeArgToAsset(collateralTokenAddress) as TOKEN;
                     var market = `${base_token}/USD`;
 
                     var size = Number(json.filled_size) / 10 ** assetToDecimal(base_token)!;
@@ -240,6 +250,9 @@ export async function parseUserHistory(raw_events, matchingDatas) {
                     break;
 
                 case RealizeFundingEvent.name.split("::")[2]:
+                    baseTokenAddress = json.symbol.base_token.name ?? json.symbol.base_token;
+                    collateralTokenAddress = json.collateral_token.name ?? json.collateral_token;
+
                     var base_token = typeArgToAsset(json.symbol.base_token.name) as TOKEN;
                     var collateral_token = typeArgToAsset(json.collateral_token.name) as TOKEN;
                     var market = `${base_token}/USD`;
@@ -290,8 +303,11 @@ export async function parseUserHistory(raw_events, matchingDatas) {
                     break;
 
                 case CancelTradingOrderEvent.name.split("::")[2]:
-                    var base_token = typeArgToAsset(json.base_token.name) as TOKEN;
-                    var collateral_token = typeArgToAsset(json.collateral_token.name) as TOKEN;
+                    baseTokenAddress = json.base_token.name ?? json.base_token;
+                    collateralTokenAddress = json.collateral_token.name ?? json.collateral_token;
+
+                    var base_token = typeArgToAsset(baseTokenAddress) as TOKEN;
+                    var collateral_token = typeArgToAsset(collateralTokenAddress) as TOKEN;
                     var market = `${base_token}/USD`;
                     var related = events.findLast((e) => e.order_id === json.order_id && e.market === market);
 
@@ -320,8 +336,11 @@ export async function parseUserHistory(raw_events, matchingDatas) {
 
                 case IncreaseCollateralEvent.name.split("::")[2]:
                 case ReleaseCollateralEvent.name.split("::")[2]:
-                    var base_token = typeArgToAsset(json.base_token.name) as TOKEN;
-                    var collateral_token = typeArgToAsset(json.collateral_token.name) as TOKEN;
+                    baseTokenAddress = json.base_token.name ?? json.base_token;
+                    collateralTokenAddress = json.collateral_token.name ?? json.collateral_token;
+
+                    var base_token = typeArgToAsset(baseTokenAddress) as TOKEN;
+                    var collateral_token = typeArgToAsset(collateralTokenAddress) as TOKEN;
                     var market = `${base_token}/USD`;
                     var related = events.find((e) => e.position_id === json.position_id && e.market === market);
 
@@ -362,8 +381,11 @@ export async function parseUserHistory(raw_events, matchingDatas) {
                     break;
 
                 case SwapEvent.name.split("::")[2]:
-                    var from_token = typeArgToAsset(json.from_token_type.name) as TOKEN;
-                    var to_token = typeArgToAsset(json.to_token_type.name) as TOKEN;
+                    let fromTokenAddress = json.from_token_type.name ?? json.from_token_type;
+                    let toTokenAddress = json.to_token_type.name ?? json.to_token_type;
+
+                    var from_token = typeArgToAsset(fromTokenAddress) as TOKEN;
+                    var to_token = typeArgToAsset(toTokenAddress) as TOKEN;
 
                     var from_price = Number(json.oracle_price_from_token);
                     var to_price = Number(json.oracle_price_to_token);
@@ -395,7 +417,9 @@ export async function parseUserHistory(raw_events, matchingDatas) {
         if (mod === "profit_vault") {
             switch (name) {
                 case WithdrawProfitEvent.name.split("::")[2]:
-                    const profit_token = typeArgToAsset(json.token_type.name) as TOKEN;
+                    let profitTokenAddress = json.token_type.name ?? json.token_type;
+
+                    const profit_token = typeArgToAsset(profitTokenAddress) as TOKEN;
                     const profit_token_decimal = assetToDecimal(profit_token);
                     const profit = Number(json.withdraw_amount) / 10 ** profit_token_decimal!;
                     const e: Event = {

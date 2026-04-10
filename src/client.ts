@@ -79,7 +79,7 @@ export class TypusClient {
     executeTransactionBlock(params: SuiClientTypes.ExecuteTransactionOptions) {
         return this.gRpcClient.executeTransaction(params);
     }
-    signAndExecuteTransaction(params) {
+    signAndExecuteTransaction(params: SuiClientTypes.SignAndExecuteTransactionOptions) {
         return this.gRpcClient.signAndExecuteTransaction(params);
     }
 

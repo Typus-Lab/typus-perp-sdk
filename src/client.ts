@@ -71,9 +71,13 @@ export class TypusClient {
     multiGetObjects(params: SuiClientTypes.GetObjectsOptions) {
         return this.gRpcClient.getObjects(params);
     }
+    /**
+     * For view-function and dry-run transaction.
+     * dry-run need `tx.setSender(user)` to work, otherwise it will fail with "Invalid sender address" error
+     */
     devInspectTransactionBlock(params: SuiClientTypes.SimulateTransactionOptions) {
         params.checksEnabled = false;
-        params.include = { commandResults: true };
+        params.include = { commandResults: true, events: true };
         return this.gRpcClient.simulateTransaction(params);
     }
     executeTransactionBlock(params: SuiClientTypes.ExecuteTransactionOptions) {

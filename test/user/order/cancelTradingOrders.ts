@@ -8,7 +8,7 @@ import { cancelTradingOrder, getUserOrders, NETWORK } from "src";
 (async () => {
     let config = await TypusConfig.default(NETWORK, null);
     let client = new TypusClient(config);
-    let keypair = Ed25519Keypair.deriveKeypair(String(process.env.MNEMONIC));
+    let keypair = Ed25519Keypair.deriveKeypair(String(process.env.W_MNEMONIC));
 
     let user = keypair.toSuiAddress();
     console.log(user);
@@ -24,12 +24,13 @@ import { cancelTradingOrder, getUserOrders, NETWORK } from "src";
         user,
     });
 
+    tx.setSender(user);
     let dryrunRes = await client.devInspectTransactionBlock({
-        transactionBlock: tx,
-        sender: user,
+        transaction: tx,
     });
-    console.log(dryrunRes.events.filter((e) => e.type.endsWith("CancelTradingOrderEvent"))[0].parsedJson);
+    // @ts-ignore
+    console.log(dryrunRes.Transaction.events.filter((e) => e.eventType.endsWith("CancelTradingOrderEvent"))[0].json);
 
-    // let res = await client.signAndExecuteTransaction({ signer: keypair, transaction: tx });
-    // console.log(res);
+    let res = await client.signAndExecuteTransaction({ signer: keypair, transaction: tx });
+    console.log(res);
 })();

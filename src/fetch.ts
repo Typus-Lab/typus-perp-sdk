@@ -448,7 +448,7 @@ export async function getLiquidationPriceAndPnl(
     }
 
     let res = await client.devInspectTransactionBlock({ transaction: tx });
-    console.log(res);
+    // console.log(res);
     //   0  estimated_liquidation_price,
     //   1  has_profit,
     //   2  pnl_usd,

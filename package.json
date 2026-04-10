@@ -8,7 +8,7 @@
     "dependencies": {
         "@mysten/bcs": "2.0.3",
         "@mysten/sui": "2.13.2",
-        "@typus/typus-sdk": "1.8.41"
+        "@typus/typus-sdk": "1.8.43"
     },
     "resolutions": {
         "@mysten/bcs": "2.0.3",

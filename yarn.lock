@@ -430,7 +430,7 @@ __metadata:
   dependencies:
     "@mysten/bcs": "npm:2.0.3"
     "@mysten/sui": "npm:2.13.2"
-    "@typus/typus-sdk": "file:../typus-sdk"
+    "@typus/typus-sdk": "npm:1.8.43"
     bignumber.js: "npm:9.1.2"
     prettier: "npm:^3.0.0"
     ts-node: "npm:^10.9.2"
@@ -442,9 +442,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@typus/typus-sdk@file:../typus-sdk::locator=%40typus%2Ftypus-perp-sdk%40workspace%3A.":
-  version: 1.8.42
-  resolution: "@typus/typus-sdk@file:../typus-sdk#../typus-sdk::hash=b9c6b6&locator=%40typus%2Ftypus-perp-sdk%40workspace%3A."
+"@typus/typus-sdk@npm:1.8.43":
+  version: 1.8.43
+  resolution: "@typus/typus-sdk@npm:1.8.43"
   dependencies:
     "@mysten/bcs": "npm:^1.6.1"
     "@mysten/kiosk": "npm:^0.12.6"
@@ -460,7 +460,7 @@ __metadata:
     lodash: "npm:^4.17.21"
     moment: "npm:^2.30.1"
     node-rsa: "npm:^1.1.1"
-  checksum: 10c0/562be77b49762207fd0082abef29474600f0b22f0fc80d83063047716ce3d1bff5163cf00e98313af8b3e23e618fd265ae0a525df7103c94e4682ed66df1b391
+  checksum: 10c0/83e26eaab9ecd9b718da6ccbc386dfa3e0ef545fb96378b3ce3be7a1ff567e6bc34ba7e888720d31378d7398ea0a59841bf6e693e1dd81be2666745f8bef3d1a
   languageName: node
   linkType: hard
 

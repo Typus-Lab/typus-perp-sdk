@@ -38,11 +38,10 @@ import { TOKEN } from "@typus/typus-sdk/dist/src/constants";
     });
 
     let dryrunRes = await client.devInspectTransactionBlock({
-        transactionBlock: tx,
-        sender: user,
+        transaction: tx,
     });
-    // console.log(dryrunRes.events.filter((e) => e.type.endsWith("reduceOptionCollateralPositionSizesEvent")));
-    console.log(dryrunRes.events.filter((e) => e.type.endsWith("OrderFilledEvent"))); // if the order is not filled, there will be no OrderFilledEvent
+    // @ts-ignore
+    console.log(dryrunRes.Transaction.events.filter((e) => e.type.endsWith("OrderFilledEvent"))); // if the order is not filled, there will be no OrderFilledEvent
 
     let res = await client.signAndExecuteTransaction({ signer: keypair, transaction: tx });
     console.log(res);

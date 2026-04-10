@@ -26,7 +26,7 @@ import { normalizeStructTag } from "@mysten/sui/utils";
             owner: user,
             coinType: normalizeStructTag(lpPool.lp_token_type.name),
         })
-    ).data.map((coin) => coin.coinObjectId);
+    ).objects.map((coin) => coin.objectId);
     console.log(coins.length);
 
     let tx = new Transaction();
@@ -39,10 +39,9 @@ import { normalizeStructTag } from "@mysten/sui/utils";
     });
 
     let dryrunRes = await client.devInspectTransactionBlock({
-        transactionBlock: tx,
-        sender: user,
+        transaction: tx,
     });
-    console.log(dryrunRes.events.filter((e) => e.type.endsWith("RedeemEvent")));
+    console.log(dryrunRes.Transaction.events.filter((e) => e.type.endsWith("RedeemEvent")));
 
     let res = await client.signAndExecuteTransaction({ signer: keypair, transaction: tx });
     console.log(res);

@@ -35,10 +35,10 @@ import { NETWORK, getLpPools, getStakePool, claim, getStakePools } from "src";
     });
 
     let dryrunRes = await client.devInspectTransactionBlock({
-        transactionBlock: tx,
-        sender: user,
+        transaction: tx,
     });
-    console.log(dryrunRes.events.filter((e) => e.type.endsWith("BurnLpEvent")));
+    // @ts-ignore
+    console.log(dryrunRes.Transaction.events.filter((e) => e.type.endsWith("BurnLpEvent")));
 
     let res = await client.signAndExecuteTransaction({ signer: keypair, transaction: tx });
     console.log(res);

@@ -39,13 +39,14 @@ import { NETWORK, getLpPools, getStakePool, getStakePools, getUserStake, unstake
         user,
     });
 
-    console.dir(JSON.parse(await tx.toJSON({ client: client.jsonRpcClient })).commands[7], { depth: null });
+    console.dir(JSON.parse(await tx.toJSON({ client: client.gRpcClient })).commands[7], { depth: null });
 
     let dryrunRes = await client.devInspectTransactionBlock({
-        transactionBlock: tx,
-        sender: user,
+        transaction: tx,
     });
-    console.log(dryrunRes.events.filter((e) => e.type.endsWith("UnstakeEvent")));
+
+    // @ts-ignore
+    console.log(dryrunRes.Transaction.events.filter((e) => e.type.endsWith("UnstakeEvent")));
 
     let res = await client.signAndExecuteTransaction({ signer: keypair, transaction: tx });
     console.log(res);

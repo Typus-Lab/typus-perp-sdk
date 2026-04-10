@@ -41,14 +41,15 @@ import { TOKEN } from "@typus/typus-sdk/dist/src/constants";
         strategyIndex: "9",
     });
 
-    let dryrunRes = await client.jsonRpcClient.devInspectTransactionBlock({
-        transactionBlock: tx,
-        sender: user,
+    let dryrunRes = await client.devInspectTransactionBlock({
+        transaction: tx,
     });
-    console.log(dryrunRes.events.filter((e) => e.type.endsWith("CreateTradingOrderWithBidReceiptsEvent")));
-    console.log(dryrunRes.events.filter((e) => e.type.endsWith("OrderFilledEvent"))); // if the order is not filled, there will be no OrderFilledEvent
+    // @ts-ignore
+    console.log(dryrunRes.Transaction.events.filter((e) => e.type.endsWith("CreateTradingOrderWithBidReceiptsEvent")));
+    // @ts-ignore
+    console.log(dryrunRes.Transaction.events.filter((e) => e.type.endsWith("OrderFilledEvent"))); // if the order is not filled, there will be no OrderFilledEvent
 
-    let res = await client.jsonRpcClient.signAndExecuteTransaction({ signer: keypair, transaction: tx });
+    let res = await client.gRpcClient.signAndExecuteTransaction({ signer: keypair, transaction: tx });
     console.log(res);
     // https://testnet.suivision.xyz/txblock/9BwZRXhRqYxeP6k3NavsVX1yQQjTfJbPBYijDPfaPHPH
 })();

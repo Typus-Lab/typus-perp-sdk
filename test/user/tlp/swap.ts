@@ -25,12 +25,13 @@ import { NETWORK, swap } from "src";
             owner: user,
             coinType: tokenType[NETWORK][FROM_TOKEN],
         })
-    ).data.map((coin) => coin.coinObjectId);
+    ).objects.map((coin) => coin.objectId);
     console.log(coins.length);
 
     let tx = new Transaction();
 
     tx = await swap(client, tx, {
+        perpIndex: 0,
         coins,
         amount: "1000000",
         FROM_TOKEN,
@@ -39,11 +40,11 @@ import { NETWORK, swap } from "src";
     });
 
     let dryrunRes = await client.devInspectTransactionBlock({
-        transactionBlock: tx,
-        sender: user,
+        transaction: tx,
     });
     console.log(dryrunRes);
-    console.log(dryrunRes.events.filter((e) => e.type.endsWith("SwapEvent"))[0].parsedJson);
+    // @ts-ignore
+    console.log(dryrunRes.Transaction.events.filter((e) => e.type.endsWith("SwapEvent"))[0].parsedJson);
 
     let res = await client.signAndExecuteTransaction({ signer: keypair, transaction: tx });
     console.log(res);

@@ -129,7 +129,7 @@ export async function getMarkets(
     tx.add(getMarketsBcs({ arguments: { registry: MARKET, indexes: input.indexes.map((x) => BigInt(x)) } }));
 
     // tx.setSender(SENDER);
-    // let bcs = await tx.build({ client: client.jsonRpcClient, onlyTransactionKind: true });
+    // let bcs = await tx.build({ client: client.gRpcClient, onlyTransactionKind: true });
     // // console.log("bcs", bcs);
     // let res = await client.simulateTransaction(bcs);
 

@@ -40,11 +40,10 @@ import { getStakePool, getStakePools, getUserStake, harvestStakeReward, NETWORK 
     });
 
     let dryrunRes = await client.devInspectTransactionBlock({
-        transactionBlock: tx,
-        sender: user,
+        transaction: tx,
     });
 
-    let events = dryrunRes.events.filter((e) => e.type.endsWith("HarvestPerUserShareEvent"));
+    let events = dryrunRes.Transaction.events.filter((e) => e.type.endsWith("HarvestPerUserShareEvent"));
 
     if (events.length > 0) {
         // @ts-ignore

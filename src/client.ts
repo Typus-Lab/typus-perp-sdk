@@ -10,7 +10,6 @@ import { SuiClientTypes } from "@mysten/sui/client";
 export type Network = "MAINNET" | "TESTNET";
 
 export class TypusClient {
-    jsonRpcClient: SuiJsonRpcClient;
     gRpcClient: SuiGrpcClient;
     graphQLClient: SuiGraphQLClient;
     pythClient: PythClient;
@@ -35,12 +34,6 @@ export class TypusClient {
             },
         };
 
-        this.jsonRpcClient = new SuiJsonRpcClient({
-            network: network,
-            url: config.rpcEndpoint,
-            mvr,
-        });
-
         this.gRpcClient = new SuiGrpcClient({
             network: network,
             baseUrl: `https://fullnode.${network}.sui.io:443`,
@@ -53,7 +46,7 @@ export class TypusClient {
             mvr,
         });
 
-        this.pythClient = createPythClient(this.jsonRpcClient, this.config.network);
+        this.pythClient = createPythClient(this.gRpcClient, this.config.network);
     }
 
     getCoins(params: SuiClientTypes.ListCoinsOptions) {

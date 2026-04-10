@@ -12,7 +12,7 @@ import { getSponsoredTx } from "@typus/typus-sdk/dist/src/utils/sponsoredTx";
     let client = new TypusClient(config);
     config.sponsored = false;
 
-    let keypair = Ed25519Keypair.deriveKeypair(String(process.env.MNEMONIC));
+    let keypair = Ed25519Keypair.deriveKeypair(String(process.env.W_MNEMONIC));
 
     let user = keypair.toSuiAddress();
     console.log(user);
@@ -20,7 +20,7 @@ import { getSponsoredTx } from "@typus/typus-sdk/dist/src/utils/sponsoredTx";
     var tx = new Transaction();
 
     // INPUTS
-    let cToken: TOKEN = "wUSDT";
+    let cToken: TOKEN = "SUI";
     let tradingToken: TOKEN = "SUI";
 
     let coins = (
@@ -28,14 +28,14 @@ import { getSponsoredTx } from "@typus/typus-sdk/dist/src/utils/sponsoredTx";
             owner: user,
             coinType: tokenType[NETWORK][cToken],
         })
-    ).data.map((coin) => coin.coinObjectId);
+    ).objects.map((coin) => coin.objectId);
 
     let suiCoins = (
         await client.getCoins({
             owner: user,
             coinType: tokenType[NETWORK]["SUI"],
         })
-    ).data.map((coin) => coin.coinObjectId);
+    ).objects.map((coin) => coin.objectId);
 
     let markets = await getMarkets(client, { indexes: ["0", "1"] });
     let marketsOnly = markets.map((x) => x[0]);
@@ -44,6 +44,7 @@ import { getSponsoredTx } from "@typus/typus-sdk/dist/src/utils/sponsoredTx";
 
     tx = await createTradingOrder(client, tx, {
         perpIndex: perpIndex!.toString(),
+        poolIndex: perpIndex!.toString(),
         coins,
         cToken,
         amount: "1000000000",
@@ -57,14 +58,15 @@ import { getSponsoredTx } from "@typus/typus-sdk/dist/src/utils/sponsoredTx";
         suiCoins,
     });
 
-    let dryrunRes = await client.devInspectTransactionBlock({
-        transactionBlock: tx,
-        sender: user,
-    });
-    console.log(dryrunRes);
-    console.log(dryrunRes.events.filter((e) => e.type.endsWith("CreateTradingOrderEvent"))[0].parsedJson); //
-    console.log(dryrunRes.events.filter((e) => e.type.endsWith("RealizeFundingEvent"))); // only exists if the order size is reduced ( with linked_position_id provided)
-    console.log(dryrunRes.events.filter((e) => e.type.endsWith("OrderFilledEvent"))); // if the order is not filled, there will be no OrderFilledEvent
+    // let dryrunRes = await client.devInspectTransactionBlock({
+    //     transaction: tx,
+    // });
+    // console.log(dryrunRes);
+    // console.log(dryrunRes.events.filter((e) => e.type.endsWith("CreateTradingOrderEvent"))[0].parsedJson); //
+    // console.log(dryrunRes.events.filter((e) => e.type.endsWith("RealizeFundingEvent"))); // only exists if the order size is reduced ( with linked_position_id provided)
+    // console.log(dryrunRes.events.filter((e) => e.type.endsWith("OrderFilledEvent"))); // if the order is not filled, there will be no OrderFilledEvent
+
+    tx.build({ client: client.gRpcClient });
 
     let res = await client.signAndExecuteTransaction({ signer: keypair, transaction: tx });
     console.log(res);

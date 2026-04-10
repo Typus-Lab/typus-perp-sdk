@@ -1,20 +1,13 @@
-import { BcsReader, bcs } from "@mysten/bcs";
 import { TypusConfig } from "@typus/typus-sdk/dist/src/utils";
 import { TypusClient } from "src/client";
-import { getUserProfits, PERP_VERSION, PROFIT_VAULT } from "src";
-
-
+import { fetchUserProfits, NETWORK } from "src";
 
 (async () => {
-    const config = await TypusConfig.default("TESTNET", null);
-    const user = "0x4374a519f43aeadf1fe795f1519682cc6a7cca552c26d874d5d98600aaeb76a8";
+    const config = await TypusConfig.default(NETWORK, null);
+    const user = "0x09953d966977a79550b65661c0e9d03890809a3f94b1ff711482c9ab8254a32a";
     const client = new TypusClient(config);
-    const profit = await getUserProfits(client, {
-        profitVault: PROFIT_VAULT,
-        version: PERP_VERSION,
+    const profit = await fetchUserProfits(client, {
         user: user,
     });
-
-
     console.log(profit);
-})()
+})();

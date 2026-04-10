@@ -14,8 +14,8 @@ import {
     STAKE_POOL,
     STAKE_POOL_VERSION,
     PERP_PACKAGE_ID,
-    PROFIT_VAULT,
     LOCK_VAULT,
+    PROFIT_VAULT,
 } from ".";
 
 import { getMarketsBcs, Markets, SymbolMarket } from "./generated/typus_perp/trading";
@@ -35,6 +35,7 @@ import { getUserProfits as _getUserProfits, getLockedUserProfits as _getLockedUs
 
 import { TypusBidReceipt } from "./generated/typus_perp/deps/typus_framework/vault";
 import { TypusClient } from "src/client";
+import { normalizeStructTag } from "@mysten/sui/utils";
 
 export async function getLpPools(client: TypusClient) {
     // let dynamicFields = await client.getDynamicFields({
@@ -134,7 +135,7 @@ export async function getMarkets(
 
     let devInspectTransactionBlockResult = await client.devInspectTransactionBlock({ transaction: tx });
     // @ts-ignore
-    let bytes = devInspectTransactionBlockResult.results[0].returnValues[0][0];
+    let bytes = devInspectTransactionBlockResult.commandResults[0].returnValues[0].bcs;
     let reader = new BcsReader(new Uint8Array(bytes));
     let marketIndex = 0;
     let results: [typeof Markets.$inferType, (typeof SymbolMarket.$inferType)[]][] = [];
@@ -187,7 +188,7 @@ export async function getUserOrders(
 
     for (var x = 0; x < input.indexes.length; x++) {
         // @ts-ignore
-        let returnValues = res.commandResults[x].returnValues[0][0];
+        let returnValues = res.commandResults[x].returnValues[0].bcs;
         // console.log(returnValues);
 
         let reader = new BcsReader(new Uint8Array(returnValues));
@@ -235,7 +236,7 @@ export async function getUserPositions(
 
     for (var x = 0; x < input.indexes.length; x++) {
         // @ts-ignore
-        let returnValues = res.commandResults[x].returnValues[0][0];
+        let returnValues = res.commandResults[x].returnValues[0].bcs;
         // console.log(returnValues);
 
         let reader = new BcsReader(new Uint8Array(returnValues));
@@ -302,12 +303,15 @@ export async function getUserStake(
     let res = await client.devInspectTransactionBlock({ transaction: tx });
     // console.log(res);
 
+    if (res.FailedTransaction) {
+        console.error("Transaction failed with error: ", res.FailedTransaction.status.error);
+    }
     if (res.commandResults) {
         let results: [typeof LpUserShare.$inferType | null, string[]][] = [];
 
         for (var x = 0; x < input.indexes.length; x++) {
             // @ts-ignore
-            var returnValues = res.commandResults[2 * x + 1].returnValues[0][0];
+            var returnValues = res.commandResults[2 * x + 1].returnValues[0].bcs;
             // console.log(returnValues);
 
             var reader = new BcsReader(new Uint8Array(returnValues));
@@ -367,7 +371,7 @@ export async function getDeactivatingShares(
 
         for (var x = 0; x < input.indexes.length; x++) {
             // @ts-ignore
-            var returnValues = res.commandResults[0].returnValues[0][0];
+            var returnValues = res.commandResults[0].returnValues[0].bcs;
             // console.log(returnValues);
 
             var reader = new BcsReader(new Uint8Array(returnValues));
@@ -438,13 +442,13 @@ export async function getLiquidationPriceAndPnl(
                     positionId: BigInt(position.position_id),
                     dovRegistry: client.config.registry.dov.dovSingle,
                 },
-                typeArguments: [position.collateral_token.name, position.symbol.base_token.name],
+                typeArguments: [normalizeStructTag(position.collateral_token.name), normalizeStructTag(position.symbol.base_token.name)],
             })
         );
     }
 
     let res = await client.devInspectTransactionBlock({ transaction: tx });
-    // console.log(res);
+    console.log(res);
     //   0  estimated_liquidation_price,
     //   1  has_profit,
     //   2  pnl_usd,
@@ -459,20 +463,20 @@ export async function getLiquidationPriceAndPnl(
         ? // @ts-ignore
           res.commandResults!.slice(-input.positions.length).map((x) => {
               // console.log(x);
-              let liquidationPrice = Number(bcs.u64().parse(Uint8Array.from(x.returnValues![0][0])));
-              let isProfit = bcs.bool().parse(Uint8Array.from(x.returnValues![1][0]));
-              var pnl = Number(bcs.u64().parse(Uint8Array.from(x.returnValues![2][0])));
+              let liquidationPrice = Number(bcs.u64().parse(Uint8Array.from(x.returnValues![0].bcs)));
+              let isProfit = bcs.bool().parse(Uint8Array.from(x.returnValues![1].bcs));
+              var pnl = Number(bcs.u64().parse(Uint8Array.from(x.returnValues![2].bcs)));
               pnl = isProfit ? pnl : -pnl;
               // including closeFee
-              let isCost = bcs.bool().parse(Uint8Array.from(x.returnValues![3][0]));
-              var cost = Number(bcs.u64().parse(Uint8Array.from(x.returnValues![4][0])));
+              let isCost = bcs.bool().parse(Uint8Array.from(x.returnValues![3].bcs));
+              var cost = Number(bcs.u64().parse(Uint8Array.from(x.returnValues![4].bcs)));
               cost = isCost ? cost : -cost;
               // cost = unrealized_loss + unrealized_trading_fee + unrealized_borrow_fee + unrealized_funding_fee;
-              let fundingFeeSign = bcs.bool().parse(Uint8Array.from(x.returnValues![5][0]));
-              var fundingFee = Number(bcs.u64().parse(Uint8Array.from(x.returnValues![6][0])));
+              let fundingFeeSign = bcs.bool().parse(Uint8Array.from(x.returnValues![5].bcs));
+              var fundingFee = Number(bcs.u64().parse(Uint8Array.from(x.returnValues![6].bcs)));
               fundingFee = fundingFeeSign ? fundingFee : -fundingFee;
-              let borrowFee = Number(bcs.u64().parse(Uint8Array.from(x.returnValues![7][0])));
-              let closeFee = Number(bcs.u64().parse(Uint8Array.from(x.returnValues![8][0])));
+              let borrowFee = Number(bcs.u64().parse(Uint8Array.from(x.returnValues![7].bcs)));
+              let closeFee = Number(bcs.u64().parse(Uint8Array.from(x.returnValues![8].bcs)));
 
               return {
                   liquidationPrice,
@@ -524,13 +528,13 @@ export async function getAllPositions(
     });
 
     // @ts-ignore
-    if (!res.commandResults?.[0]?.returnValues?.[0]?.[0]) {
+    if (!res.commandResults?.[0]?.returnValues?.[0]?.bcs) {
         return { positions: [], maxPage: 0 };
     }
 
     // -- 解析回傳值 -------------------------------------------------
     // @ts-ignore
-    const raw = new Uint8Array(res.commandResults![0].returnValues![0][0]);
+    const raw = new Uint8Array(res.commandResults![0].returnValues![0].bcs);
 
     // 1) 至少要有 8 bytes 的 max_page
     if (raw.length < 8) return { positions: [], maxPage: 0 };
@@ -626,15 +630,13 @@ export type LockedUserProfit = {
 export async function fetchUserProfits(
     client: TypusClient,
     input: {
-        profitVault: string;
-        version: string;
         user: string;
     }
 ) {
     let tx = new Transaction();
     tx.moveCall({
         target: `${PERP_PACKAGE_ID}::profit_vault::get_user_profits`,
-        arguments: [tx.object(input.version), tx.object(input.profitVault), tx.pure.address(input.user)],
+        arguments: [tx.object(PERP_VERSION), tx.object(PROFIT_VAULT), tx.pure.address(input.user)],
     });
 
     const res = await client.devInspectTransactionBlock({
@@ -642,12 +644,12 @@ export async function fetchUserProfits(
     });
 
     // @ts-ignore
-    if (!res.commandResults?.[0]?.returnValues?.[0]?.[0]) {
+    if (!res.commandResults?.[0]?.returnValues?.[0].bcs) {
         return [];
     }
 
     // @ts-ignore
-    const returnValues = res.commandResults[0].returnValues[0][0];
+    const returnValues = res.commandResults[0].returnValues[0].bcs;
 
     const reader = new BcsReader(new Uint8Array(returnValues));
 
@@ -665,15 +667,13 @@ export async function fetchUserProfits(
 export async function fetchLockedUserProfits(
     client: TypusClient,
     input: {
-        lockVault: string;
-        version: string;
         user: string;
     }
 ) {
     let tx = new Transaction();
     tx.moveCall({
         target: `${PERP_PACKAGE_ID}::profit_vault::get_locked_user_profits`,
-        arguments: [tx.object(PERP_VERSION), tx.object(input.lockVault), tx.pure.address(input.user)],
+        arguments: [tx.object(PERP_VERSION), tx.object(LOCK_VAULT), tx.pure.address(input.user)],
     });
 
     const res = await client.devInspectTransactionBlock({
@@ -681,12 +681,12 @@ export async function fetchLockedUserProfits(
     });
 
     // @ts-ignore
-    if (!res.commandResults?.[0]?.returnValues?.[0]?.[0]) {
+    if (!res.commandResults?.[0]?.returnValues?.[0].bcs) {
         return [];
     }
 
     // @ts-ignore
-    const returnValues = res.commandResults[0].returnValues[0][0];
+    const returnValues = res.commandResults[0].returnValues[0].bcs;
     const reader = new BcsReader(new Uint8Array(returnValues));
     const lockedUserProfits: LockedUserProfit[] = [];
     reader.readVec((reader) => {
@@ -697,137 +697,4 @@ export async function fetchLockedUserProfits(
     });
 
     return lockedUserProfits;
-}
-
-export async function fetchAllUserProfits(
-    client: TypusClient,
-    input?: {
-        profitVault?: string;
-    }
-): Promise<{ user: string; profits: UserProfit[] }[]> {
-    const profitVaultId = input?.profitVault ?? PROFIT_VAULT;
-
-    // 1. Read ProfitVault object to get user_profits Table ID
-    const vaultResponse = await client.getObject({
-        objectId: profitVaultId,
-        include: { content: true },
-    });
-
-    if (!vaultResponse.object.content) {
-        return [];
-    }
-
-    const fields = (vaultResponse.object.content as any).fields;
-    const tableId = fields?.user_profits?.fields?.id?.id;
-
-    if (!tableId) {
-        return [];
-    }
-
-    // 2. Get all dynamic fields (user addresses) from the Table
-    let cursor: string | null = null;
-    const allUsers: string[] = [];
-
-    while (true) {
-        const dynamicFields = await client.getDynamicFields({
-            parentId: tableId,
-            cursor,
-            limit: 50,
-        });
-
-        for (const field of dynamicFields.dynamicFields) {
-            const userAddress = (field.name as any).value;
-            if (userAddress) {
-                allUsers.push(userAddress);
-            }
-        }
-
-        if (!dynamicFields.hasNextPage) {
-            break;
-        }
-        cursor = dynamicFields.cursor ?? null;
-    }
-
-    // 3. For each user, fetch their profits
-    const fetchUserProfitsPromises: Promise<{ user: string; profits: UserProfit[] }>[] = [];
-    for (const user of allUsers) {
-        try {
-            const fetchUserProfitsWithUser = async () => {
-                const profits = await fetchUserProfits(client, { profitVault: profitVaultId, version: PERP_VERSION, user });
-                return { user, profits };
-            };
-            fetchUserProfitsPromises.push(fetchUserProfitsWithUser());
-        } catch (e) {
-            console.error(`Failed to get profits for user ${user}:`, e);
-        }
-    }
-
-    const results = await Promise.all(fetchUserProfitsPromises);
-    return results;
-}
-
-export async function fetchAllLockedUserProfits(
-    client: TypusClient,
-    input?: {
-        lockVault?: string;
-    }
-): Promise<{ user: string; lockedUserProfits: LockedUserProfit[] }[]> {
-    // 1. Read LockVault object to get locked_user_profits Table ID
-    const vaultResponse = await client.getObject({
-        objectId: input?.lockVault ?? LOCK_VAULT,
-        include: { content: true },
-    });
-
-    if (!vaultResponse.object.content) {
-        return [];
-    }
-
-    const fields = (vaultResponse.object.content as any).fields;
-    const tableId = fields?.locked_user_profits?.fields?.id?.id;
-
-    if (!tableId) {
-        return [];
-    }
-
-    // 2. Get all dynamic fields (user addresses) from the Table
-    let cursor: string | null = null;
-    const allUsers: string[] = [];
-
-    while (true) {
-        const dynamicFields = await client.getDynamicFields({
-            parentId: tableId,
-            cursor,
-            limit: 50,
-        });
-
-        for (const field of dynamicFields.dynamicFields) {
-            const userAddress = (field.name as any).value;
-            if (userAddress) {
-                allUsers.push(userAddress);
-            }
-        }
-
-        if (!dynamicFields.hasNextPage) {
-            break;
-        }
-        cursor = dynamicFields.cursor ?? null;
-    }
-
-    // 3. For each user, fetch their locked profits
-    const fetchLockedUserProfitsPromises: Promise<{ user: string; lockedUserProfits: LockedUserProfit[] }>[] = [];
-
-    for (const user of allUsers) {
-        try {
-            const fetchLockedUserProfitsWithUser = async () => {
-                const lockedUserProfits = await fetchLockedUserProfits(client, { lockVault: LOCK_VAULT, version: PERP_VERSION, user });
-                return { user, lockedUserProfits };
-            };
-            fetchLockedUserProfitsPromises.push(fetchLockedUserProfitsWithUser());
-        } catch (e) {
-            console.error(`Failed to get locked profits for user ${user}:`, e);
-        }
-    }
-    const results = await Promise.all(fetchLockedUserProfitsPromises);
-
-    return results;
 }

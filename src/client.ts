@@ -3,8 +3,7 @@ import { SuiGraphQLClient } from "@mysten/sui/graphql";
 import { SuiGrpcClient } from "@mysten/sui/grpc";
 import { createPythClient, PythClient, TypusConfig } from "@typus/typus-sdk/dist/src/utils";
 import type { RpcTransport } from "@protobuf-ts/runtime-rpc";
-import { GrpcWebFetchTransport } from "@protobuf-ts/grpcweb-transport";
-import { SuiJsonRpcClient } from "@mysten/sui/jsonRpc";
+import { JsonRpcHTTPTransport, SuiJsonRpcClient } from "@mysten/sui/jsonRpc";
 import { SuiClientTypes } from "@mysten/sui/client";
 
 export type Network = "MAINNET" | "TESTNET";
@@ -36,7 +35,7 @@ export class TypusClient {
 
         this.gRpcClient = new SuiGrpcClient({
             network: network,
-            baseUrl: `https://fullnode.${network}.sui.io:443`,
+            baseUrl: config.rpcEndpoint,
             mvr,
         });
 
@@ -46,7 +45,12 @@ export class TypusClient {
             mvr,
         });
 
-        this.pythClient = createPythClient(this.gRpcClient, this.config.network);
+        const jsonRpcClient = new SuiJsonRpcClient({
+            network: network,
+            transport: new JsonRpcHTTPTransport({ url: config.rpcEndpoint }),
+        });
+
+        this.pythClient = createPythClient(jsonRpcClient, this.config.network);
     }
 
     getCoins(params: SuiClientTypes.ListCoinsOptions) {

@@ -8,7 +8,7 @@
  */
 
 import { type Transaction } from "@mysten/sui/transactions";
-import { normalizeMoveArguments, type RawTransactionArgument } from "../utils/index";
+import { normalizeMoveArguments, type RawTransactionArgument } from "../utils/index.js";
 export interface SetU64VectorValueArguments {
     u64Vector: RawTransactionArgument<number | bigint[]>;
     i: RawTransactionArgument<number | bigint>;
@@ -30,7 +30,7 @@ export interface SetU64VectorValueOptions {
  */
 export function setU64VectorValue(options: SetU64VectorValueOptions) {
     const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = ["vector<u64>", "u64", "u64"] satisfies string[];
+    const argumentsTypes = ["vector<u64>", "u64", "u64"] satisfies (string | null)[];
     const parameterNames = ["u64Vector", "i", "value"];
     return (tx: Transaction) =>
         tx.moveCall({
@@ -56,7 +56,7 @@ export interface GetU64VectorValueOptions {
  */
 export function getU64VectorValue(options: GetU64VectorValueOptions) {
     const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = ["vector<u64>", "u64"] satisfies string[];
+    const argumentsTypes = ["vector<u64>", "u64"] satisfies (string | null)[];
     const parameterNames = ["u64Vector", "i"];
     return (tx: Transaction) =>
         tx.moveCall({
@@ -76,7 +76,7 @@ export interface MultiplierOptions {
 /** Calculates a multiplier for a given number of decimals. */
 export function multiplier(options: MultiplierOptions) {
     const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = ["u64"] satisfies string[];
+    const argumentsTypes = ["u64"] satisfies (string | null)[];
     const parameterNames = ["decimal"];
     return (tx: Transaction) =>
         tx.moveCall({
@@ -106,7 +106,7 @@ export interface AmountToUsdOptions {
 /** Converts an amount of a token to USD. */
 export function amountToUsd(options: AmountToUsdOptions) {
     const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = ["u64", "u64", "u64", "u64"] satisfies string[];
+    const argumentsTypes = ["u64", "u64", "u64", "u64"] satisfies (string | null)[];
     const parameterNames = ["amount", "amountDecimal", "price", "priceDecimal"];
     return (tx: Transaction) =>
         tx.moveCall({
@@ -136,7 +136,7 @@ export interface UsdToAmountOptions {
 /** Converts an amount of USD to a token. */
 export function usdToAmount(options: UsdToAmountOptions) {
     const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = ["u64", "u64", "u64", "u64"] satisfies string[];
+    const argumentsTypes = ["u64", "u64", "u64", "u64"] satisfies (string | null)[];
     const parameterNames = ["usd", "amountDecimal", "price", "priceDecimal"];
     return (tx: Transaction) =>
         tx.moveCall({
@@ -172,5 +172,31 @@ export function getFundingRateDecimal(options: GetFundingRateDecimalOptions = {}
             package: packageAddress,
             module: "math",
             function: "get_funding_rate_decimal",
+        });
+}
+export interface GetMbpScaleOptions {
+    package?: string;
+    arguments?: [];
+}
+export function getMbpScale(options: GetMbpScaleOptions = {}) {
+    const packageAddress = options.package ?? "@typus/perp";
+    return (tx: Transaction) =>
+        tx.moveCall({
+            package: packageAddress,
+            module: "math",
+            function: "get_mbp_scale",
+        });
+}
+export interface GetBpScaleOptions {
+    package?: string;
+    arguments?: [];
+}
+export function getBpScale(options: GetBpScaleOptions = {}) {
+    const packageAddress = options.package ?? "@typus/perp";
+    return (tx: Transaction) =>
+        tx.moveCall({
+            package: packageAddress,
+            module: "math",
+            function: "get_bp_scale",
         });
 }

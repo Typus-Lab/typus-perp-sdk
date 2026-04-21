@@ -49,7 +49,7 @@ import { TypusClient } from "src/client";
             owner: user,
             coinType: cToken,
         })
-    ).data.map((coin) => coin.coinObjectId);
+    ).objects.map((coin) => coin.objectId);
     console.log("coins.length: ", coins.length);
 
     let tx = new Transaction();
@@ -66,16 +66,16 @@ import { TypusClient } from "src/client";
         isAutoCompound: false,
     });
 
-    // console.dir(JSON.parse(await tx.toJSON({ client: client.jsonRpcClient })).commands[8], { depth: null });
-    // console.dir(JSON.parse(await tx.toJSON({ client: client.jsonRpcClient })).inputs[11], { depth: null });
+    // console.dir(JSON.parse(await tx.toJSON({ client: client.gRpcClient })).commands[8], { depth: null });
+    // console.dir(JSON.parse(await tx.toJSON({ client: client.gRpcClient })).inputs[11], { depth: null });
 
     // let dryrunRes = await client.devInspectTransactionBlock({
-    //     transactionBlock: tx,
-    //     sender: user,
+    //     transaction: tx,
+    //
     // });
     // // console.log(dryrunRes);
-    // console.log(dryrunRes.events.filter((e) => e.type.endsWith("MintLpEvent")));
-    // console.log(dryrunRes.events.filter((e) => e.type.endsWith("StakeEvent")));
+    // console.log(dryrunRes.Transaction.events.filter((e) => e.type.endsWith("MintLpEvent")));
+    // console.log(dryrunRes.Transaction.events.filter((e) => e.type.endsWith("StakeEvent")));
 
     let res = await client.signAndExecuteTransaction({ signer: keypair, transaction: tx });
     console.log(res);

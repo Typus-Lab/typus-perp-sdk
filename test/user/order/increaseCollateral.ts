@@ -25,7 +25,7 @@ import { normalizeStructTag } from "@mysten/sui/utils";
             owner: user,
             coinType: normalizeStructTag(position.collateral_token.name),
         })
-    ).data.map((coin) => coin.coinObjectId);
+    ).objects.map((coin) => coin.objectId);
 
     tx = await increaseCollateral(client, tx, {
         coins,
@@ -34,11 +34,11 @@ import { normalizeStructTag } from "@mysten/sui/utils";
     });
 
     let dryrunRes = await client.devInspectTransactionBlock({
-        transactionBlock: tx,
-        sender: user,
+        transaction: tx,
     });
     console.log(dryrunRes);
-    console.log(dryrunRes.events.filter((e) => e.type.endsWith("IncreaseCollateralEvent"))[0].parsedJson);
+    // @ts-ignore
+    console.log(dryrunRes.Transaction.events.filter((e) => e.eventType.endsWith("IncreaseCollateralEvent"))[0].json);
 
     let res = await client.signAndExecuteTransaction({ signer: keypair, transaction: tx });
     console.log(res);

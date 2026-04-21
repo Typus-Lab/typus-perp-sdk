@@ -1,6 +1,9 @@
-// tsconfig.json
 {
+    "rootDir": "src",
     "extends": "./tsconfig.build.json",
+    "compilerOptions": {
+        "module": "NodeNext"
+    },
     "include": ["src", "test"],
     "exclude": ["node_modules", "**/__tests__/*", "scripts", "_deprecated"]
 }

@@ -1,7 +1,6 @@
 import "@typus/typus-sdk/dist/src/utils/load_env";
 import { TypusConfig } from "@typus/typus-sdk/dist/src/utils";
 import { TypusClient } from "src/client";
-import { SuiClient } from "@mysten/sui/client";
 import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519";
 import { Transaction } from "@mysten/sui/transactions";
 import { getStakePools, MARKET, NETWORK, PERP_VERSION, STAKE_POOL, STAKE_POOL_VERSION } from "src";

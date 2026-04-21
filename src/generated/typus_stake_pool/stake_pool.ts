@@ -1,17 +1,27 @@
 /**************************************************************
  * THIS FILE IS GENERATED AND SHOULD NOT BE MANUALLY MODIFIED *
  **************************************************************/
-import { MoveStruct, normalizeMoveArguments, type RawTransactionArgument } from "../utils/index";
+import { MoveStruct, normalizeMoveArguments, type RawTransactionArgument } from "../utils/index.js";
 import { bcs } from "@mysten/sui/bcs";
 import { type Transaction } from "@mysten/sui/transactions";
-import * as object from "./deps/sui/object";
-import * as type_name from "./deps/std/type_name";
-import * as vec_map from "./deps/sui/vec_map";
+import * as type_name from "./deps/std/type_name.js";
+import * as type_name_1 from "./deps/std/type_name.js";
+import * as type_name_2 from "./deps/std/type_name.js";
+import * as type_name_3 from "./deps/std/type_name.js";
+import * as type_name_4 from "./deps/std/type_name.js";
+import * as type_name_5 from "./deps/std/type_name.js";
+import * as type_name_6 from "./deps/std/type_name.js";
+import * as type_name_7 from "./deps/std/type_name.js";
+import * as type_name_8 from "./deps/std/type_name.js";
+import * as type_name_9 from "./deps/std/type_name.js";
+import * as type_name_10 from "./deps/std/type_name.js";
+import * as type_name_11 from "./deps/std/type_name.js";
+import * as type_name_12 from "./deps/std/type_name.js";
 const $moduleName = "@typus/stake-pool::stake_pool";
 export const StakePoolRegistry = new MoveStruct({
     name: `${$moduleName}::StakePoolRegistry`,
     fields: {
-        id: object.UID,
+        id: bcs.Address,
         /** The number of pools in the registry. */
         num_pool: bcs.u64(),
     },
@@ -78,7 +88,7 @@ export const Incentive = new MoveStruct({
     name: `${$moduleName}::Incentive`,
     fields: {
         /** The type name of the incentive token. */
-        token_type: type_name.TypeName,
+        token_type: type_name_1.TypeName,
         /** The configuration for the incentive. */
         config: IncentiveConfig,
         /** Information about the incentive. */
@@ -88,7 +98,7 @@ export const Incentive = new MoveStruct({
 export const StakePool = new MoveStruct({
     name: `${$moduleName}::StakePool`,
     fields: {
-        id: object.UID,
+        id: bcs.Address,
         /** Information about the stake pool. */
         pool_info: StakePoolInfo,
         /** Configuration for the stake pool. */
@@ -108,7 +118,10 @@ export const DeactivatingShares = new MoveStruct({
         unsubscribed_ts_ms: bcs.u64(),
         /** The timestamp when the shares can be unlocked. */
         unlocked_ts_ms: bcs.u64(),
-        /** The unsubscribed incentive price index. */
+        /**
+         * The unsubscribed incentive price index (aligned with StakePool.incentives by
+         * index).
+         */
         unsubscribed_incentive_price_index: bcs.vector(bcs.u64()),
         /** Padding for future use. */
         u64_padding: bcs.vector(bcs.u64()),
@@ -129,7 +142,7 @@ export const LpUserShare = new MoveStruct({
         active_shares: bcs.u64(),
         /** A vector of deactivating shares. */
         deactivating_shares: bcs.vector(DeactivatingShares),
-        /** The last incentive price index. */
+        /** The last incentive price index (aligned with StakePool.incentives by index). */
         last_incentive_price_index: bcs.vector(bcs.u64()),
         /** The last snapshot ts for exp. */
         snapshot_ts_ms: bcs.u64(),
@@ -155,7 +168,7 @@ export const AutoCompoundEvent = new MoveStruct({
     fields: {
         sender: bcs.Address,
         index: bcs.u64(),
-        incentive_token: type_name.TypeName,
+        incentive_token: type_name_2.TypeName,
         incentive_price_index: bcs.u64(),
         total_amount: bcs.u64(),
         compound_users: bcs.u64(),
@@ -168,7 +181,7 @@ export const AddIncentiveTokenEvent = new MoveStruct({
     fields: {
         sender: bcs.Address,
         index: bcs.u64(),
-        incentive_token: type_name.TypeName,
+        incentive_token: type_name_3.TypeName,
         incentive_info: IncentiveInfo,
         incentive_config: IncentiveConfig,
         u64_padding: bcs.vector(bcs.u64()),
@@ -195,7 +208,7 @@ export const DeactivateIncentiveTokenEvent = new MoveStruct({
     fields: {
         sender: bcs.Address,
         index: bcs.u64(),
-        incentive_token: type_name.TypeName,
+        incentive_token: type_name_4.TypeName,
         u64_padding: bcs.vector(bcs.u64()),
     },
 });
@@ -204,7 +217,7 @@ export const ActivateIncentiveTokenEvent = new MoveStruct({
     fields: {
         sender: bcs.Address,
         index: bcs.u64(),
-        incentive_token: type_name.TypeName,
+        incentive_token: type_name_5.TypeName,
         u64_padding: bcs.vector(bcs.u64()),
     },
 });
@@ -213,7 +226,7 @@ export const RemoveIncentiveTokenEvent = new MoveStruct({
     fields: {
         sender: bcs.Address,
         index: bcs.u64(),
-        incentive_token: type_name.TypeName,
+        incentive_token: type_name_6.TypeName,
         incentive_balance_value: bcs.u64(),
         u64_padding: bcs.vector(bcs.u64()),
     },
@@ -243,7 +256,7 @@ export const DepositIncentiveEvent = new MoveStruct({
     fields: {
         sender: bcs.Address,
         index: bcs.u64(),
-        incentive_token_type: type_name.TypeName,
+        incentive_token_type: type_name_7.TypeName,
         deposit_amount: bcs.u64(),
         u64_padding: bcs.vector(bcs.u64()),
     },
@@ -253,7 +266,7 @@ export const WithdrawIncentiveEvent = new MoveStruct({
     fields: {
         sender: bcs.Address,
         index: bcs.u64(),
-        incentive_token_type: type_name.TypeName,
+        incentive_token_type: type_name_8.TypeName,
         withdrawal_amount: bcs.u64(),
         u64_padding: bcs.vector(bcs.u64()),
     },
@@ -263,7 +276,7 @@ export const StakeEvent = new MoveStruct({
     fields: {
         sender: bcs.Address,
         index: bcs.u64(),
-        lp_token_type: type_name.TypeName,
+        lp_token_type: type_name_9.TypeName,
         stake_amount: bcs.u64(),
         user_share_id: bcs.u64(),
         stake_ts_ms: bcs.u64(),
@@ -298,7 +311,7 @@ export const UnsubscribeEvent = new MoveStruct({
     fields: {
         sender: bcs.Address,
         index: bcs.u64(),
-        lp_token_type: type_name.TypeName,
+        lp_token_type: type_name_10.TypeName,
         user_share_id: bcs.u64(),
         unsubscribed_shares: bcs.u64(),
         unsubscribe_ts_ms: bcs.u64(),
@@ -311,7 +324,7 @@ export const UnstakeEvent = new MoveStruct({
     fields: {
         sender: bcs.Address,
         index: bcs.u64(),
-        lp_token_type: type_name.TypeName,
+        lp_token_type: type_name_11.TypeName,
         user_share_id: bcs.u64(),
         unstake_amount: bcs.u64(),
         unstake_ts_ms: bcs.u64(),
@@ -323,7 +336,7 @@ export const HarvestPerUserShareEvent = new MoveStruct({
     fields: {
         sender: bcs.Address,
         index: bcs.u64(),
-        incentive_token_type: type_name.TypeName,
+        incentive_token_type: type_name_12.TypeName,
         harvest_amount: bcs.u64(),
         user_share_id: bcs.u64(),
         u64_padding: bcs.vector(bcs.u64()),
@@ -362,11 +375,7 @@ export interface NewStakePoolOptions {
 /** [Authorized Function] Creates a new stake pool. */
 export function newStakePool(options: NewStakePoolOptions) {
     const packageAddress = options.package ?? "@typus/stake-pool";
-    const argumentsTypes = [
-        `${packageAddress}::admin::Version`,
-        `${packageAddress}::stake_pool::StakePoolRegistry`,
-        "u64",
-    ] satisfies string[];
+    const argumentsTypes = [null, null, "u64"] satisfies (string | null)[];
     const parameterNames = ["version", "registry", "unlockCountdownTsMs"];
     return (tx: Transaction) =>
         tx.moveCall({
@@ -396,12 +405,7 @@ export interface AutoCompoundOptions {
 /** [Authorized Function] */
 export function autoCompound(options: AutoCompoundOptions) {
     const packageAddress = options.package ?? "@typus/stake-pool";
-    const argumentsTypes = [
-        `${packageAddress}::admin::Version`,
-        `${packageAddress}::stake_pool::StakePoolRegistry`,
-        "u64",
-        "0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock",
-    ] satisfies string[];
+    const argumentsTypes = [null, null, "u64", "0x2::clock::Clock"] satisfies (string | null)[];
     const parameterNames = ["version", "registry", "index"];
     return (tx: Transaction) =>
         tx.moveCall({
@@ -435,14 +439,7 @@ export interface AddIncentiveTokenOptions {
 /** [Authorized Function] Adds a new incentive token to a pool. */
 export function addIncentiveToken(options: AddIncentiveTokenOptions) {
     const packageAddress = options.package ?? "@typus/stake-pool";
-    const argumentsTypes = [
-        `${packageAddress}::admin::Version`,
-        `${packageAddress}::stake_pool::StakePoolRegistry`,
-        "u64",
-        "u64",
-        "u64",
-        "0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock",
-    ] satisfies string[];
+    const argumentsTypes = [null, null, "u64", "u64", "u64", "0x2::clock::Clock"] satisfies (string | null)[];
     const parameterNames = ["version", "registry", "index", "periodIncentiveAmount", "incentiveIntervalTsMs"];
     return (tx: Transaction) =>
         tx.moveCall({
@@ -471,11 +468,7 @@ export interface DeactivateStakePoolOptions {
 /** [Authorized Function] Activates a stake pool. */
 export function deactivateStakePool(options: DeactivateStakePoolOptions) {
     const packageAddress = options.package ?? "@typus/stake-pool";
-    const argumentsTypes = [
-        `${packageAddress}::admin::Version`,
-        `${packageAddress}::stake_pool::StakePoolRegistry`,
-        "u64",
-    ] satisfies string[];
+    const argumentsTypes = [null, null, "u64"] satisfies (string | null)[];
     const parameterNames = ["version", "registry", "index"];
     return (tx: Transaction) =>
         tx.moveCall({
@@ -503,11 +496,7 @@ export interface ActivateStakePoolOptions {
 /** [Authorized Function] Activates a stake pool. */
 export function activateStakePool(options: ActivateStakePoolOptions) {
     const packageAddress = options.package ?? "@typus/stake-pool";
-    const argumentsTypes = [
-        `${packageAddress}::admin::Version`,
-        `${packageAddress}::stake_pool::StakePoolRegistry`,
-        "u64",
-    ] satisfies string[];
+    const argumentsTypes = [null, null, "u64"] satisfies (string | null)[];
     const parameterNames = ["version", "registry", "index"];
     return (tx: Transaction) =>
         tx.moveCall({
@@ -536,12 +525,7 @@ export interface DeactivateIncentiveTokenOptions {
 /** [Authorized Function] Deactivates an incentive token. */
 export function deactivateIncentiveToken(options: DeactivateIncentiveTokenOptions) {
     const packageAddress = options.package ?? "@typus/stake-pool";
-    const argumentsTypes = [
-        `${packageAddress}::admin::Version`,
-        `${packageAddress}::stake_pool::StakePoolRegistry`,
-        "u64",
-        "0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock",
-    ] satisfies string[];
+    const argumentsTypes = [null, null, "u64", "0x2::clock::Clock"] satisfies (string | null)[];
     const parameterNames = ["version", "registry", "index"];
     return (tx: Transaction) =>
         tx.moveCall({
@@ -571,12 +555,7 @@ export interface ActivateIncentiveTokenOptions {
 /** [Authorized Function] Activates an incentive token. */
 export function activateIncentiveToken(options: ActivateIncentiveTokenOptions) {
     const packageAddress = options.package ?? "@typus/stake-pool";
-    const argumentsTypes = [
-        `${packageAddress}::admin::Version`,
-        `${packageAddress}::stake_pool::StakePoolRegistry`,
-        "u64",
-        "0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock",
-    ] satisfies string[];
+    const argumentsTypes = [null, null, "u64", "0x2::clock::Clock"] satisfies (string | null)[];
     const parameterNames = ["version", "registry", "index"];
     return (tx: Transaction) =>
         tx.moveCall({
@@ -606,11 +585,7 @@ export interface RemoveIncentiveTokenOptions {
 /** [Authorized Function] Removes an incentive token. */
 export function removeIncentiveToken(options: RemoveIncentiveTokenOptions) {
     const packageAddress = options.package ?? "@typus/stake-pool";
-    const argumentsTypes = [
-        `${packageAddress}::admin::Version`,
-        `${packageAddress}::stake_pool::StakePoolRegistry`,
-        "u64",
-    ] satisfies string[];
+    const argumentsTypes = [null, null, "u64"] satisfies (string | null)[];
     const parameterNames = ["version", "registry", "index"];
     return (tx: Transaction) =>
         tx.moveCall({
@@ -641,12 +616,7 @@ export interface UpdateUnlockCountdownTsMsOptions {
 /** [Authorized Function] Updates the unlock countdown. */
 export function updateUnlockCountdownTsMs(options: UpdateUnlockCountdownTsMsOptions) {
     const packageAddress = options.package ?? "@typus/stake-pool";
-    const argumentsTypes = [
-        `${packageAddress}::admin::Version`,
-        `${packageAddress}::stake_pool::StakePoolRegistry`,
-        "u64",
-        "u64",
-    ] satisfies string[];
+    const argumentsTypes = [null, null, "u64", "u64"] satisfies (string | null)[];
     const parameterNames = ["version", "registry", "index", "unlockCountdownTsMs"];
     return (tx: Transaction) =>
         tx.moveCall({
@@ -682,14 +652,14 @@ export interface UpdateIncentiveConfigOptions {
 export function updateIncentiveConfig(options: UpdateIncentiveConfigOptions) {
     const packageAddress = options.package ?? "@typus/stake-pool";
     const argumentsTypes = [
-        `${packageAddress}::admin::Version`,
-        `${packageAddress}::stake_pool::StakePoolRegistry`,
+        null,
+        null,
         "u64",
-        "0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock",
-        "0x0000000000000000000000000000000000000000000000000000000000000001::option::Option<u64>",
-        "0x0000000000000000000000000000000000000000000000000000000000000001::option::Option<u64>",
-        "0x0000000000000000000000000000000000000000000000000000000000000001::option::Option<vector<u64>>",
-    ] satisfies string[];
+        "0x2::clock::Clock",
+        "0x1::option::Option<u64>",
+        "0x1::option::Option<u64>",
+        "0x1::option::Option<vector<u64>>",
+    ] satisfies (string | null)[];
     const parameterNames = ["version", "registry", "index", "periodIncentiveAmount", "incentiveIntervalTsMs", "u64Padding"];
     return (tx: Transaction) =>
         tx.moveCall({
@@ -718,12 +688,7 @@ export interface AllocateIncentiveOptions {
 /** Allocates incentive to the pool. WARNING: no authority check inside */
 export function allocateIncentive(options: AllocateIncentiveOptions) {
     const packageAddress = options.package ?? "@typus/stake-pool";
-    const argumentsTypes = [
-        `${packageAddress}::admin::Version`,
-        `${packageAddress}::stake_pool::StakePoolRegistry`,
-        "u64",
-        "0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock",
-    ] satisfies string[];
+    const argumentsTypes = [null, null, "u64", "0x2::clock::Clock"] satisfies (string | null)[];
     const parameterNames = ["version", "registry", "index"];
     return (tx: Transaction) =>
         tx.moveCall({
@@ -754,12 +719,7 @@ export interface DepositIncentiveOptions {
 /** [Authorized Function] Deposits incentive tokens. */
 export function depositIncentive(options: DepositIncentiveOptions) {
     const packageAddress = options.package ?? "@typus/stake-pool";
-    const argumentsTypes = [
-        `${packageAddress}::admin::Version`,
-        `${packageAddress}::stake_pool::StakePoolRegistry`,
-        "u64",
-        `0x0000000000000000000000000000000000000000000000000000000000000002::coin::Coin<${options.typeArguments[0]}>`,
-    ] satisfies string[];
+    const argumentsTypes = [null, null, "u64", null] satisfies (string | null)[];
     const parameterNames = ["version", "registry", "index", "coin"];
     return (tx: Transaction) =>
         tx.moveCall({
@@ -791,13 +751,7 @@ export interface WithdrawIncentiveOptions {
 /** [Authorized Function] Withdraws incentive tokens. */
 export function withdrawIncentive(options: WithdrawIncentiveOptions) {
     const packageAddress = options.package ?? "@typus/stake-pool";
-    const argumentsTypes = [
-        `${packageAddress}::admin::Version`,
-        `${packageAddress}::stake_pool::StakePoolRegistry`,
-        "u64",
-        "0x0000000000000000000000000000000000000000000000000000000000000001::option::Option<u64>",
-        "0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock",
-    ] satisfies string[];
+    const argumentsTypes = [null, null, "u64", "0x1::option::Option<u64>", "0x2::clock::Clock"] satisfies (string | null)[];
     const parameterNames = ["version", "registry", "index", "amount"];
     return (tx: Transaction) =>
         tx.moveCall({
@@ -829,13 +783,7 @@ export interface StakeOptions {
 /** [User Function] Stake LP tokens. */
 export function stake(options: StakeOptions) {
     const packageAddress = options.package ?? "@typus/stake-pool";
-    const argumentsTypes = [
-        `${packageAddress}::admin::Version`,
-        `${packageAddress}::stake_pool::StakePoolRegistry`,
-        "u64",
-        `0x0000000000000000000000000000000000000000000000000000000000000002::coin::Coin<${options.typeArguments[0]}>`,
-        "0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock",
-    ] satisfies string[];
+    const argumentsTypes = [null, null, "u64", null, "0x2::clock::Clock"] satisfies (string | null)[];
     const parameterNames = ["version", "registry", "index", "lpToken"];
     return (tx: Transaction) =>
         tx.moveCall({
@@ -868,13 +816,7 @@ export interface UpdatePoolInfoU64PaddingOptions {
 /** [Authorized Function] Update TLP price for calculating staking exp */
 export function updatePoolInfoU64Padding(options: UpdatePoolInfoU64PaddingOptions) {
     const packageAddress = options.package ?? "@typus/stake-pool";
-    const argumentsTypes = [
-        `${packageAddress}::admin::Version`,
-        `${packageAddress}::stake_pool::StakePoolRegistry`,
-        "u64",
-        "u64",
-        "u64",
-    ] satisfies string[];
+    const argumentsTypes = [null, null, "u64", "u64", "u64"] satisfies (string | null)[];
     const parameterNames = ["version", "registry", "index", "tlpPrice", "usdPerExp"];
     return (tx: Transaction) =>
         tx.moveCall({
@@ -906,14 +848,7 @@ export interface SnapshotOptions {
 /** [User Function] Get the staking exp */
 export function snapshot(options: SnapshotOptions) {
     const packageAddress = options.package ?? "@typus/stake-pool";
-    const argumentsTypes = [
-        `${packageAddress}::admin::Version`,
-        `${packageAddress}::stake_pool::StakePoolRegistry`,
-        "0x4213e12a2220f15f1837a76897110d2260786558169bd8d0847f21e9b551f277::ecosystem::Version",
-        "0x4213e12a2220f15f1837a76897110d2260786558169bd8d0847f21e9b551f277::user::TypusUserRegistry",
-        "u64",
-        "0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock",
-    ] satisfies string[];
+    const argumentsTypes = [null, null, null, null, "u64", "0x2::clock::Clock"] satisfies (string | null)[];
     const parameterNames = ["version", "registry", "typusEcosystemVersion", "typusUserRegistry", "index"];
     return (tx: Transaction) =>
         tx.moveCall({
@@ -944,13 +879,7 @@ export interface UnsubscribeOptions {
 /** [User Function] Pre-process to unstake the TLP */
 export function unsubscribe(options: UnsubscribeOptions) {
     const packageAddress = options.package ?? "@typus/stake-pool";
-    const argumentsTypes = [
-        `${packageAddress}::admin::Version`,
-        `${packageAddress}::stake_pool::StakePoolRegistry`,
-        "u64",
-        "0x0000000000000000000000000000000000000000000000000000000000000001::option::Option<u64>",
-        "0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock",
-    ] satisfies string[];
+    const argumentsTypes = [null, null, "u64", "0x1::option::Option<u64>", "0x2::clock::Clock"] satisfies (string | null)[];
     const parameterNames = ["version", "registry", "index", "unsubscribedShares"];
     return (tx: Transaction) =>
         tx.moveCall({
@@ -980,12 +909,7 @@ export interface UnstakeOptions {
 /** [User Function] Post-process to unstake the TLP */
 export function unstake(options: UnstakeOptions) {
     const packageAddress = options.package ?? "@typus/stake-pool";
-    const argumentsTypes = [
-        `${packageAddress}::admin::Version`,
-        `${packageAddress}::stake_pool::StakePoolRegistry`,
-        "u64",
-        "0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock",
-    ] satisfies string[];
+    const argumentsTypes = [null, null, "u64", "0x2::clock::Clock"] satisfies (string | null)[];
     const parameterNames = ["version", "registry", "index"];
     return (tx: Transaction) =>
         tx.moveCall({
@@ -994,37 +918,6 @@ export function unstake(options: UnstakeOptions) {
             function: "unstake",
             arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
             typeArguments: options.typeArguments,
-        });
-}
-export interface UpdateLastIncentivePriceIndexArguments {
-    lpUserShare: RawTransactionArgument<string>;
-    incentiveToken: RawTransactionArgument<string>;
-    currentIncentiveIndex: RawTransactionArgument<number | bigint>;
-}
-export interface UpdateLastIncentivePriceIndexOptions {
-    package?: string;
-    arguments:
-        | UpdateLastIncentivePriceIndexArguments
-        | [
-              lpUserShare: RawTransactionArgument<string>,
-              incentiveToken: RawTransactionArgument<string>,
-              currentIncentiveIndex: RawTransactionArgument<number | bigint>,
-          ];
-}
-export function updateLastIncentivePriceIndex(options: UpdateLastIncentivePriceIndexOptions) {
-    const packageAddress = options.package ?? "@typus/stake-pool";
-    const argumentsTypes = [
-        `${packageAddress}::stake_pool::LpUserShare`,
-        "0x0000000000000000000000000000000000000000000000000000000000000001::type_name::TypeName",
-        "u64",
-    ] satisfies string[];
-    const parameterNames = ["lpUserShare", "incentiveToken", "currentIncentiveIndex"];
-    return (tx: Transaction) =>
-        tx.moveCall({
-            package: packageAddress,
-            module: "stake_pool",
-            function: "update_last_incentive_price_index",
-            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
         });
 }
 export interface LogHarvestedAmountArguments {
@@ -1039,7 +932,7 @@ export interface LogHarvestedAmountOptions {
 }
 export function logHarvestedAmount(options: LogHarvestedAmountOptions) {
     const packageAddress = options.package ?? "@typus/stake-pool";
-    const argumentsTypes = [`${packageAddress}::stake_pool::LpUserShare`, "u64"] satisfies string[];
+    const argumentsTypes = [null, "u64"] satisfies (string | null)[];
     const parameterNames = ["userShare", "incentiveValue"];
     return (tx: Transaction) =>
         tx.moveCall({
@@ -1068,12 +961,7 @@ export interface HarvestPerUserShareOptions {
 /** [User Function] Harvest the incentive from staking TLP */
 export function harvestPerUserShare(options: HarvestPerUserShareOptions) {
     const packageAddress = options.package ?? "@typus/stake-pool";
-    const argumentsTypes = [
-        `${packageAddress}::admin::Version`,
-        `${packageAddress}::stake_pool::StakePoolRegistry`,
-        "u64",
-        "0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock",
-    ] satisfies string[];
+    const argumentsTypes = [null, null, "u64", "0x2::clock::Clock"] satisfies (string | null)[];
     const parameterNames = ["version", "registry", "index"];
     return (tx: Transaction) =>
         tx.moveCall({
@@ -1084,51 +972,73 @@ export function harvestPerUserShare(options: HarvestPerUserShareOptions) {
             typeArguments: options.typeArguments,
         });
 }
-export interface CalculateIncentiveArguments {
+export interface CalculateIncentiveByIdxArguments {
     currentIncentiveIndex: RawTransactionArgument<number | bigint>;
-    incentiveToken: RawTransactionArgument<string>;
+    incentiveIdx: RawTransactionArgument<number | bigint>;
     lpUserShare: RawTransactionArgument<string>;
 }
-export interface CalculateIncentiveOptions {
+export interface CalculateIncentiveByIdxOptions {
     package?: string;
     arguments:
-        | CalculateIncentiveArguments
+        | CalculateIncentiveByIdxArguments
         | [
               currentIncentiveIndex: RawTransactionArgument<number | bigint>,
-              incentiveToken: RawTransactionArgument<string>,
+              incentiveIdx: RawTransactionArgument<number | bigint>,
               lpUserShare: RawTransactionArgument<string>,
           ];
 }
-export function calculateIncentive(options: CalculateIncentiveOptions) {
+export function calculateIncentiveByIdx(options: CalculateIncentiveByIdxOptions) {
     const packageAddress = options.package ?? "@typus/stake-pool";
-    const argumentsTypes = [
-        "u64",
-        "0x0000000000000000000000000000000000000000000000000000000000000001::type_name::TypeName",
-        `${packageAddress}::stake_pool::LpUserShare`,
-    ] satisfies string[];
-    const parameterNames = ["currentIncentiveIndex", "incentiveToken", "lpUserShare"];
+    const argumentsTypes = ["u64", "u64", null] satisfies (string | null)[];
+    const parameterNames = ["currentIncentiveIndex", "incentiveIdx", "lpUserShare"];
     return (tx: Transaction) =>
         tx.moveCall({
             package: packageAddress,
             module: "stake_pool",
-            function: "calculate_incentive",
+            function: "calculate_incentive_by_idx",
+            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
+        });
+}
+export interface UpdateLastIncentivePriceIndexByIdxArguments {
+    lpUserShare: RawTransactionArgument<string>;
+    incentiveIdx: RawTransactionArgument<number | bigint>;
+    currentIncentiveIndex: RawTransactionArgument<number | bigint>;
+}
+export interface UpdateLastIncentivePriceIndexByIdxOptions {
+    package?: string;
+    arguments:
+        | UpdateLastIncentivePriceIndexByIdxArguments
+        | [
+              lpUserShare: RawTransactionArgument<string>,
+              incentiveIdx: RawTransactionArgument<number | bigint>,
+              currentIncentiveIndex: RawTransactionArgument<number | bigint>,
+          ];
+}
+export function updateLastIncentivePriceIndexByIdx(options: UpdateLastIncentivePriceIndexByIdxOptions) {
+    const packageAddress = options.package ?? "@typus/stake-pool";
+    const argumentsTypes = [null, "u64", "u64"] satisfies (string | null)[];
+    const parameterNames = ["lpUserShare", "incentiveIdx", "currentIncentiveIndex"];
+    return (tx: Transaction) =>
+        tx.moveCall({
+            package: packageAddress,
+            module: "stake_pool",
+            function: "update_last_incentive_price_index_by_idx",
             arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
         });
 }
 export interface HarvestProgressUpdatedArguments {
-    current: RawTransactionArgument<string>;
-    user: RawTransactionArgument<string>;
+    current: RawTransactionArgument<number | bigint[]>;
+    user: RawTransactionArgument<number | bigint[]>;
 }
 export interface HarvestProgressUpdatedOptions {
     package?: string;
-    arguments: HarvestProgressUpdatedArguments | [current: RawTransactionArgument<string>, user: RawTransactionArgument<string>];
+    arguments:
+        | HarvestProgressUpdatedArguments
+        | [current: RawTransactionArgument<number | bigint[]>, user: RawTransactionArgument<number | bigint[]>];
 }
 export function harvestProgressUpdated(options: HarvestProgressUpdatedOptions) {
     const packageAddress = options.package ?? "@typus/stake-pool";
-    const argumentsTypes = [
-        "0x0000000000000000000000000000000000000000000000000000000000000001::vector::vector<u64>",
-        "0x0000000000000000000000000000000000000000000000000000000000000001::vector::vector<u64>",
-    ] satisfies string[];
+    const argumentsTypes = ["vector<u64>", "vector<u64>"] satisfies (string | null)[];
     const parameterNames = ["current", "user"];
     return (tx: Transaction) =>
         tx.moveCall({
@@ -1147,7 +1057,7 @@ export interface MultiplierOptions {
 }
 export function multiplier(options: MultiplierOptions) {
     const packageAddress = options.package ?? "@typus/stake-pool";
-    const argumentsTypes = ["u64"] satisfies string[];
+    const argumentsTypes = ["u64"] satisfies (string | null)[];
     const parameterNames = ["decimal"];
     return (tx: Transaction) =>
         tx.moveCall({
@@ -1170,7 +1080,7 @@ export interface GetUserSharesOptions {
 }
 export function getUserShares(options: GetUserSharesOptions) {
     const packageAddress = options.package ?? "@typus/stake-pool";
-    const argumentsTypes = [`${packageAddress}::stake_pool::StakePoolRegistry`, "u64", "address"] satisfies string[];
+    const argumentsTypes = [null, "u64", "address"] satisfies (string | null)[];
     const parameterNames = ["registry", "index", "user"];
     return (tx: Transaction) =>
         tx.moveCall({
@@ -1197,7 +1107,7 @@ export interface GetUserSharesByUserShareIdOptions {
 }
 export function getUserSharesByUserShareId(options: GetUserSharesByUserShareIdOptions) {
     const packageAddress = options.package ?? "@typus/stake-pool";
-    const argumentsTypes = [`${packageAddress}::stake_pool::StakePoolRegistry`, "u64", "u64"] satisfies string[];
+    const argumentsTypes = [null, "u64", "u64"] satisfies (string | null)[];
     const parameterNames = ["registry", "index", "userShareId"];
     return (tx: Transaction) =>
         tx.moveCall({
@@ -1217,7 +1127,7 @@ export interface GetStakePoolOptions {
 }
 export function getStakePool(options: GetStakePoolOptions) {
     const packageAddress = options.package ?? "@typus/stake-pool";
-    const argumentsTypes = ["0x0000000000000000000000000000000000000000000000000000000000000002::object::UID", "u64"] satisfies string[];
+    const argumentsTypes = ["0x2::object::ID", "u64"] satisfies (string | null)[];
     const parameterNames = ["id", "index"];
     return (tx: Transaction) =>
         tx.moveCall({
@@ -1237,7 +1147,7 @@ export interface GetMutStakePoolOptions {
 }
 export function getMutStakePool(options: GetMutStakePoolOptions) {
     const packageAddress = options.package ?? "@typus/stake-pool";
-    const argumentsTypes = ["0x0000000000000000000000000000000000000000000000000000000000000002::object::UID", "u64"] satisfies string[];
+    const argumentsTypes = ["0x2::object::ID", "u64"] satisfies (string | null)[];
     const parameterNames = ["id", "index"];
     return (tx: Transaction) =>
         tx.moveCall({
@@ -1256,7 +1166,7 @@ export interface GetIncentiveTokensOptions {
 }
 export function getIncentiveTokens(options: GetIncentiveTokensOptions) {
     const packageAddress = options.package ?? "@typus/stake-pool";
-    const argumentsTypes = [`${packageAddress}::stake_pool::StakePool`] satisfies string[];
+    const argumentsTypes = [null] satisfies (string | null)[];
     const parameterNames = ["stakePool"];
     return (tx: Transaction) =>
         tx.moveCall({
@@ -1276,10 +1186,7 @@ export interface GetIncentiveOptions {
 }
 export function getIncentive(options: GetIncentiveOptions) {
     const packageAddress = options.package ?? "@typus/stake-pool";
-    const argumentsTypes = [
-        `${packageAddress}::stake_pool::StakePool`,
-        "0x0000000000000000000000000000000000000000000000000000000000000001::type_name::TypeName",
-    ] satisfies string[];
+    const argumentsTypes = [null, null] satisfies (string | null)[];
     const parameterNames = ["stakePool", "tokenType"];
     return (tx: Transaction) =>
         tx.moveCall({
@@ -1299,10 +1206,7 @@ export interface GetMutIncentiveOptions {
 }
 export function getMutIncentive(options: GetMutIncentiveOptions) {
     const packageAddress = options.package ?? "@typus/stake-pool";
-    const argumentsTypes = [
-        `${packageAddress}::stake_pool::StakePool`,
-        "0x0000000000000000000000000000000000000000000000000000000000000001::type_name::TypeName",
-    ] satisfies string[];
+    const argumentsTypes = [null, null] satisfies (string | null)[];
     const parameterNames = ["stakePool", "tokenType"];
     return (tx: Transaction) =>
         tx.moveCall({
@@ -1322,16 +1226,34 @@ export interface RemoveIncentiveOptions {
 }
 export function removeIncentive(options: RemoveIncentiveOptions) {
     const packageAddress = options.package ?? "@typus/stake-pool";
-    const argumentsTypes = [
-        `${packageAddress}::stake_pool::StakePool`,
-        "0x0000000000000000000000000000000000000000000000000000000000000001::type_name::TypeName",
-    ] satisfies string[];
+    const argumentsTypes = [null, null] satisfies (string | null)[];
     const parameterNames = ["stakePool", "tokenType"];
     return (tx: Transaction) =>
         tx.moveCall({
             package: packageAddress,
             module: "stake_pool",
             function: "remove_incentive",
+            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
+        });
+}
+export interface GetIncentiveIdxArguments {
+    stakePool: RawTransactionArgument<string>;
+    tokenType: RawTransactionArgument<string>;
+}
+export interface GetIncentiveIdxOptions {
+    package?: string;
+    arguments: GetIncentiveIdxArguments | [stakePool: RawTransactionArgument<string>, tokenType: RawTransactionArgument<string>];
+}
+/** Get incentive index by token type, returns None if not found */
+export function getIncentiveIdx(options: GetIncentiveIdxOptions) {
+    const packageAddress = options.package ?? "@typus/stake-pool";
+    const argumentsTypes = [null, null] satisfies (string | null)[];
+    const parameterNames = ["stakePool", "tokenType"];
+    return (tx: Transaction) =>
+        tx.moveCall({
+            package: packageAddress,
+            module: "stake_pool",
+            function: "get_incentive_idx",
             arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
         });
 }
@@ -1344,7 +1266,7 @@ export interface GetLastIncentivePriceIndexOptions {
 }
 export function getLastIncentivePriceIndex(options: GetLastIncentivePriceIndexOptions) {
     const packageAddress = options.package ?? "@typus/stake-pool";
-    const argumentsTypes = [`${packageAddress}::stake_pool::StakePool`] satisfies string[];
+    const argumentsTypes = [null] satisfies (string | null)[];
     const parameterNames = ["stakePool"];
     return (tx: Transaction) =>
         tx.moveCall({
@@ -1363,7 +1285,7 @@ export interface CheckStakePoolActiveOptions {
 }
 export function checkStakePoolActive(options: CheckStakePoolActiveOptions) {
     const packageAddress = options.package ?? "@typus/stake-pool";
-    const argumentsTypes = [`${packageAddress}::stake_pool::StakePool`] satisfies string[];
+    const argumentsTypes = [null] satisfies (string | null)[];
     const parameterNames = ["stakePool"];
     return (tx: Transaction) =>
         tx.moveCall({

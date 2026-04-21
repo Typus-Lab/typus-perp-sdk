@@ -1,25 +1,14 @@
-import { graphql } from "@mysten/sui/graphql/schemas/latest";
+import { graphql } from "@mysten/sui/graphql/schema";
 import { SuiGraphQLClient } from "@mysten/sui/graphql";
 import { SuiGrpcClient } from "@mysten/sui/grpc";
-import {
-    DevInspectTransactionBlockParams,
-    ExecuteTransactionBlockParams,
-    GetCoinsParams,
-    GetDynamicFieldsParams,
-    GetObjectParams,
-    GetOwnedObjectsParams,
-    MultiGetObjectsParams,
-    QueryEventsParams,
-    SuiClient,
-} from "@mysten/sui/client";
 import { createPythClient, PythClient, TypusConfig } from "@typus/typus-sdk/dist/src/utils";
 import type { RpcTransport } from "@protobuf-ts/runtime-rpc";
-import { GrpcWebFetchTransport } from "@protobuf-ts/grpcweb-transport";
+import { JsonRpcHTTPTransport, SuiJsonRpcClient } from "@mysten/sui/jsonRpc";
+import { SuiClientTypes } from "@mysten/sui/client";
 
 export type Network = "MAINNET" | "TESTNET";
 
 export class TypusClient {
-    jsonRpcClient: SuiClient;
     gRpcClient: SuiGrpcClient;
     graphQLClient: SuiGraphQLClient;
     pythClient: PythClient;
@@ -44,20 +33,10 @@ export class TypusClient {
             },
         };
 
-        this.jsonRpcClient = new SuiClient({
-            network: network,
-            url: config.rpcEndpoint,
-            mvr,
-        });
-
         this.gRpcClient = new SuiGrpcClient({
             network: network,
-            transport:
-                grpcTransport ??
-                new GrpcWebFetchTransport({
-                    baseUrl: `https://fullnode.${network}.sui.io:443`,
-                    // Additional transport options
-                }),
+            baseUrl: config.rpcEndpoint,
+            mvr,
         });
 
         this.graphQLClient = new SuiGraphQLClient({
@@ -66,54 +45,43 @@ export class TypusClient {
             mvr,
         });
 
-        this.pythClient = createPythClient(this.jsonRpcClient, this.config.network);
+        const jsonRpcClient = new SuiJsonRpcClient({
+            network: network,
+            transport: new JsonRpcHTTPTransport({ url: config.rpcEndpoint }),
+        });
+
+        this.pythClient = createPythClient(jsonRpcClient, this.config.network);
     }
 
-    getCoins(params: GetCoinsParams) {
-        return this.jsonRpcClient.getCoins(params);
+    getCoins(params: SuiClientTypes.ListCoinsOptions) {
+        return this.gRpcClient.listCoins(params);
     }
-    getObject(params: GetObjectParams) {
-        return this.jsonRpcClient.getObject(params);
+    getObject(params: SuiClientTypes.GetObjectOptions) {
+        return this.gRpcClient.getObject(params);
     }
-    getOwnedObjects(params: GetOwnedObjectsParams) {
-        return this.jsonRpcClient.getOwnedObjects(params);
+    getOwnedObjects(params: SuiClientTypes.ListOwnedObjectsOptions) {
+        return this.gRpcClient.listOwnedObjects(params);
     }
-    getDynamicFields(params: GetDynamicFieldsParams) {
-        return this.jsonRpcClient.getDynamicFields(params);
+    getDynamicFields(params: SuiClientTypes.ListDynamicFieldsOptions): Promise<SuiClientTypes.ListDynamicFieldsResponse> {
+        return this.gRpcClient.listDynamicFields(params);
     }
-    multiGetObjects(params: MultiGetObjectsParams) {
-        return this.jsonRpcClient.multiGetObjects(params);
+    multiGetObjects(params: SuiClientTypes.GetObjectsOptions) {
+        return this.gRpcClient.getObjects(params);
     }
-    devInspectTransactionBlock(params: DevInspectTransactionBlockParams) {
-        // this.gRpcClient.transactionExecutionService.simulateTransaction({ transaction: { bcs: { value: params.transactionBlock } } });
-
-        return this.jsonRpcClient.devInspectTransactionBlock(params);
+    /**
+     * For view-function and dry-run transaction.
+     * dry-run need `tx.setSender(user)` to work, otherwise it will fail with "Invalid sender address" error
+     */
+    devInspectTransactionBlock(params: SuiClientTypes.SimulateTransactionOptions) {
+        params.checksEnabled = false;
+        params.include = { commandResults: true, events: true };
+        return this.gRpcClient.simulateTransaction(params);
     }
-    executeTransactionBlock(params: ExecuteTransactionBlockParams) {
-        // this.gRpcClient.transactionExecutionService.executeTransaction({
-        //     transaction: { bcs: { value: params.transactionBlock } },
-        //     signatures,
-        // });
-
-        // this.gRpcClient.transactionExecutionService.executeTransaction({
-        //     transaction: {
-        //         bcs: {
-        //             value: transactionBytes,
-        //         },
-        //     },
-        //     signatures: signatures.map((sig) => ({
-        //         bcs: { value: fromBase64(sig) },
-        //         signature: { oneofKind: undefined },
-        //     })),
-        // });
-
-        return this.jsonRpcClient.executeTransactionBlock(params);
+    executeTransactionBlock(params: SuiClientTypes.ExecuteTransactionOptions) {
+        return this.gRpcClient.executeTransaction(params);
     }
-    signAndExecuteTransaction(params) {
-        return this.jsonRpcClient.signAndExecuteTransaction(params);
-    }
-    queryEvents(params: QueryEventsParams) {
-        return this.jsonRpcClient.queryEvents(params);
+    signAndExecuteTransaction(params: SuiClientTypes.SignAndExecuteTransactionOptions) {
+        return this.gRpcClient.signAndExecuteTransaction(params);
     }
 
     // gRPC
@@ -157,14 +125,6 @@ export class TypusClient {
             // console.log(x_1.childObject?.contents?.value!);
             return x_1.childObject?.contents?.value!;
         });
-    }
-
-    simulateTransaction(transactionBcs: Uint8Array<ArrayBufferLike>) {
-        return this.gRpcClient.core.dryRunTransaction({ transaction: transactionBcs });
-        // return this.gRpcClient.transactionExecutionService.simulateTransaction({
-        //     transaction: { bcs: { value: transactionBcs } },
-        //     // checks: 1,
-        // });
     }
 }
 

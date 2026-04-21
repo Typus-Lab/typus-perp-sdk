@@ -8,11 +8,11 @@
  * liquidations.
  */
 
-import { MoveStruct, normalizeMoveArguments, type RawTransactionArgument } from "../utils/index";
+import { MoveStruct, normalizeMoveArguments, type RawTransactionArgument } from "../utils/index.js";
 import { bcs } from "@mysten/sui/bcs";
 import { type Transaction } from "@mysten/sui/transactions";
-import * as vault from "./deps/typus_framework/vault";
-import * as type_name from "./deps/std/type_name";
+import * as vault from "./deps/typus_framework/vault.js";
+import * as type_name from "./deps/std/type_name.js";
 const $moduleName = "@typus/perp::escrow";
 export const UnsettledBidReceipt = new MoveStruct({
     name: `${$moduleName}::UnsettledBidReceipt`,
@@ -75,19 +75,10 @@ export interface CreateUnsettledBidReceiptOptions {
 /** Creates a new `UnsettledBidReceipt`. */
 export function createUnsettledBidReceipt(options: CreateUnsettledBidReceiptOptions) {
     const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [
-        "vector<0x908a10789a1a6953e0b73a997c10e3552f7ce4e2907afd00a334ed74bd973ded::vault::TypusBidReceipt>",
-        "u64",
-        "address",
-        "vector<0x0000000000000000000000000000000000000000000000000000000000000001::type_name::TypeName>",
-        "bool",
-        "u64",
-        "u64",
-        "u64",
-        "bool",
-        "u64",
-        "u64",
-    ] satisfies string[];
+    const argumentsTypes = ["vector<null>", "u64", "address", "vector<null>", "bool", "u64", "u64", "u64", "bool", "u64", "u64"] satisfies (
+        | string
+        | null
+    )[];
     const parameterNames = [
         "receipt",
         "positionId",
@@ -119,7 +110,7 @@ export interface DestructUnsettledBidReceiptOptions {
 /** Destructs an `UnsettledBidReceipt` and returns its fields. */
 export function destructUnsettledBidReceipt(options: DestructUnsettledBidReceiptOptions) {
     const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [`${packageAddress}::escrow::UnsettledBidReceipt`] satisfies string[];
+    const argumentsTypes = [null] satisfies (string | null)[];
     const parameterNames = ["unsettledBidReceipt"];
     return (tx: Transaction) =>
         tx.moveCall({
@@ -139,7 +130,7 @@ export interface GetBidReceiptsOptions {
 /** Gets a reference to the bid receipts in an `UnsettledBidReceipt`. */
 export function getBidReceipts(options: GetBidReceiptsOptions) {
     const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [`${packageAddress}::escrow::UnsettledBidReceipt`] satisfies string[];
+    const argumentsTypes = [null] satisfies (string | null)[];
     const parameterNames = ["unsettledBidReceipt"];
     return (tx: Transaction) =>
         tx.moveCall({

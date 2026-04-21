@@ -2,7 +2,7 @@
  * THIS FILE IS GENERATED AND SHOULD NOT BE MANUALLY MODIFIED *
  **************************************************************/
 import { type BcsType, bcs } from "@mysten/sui/bcs";
-import { MoveStruct } from "../../../utils/index";
+import { MoveStruct } from "../../../utils/index.js";
 const $moduleName = "0x2::vec_set";
 /**
  * A set data structure backed by a vector. The set is guaranteed not to contain

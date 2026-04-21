@@ -64,9 +64,9 @@ export const COMPETITION_CONFIG =
 
 export const PROFIT_VAULT =
     NETWORK == "MAINNET"
-        ? "0xd24222307ba17ee1a08fe46ac587b1106e585e53f314ffffb525a4d4158b64c3" // TODO: Add mainnet PROFIT_VAULT address
-        : "0xb1d603139b24db2c46f6a423c8613ce677f329a0b159ff6e57672f3b663aec47"; // TODO: Add testnet PROFIT_VAULT address
+        ? "0xd24222307ba17ee1a08fe46ac587b1106e585e53f314ffffb525a4d4158b64c3"
+        : "0xb1d603139b24db2c46f6a423c8613ce677f329a0b159ff6e57672f3b663aec47";
 export const LOCK_VAULT =
     NETWORK == "MAINNET"
-        ? "0x585355900351dd1915b77f31c06ae9e6d58b187de848d4e6e6a55d3789e281d6" // TODO: Add mainnet LOCK_VAULT address
-        : "0x25dd9540f031b9a62b83784a727e1ef410f9aa91ecf7e3bb27a0c61f8ceecbfb"; // TODO: Add testnet LOCK_VAULT address
+        ? "0x585355900351dd1915b77f31c06ae9e6d58b187de848d4e6e6a55d3789e281d6"
+        : "0x25dd9540f031b9a62b83784a727e1ef410f9aa91ecf7e3bb27a0c61f8ceecbfb";

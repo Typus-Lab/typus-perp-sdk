@@ -32,11 +32,11 @@ import { normalizeStructTag } from "@mysten/sui/utils";
 
     // coins
     let coins = (
-        await client.jsonRpcClient.getCoins({
+        await client.getCoins({
             owner: user,
             coinType: normalizeStructTag(stakePool.pool_info.stake_token.name),
         })
-    ).data.map((coin) => coin.coinObjectId);
+    ).objects.map((coin) => coin.objectId);
     console.log(coins.length);
 
     let tx = new Transaction();
@@ -51,14 +51,14 @@ import { normalizeStructTag } from "@mysten/sui/utils";
 
     // console.log(tx.getData());
 
-    let dryrunRes = await client.jsonRpcClient.devInspectTransactionBlock({
-        transactionBlock: tx,
-        sender: user,
+    let dryrunRes = await client.devInspectTransactionBlock({
+        transaction: tx,
     });
     // console.log(dryrunRes);
-    console.log(dryrunRes.events.filter((e) => e.type.endsWith("StakeEvent")));
+    // @ts-ignore
+    console.log(dryrunRes.Transaction.events.filter((e) => e.type.endsWith("StakeEvent")));
 
-    let res = await client.jsonRpcClient.signAndExecuteTransaction({ signer: keypair, transaction: tx });
+    let res = await client.signAndExecuteTransaction({ signer: keypair, transaction: tx });
     console.log(res);
     // https://testnet.suivision.xyz/txblock/GRjmdrHtcqzAP4a8i6nTef88zDpPZ2ouLSVX4DTj8JnC
 })();

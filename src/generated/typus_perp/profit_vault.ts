@@ -1,18 +1,20 @@
 /**************************************************************
  * THIS FILE IS GENERATED AND SHOULD NOT BE MANUALLY MODIFIED *
  **************************************************************/
-import { MoveStruct, normalizeMoveArguments, type RawTransactionArgument } from "../utils/index";
+import { MoveStruct, normalizeMoveArguments, type RawTransactionArgument } from "../utils/index.js";
 import { bcs } from "@mysten/sui/bcs";
 import { type Transaction } from "@mysten/sui/transactions";
-import * as object from "./deps/sui/object";
-import * as vec_set from "./deps/sui/vec_set";
-import * as table from "./deps/sui/table";
-import * as type_name from "./deps/std/type_name";
+import * as vec_set from "./deps/sui/vec_set.js";
+import * as table from "./deps/sui/table.js";
+import * as table_1 from "./deps/sui/table.js";
+import * as type_name from "./deps/std/type_name.js";
+import * as type_name_1 from "./deps/std/type_name.js";
+import * as type_name_2 from "./deps/std/type_name.js";
 const $moduleName = "@typus/perp::profit_vault";
 export const ProfitVault = new MoveStruct({
     name: `${$moduleName}::ProfitVault`,
     fields: {
-        id: object.UID,
+        id: bcs.Address,
         whitelist: vec_set.VecSet(bcs.Address),
         user_profits: table.Table,
         unlock_countdown_ts_ms: bcs.u64(),
@@ -21,15 +23,15 @@ export const ProfitVault = new MoveStruct({
 export const LockVault = new MoveStruct({
     name: `${$moduleName}::LockVault`,
     fields: {
-        id: object.UID,
-        user_profits: table.Table,
+        id: bcs.Address,
+        user_profits: table_1.Table,
     },
 });
 export const UserProfit = new MoveStruct({
     name: `${$moduleName}::UserProfit`,
     fields: {
         collateral_token: type_name.TypeName,
-        base_token: type_name.TypeName,
+        base_token: type_name_1.TypeName,
         position_id: bcs.u64(),
         order_id: bcs.u64(),
         amount: bcs.u64(),
@@ -92,7 +94,7 @@ export const PutUserProfitEvent = new MoveStruct({
 export const WithdrawProfitEvent = new MoveStruct({
     name: `${$moduleName}::WithdrawProfitEvent`,
     fields: {
-        token_type: type_name.TypeName,
+        token_type: type_name_2.TypeName,
         withdraw_amount: bcs.u64(),
     },
 });
@@ -108,7 +110,7 @@ export interface CreateProfitVaultOptions {
 }
 export function createProfitVault(options: CreateProfitVaultOptions) {
     const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [`${packageAddress}::admin::Version`, "u64"] satisfies string[];
+    const argumentsTypes = [null, "u64"] satisfies (string | null)[];
     const parameterNames = ["version", "unlockCountdownTsMs"];
     return (tx: Transaction) =>
         tx.moveCall({
@@ -127,7 +129,7 @@ export interface CreateLockVaultOptions {
 }
 export function createLockVault(options: CreateLockVaultOptions) {
     const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [`${packageAddress}::admin::Version`] satisfies string[];
+    const argumentsTypes = [null] satisfies (string | null)[];
     const parameterNames = ["version"];
     return (tx: Transaction) =>
         tx.moveCall({
@@ -150,11 +152,7 @@ export interface AddWhitelistOptions {
 }
 export function addWhitelist(options: AddWhitelistOptions) {
     const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [
-        `${packageAddress}::admin::Version`,
-        `${packageAddress}::profit_vault::ProfitVault`,
-        "address",
-    ] satisfies string[];
+    const argumentsTypes = [null, null, "address"] satisfies (string | null)[];
     const parameterNames = ["version", "profitVault", "user"];
     return (tx: Transaction) =>
         tx.moveCall({
@@ -177,11 +175,7 @@ export interface RemoveWhitelistOptions {
 }
 export function removeWhitelist(options: RemoveWhitelistOptions) {
     const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [
-        `${packageAddress}::admin::Version`,
-        `${packageAddress}::profit_vault::ProfitVault`,
-        "address",
-    ] satisfies string[];
+    const argumentsTypes = [null, null, "address"] satisfies (string | null)[];
     const parameterNames = ["version", "profitVault", "user"];
     return (tx: Transaction) =>
         tx.moveCall({
@@ -208,7 +202,7 @@ export interface UpdateUnlockCountdownTsMsOptions {
 }
 export function updateUnlockCountdownTsMs(options: UpdateUnlockCountdownTsMsOptions) {
     const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [`${packageAddress}::admin::Version`, `${packageAddress}::profit_vault::ProfitVault`, "u64"] satisfies string[];
+    const argumentsTypes = [null, null, "u64"] satisfies (string | null)[];
     const parameterNames = ["version", "profitVault", "newUnlockCountdownTsMs"];
     return (tx: Transaction) =>
         tx.moveCall({
@@ -240,14 +234,7 @@ export interface LockUserProfitOptions {
 }
 export function lockUserProfit(options: LockUserProfitOptions) {
     const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [
-        `${packageAddress}::admin::Version`,
-        `${packageAddress}::profit_vault::ProfitVault`,
-        `${packageAddress}::profit_vault::LockVault`,
-        "address",
-        "u64",
-        "0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock",
-    ] satisfies string[];
+    const argumentsTypes = [null, null, null, "address", "u64", "0x2::clock::Clock"] satisfies (string | null)[];
     const parameterNames = ["version", "profitVault", "lockVault", "user", "idx"];
     return (tx: Transaction) =>
         tx.moveCall({
@@ -280,13 +267,7 @@ export interface UnlockUserProfitOptions {
 }
 export function unlockUserProfit(options: UnlockUserProfitOptions) {
     const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [
-        `${packageAddress}::admin::Version`,
-        `${packageAddress}::profit_vault::ProfitVault`,
-        `${packageAddress}::profit_vault::LockVault`,
-        "address",
-        "u64",
-    ] satisfies string[];
+    const argumentsTypes = [null, null, null, "address", "u64"] satisfies (string | null)[];
     const parameterNames = ["version", "profitVault", "lockVault", "user", "idx"];
     return (tx: Transaction) =>
         tx.moveCall({
@@ -321,15 +302,7 @@ export interface PutUserProfitOptions {
 }
 export function putUserProfit(options: PutUserProfitOptions) {
     const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [
-        `${packageAddress}::profit_vault::ProfitVault`,
-        "address",
-        `0x0000000000000000000000000000000000000000000000000000000000000002::balance::Balance<${options.typeArguments[0]}>`,
-        "0x0000000000000000000000000000000000000000000000000000000000000001::type_name::TypeName",
-        "u64",
-        "u64",
-        "0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock",
-    ] satisfies string[];
+    const argumentsTypes = [null, "address", null, null, "u64", "u64", "0x2::clock::Clock"] satisfies (string | null)[];
     const parameterNames = ["profitVault", "user", "balance", "baseTokenType", "positionId", "orderId"];
     return (tx: Transaction) =>
         tx.moveCall({
@@ -350,10 +323,7 @@ export interface WithdrawProfitOptions {
 }
 export function withdrawProfit(options: WithdrawProfitOptions) {
     const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [
-        `${packageAddress}::profit_vault::ProfitVault`,
-        "0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock",
-    ] satisfies string[];
+    const argumentsTypes = [null, "0x2::clock::Clock"] satisfies (string | null)[];
     const parameterNames = ["profitVault"];
     return (tx: Transaction) =>
         tx.moveCall({
@@ -374,7 +344,7 @@ export interface IsWhitelistOptions {
 }
 export function isWhitelist(options: IsWhitelistOptions) {
     const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [`${packageAddress}::profit_vault::ProfitVault`, "address"] satisfies string[];
+    const argumentsTypes = [null, "address"] satisfies (string | null)[];
     const parameterNames = ["profitVault", "user"];
     return (tx: Transaction) =>
         tx.moveCall({
@@ -397,11 +367,7 @@ export interface GetUserProfitsOptions {
 }
 export function getUserProfits(options: GetUserProfitsOptions) {
     const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [
-        `${packageAddress}::admin::Version`,
-        `${packageAddress}::profit_vault::ProfitVault`,
-        "address",
-    ] satisfies string[];
+    const argumentsTypes = [null, null, "address"] satisfies (string | null)[];
     const parameterNames = ["version", "profitVault", "user"];
     return (tx: Transaction) =>
         tx.moveCall({
@@ -424,11 +390,7 @@ export interface GetLockedUserProfitsOptions {
 }
 export function getLockedUserProfits(options: GetLockedUserProfitsOptions) {
     const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [
-        `${packageAddress}::admin::Version`,
-        `${packageAddress}::profit_vault::LockVault`,
-        "address",
-    ] satisfies string[];
+    const argumentsTypes = [null, null, "address"] satisfies (string | null)[];
     const parameterNames = ["version", "lockVault", "user"];
     return (tx: Transaction) =>
         tx.moveCall({

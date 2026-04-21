@@ -34,7 +34,7 @@ import { getTlpFeeFromSentio } from "src/api/sentio";
     // console.log(tvl_usd);
     console.log(tlp_price);
 
-    let fee_apr = (value * 365) / 7 / tvl_usd;
+    let fee_apr = (value.get(index.toString()) ?? 0 * 365) / 7 / tvl_usd;
     // console.log(fee_apr);
 
     let total_apr = incentive_apr + fee_apr;

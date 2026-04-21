@@ -11,8 +11,7 @@
  */
 
 import { type BcsType, bcs } from "@mysten/sui/bcs";
-import { MoveStruct } from "../../../utils/index";
-import * as object from "../sui/object";
+import { MoveStruct } from "../../../utils/index.js";
 const $moduleName = "typus::linked_object_table";
 /**
  * A doubly-linked list of key-value pairs where values are stored as dynamic
@@ -20,12 +19,12 @@ const $moduleName = "typus::linked_object_table";
  */
 export function LinkedObjectTable<K extends BcsType<any>>(...typeParameters: [K]) {
     return new MoveStruct({
-        name: `${$moduleName}::LinkedObjectTable<${typeParameters[0].name as K["name"]}>`,
+        name: `${$moduleName}::LinkedObjectTable<${typeParameters[0].name as K["name"]}, phantom V>`,
         fields: {
             /** The UID for storing the nodes of the linked list. */
-            id: object.UID,
+            id: bcs.Address,
             /** The UID for storing the values as dynamic object fields. */
-            vid: object.UID,
+            vid: bcs.Address,
             /** The number of key-value pairs in the table. */
             size: bcs.u64(),
             /** The key of the first entry in the table. */

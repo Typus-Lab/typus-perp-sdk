@@ -2,7 +2,6 @@ import { graphql } from "@mysten/sui/graphql/schema";
 import { SuiGraphQLClient } from "@mysten/sui/graphql";
 import { SuiGrpcClient } from "@mysten/sui/grpc";
 import { createPythClient, PythClient, TypusConfig } from "@typus/typus-sdk/dist/src/utils";
-import type { RpcTransport } from "@protobuf-ts/runtime-rpc";
 import { JsonRpcHTTPTransport, SuiJsonRpcClient } from "@mysten/sui/jsonRpc";
 import { SuiClientTypes } from "@mysten/sui/client";
 
@@ -16,7 +15,7 @@ export class TypusClient {
     // user: string;
 
     // mvr?: Experimental_SuiClientTypes.MvrOptions
-    constructor(config: TypusConfig, grpcTransport?: RpcTransport) {
+    constructor(config: TypusConfig) {
         this.config = config;
         const network = config.network.toLowerCase();
 

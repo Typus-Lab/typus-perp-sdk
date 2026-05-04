@@ -487,7 +487,7 @@ export async function harvestStakeReward(
         user: string;
     }
 ): Promise<Transaction> {
-    let iTokens = input.stakePool.incentives.map((i) => i.token_type.name);
+    let iTokens = input.stakePool.incentives.map((i) => normalizeStructTag(i.token_type.name));
 
     snapshot(client, tx, { perpIndex: input.stakePool.pool_info.index });
 

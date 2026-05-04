@@ -11,12 +11,11 @@
         "@typus/typus-sdk": "1.9.0"
     },
     "resolutions": {
-        "@mysten/bcs": "2.0.3",
-        "@mysten/sui": "2.13.2",
         "@pythnetwork/pyth-sui-js": "2.3.0"
     },
     "devDependencies": {
         "@types/node": "^25.6.0",
+        "axios": "1.13.2",
         "bignumber.js": "9.1.2",
         "prettier": "^3.0.0",
         "ts-node": "^10.9.2",

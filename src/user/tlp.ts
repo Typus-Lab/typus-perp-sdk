@@ -281,7 +281,7 @@ export async function unstakeRedeem(
 
     let balance = tx.moveCall({
         target: `0x2::coin::into_balance`,
-        typeArguments: [input.lpPool.lp_token_type.name],
+        typeArguments: [lpToken],
         arguments: [lpCoin],
     });
 
@@ -294,7 +294,7 @@ export async function unstakeRedeem(
 
                 balance,
             },
-            typeArguments: [input.lpPool.lp_token_type.name],
+            typeArguments: [lpToken],
         })
     );
 

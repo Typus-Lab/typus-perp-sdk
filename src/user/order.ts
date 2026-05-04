@@ -130,8 +130,8 @@ export async function cancelTradingOrder(
         user: string;
     }
 ): Promise<Transaction> {
-    let cToken = "0x" + input.order.collateral_token.name;
-    let BASE_TOKEN = "0x" + input.order.symbol.base_token.name;
+    let cToken = normalizeStructTag(input.order.collateral_token.name);
+    let BASE_TOKEN = normalizeStructTag(input.order.symbol.base_token.name);
 
     let coin = tx.add(
         _cancelTradingOrder({

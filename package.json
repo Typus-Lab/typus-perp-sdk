@@ -8,7 +8,8 @@
     "dependencies": {
         "@mysten/bcs": "2.0.3",
         "@mysten/sui": "2.13.2",
-        "@typus/typus-sdk": "1.9.0",
+        "@pythnetwork/pyth-lazer-sdk": "6.2.2",
+        "@typus/typus-sdk": "file:../typus-sdk",
         "dotenv": "16.4.5"
     },
     "resolutions": {

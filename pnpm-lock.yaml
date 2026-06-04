@@ -17,9 +17,12 @@ importers:
       '@mysten/sui':
         specifier: 2.13.2
         version: 2.13.2(typescript@5.9.3)
+      '@pythnetwork/pyth-lazer-sdk':
+        specifier: 6.2.2
+        version: 6.2.2
       '@typus/typus-sdk':
-        specifier: 1.9.0
-        version: 1.9.0(axios@1.13.2)(typescript@5.9.3)
+        specifier: file:../typus-sdk
+        version: file:../typus-sdk(typescript@5.9.3)
       dotenv:
         specifier: 16.4.5
         version: 16.4.5
@@ -108,6 +111,10 @@ packages:
     peerDependencies:
       graphql: ^0.8.0 || ^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
 
+  '@isaacs/ttlcache@2.1.4':
+    resolution: {integrity: sha512-7kMz0BJpMvgAMkyglums7B2vtrn5g0a0am77JY0GjkZZNetOBCFn7AG7gKCwT0QPiXyxW7YIQSgtARknUEOcxQ==}
+    engines: {node: '>=12'}
+
   '@jridgewell/resolve-uri@3.1.2':
     resolution: {integrity: sha512-bRISgCIjP20/tbWSPWMEi54QVPRZExkuD9lJL+UIxUKtwVJA8wW1Trb1jMs1RFXo1CBTNZ/5hpC9QvmKWdopKw==}
     engines: {node: '>=6.0.0'}
@@ -184,11 +191,13 @@ packages:
   '@protobuf-ts/runtime@2.11.1':
     resolution: {integrity: sha512-KuDaT1IfHkugM2pyz+FwiY80ejWrkH1pAtOBOZFuR6SXEFTsnb/jiQWQ1rCIrcKx2BtyxnxW6BWwsVSA/Ie+WQ==}
 
-  '@pythnetwork/hermes-client@2.0.0':
-    resolution: {integrity: sha512-8ZbCrO5NSlsu1zauIJjZv0sPR3qF9uzgCpBpAPSBGBjwKP0T3TdIRfuSzf9mpzrqf+b7QUqNVNLWZqgN7nlREw==}
+  '@pythnetwork/pyth-lazer-sdk@6.2.2':
+    resolution: {integrity: sha512-tL8+eH8hk1cF8R1uG8ckC6RsA18Zyhf7cK43ue/FEEOXRFm6ooxBcc4D3fYRUdln7hzMY8XABHpmUaSk72jn6A==}
+    engines: {node: ^24.0.0}
 
-  '@pythnetwork/pyth-sui-js@2.3.0':
-    resolution: {integrity: sha512-QOlbzhRBSYyVNofKr6vBJL/W+YNf/TZ4eqMBzjV18Rb1mG2ZdSA4IOuBj8n8ZVMvVU+CLWgGsHs5NkgcivHX6Q==}
+  '@pythnetwork/pyth-lazer-sui-js@0.3.0':
+    resolution: {integrity: sha512-YNkXjSlMfuNGYflN7UH+29OgRe5PztmARHuM8DpsCe17/hwhgI0dBiXd/cUII4AR/yGNGEycNCxodCG48BEmtA==}
+    engines: {node: ^24.0.0}
 
   '@scure/base@1.2.6':
     resolution: {integrity: sha512-g/nm5FgUa//MCj1gV09zTJTaM6KBAHqLN907YVQqf7zC49+DcO4B1so4ZX07Ef10Twr6nuqYEH9GEggFXA4Fmg==}
@@ -235,14 +244,8 @@ packages:
   '@types/node@25.6.0':
     resolution: {integrity: sha512-+qIYRKdNYJwY3vRCZMdJbPLJAtGjQBudzZzdzwQYkEPQd+PJGixUL5QfvCLDaULoLv+RhT3LDkwEfKaAkgSmNQ==}
 
-  '@typus/typus-sdk@1.9.0':
-    resolution: {integrity: sha512-U/VIvHLcPd/Z8zJdDCDAcXaFfJWazBZ+U+gAlWt7AMtiF0pbOMYK1dRkWgl4G3ky4WKV2gG0BmQhnh1rkeStAw==}
-
-  '@zodios/core@10.9.6':
-    resolution: {integrity: sha512-aH4rOdb3AcezN7ws8vDgBfGboZMk2JGGzEq/DtW65MhnRxyTGRuLJRWVQ/2KxDgWvV2F5oTkAS+5pnjKbl0n+A==}
-    peerDependencies:
-      axios: ^0.x || ^1.0.0
-      zod: ^3.x
+  '@typus/typus-sdk@file:../typus-sdk':
+    resolution: {directory: ../typus-sdk, type: directory}
 
   acorn-walk@8.3.5:
     resolution: {integrity: sha512-HEHNfbars9v4pgpW6SO1KSPkfoS0xVOM/9UzkJltjlsHZmJasxg8aXkuZa7SMf8vKGIBhpUsPluQSqhJFCqebw==}
@@ -400,14 +403,6 @@ packages:
     resolution: {integrity: sha512-eGuFFw7Upda+g4p+QHvnW0RyTX/SVeJBDM/gCtMARO0cLuT2HcEKnTPvhjV6aGeqrCB/sbNop0Kszm0jsaWU4A==}
     engines: {node: '>=4'}
     hasBin: true
-
-  eventsource-parser@3.0.8:
-    resolution: {integrity: sha512-70QWGkr4snxr0OXLRWsFLeRBIRPuQOvt4s8QYjmUlmlkyTZkRqS7EDVRZtzU3TiyDbXSzaOeF0XUKy8PchzukQ==}
-    engines: {node: '>=18.0.0'}
-
-  eventsource@3.0.7:
-    resolution: {integrity: sha512-CRT1WTyuQoD771GW56XEZFQ/ZoSfWid1alKGDYMmkt2yl8UXrVR4pspqWNEcqKvVIzg6PAltWjxcSSPrboA4iA==}
-    engines: {node: '>=18.0.0'}
 
   fast-glob@3.3.3:
     resolution: {integrity: sha512-7MptL8U0cqcFdzIzwOTHoilX9x5BrNqye7Z/LuC7kCMRio1EMSyqRK3BEAUD7sXRq4iT4AzTVuZdhgQ2TCvYLg==}
@@ -701,6 +696,9 @@ packages:
     resolution: {integrity: sha512-65P7iz6X5yEr1cwcgvQxbbIw7Uk3gOy5dIdtZ4rDveLqhrdJP+Li/Hx6tyK0NEb+2GCyneCMJiGqrADCSNk8sQ==}
     engines: {node: '>=8.0'}
 
+  ts-log@2.2.7:
+    resolution: {integrity: sha512-320x5Ggei84AxzlXp91QkIGSw5wgaLT6GeAH0KsqDmRZdVWW2OiSeVvElVoatk3f7nicwXlElXsoFkARiGE2yg==}
+
   ts-node@10.9.2:
     resolution: {integrity: sha512-f0FFpIdcHgn8zcPSbf1dRevwt047YMnaiJM3u2w2RewrB+fob/zePZcrOyQoLMMO7aBIddLcQIEK5dYjkLnGrQ==}
     hasBin: true
@@ -779,12 +777,21 @@ packages:
       utf-8-validate:
         optional: true
 
+  ws@8.20.1:
+    resolution: {integrity: sha512-It4dO0K5v//JtTXuPkfEOaI3uUN87iYPnqo/ZzqCoG3g8uhA66QUMs/SrM0YK7/NAu+r4LMh/9dq2A7k+rHs+w==}
+    engines: {node: '>=10.0.0'}
+    peerDependencies:
+      bufferutil: ^4.0.1
+      utf-8-validate: '>=5.0.2'
+    peerDependenciesMeta:
+      bufferutil:
+        optional: true
+      utf-8-validate:
+        optional: true
+
   yn@3.1.1:
     resolution: {integrity: sha512-Ux4ygGWsu2c7isFWe8Yu1YluJmqVhxqK2cLXNQA5AcC3QfbGNpM7fu0Y8b/z16pXLnFxZYvWhd3fhBY9DLmC6Q==}
     engines: {node: '>=6'}
-
-  zod@3.25.76:
-    resolution: {integrity: sha512-gzUt/qt81nXsFGKIFcC3YnfEAx5NkunCfnDlvuBSSFS02bcXu4Lmea0AFIUwbLWxWPx3d9p8S5QoaujKcNQxcQ==}
 
 snapshots:
 
@@ -826,6 +833,8 @@ snapshots:
   '@graphql-typed-document-node/core@3.2.0(graphql@16.13.2)':
     dependencies:
       graphql: 16.13.2
+
+  '@isaacs/ttlcache@2.1.4': {}
 
   '@jridgewell/resolve-uri@3.1.2': {}
 
@@ -948,23 +957,23 @@ snapshots:
 
   '@protobuf-ts/runtime@2.11.1': {}
 
-  '@pythnetwork/hermes-client@2.0.0(axios@1.13.2)':
+  '@pythnetwork/pyth-lazer-sdk@6.2.2':
     dependencies:
-      '@zodios/core': 10.9.6(axios@1.13.2)(zod@3.25.76)
-      eventsource: 3.0.7
-      zod: 3.25.76
+      '@isaacs/ttlcache': 2.1.4
+      buffer: 6.0.3
+      isomorphic-ws: 5.0.0(ws@8.20.1)
+      ts-log: 2.2.7
+      ws: 8.20.1
     transitivePeerDependencies:
-      - axios
+      - bufferutil
+      - utf-8-validate
 
-  '@pythnetwork/pyth-sui-js@2.3.0(axios@1.13.2)(typescript@5.9.3)':
+  '@pythnetwork/pyth-lazer-sui-js@0.3.0(typescript@5.9.3)':
     dependencies:
       '@mysten/sui': 1.45.2(typescript@5.9.3)
-      '@pythnetwork/hermes-client': 2.0.0(axios@1.13.2)
-      buffer: 6.0.3
     transitivePeerDependencies:
       - '@gql.tada/svelte-support'
       - '@gql.tada/vue-support'
-      - axios
       - typescript
 
   '@scure/base@1.2.6': {}
@@ -1015,12 +1024,13 @@ snapshots:
     dependencies:
       undici-types: 7.19.2
 
-  '@typus/typus-sdk@1.9.0(axios@1.13.2)(typescript@5.9.3)':
+  '@typus/typus-sdk@file:../typus-sdk(typescript@5.9.3)':
     dependencies:
       '@mysten/bcs': 2.0.3
       '@mysten/kiosk': 1.2.0(@mysten/sui@2.13.2(typescript@5.9.3))
       '@mysten/sui': 2.13.2(typescript@5.9.3)
-      '@pythnetwork/pyth-sui-js': 2.3.0(axios@1.13.2)(typescript@5.9.3)
+      '@pythnetwork/pyth-lazer-sdk': 6.2.2
+      '@pythnetwork/pyth-lazer-sui-js': 0.3.0(typescript@5.9.3)
       '@shinami/clients': 0.10.0(@mysten/sui@2.13.2(typescript@5.9.3))
       bignumber.js: 9.1.2
       camelcase-keys-deep: 0.1.0
@@ -1033,15 +1043,9 @@ snapshots:
       - '@aptos-labs/ts-sdk'
       - '@gql.tada/svelte-support'
       - '@gql.tada/vue-support'
-      - axios
       - bufferutil
       - typescript
       - utf-8-validate
-
-  '@zodios/core@10.9.6(axios@1.13.2)(zod@3.25.76)':
-    dependencies:
-      axios: 1.13.2
-      zod: 3.25.76
 
   acorn-walk@8.3.5:
     dependencies:
@@ -1191,12 +1195,6 @@ snapshots:
 
   esprima@4.0.1: {}
 
-  eventsource-parser@3.0.8: {}
-
-  eventsource@3.0.7:
-    dependencies:
-      eventsource-parser: 3.0.8
-
   fast-glob@3.3.3:
     dependencies:
       '@nodelib/fs.stat': 2.0.5
@@ -1333,6 +1331,10 @@ snapshots:
     dependencies:
       ws: 8.18.3
 
+  isomorphic-ws@5.0.0(ws@8.20.1):
+    dependencies:
+      ws: 8.20.1
+
   js-tokens@4.0.0: {}
 
   js-yaml@3.14.2:
@@ -1454,6 +1456,8 @@ snapshots:
     dependencies:
       is-number: 7.0.0
 
+  ts-log@2.2.7: {}
+
   ts-node@10.9.2(@types/node@25.6.0)(typescript@5.9.3):
     dependencies:
       '@cspotcode/source-map-support': 0.8.1
@@ -1528,6 +1532,6 @@ snapshots:
 
   ws@8.18.3: {}
 
-  yn@3.1.1: {}
+  ws@8.20.1: {}
 
-  zod@3.25.76: {}
+  yn@3.1.1: {}

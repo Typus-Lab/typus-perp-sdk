@@ -10,7 +10,7 @@ import { updatePoolInfoU64Padding } from "src/generated/typus_stake_pool/stake_p
 (async () => {
     let keypair = Ed25519Keypair.deriveKeypair(String(process.env.AUTH_MNEMONIC));
     let config = await TypusConfig.default(NETWORK, null);
-    let client = new TypusClient(config);
+    let client = await TypusClient.create(config);
     let user = keypair.toSuiAddress();
     console.log(user);
 

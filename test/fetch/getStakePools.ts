@@ -4,7 +4,7 @@ import { getStakePool, getStakePools, NETWORK } from "src";
 
 (async () => {
     let config = await TypusConfig.default(NETWORK, null);
-    let client = new TypusClient(config);
+    let client = await TypusClient.create(config);
 
     let stakePools = await getStakePools(client);
     console.dir(stakePools, { depth: null }); // 1 lpPool inclueded

@@ -7,15 +7,15 @@ import { cancelTradingOrder, getUserOrders, NETWORK } from "src";
 
 (async () => {
     let config = await TypusConfig.default(NETWORK, null);
-    let client = new TypusClient(config);
-    let keypair = Ed25519Keypair.deriveKeypair(String(process.env.W_MNEMONIC));
+    let client = await TypusClient.create(config);
+    let keypair = Ed25519Keypair.deriveKeypair(String(process.env.MNEMONIC ?? process.env.W_MNEMONIC));
 
     let user = keypair.toSuiAddress();
     console.log(user);
 
     var tx = new Transaction();
 
-    let orders = await getUserOrders(client, { user, indexes: ["0", "1"] });
+    let orders = await getUserOrders(client, { user, indexes: ["0"] });
     let order = orders[0];
     console.log(order);
 

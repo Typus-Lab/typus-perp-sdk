@@ -11,7 +11,7 @@ import mne from "mnemonic.json";
 (async () => {
     let keypair = Ed25519Keypair.deriveKeypair(String(mne.MNEMONIC));
     let config = await TypusConfig.default(NETWORK, null);
-    let client = new TypusClient(config);
+    let client = await TypusClient.create(config);
     let provider = new SuiClient({ url: config.rpcEndpoint });
 
     let user = keypair.toSuiAddress();

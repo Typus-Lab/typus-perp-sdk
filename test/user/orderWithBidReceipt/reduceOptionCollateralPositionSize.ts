@@ -4,14 +4,13 @@ import { TypusClient } from "src/client";
 import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519";
 import { Transaction } from "@mysten/sui/transactions";
 import { reduceOptionCollateralPositionSize, NETWORK, getMarkets, findMarketIndex } from "src";
-import { createPythClient } from "@typus/typus-sdk/dist/src/utils";
 import "@typus/typus-sdk/dist/src/utils/load_env";
 import { TOKEN } from "@typus/typus-sdk/dist/src/constants";
 
 (async () => {
     let keypair = Ed25519Keypair.deriveKeypair(String(process.env.MNEMONIC));
     let config = await TypusConfig.default(NETWORK, null);
-    let client = new TypusClient(config);
+    let client = await TypusClient.create(config);
 
     let user = keypair.toSuiAddress();
     console.log(user);

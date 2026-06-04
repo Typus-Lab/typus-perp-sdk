@@ -1,21 +1,51 @@
 import { graphql } from "@mysten/sui/graphql/schema";
 import { SuiGraphQLClient } from "@mysten/sui/graphql";
 import { SuiGrpcClient } from "@mysten/sui/grpc";
-import { createPythClient, PythClient, TypusConfig } from "@typus/typus-sdk/dist/src/utils";
+import { PythLazerSuiClient, TypusConfig } from "@typus/typus-sdk/dist/src/utils";
+import { PythLazerClient } from "@pythnetwork/pyth-lazer-sdk";
 import { JsonRpcHTTPTransport, SuiJsonRpcClient } from "@mysten/sui/jsonRpc";
 import { SuiClientTypes } from "@mysten/sui/client";
+import {
+    ORACLE_PACKAGE_ID,
+    ORACLE_V2_ID,
+    PERP_PACKAGE_ID,
+    PYTH_LAZER_PACKAGE_ID,
+    PYTH_LAZER_STATE_ID,
+    STAKE_PACKAGE_ID,
+} from ".";
 
 export type Network = "MAINNET" | "TESTNET";
 
 export class TypusClient {
     gRpcClient: SuiGrpcClient;
     graphQLClient: SuiGraphQLClient;
-    pythClient: PythClient;
+    pythClient: PythLazerSuiClient;
     config: TypusConfig;
-    // user: string;
 
-    // mvr?: Experimental_SuiClientTypes.MvrOptions
-    constructor(config: TypusConfig) {
+    static async create(config: TypusConfig): Promise<TypusClient> {
+        // typus-config@main is stale (advertises old oracle + old perp pkgs). Override here.
+        if (ORACLE_PACKAGE_ID) {
+            config.package.oracle = ORACLE_PACKAGE_ID;
+        }
+        if (PERP_PACKAGE_ID) {
+            config.package.perp.perp = PERP_PACKAGE_ID;
+        }
+        if (STAKE_PACKAGE_ID) {
+            config.package.perp.stakePool = STAKE_PACKAGE_ID;
+        }
+
+        const token = process.env.LAZER_TOKEN ?? process.env.PYTH_LAZER_TOKEN;
+        if (!token) {
+            throw new Error("LAZER_TOKEN (or PYTH_LAZER_TOKEN) env var is required for Pyth Lazer client");
+        }
+        const lazer = await PythLazerClient.create({
+            token,
+            webSocketPoolConfig: { numConnections: 1 },
+        });
+        return new TypusClient(config, lazer);
+    }
+
+    private constructor(config: TypusConfig, lazer: PythLazerClient) {
         this.config = config;
         const network = config.network.toLowerCase();
 
@@ -25,10 +55,6 @@ export class TypusClient {
                     "@typus/perp": config.package.perp.perp,
                     "@typus/stake-pool": config.package.perp.stakePool,
                 },
-                // types: {
-                //     "@typus/perp": PERP_PACKAGE_ID,
-                //     "@typus/stake-pool": STAKE_PACKAGE_ID,
-                // },
             },
         };
 
@@ -49,7 +75,15 @@ export class TypusClient {
             transport: new JsonRpcHTTPTransport({ url: config.rpcEndpoint }),
         });
 
-        this.pythClient = createPythClient(jsonRpcClient, this.config.network);
+        this.pythClient = new PythLazerSuiClient({
+            lazer,
+            sui: jsonRpcClient,
+            network: config.network,
+            lazerPackage: PYTH_LAZER_PACKAGE_ID,
+            oraclePackage: ORACLE_PACKAGE_ID,
+            oracleV2Id: ORACLE_V2_ID,
+            stateObjectId: PYTH_LAZER_STATE_ID,
+        });
     }
 
     getCoins(params: SuiClientTypes.ListCoinsOptions) {

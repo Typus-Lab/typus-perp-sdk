@@ -1,8 +1,8 @@
 import { Transaction } from "@mysten/sui/transactions";
 import { bcs, BcsReader } from "@mysten/bcs";
 
-import { oracle, SENDER, TOKEN, tokenType, typeArgToAsset } from "@typus/typus-sdk/dist/src/constants";
-import { updatePyth, updateOracleWithPythUsd, TypusConfig } from "@typus/typus-sdk/dist/src/utils";
+import { SENDER, TOKEN, tokenType, typeArgToAsset } from "@typus/typus-sdk/dist/src/constants";
+import { TypusConfig } from "@typus/typus-sdk/dist/src/utils";
 import { updateOracleWithSignatureTx } from "@typus/typus-sdk/dist/src/utils";
 
 import {
@@ -10,6 +10,7 @@ import {
     LP_POOL,
     MARKET,
     NETWORK,
+    ORACLE_V2_ID,
     PERP_VERSION,
     STAKE_POOL,
     STAKE_POOL_VERSION,
@@ -133,7 +134,12 @@ export async function getMarkets(
     // // console.log("bcs", bcs);
     // let res = await client.simulateTransaction(bcs);
 
+    tx.setSender("0x0000000000000000000000000000000000000000000000000000000000000001");
     let devInspectTransactionBlockResult = await client.devInspectTransactionBlock({ transaction: tx });
+    if (!devInspectTransactionBlockResult.commandResults || devInspectTransactionBlockResult.FailedTransaction) {
+        console.error("getMarkets devInspect failed:", JSON.stringify(devInspectTransactionBlockResult, null, 2));
+        return [];
+    }
     // @ts-ignore
     let bytes = devInspectTransactionBlockResult.commandResults[0].returnValues[0].bcs;
     let reader = new BcsReader(new Uint8Array(bytes));
@@ -413,10 +419,9 @@ export async function getLiquidationPriceAndPnl(
         tokens.push(BASE_TOKEN);
     }
 
-    const tokensWithoutTypus = tokens.filter((token) => token !== "TYPUS");
-    await updatePyth(client.pythClient, tx, Array.from(new Set(tokensWithoutTypus)));
-    for (let token of Array.from(new Set(tokensWithoutTypus))) {
-        updateOracleWithPythUsd(client.pythClient, tx, client.config.package.oracle, token);
+    const tokensWithoutTypus = Array.from(new Set(tokens.filter((token) => token !== "TYPUS")));
+    if (tokensWithoutTypus.length > 0) {
+        await client.pythClient.updateOracleV2WithPythLazer(tx, tokensWithoutTypus);
     }
 
     if (tokens.includes("TYPUS")) {
@@ -424,9 +429,6 @@ export async function getLiquidationPriceAndPnl(
     }
 
     for (let position of input.positions) {
-        // parse from Position
-        let TOKEN = typeArgToAsset(position.collateral_token.name);
-        let BASE_TOKEN = typeArgToAsset(position.symbol.base_token.name);
         // @ts-ignore
         let index = position.marketIndex;
         tx.add(
@@ -435,12 +437,11 @@ export async function getLiquidationPriceAndPnl(
                     version: PERP_VERSION,
                     registry: MARKET,
                     poolRegistry: LP_POOL,
+                    dovRegistry: client.config.registry.dov.dovSingle,
+                    oracleV2: ORACLE_V2_ID,
                     marketIndex: BigInt(index),
                     poolIndex: BigInt(index),
-                    typusOracleCToken: oracle[NETWORK][TOKEN]!,
-                    typusOracleTradingSymbol: oracle[NETWORK][BASE_TOKEN]!,
                     positionId: BigInt(position.position_id),
-                    dovRegistry: client.config.registry.dov.dovSingle,
                 },
                 typeArguments: [normalizeStructTag(position.collateral_token.name), normalizeStructTag(position.symbol.base_token.name)],
             })

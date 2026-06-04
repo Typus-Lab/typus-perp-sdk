@@ -448,7 +448,14 @@ export async function getLiquidationPriceAndPnl(
         );
     }
 
+    if (input.positions.length > 0) {
+        tx.setSender(input.positions[0].user);
+    }
     let res = await client.devInspectTransactionBlock({ transaction: tx });
+    if (res.FailedTransaction) {
+        console.error("getLiquidationPriceAndPnl devInspect failed:", JSON.stringify(res.FailedTransaction.status.error, null, 2));
+        return [];
+    }
     // console.log(res);
     //   0  estimated_liquidation_price,
     //   1  has_profit,

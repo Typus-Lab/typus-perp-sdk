@@ -7,7 +7,7 @@ import { Transaction } from "@mysten/sui/transactions";
 import { NETWORK, getLpPools, getStakePool, claim, getStakePools } from "src";
 
 (async () => {
-    let keypair = Ed25519Keypair.deriveKeypair(String(process.env.MNEMONIC));
+    let keypair = Ed25519Keypair.deriveKeypair(String(process.env.MNEMONIC ?? process.env.W_MNEMONIC));
     let config = await TypusConfig.default(NETWORK, null);
     let client = await TypusClient.create(config);
 
@@ -21,26 +21,25 @@ import { NETWORK, getLpPools, getStakePool, claim, getStakePools } from "src";
     // console.log(lpPool);
 
     let stakePools = await getStakePools(client);
-    console.log(stakePools);
-
     let stakePool = stakePools[index];
-    console.log(stakePool);
     let tx = new Transaction();
 
     await claim(client, tx, {
         lpPool,
         stakePool,
-        cTOKEN: "wUSDT",
+        cTOKEN: "wUSDC",
         user,
     });
 
-    let dryrunRes = await client.devInspectTransactionBlock({
-        transaction: tx,
-    });
+    tx.setSender(user);
+    let dryrunRes = await client.devInspectTransactionBlock({ transaction: tx });
+    if (dryrunRes.FailedTransaction) {
+        console.error("DRY-RUN FAILED:", JSON.stringify(dryrunRes.FailedTransaction.status.error, null, 2));
+        process.exit(1);
+    }
+    console.log("DRY-RUN OK — PTB valid (Lazer + claim_v2 path)");
     // @ts-ignore
-    console.log(dryrunRes.Transaction.events.filter((e) => e.type.endsWith("BurnLpEvent")));
-
-    let res = await client.signAndExecuteTransaction({ signer: keypair, transaction: tx });
-    console.log(res);
-    // https://testnet.suivision.xyz/txblock/EvBgQwKFay8YMYDG9WtStsfvR7MzhPa4nu5aKMgeptzX?tab=Events
+    let evts = dryrunRes.Transaction.events.filter((e: any) => (e.eventType ?? e.type ?? "").endsWith("BurnLpEvent"));
+    console.log("BurnLpEvent:", JSON.stringify(evts[0]?.json ?? evts[0]?.parsedJson ?? evts[0] ?? null, null, 2));
+    process.exit(0);
 })();

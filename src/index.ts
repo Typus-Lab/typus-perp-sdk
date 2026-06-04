@@ -80,3 +80,8 @@ export const PYTH_LAZER_PACKAGE_ID =
     NETWORK == "MAINNET" ? "" : "0xacb76cbd636b83839153feff75b83157c400075717ce8c979fbbe88cf3564901";
 export const PYTH_LAZER_STATE_ID =
     NETWORK == "MAINNET" ? "" : "0x7b570126bfdcc7f7b2b4028445d4ac1d35c41da498606a2b097c3973425698d3";
+
+// DOV single-collateral Registry that the new typus_perp pkg links against
+// (origin 0x02821e55). typus-config@main still advertises the old 0x6c9a394a DOV.
+export const DOV_SINGLE_REGISTRY =
+    NETWORK == "MAINNET" ? "" : "0x43db5b91c8af6cf7a2a3b624e97aa35eef40adff4a22e2b59571b9eb89ded084";

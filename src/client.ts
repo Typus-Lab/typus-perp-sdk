@@ -6,6 +6,7 @@ import { PythLazerClient } from "@pythnetwork/pyth-lazer-sdk";
 import { JsonRpcHTTPTransport, SuiJsonRpcClient } from "@mysten/sui/jsonRpc";
 import { SuiClientTypes } from "@mysten/sui/client";
 import {
+    DOV_SINGLE_REGISTRY,
     ORACLE_PACKAGE_ID,
     ORACLE_V2_ID,
     PERP_PACKAGE_ID,
@@ -32,6 +33,12 @@ export class TypusClient {
         }
         if (STAKE_PACKAGE_ID) {
             config.package.perp.stakePool = STAKE_PACKAGE_ID;
+        }
+        // typus-config@main points at the old DOV registry; the new typus_perp links
+        // against the 0x02821e55 DOV family — override so bid-receipt / liquidation
+        // views pass the right &DovRegistry type.
+        if (DOV_SINGLE_REGISTRY && config.registry?.dov) {
+            config.registry.dov.dovSingle = DOV_SINGLE_REGISTRY;
         }
 
         const token = process.env.LAZER_TOKEN ?? process.env.PYTH_LAZER_TOKEN;

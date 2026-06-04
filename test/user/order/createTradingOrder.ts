@@ -41,7 +41,7 @@ import { TOKEN, tokenType } from "@typus/typus-sdk/dist/src/constants";
         amount: "100000000",
         tradingToken,
         size: "1000000000",
-        triggerPrice: "50000000",
+        triggerPrice: "200000000",
         isLong: true,
         isStopOrder: false,
         reduceOnly: false,

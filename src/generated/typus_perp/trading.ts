@@ -92,6 +92,8 @@ export const MarketConfig = new MoveStruct({ name: `${$moduleName}::MarketConfig
         funding_interval_ts_ms: bcs.u64(),
         /** The experience multiplier. */
         exp_multiplier: bcs.u64(),
+        /** The cool-down threshold in milliseconds. */
+        cool_down_threshold_ts_ms: bcs.u64(),
         /** Padding for future use. */
         u64_padding: bcs.vector(bcs.u64())
     } });
@@ -182,6 +184,7 @@ export const CreateTradingOrderEvent = new MoveStruct({ name: `${$moduleName}::C
         is_stop_order: bcs.bool(),
         size: bcs.u64(),
         trigger_price: bcs.u64(),
+        trading_pair_oracle_price: bcs.u64(),
         filled: bcs.bool(),
         filled_price: bcs.option(bcs.u64()),
         u64_padding: bcs.vector(bcs.u64())
@@ -191,9 +194,9 @@ export const ManagerCancelOrdersEvent = new MoveStruct({ name: `${$moduleName}::
         collateral_token: type_name.TypeName,
         base_token: type_name.TypeName,
         order_type_tag: bcs.u8(),
-        order_ids: bcs.vector(bcs.u64()),
-        order_sizes: bcs.vector(bcs.u64()),
-        order_prices: bcs.vector(bcs.u64()),
+        order_id: bcs.u64(),
+        order_size: bcs.u64(),
+        order_price: bcs.u64(),
         u64_padding: bcs.vector(bcs.u64())
     } });
 export const CancelTradingOrderEvent = new MoveStruct({ name: `${$moduleName}::CancelTradingOrderEvent`, fields: {

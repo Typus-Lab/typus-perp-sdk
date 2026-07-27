@@ -33,7 +33,35 @@ export class TypusClient {
         config: TypusConfig,
         opts?: { getAccessToken?: () => string | Promise<string> }
     ): Promise<TypusClient> {
-        // typus-config@main is stale (advertises old oracle + old perp pkgs). Override here.
+        if (opts?.getAccessToken) {
+            return new TypusClient(config, { getAccessToken: opts.getAccessToken });
+        }
+
+        const token = process.env.LAZER_TOKEN ?? process.env.PYTH_LAZER_TOKEN;
+        if (!token) {
+            throw new Error("LAZER_TOKEN (or PYTH_LAZER_TOKEN) env var is required for Pyth Lazer client");
+        }
+        const lazer = await PythLazerClient.create({
+            token,
+            webSocketPoolConfig: { numConnections: 1 },
+        });
+        return new TypusClient(config, { lazer });
+    }
+
+    /**
+     * Stays public: most call sites build a client only for read-only views and
+     * never touch the oracle, so requiring the async `create` (and a price
+     * source) everywhere would be noise. Fetching a price without a source
+     * throws at fetch time.
+     */
+    constructor(
+        config: TypusConfig,
+        priceSource: { lazer?: PythLazerClient; getAccessToken?: () => string | Promise<string> } = {}
+    ) {
+        // typus-config@main is stale (advertises old oracle + old perp pkgs).
+        // Applied here rather than in `create` because most call sites use the
+        // constructor directly — overriding only in `create` left them on the
+        // pre-OracleV2 packages.
         if (ORACLE_PACKAGE_ID) {
             config.package.oracle = ORACLE_PACKAGE_ID;
         }
@@ -50,25 +78,6 @@ export class TypusClient {
             config.registry.dov.dovSingle = DOV_SINGLE_REGISTRY;
         }
 
-        if (opts?.getAccessToken) {
-            return new TypusClient(config, { getAccessToken: opts.getAccessToken });
-        }
-
-        const token = process.env.LAZER_TOKEN ?? process.env.PYTH_LAZER_TOKEN;
-        if (!token) {
-            throw new Error("LAZER_TOKEN (or PYTH_LAZER_TOKEN) env var is required for Pyth Lazer client");
-        }
-        const lazer = await PythLazerClient.create({
-            token,
-            webSocketPoolConfig: { numConnections: 1 },
-        });
-        return new TypusClient(config, { lazer });
-    }
-
-    private constructor(
-        config: TypusConfig,
-        priceSource: { lazer?: PythLazerClient; getAccessToken?: () => string | Promise<string> }
-    ) {
         this.config = config;
         const network = config.network.toLowerCase();
 

@@ -57,7 +57,14 @@ export function getPureBcsSchema(typeTag: string | TypeTag): BcsType<any> | null
 	return null;
 }
 
-export function normalizeMoveArguments(args: unknown[] | object, argTypes: string[], parameterNames?: string[]) {
+// argTypes carries `null` for parameters whose type the codegen could not
+// resolve (external packages, e.g. Scallop in lending.ts). Only string equality
+// is ever tested below, so a null just falls through to the default branch.
+export function normalizeMoveArguments(
+	args: unknown[] | object,
+	argTypes: (string | null)[],
+	parameterNames?: string[],
+) {
 	const argLen = Array.isArray(args) ? args.length : Object.keys(args).length;
 	if (parameterNames && argLen !== parameterNames.length) {
 		throw new Error(

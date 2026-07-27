@@ -23,7 +23,16 @@ export class TypusClient {
     pythClient: PythLazerSuiClient;
     config: TypusConfig;
 
-    static async create(config: TypusConfig): Promise<TypusClient> {
+    /**
+     * `opts.getAccessToken` is the browser path: it returns a short-lived Pyth
+     * JWT per call, so no long-lived key is needed (and none can leak into a
+     * bundle). Omit it and we fall back to the WS client off `LAZER_TOKEN`,
+     * which is what node crankers and scripts use.
+     */
+    static async create(
+        config: TypusConfig,
+        opts?: { getAccessToken?: () => string | Promise<string> }
+    ): Promise<TypusClient> {
         // typus-config@main is stale (advertises old oracle + old perp pkgs). Override here.
         if (ORACLE_PACKAGE_ID) {
             config.package.oracle = ORACLE_PACKAGE_ID;
@@ -41,6 +50,10 @@ export class TypusClient {
             config.registry.dov.dovSingle = DOV_SINGLE_REGISTRY;
         }
 
+        if (opts?.getAccessToken) {
+            return new TypusClient(config, { getAccessToken: opts.getAccessToken });
+        }
+
         const token = process.env.LAZER_TOKEN ?? process.env.PYTH_LAZER_TOKEN;
         if (!token) {
             throw new Error("LAZER_TOKEN (or PYTH_LAZER_TOKEN) env var is required for Pyth Lazer client");
@@ -49,10 +62,13 @@ export class TypusClient {
             token,
             webSocketPoolConfig: { numConnections: 1 },
         });
-        return new TypusClient(config, lazer);
+        return new TypusClient(config, { lazer });
     }
 
-    private constructor(config: TypusConfig, lazer: PythLazerClient) {
+    private constructor(
+        config: TypusConfig,
+        priceSource: { lazer?: PythLazerClient; getAccessToken?: () => string | Promise<string> }
+    ) {
         this.config = config;
         const network = config.network.toLowerCase();
 
@@ -83,7 +99,7 @@ export class TypusClient {
         });
 
         this.pythClient = new PythLazerSuiClient({
-            lazer,
+            ...priceSource,
             sui: jsonRpcClient,
             network: config.network,
             lazerPackage: PYTH_LAZER_PACKAGE_ID,

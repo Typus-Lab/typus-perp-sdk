@@ -8,9 +8,13 @@ dotenv.config();
 // default MAINNET
 export const NETWORK = process.env.NEXT_PUBLIC_CLUSTER == "testnet" ? "TESTNET" : "MAINNET";
 
+// Mainnet is the CVersion-7 package: the only one carrying `create_trading_order_v2`
+// / `match_trading_order_v2` (the OracleV2 readers). Verified on-chain — the
+// previously pinned 0xf60e3542 exposes no `_v2` order entries at all, and
+// typus-config@main still advertises the older 0x8e4743f2.
 export const PERP_PACKAGE_ID =
     NETWORK == "MAINNET"
-        ? "0xf60e3542f1c65a77d9bcdffd5d8a712a46b935ec51b9052e5ad98888e0392d09"
+        ? "0xb78db3bf6aff87ae8aa6b1b5d4718d475d46b74734727889f2b4c300d79e8970"
         : "0x228f1823a2daf15cf2d5031e47bd7c26ae1d19ea89160df29d351c6e56134c61";
 
 export const STAKE_PACKAGE_ID =
@@ -71,15 +75,25 @@ export const LOCK_VAULT =
         ? "0x585355900351dd1915b77f31c06ae9e6d58b187de848d4e6e6a55d3789e281d6"
         : "0x8d3c497b2b0e7b8a7633422e8da780ba83ea6709d81ba7b0ca6935d58692cc96";
 
-// Pyth Lazer + OracleV2 (testnet only; mainnet still on Hermes path)
+// Pyth Lazer + OracleV2. Mainnet values mirror typus-rust
+// src/config/mainnet/pyth.json (oracle v16 / Lazer state), which the crankers
+// already run against — the OracleV2 object below holds 24 registered tokens.
 export const ORACLE_PACKAGE_ID =
-    NETWORK == "MAINNET" ? "" : "0xd2e030ab7f0fc956c7e683cf3c6faf3d22868dee81a4aae9f4a10a6d998a8a02";
+    NETWORK == "MAINNET"
+        ? "0xb52c1b617cf5c9a6f911907be7d4b7bc12c618050b6421ee9801a4011617dcbe"
+        : "0xd2e030ab7f0fc956c7e683cf3c6faf3d22868dee81a4aae9f4a10a6d998a8a02";
 export const ORACLE_V2_ID =
-    NETWORK == "MAINNET" ? "" : "0x6378d4a139475984613344077a862972756e2bd0cb2aab7018e7f48eeee0742d";
+    NETWORK == "MAINNET"
+        ? "0xcd03806a638885c18d9866b9704cb53487c51df8642e95059a6984673b9fa211"
+        : "0x6378d4a139475984613344077a862972756e2bd0cb2aab7018e7f48eeee0742d";
 export const PYTH_LAZER_PACKAGE_ID =
-    NETWORK == "MAINNET" ? "" : "0xacb76cbd636b83839153feff75b83157c400075717ce8c979fbbe88cf3564901";
+    NETWORK == "MAINNET"
+        ? "0xefbfd064480777699fd9c557a5804d72ace7bc82661fdc8d1f1a44ea6d92ee10"
+        : "0xacb76cbd636b83839153feff75b83157c400075717ce8c979fbbe88cf3564901";
 export const PYTH_LAZER_STATE_ID =
-    NETWORK == "MAINNET" ? "" : "0x7b570126bfdcc7f7b2b4028445d4ac1d35c41da498606a2b097c3973425698d3";
+    NETWORK == "MAINNET"
+        ? "0xd0db9c1e9212a98120384bf78d8b8c985d87b9ee6921dffcf9d1394062911573"
+        : "0x7b570126bfdcc7f7b2b4028445d4ac1d35c41da498606a2b097c3973425698d3";
 
 // DOV single-collateral Registry that the new typus_perp pkg links against
 // (origin 0x02821e55). typus-config@main still advertises the old 0x6c9a394a DOV.

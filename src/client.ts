@@ -2,7 +2,10 @@ import { graphql } from "@mysten/sui/graphql/schema";
 import { SuiGraphQLClient } from "@mysten/sui/graphql";
 import { SuiGrpcClient } from "@mysten/sui/grpc";
 import { PythLazerSuiClient, TypusConfig } from "@typus/typus-sdk/dist/src/utils";
-import { PythLazerClient } from "@pythnetwork/pyth-lazer-sdk";
+// Type-only + dynamic import below: this WS client is node-only, so a static
+// import would force the whole Lazer SDK into browser bundles that only ever
+// take the JWT/REST path.
+import type { PythLazerClient } from "@pythnetwork/pyth-lazer-sdk";
 import { JsonRpcHTTPTransport, SuiJsonRpcClient } from "@mysten/sui/jsonRpc";
 import { SuiClientTypes } from "@mysten/sui/client";
 import {
@@ -41,6 +44,10 @@ export class TypusClient {
         if (!token) {
             throw new Error("LAZER_TOKEN (or PYTH_LAZER_TOKEN) env var is required for Pyth Lazer client");
         }
+        // Cast at the boundary: the dynamic import resolves the ESM decls while the
+        // type-only import above resolves the CJS ones, and TS treats the two
+        // PythLazerClient declarations as distinct (separate private members).
+        const { PythLazerClient } = (await import("@pythnetwork/pyth-lazer-sdk")) as any;
         const lazer = await PythLazerClient.create({
             token,
             webSocketPoolConfig: { numConnections: 1 },

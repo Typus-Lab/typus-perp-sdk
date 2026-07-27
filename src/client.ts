@@ -47,7 +47,14 @@ export class TypusClient {
         // Cast at the boundary: the dynamic import resolves the ESM decls while the
         // type-only import above resolves the CJS ones, and TS treats the two
         // PythLazerClient declarations as distinct (separate private members).
-        const { PythLazerClient } = (await import("@pythnetwork/pyth-lazer-sdk")) as any;
+        const { PythLazerClient } = (await import(
+            // webpackIgnore: bundlers must not follow this. It is the node-only
+            // branch, and @pythnetwork/pyth-lazer-sdk@6.2.2 ships an exports map
+            // with "default" ahead of "types", which webpack 5 rejects outright
+            // ("Default condition should be last one") — so merely resolving it
+            // fails a browser build even though the branch is never taken there.
+            /* webpackIgnore: true */ "@pythnetwork/pyth-lazer-sdk"
+        )) as any;
         const lazer = await PythLazerClient.create({
             token,
             webSocketPoolConfig: { numConnections: 1 },

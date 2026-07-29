@@ -9,7 +9,7 @@ import { TypusClient } from "src/client";
 (async () => {
     let keypair = Ed25519Keypair.deriveKeypair(String(process.env.MNEMONIC));
     let config = await TypusConfig.default(NETWORK, null);
-    let client = new TypusClient(config);
+    let client = await TypusClient.create(config);
 
     let user = keypair.toSuiAddress();
     console.log(user);
@@ -36,11 +36,11 @@ import { TypusClient } from "src/client";
     });
     console.log("stakes: ", stakes);
 
-    let userShareId = stakes[index][0] ? stakes[index][0]!.user_share_id.toString() : null;
+    let userShareId = stakes[index]?.[0] ? stakes[index][0]!.user_share_id.toString() : null;
     console.log("userShareId: ", userShareId);
 
     // INPUT
-    let cTOKEN: TOKEN = "wUSDT";
+    let cTOKEN: TOKEN = "wUSDC";
     let cToken = tokenType[NETWORK][cTOKEN];
 
     // coins
@@ -62,22 +62,19 @@ import { TypusClient } from "src/client";
         amount: "10000000000",
         userShareId,
         user,
-        stake: true,
+        stake: false,
         isAutoCompound: false,
     });
 
-    // console.dir(JSON.parse(await tx.toJSON({ client: client.gRpcClient })).commands[8], { depth: null });
-    // console.dir(JSON.parse(await tx.toJSON({ client: client.gRpcClient })).inputs[11], { depth: null });
-
-    // let dryrunRes = await client.devInspectTransactionBlock({
-    //     transaction: tx,
-    //
-    // });
-    // // console.log(dryrunRes);
-    // console.log(dryrunRes.Transaction.events.filter((e) => e.type.endsWith("MintLpEvent")));
-    // console.log(dryrunRes.Transaction.events.filter((e) => e.type.endsWith("StakeEvent")));
+    tx.setSender(user);
+    let dryrunRes = await client.devInspectTransactionBlock({ transaction: tx });
+    if (dryrunRes.FailedTransaction) {
+        console.error("DRY-RUN FAILED:", JSON.stringify(dryrunRes.FailedTransaction.status.error, null, 2));
+        process.exit(1);
+    }
+    console.log("DRY-RUN OK");
 
     let res = await client.signAndExecuteTransaction({ signer: keypair, transaction: tx });
-    console.log(res);
-    // https://testnet.suivision.xyz/txblock/GRjmdrHtcqzAP4a8i6nTef88zDpPZ2ouLSVX4DTj8JnC
+    console.log("res:", JSON.stringify(res, null, 2).slice(0, 1500));
+    process.exit(0);
 })();

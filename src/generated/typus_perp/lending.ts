@@ -8,7 +8,7 @@
  */
 
 import { type Transaction } from "@mysten/sui/transactions";
-import { normalizeMoveArguments, type RawTransactionArgument } from "../utils/index.js";
+import { normalizeMoveArguments, type RawTransactionArgument } from "../utils/index";
 export interface DepositScallopBasicArguments {
     balance: RawTransactionArgument<string>;
     scallopVersion: RawTransactionArgument<string>;

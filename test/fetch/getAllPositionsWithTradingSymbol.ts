@@ -5,7 +5,7 @@ import { getAllPositionsWithTradingSymbol, NETWORK } from "src";
 
 (async () => {
     let config = await TypusConfig.default(NETWORK, null);
-    let client = new TypusClient(config);
+    let client = await TypusClient.create(config);
 
     let baseToken: TOKEN = "SUI";
 

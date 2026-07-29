@@ -1,13 +1,12 @@
 import {
-    createTradingOrderWithBidReceipt as _createTradingOrderWithBidReceipt,
-    reduceOptionCollateralPositionSize as _reduceOptionCollateralPositionSize,
+    createTradingOrderWithBidReceiptV2 as _createTradingOrderWithBidReceipt,
+    reduceOptionCollateralPositionSizeV2 as _reduceOptionCollateralPositionSize,
 } from "src/generated/typus_perp/trading";
 import { Transaction, TransactionObjectArgument } from "@mysten/sui/transactions";
-import { updatePyth, updateOracleWithPythUsd, splitCoin } from "@typus/typus-sdk/dist/src/utils";
-import { tokenType, TOKEN, oracle } from "@typus/typus-sdk/dist/src/constants";
+import { tokenType, TOKEN } from "@typus/typus-sdk/dist/src/constants";
 import { getSplitBidReceiptTx } from "@typus/typus-sdk/dist/src/typus-dov-single-v2";
 import { getWithdrawBidReceiptTx } from "@typus/typus-sdk/dist/src/auto-bid/user-entry";
-import { COMPETITION_CONFIG, LP_POOL, MARKET, NETWORK, PERP_VERSION } from "..";
+import { COMPETITION_CONFIG, LP_POOL, MARKET, NETWORK, ORACLE_V2_ID, PERP_VERSION } from "..";
 import { TypusClient } from "src/client";
 
 export function splitBidReceiptTx(
@@ -64,22 +63,14 @@ export async function createTradingOrderWithBidReceiptByAutoBid(
         signalIndex: string;
         strategyIndex: string;
         share?: string; // if undefined, merge all receipts
-        suiCoins?: string[]; // for sponsored tx
     }
 ): Promise<Transaction> {
-    // INPUTS
     let TOKEN = input.cToken;
     let BASE_TOKEN = input.tradingToken;
-    let tokens = Array.from(new Set([TOKEN, BASE_TOKEN]));
+    let tokens = Array.from(new Set([TOKEN, BASE_TOKEN])).filter((t) => t !== "TYPUS");
 
-    let suiCoin;
-    if (client.config.sponsored) {
-        suiCoin = splitCoin(tx, tokenType.MAINNET.SUI, input.suiCoins!, tokens.length.toString(), client.config.sponsored);
-    }
-
-    await updatePyth(client.pythClient, tx, tokens, suiCoin);
-    for (let token of tokens) {
-        updateOracleWithPythUsd(client.pythClient, tx, client.config.package.oracle, token);
+    if (tokens.length > 0) {
+        await client.pythClient.updateOracleV2WithPythLazer(tx, tokens);
     }
 
     let withdrawBidReceipt = getWithdrawBidReceiptTx(client.config, tx, {
@@ -111,18 +102,17 @@ export async function createTradingOrderWithBidReceiptByAutoBid(
                 version: PERP_VERSION,
                 registry: MARKET,
                 poolRegistry: LP_POOL,
+                dovRegistry: client.config.registry.dov.dovSingle,
+                oracleV2: ORACLE_V2_ID,
                 marketIndex: BigInt(input.perpIndex),
                 poolIndex: BigInt(input.poolIndex),
-                typusOracleCToken: oracle[NETWORK][TOKEN]!,
-                typusOracleTradingSymbol: oracle[NETWORK][BASE_TOKEN]!,
                 typusEcosystemVersion: client.config.version.typus,
                 typusUserRegistry: client.config.registry.typus.user,
                 typusLeaderboardRegistry: client.config.registry.typus.leaderboard,
-                isLong: input.isLong,
-                dovRegistry: client.config.registry.dov.dovSingle,
-                collateralBidReceipt,
                 tailsStakingRegistry: client.config.registry.typus.tailsStaking,
                 competitionConfig: COMPETITION_CONFIG,
+                collateralBidReceipt,
+                isLong: input.isLong,
             },
             typeArguments: [cToken, bToken, baseToken],
         })
@@ -145,22 +135,14 @@ export async function createTradingOrderWithBidReceipt(
         bToken: TOKEN;
         bidReceipts: string[];
         share?: string; // if undefined, merge all receipts
-        suiCoins?: string[]; // for sponsored tx
     }
 ): Promise<Transaction> {
-    // INPUTS
     let TOKEN = input.cToken;
     let BASE_TOKEN = input.tradingToken;
-    let tokens = Array.from(new Set([TOKEN, BASE_TOKEN]));
+    let tokens = Array.from(new Set([TOKEN, BASE_TOKEN])).filter((t) => t !== "TYPUS");
 
-    let suiCoin;
-    if (client.config.sponsored) {
-        suiCoin = splitCoin(tx, tokenType.MAINNET.SUI, input.suiCoins!, tokens.length.toString(), client.config.sponsored);
-    }
-
-    await updatePyth(client.pythClient, tx, tokens, suiCoin);
-    for (let token of tokens) {
-        updateOracleWithPythUsd(client.pythClient, tx, client.config.package.oracle, token);
+    if (tokens.length > 0) {
+        await client.pythClient.updateOracleV2WithPythLazer(tx, tokens);
     }
 
     // split bid receipt
@@ -180,18 +162,17 @@ export async function createTradingOrderWithBidReceipt(
                 version: PERP_VERSION,
                 registry: MARKET,
                 poolRegistry: LP_POOL,
+                dovRegistry: client.config.registry.dov.dovSingle,
+                oracleV2: ORACLE_V2_ID,
                 marketIndex: BigInt(input.perpIndex),
                 poolIndex: BigInt(input.poolIndex),
-                typusOracleCToken: oracle[NETWORK][TOKEN]!,
-                typusOracleTradingSymbol: oracle[NETWORK][BASE_TOKEN]!,
                 typusEcosystemVersion: client.config.version.typus,
                 typusUserRegistry: client.config.registry.typus.user,
                 typusLeaderboardRegistry: client.config.registry.typus.leaderboard,
-                isLong: input.isLong,
-                dovRegistry: client.config.registry.dov.dovSingle,
-                collateralBidReceipt,
                 tailsStakingRegistry: client.config.registry.typus.tailsStaking,
                 competitionConfig: COMPETITION_CONFIG,
+                collateralBidReceipt,
+                isLong: input.isLong,
             },
             typeArguments: [cToken, bToken, baseToken],
         })
@@ -210,21 +191,14 @@ export async function reduceOptionCollateralPositionSize(
         bToken: string;
         positionId: string;
         orderSize: string | null;
-        suiCoins?: string[]; // for sponsored tx
     }
 ): Promise<Transaction> {
     let TOKEN = input.cToken;
     let BASE_TOKEN = input.tradingToken;
-    let tokens = Array.from(new Set([TOKEN, BASE_TOKEN]));
+    let tokens = Array.from(new Set([TOKEN, BASE_TOKEN])).filter((t) => t !== "TYPUS");
 
-    let suiCoin;
-    if (client.config.sponsored) {
-        suiCoin = splitCoin(tx, tokenType.MAINNET.SUI, input.suiCoins!, tokens.length.toString(), client.config.sponsored);
-    }
-
-    await updatePyth(client.pythClient, tx, tokens, suiCoin);
-    for (let token of tokens) {
-        updateOracleWithPythUsd(client.pythClient, tx, client.config.package.oracle, token);
+    if (tokens.length > 0) {
+        await client.pythClient.updateOracleV2WithPythLazer(tx, tokens);
     }
 
     let cToken = tokenType[NETWORK][TOKEN];
@@ -236,18 +210,17 @@ export async function reduceOptionCollateralPositionSize(
                 version: PERP_VERSION,
                 registry: MARKET,
                 poolRegistry: LP_POOL,
+                dovRegistry: client.config.registry.dov.dovSingle,
+                oracleV2: ORACLE_V2_ID,
                 marketIndex: BigInt(input.perpIndex),
                 poolIndex: BigInt(input.perpIndex),
-                typusOracleCToken: oracle[NETWORK][TOKEN]!,
-                typusOracleTradingSymbol: oracle[NETWORK][BASE_TOKEN]!,
                 typusEcosystemVersion: client.config.version.typus,
                 typusUserRegistry: client.config.registry.typus.user,
                 typusLeaderboardRegistry: client.config.registry.typus.leaderboard,
-                dovRegistry: client.config.registry.dov.dovSingle,
-                positionId: BigInt(input.positionId),
-                orderSize: input.orderSize ? BigInt(input.orderSize) : null,
                 tailsStakingRegistry: client.config.registry.typus.tailsStaking,
                 competitionConfig: COMPETITION_CONFIG,
+                positionId: BigInt(input.positionId),
+                orderSize: tx.pure.option("u64", input.orderSize ? BigInt(input.orderSize) : null),
             },
             typeArguments: [cToken, bToken, baseToken],
         })

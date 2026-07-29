@@ -2,6 +2,7 @@
  * THIS FILE IS GENERATED AND SHOULD NOT BE MANUALLY MODIFIED *
  **************************************************************/
 
+
 /**
  * The `lp_pool` module is the heart of the TLP (Typus Liquidity Pool) logic. It
  * defines the structures for liquidity pools, token pools, and their
@@ -9,55 +10,22 @@
  * liquidity, swapping, and redeeming.
  */
 
-import { MoveStruct, normalizeMoveArguments, type RawTransactionArgument } from "../utils/index.js";
-import { bcs } from "@mysten/sui/bcs";
-import { type Transaction } from "@mysten/sui/transactions";
-import * as type_name from "./deps/std/type_name.js";
-import * as type_name_1 from "./deps/std/type_name.js";
-import * as type_name_2 from "./deps/std/type_name.js";
-import * as escrow from "./escrow.js";
-import * as balance from "./deps/sui/balance.js";
-import * as type_name_3 from "./deps/std/type_name.js";
-import * as type_name_4 from "./deps/std/type_name.js";
-import * as type_name_5 from "./deps/std/type_name.js";
-import * as type_name_6 from "./deps/std/type_name.js";
-import * as type_name_7 from "./deps/std/type_name.js";
-import * as type_name_8 from "./deps/std/type_name.js";
-import * as type_name_9 from "./deps/std/type_name.js";
-import * as type_name_10 from "./deps/std/type_name.js";
-import * as type_name_11 from "./deps/std/type_name.js";
-import * as type_name_12 from "./deps/std/type_name.js";
-import * as type_name_13 from "./deps/std/type_name.js";
-import * as type_name_14 from "./deps/std/type_name.js";
-import * as type_name_15 from "./deps/std/type_name.js";
-import * as type_name_16 from "./deps/std/type_name.js";
-import * as type_name_17 from "./deps/std/type_name.js";
-import * as type_name_18 from "./deps/std/type_name.js";
-import * as type_name_19 from "./deps/std/type_name.js";
-import * as type_name_20 from "./deps/std/type_name.js";
-import * as type_name_21 from "./deps/std/type_name.js";
-import * as type_name_22 from "./deps/std/type_name.js";
-import * as type_name_23 from "./deps/std/type_name.js";
-import * as type_name_24 from "./deps/std/type_name.js";
-import * as type_name_25 from "./deps/std/type_name.js";
-import * as type_name_26 from "./deps/std/type_name.js";
-import * as type_name_27 from "./deps/std/type_name.js";
-import * as type_name_28 from "./deps/std/type_name.js";
-import * as type_name_29 from "./deps/std/type_name.js";
-const $moduleName = "@typus/perp::lp_pool";
-export const Registry = new MoveStruct({
-    name: `${$moduleName}::Registry`,
-    fields: {
-        id: bcs.Address,
+import { MoveStruct, normalizeMoveArguments, type RawTransactionArgument } from '../utils/index';
+import { bcs } from '@mysten/sui/bcs';
+import { type Transaction } from '@mysten/sui/transactions';
+import * as object from './deps/sui/object';
+import * as type_name from './deps/std/type_name';
+import * as escrow from './escrow';
+import * as balance from './deps/sui/balance';
+const $moduleName = '@typus/perp::lp_pool';
+export const Registry = new MoveStruct({ name: `${$moduleName}::Registry`, fields: {
+        id: object.UID,
         /** The number of pools in the registry. */
         num_pool: bcs.u64(),
         /** The UID of the liquidity pool registry. */
-        liquidity_pool_registry: bcs.Address,
-    },
-});
-export const SpotConfig = new MoveStruct({
-    name: `${$moduleName}::SpotConfig`,
-    fields: {
+        liquidity_pool_registry: object.UID
+    } });
+export const SpotConfig = new MoveStruct({ name: `${$moduleName}::SpotConfig`, fields: {
         /** The minimum deposit amount. */
         min_deposit: bcs.u64(),
         /** The maximum capacity of the pool. */
@@ -79,12 +47,9 @@ export const SpotConfig = new MoveStruct({
         /** The protocol's share of the lending interest in basis points. */
         lending_protocol_share_bp: bcs.u64(),
         /** Padding for future use. */
-        u64_padding: bcs.vector(bcs.u64()),
-    },
-});
-export const MarginConfig = new MoveStruct({
-    name: `${$moduleName}::MarginConfig`,
-    fields: {
+        u64_padding: bcs.vector(bcs.u64())
+    } });
+export const MarginConfig = new MoveStruct({ name: `${$moduleName}::MarginConfig`, fields: {
         /** The basic borrow rate at utilization 0. */
         basic_borrow_rate_0: bcs.u64(),
         /** The basic borrow rate at utilization 1. */
@@ -100,12 +65,9 @@ export const MarginConfig = new MoveStruct({
         /** The maximum order reserve ratio in basis points. */
         max_order_reserve_ratio_bp: bcs.u64(),
         /** Padding for future use. */
-        u64_padding: bcs.vector(bcs.u64()),
-    },
-});
-export const Config = new MoveStruct({
-    name: `${$moduleName}::Config`,
-    fields: {
+        u64_padding: bcs.vector(bcs.u64())
+    } });
+export const Config = new MoveStruct({ name: `${$moduleName}::Config`, fields: {
         /** The address of the oracle. */
         oracle_id: bcs.Address,
         /** The number of decimals for the liquidity token. */
@@ -115,12 +77,9 @@ export const Config = new MoveStruct({
         /** The margin-related configuration for the token pool. */
         margin_config: MarginConfig,
         /** Padding for future use. */
-        u64_padding: bcs.vector(bcs.u64()),
-    },
-});
-export const State = new MoveStruct({
-    name: `${$moduleName}::State`,
-    fields: {
+        u64_padding: bcs.vector(bcs.u64())
+    } });
+export const State = new MoveStruct({ name: `${$moduleName}::State`, fields: {
         /** The amount of liquidity in the pool. */
         liquidity_amount: bcs.u64(),
         /** The value of the liquidity in USD. */
@@ -142,23 +101,17 @@ export const State = new MoveStruct({
         /** The current lending amount. */
         current_lending_amount: bcs.vector(bcs.u64()),
         /** Padding for future use. */
-        u64_padding: bcs.vector(bcs.u64()),
-    },
-});
-export const TokenPool = new MoveStruct({
-    name: `${$moduleName}::TokenPool`,
-    fields: {
+        u64_padding: bcs.vector(bcs.u64())
+    } });
+export const TokenPool = new MoveStruct({ name: `${$moduleName}::TokenPool`, fields: {
         /** The type name of the token. */
         token_type: type_name.TypeName,
         /** The configuration for the token pool. */
         config: Config,
         /** The state of the token pool. */
-        state: State,
-    },
-});
-export const LiquidityPoolInfo = new MoveStruct({
-    name: `${$moduleName}::LiquidityPoolInfo`,
-    fields: {
+        state: State
+    } });
+export const LiquidityPoolInfo = new MoveStruct({ name: `${$moduleName}::LiquidityPoolInfo`, fields: {
         /** The number of decimals for the LP token. */
         lp_token_decimal: bcs.u64(),
         /** The total supply of LP tokens. */
@@ -166,23 +119,20 @@ export const LiquidityPoolInfo = new MoveStruct({
         /** The total value locked in the pool in USD. */
         tvl_usd: bcs.u64(),
         /** Whether the pool is active. */
-        is_active: bcs.bool(),
-    },
-});
-export const LiquidityPool = new MoveStruct({
-    name: `${$moduleName}::LiquidityPool`,
-    fields: {
+        is_active: bcs.bool()
+    } });
+export const LiquidityPool = new MoveStruct({ name: `${$moduleName}::LiquidityPool`, fields: {
         /**
-         * The UID of the object. Token balances are dynamic fields under this id with
-         * TypeName key.
-         */
-        id: bcs.Address,
+           * The UID of the object. Token balances are dynamic fields under this id with
+           * TypeName key.
+           */
+        id: object.UID,
         /** The index of the pool. */
         index: bcs.u64(),
         /** The type name of the LP token. */
-        lp_token_type: type_name_1.TypeName,
+        lp_token_type: type_name.TypeName,
         /** A vector of the type names of the liquidity tokens. */
-        liquidity_tokens: bcs.vector(type_name_2.TypeName),
+        liquidity_tokens: bcs.vector(type_name.TypeName),
         /** A vector of the token pools. */
         token_pools: bcs.vector(TokenPool),
         /** Information about the liquidity pool. */
@@ -192,12 +142,9 @@ export const LiquidityPool = new MoveStruct({
         /** Padding for future use. */
         u64_padding: bcs.vector(bcs.u64()),
         /** Padding for future use. */
-        bcs_padding: bcs.vector(bcs.u8()),
-    },
-});
-export const DeactivatingShares = new MoveStruct({
-    name: `${$moduleName}::DeactivatingShares<phantom TOKEN>`,
-    fields: {
+        bcs_padding: bcs.vector(bcs.u8())
+    } });
+export const DeactivatingShares = new MoveStruct({ name: `${$moduleName}::DeactivatingShares`, fields: {
         /** The balance of the deactivating shares. */
         balance: balance.Balance,
         /** The timestamp of the redemption. */
@@ -205,259 +152,164 @@ export const DeactivatingShares = new MoveStruct({
         /** The timestamp when the shares can be unlocked. */
         unlock_ts_ms: bcs.u64(),
         /** Padding for future use. */
-        u64_padding: bcs.vector(bcs.u64()),
-    },
-});
-export const ManagerDepositReceipt = new MoveStruct({
-    name: `${$moduleName}::ManagerDepositReceipt`,
-    fields: {
-        id: bcs.Address,
+        u64_padding: bcs.vector(bcs.u64())
+    } });
+export const ManagerDepositReceipt = new MoveStruct({ name: `${$moduleName}::ManagerDepositReceipt`, fields: {
+        id: object.UID,
         /** The index of the pool. */
         index: bcs.u64(),
         /** The type name of the token. */
-        token_type: type_name_3.TypeName,
+        token_type: type_name.TypeName,
         /** The amount of the deposit. */
         amount: bcs.u64(),
         /** Padding for future use. */
-        u64_padding: bcs.vector(bcs.u64()),
-    },
-});
-export const NewLiquidityPoolEvent = new MoveStruct({
-    name: `${$moduleName}::NewLiquidityPoolEvent`,
-    fields: {
+        u64_padding: bcs.vector(bcs.u64())
+    } });
+export const NewLiquidityPoolEvent = new MoveStruct({ name: `${$moduleName}::NewLiquidityPoolEvent`, fields: {
         sender: bcs.Address,
         index: bcs.u64(),
-        lp_token_type: type_name_4.TypeName,
+        lp_token_type: type_name.TypeName,
         lp_token_decimal: bcs.u64(),
-        u64_padding: bcs.vector(bcs.u64()),
-    },
-});
-export const UpdateUnlockCountdownTsMsEvent = new MoveStruct({
-    name: `${$moduleName}::UpdateUnlockCountdownTsMsEvent`,
-    fields: {
+        u64_padding: bcs.vector(bcs.u64())
+    } });
+export const UpdateUnlockCountdownTsMsEvent = new MoveStruct({ name: `${$moduleName}::UpdateUnlockCountdownTsMsEvent`, fields: {
         sender: bcs.Address,
         index: bcs.u64(),
         previous_unlock_countdown_ts_ms: bcs.u64(),
         new_unlock_countdown_ts_ms: bcs.u64(),
-        u64_padding: bcs.vector(bcs.u64()),
-    },
-});
-export const UpdateRebalanceCostThresholdBpEvent = new MoveStruct({
-    name: `${$moduleName}::UpdateRebalanceCostThresholdBpEvent`,
-    fields: {
+        u64_padding: bcs.vector(bcs.u64())
+    } });
+export const UpdateRebalanceCostThresholdBpEvent = new MoveStruct({ name: `${$moduleName}::UpdateRebalanceCostThresholdBpEvent`, fields: {
         sender: bcs.Address,
         index: bcs.u64(),
         previous_rebalance_cost_threshold_bp: bcs.u64(),
         new_rebalance_cost_threshold_bp: bcs.u64(),
-        u64_padding: bcs.vector(bcs.u64()),
-    },
-});
-export const AddLiquidityTokenEvent = new MoveStruct({
-    name: `${$moduleName}::AddLiquidityTokenEvent`,
-    fields: {
+        u64_padding: bcs.vector(bcs.u64())
+    } });
+export const AddLiquidityTokenEvent = new MoveStruct({ name: `${$moduleName}::AddLiquidityTokenEvent`, fields: {
         sender: bcs.Address,
         index: bcs.u64(),
-        token_type: type_name_5.TypeName,
+        token_type: type_name.TypeName,
         config: Config,
         state: State,
-        u64_padding: bcs.vector(bcs.u64()),
-    },
-});
-export const UpdateSpotConfigEvent = new MoveStruct({
-    name: `${$moduleName}::UpdateSpotConfigEvent`,
-    fields: {
+        u64_padding: bcs.vector(bcs.u64())
+    } });
+export const UpdateSpotConfigEvent = new MoveStruct({ name: `${$moduleName}::UpdateSpotConfigEvent`, fields: {
         sender: bcs.Address,
         index: bcs.u64(),
-        liquidity_token_type: type_name_6.TypeName,
+        liquidity_token_type: type_name.TypeName,
         previous_spot_config: SpotConfig,
         new_spot_config: SpotConfig,
-        u64_padding: bcs.vector(bcs.u64()),
-    },
-});
-export const ManagerEmergencyDepositEvent = new MoveStruct({
-    name: `${$moduleName}::ManagerEmergencyDepositEvent`,
-    fields: {
+        u64_padding: bcs.vector(bcs.u64())
+    } });
+export const ManagerEmergencyDepositEvent = new MoveStruct({ name: `${$moduleName}::ManagerEmergencyDepositEvent`, fields: {
         sender: bcs.Address,
         index: bcs.u64(),
-        liquidity_token_type: type_name_7.TypeName,
+        liquidity_token_type: type_name.TypeName,
         amount: bcs.u64(),
-        u64_padding: bcs.vector(bcs.u64()),
-    },
-});
-export const ManagerEmergencyWithdrawEvent = new MoveStruct({
-    name: `${$moduleName}::ManagerEmergencyWithdrawEvent`,
-    fields: {
+        u64_padding: bcs.vector(bcs.u64())
+    } });
+export const ManagerEmergencyWithdrawEvent = new MoveStruct({ name: `${$moduleName}::ManagerEmergencyWithdrawEvent`, fields: {
         sender: bcs.Address,
         index: bcs.u64(),
-        liquidity_token_type: type_name_8.TypeName,
+        liquidity_token_type: type_name.TypeName,
         amount: bcs.u64(),
-        u64_padding: bcs.vector(bcs.u64()),
-    },
-});
-export const UpdateMarginConfigEvent = new MoveStruct({
-    name: `${$moduleName}::UpdateMarginConfigEvent`,
-    fields: {
+        u64_padding: bcs.vector(bcs.u64())
+    } });
+export const UpdateMarginConfigEvent = new MoveStruct({ name: `${$moduleName}::UpdateMarginConfigEvent`, fields: {
         sender: bcs.Address,
         index: bcs.u64(),
-        liquidity_token_type: type_name_9.TypeName,
+        liquidity_token_type: type_name.TypeName,
         previous_margin_config: MarginConfig,
         new_margin_config: MarginConfig,
-        u64_padding: bcs.vector(bcs.u64()),
-    },
-});
-export const MintLpEvent = new MoveStruct({
-    name: `${$moduleName}::MintLpEvent`,
-    fields: {
+        u64_padding: bcs.vector(bcs.u64())
+    } });
+export const MintLpEvent = new MoveStruct({ name: `${$moduleName}::MintLpEvent`, fields: {
         sender: bcs.Address,
         index: bcs.u64(),
-        liquidity_token_type: type_name_10.TypeName,
+        liquidity_token_type: type_name.TypeName,
         deposit_amount: bcs.u64(),
         deposit_amount_usd: bcs.u64(),
         mint_fee_usd: bcs.u64(),
-        lp_token_type: type_name_11.TypeName,
+        lp_token_type: type_name.TypeName,
         minted_lp_amount: bcs.u64(),
-        u64_padding: bcs.vector(bcs.u64()),
-    },
-});
-export const UpdateBorrowInfoEvent = new MoveStruct({
-    name: `${$moduleName}::UpdateBorrowInfoEvent`,
-    fields: {
+        u64_padding: bcs.vector(bcs.u64())
+    } });
+export const UpdateBorrowInfoEvent = new MoveStruct({ name: `${$moduleName}::UpdateBorrowInfoEvent`, fields: {
         index: bcs.u64(),
-        liquidity_token_type: type_name_12.TypeName,
+        liquidity_token_type: type_name.TypeName,
         previous_borrow_ts_ms: bcs.u64(),
         previous_cumulative_borrow_rate: bcs.u64(),
         borrow_interval_ts_ms: bcs.u64(),
         last_borrow_rate_ts_ms: bcs.u64(),
         last_cumulative_borrow_rate: bcs.u64(),
-        u64_padding: bcs.vector(bcs.u64()),
-    },
-});
-export const SwapEvent = new MoveStruct({
-    name: `${$moduleName}::SwapEvent`,
-    fields: {
+        u64_padding: bcs.vector(bcs.u64())
+    } });
+export const SwapEvent = new MoveStruct({ name: `${$moduleName}::SwapEvent`, fields: {
         sender: bcs.Address,
         index: bcs.u64(),
-        from_token_type: type_name_13.TypeName,
+        from_token_type: type_name.TypeName,
         from_amount: bcs.u64(),
-        to_token_type: type_name_14.TypeName,
+        to_token_type: type_name.TypeName,
         min_to_amount: bcs.u64(),
         actual_to_amount: bcs.u64(),
         fee_amount: bcs.u64(),
         fee_amount_usd: bcs.u64(),
         oracle_price_from_token: bcs.u64(),
         oracle_price_to_token: bcs.u64(),
-        u64_padding: bcs.vector(bcs.u64()),
-    },
-});
-export const RedeemEvent = new MoveStruct({
-    name: `${$moduleName}::RedeemEvent`,
-    fields: {
+        u64_padding: bcs.vector(bcs.u64())
+    } });
+export const RedeemEvent = new MoveStruct({ name: `${$moduleName}::RedeemEvent`, fields: {
         sender: bcs.Address,
         index: bcs.u64(),
         share: bcs.u64(),
         share_price: bcs.u64(),
         timestamp_ts_ms: bcs.u64(),
         unlock_ts_ms: bcs.u64(),
-        u64_padding: bcs.vector(bcs.u64()),
-    },
-});
-export const SuspendPoolEvent = new MoveStruct({
-    name: `${$moduleName}::SuspendPoolEvent`,
-    fields: {
+        u64_padding: bcs.vector(bcs.u64())
+    } });
+export const SuspendPoolEvent = new MoveStruct({ name: `${$moduleName}::SuspendPoolEvent`, fields: {
         sender: bcs.Address,
         index: bcs.u64(),
-        u64_padding: bcs.vector(bcs.u64()),
-    },
-});
-export const ResumePoolEvent = new MoveStruct({
-    name: `${$moduleName}::ResumePoolEvent`,
-    fields: {
+        u64_padding: bcs.vector(bcs.u64())
+    } });
+export const ResumePoolEvent = new MoveStruct({ name: `${$moduleName}::ResumePoolEvent`, fields: {
         sender: bcs.Address,
         index: bcs.u64(),
-        u64_padding: bcs.vector(bcs.u64()),
-    },
-});
-export const SuspendTokenPoolEvent = new MoveStruct({
-    name: `${$moduleName}::SuspendTokenPoolEvent`,
-    fields: {
+        u64_padding: bcs.vector(bcs.u64())
+    } });
+export const SuspendTokenPoolEvent = new MoveStruct({ name: `${$moduleName}::SuspendTokenPoolEvent`, fields: {
         sender: bcs.Address,
         index: bcs.u64(),
-        liquidity_token: type_name_15.TypeName,
-        u64_padding: bcs.vector(bcs.u64()),
-    },
-});
-export const ResumeTokenPoolEvent = new MoveStruct({
-    name: `${$moduleName}::ResumeTokenPoolEvent`,
-    fields: {
+        liquidity_token: type_name.TypeName,
+        u64_padding: bcs.vector(bcs.u64())
+    } });
+export const ResumeTokenPoolEvent = new MoveStruct({ name: `${$moduleName}::ResumeTokenPoolEvent`, fields: {
         sender: bcs.Address,
         index: bcs.u64(),
-        liquidity_token: type_name_16.TypeName,
-        u64_padding: bcs.vector(bcs.u64()),
-    },
-});
-export const DepositLendingEvent = new MoveStruct({
-    name: `${$moduleName}::DepositLendingEvent`,
-    fields: {
+        liquidity_token: type_name.TypeName,
+        u64_padding: bcs.vector(bcs.u64())
+    } });
+export const ManagerRemoveLiquidityTokenEvent = new MoveStruct({ name: `${$moduleName}::ManagerRemoveLiquidityTokenEvent`, fields: {
         index: bcs.u64(),
-        lending_index: bcs.u64(),
-        c_token_type: type_name_17.TypeName,
-        deposit_amount: bcs.u64(),
-        minted_market_coin_amount: bcs.u64(),
-        latest_lending_amount: bcs.u64(),
-        latest_market_coin_amount: bcs.u64(),
-        latest_reserved_amount: bcs.u64(),
-        latest_liquidity_amount: bcs.u64(),
-        u64_padding: bcs.vector(bcs.u64()),
-    },
-});
-export const WithdrawLendingEvent = new MoveStruct({
-    name: `${$moduleName}::WithdrawLendingEvent`,
-    fields: {
+        liquidity_token: type_name.TypeName,
+        u64_padding: bcs.vector(bcs.u64())
+    } });
+export const RebalanceProcess = new MoveStruct({ name: `${$moduleName}::RebalanceProcess`, fields: {
         index: bcs.u64(),
-        lending_index: bcs.u64(),
-        c_token_type: type_name_18.TypeName,
-        r_token_type: type_name_19.TypeName,
-        withdraw_amount: bcs.u64(),
-        withdrawn_collateral_amount: bcs.u64(),
-        latest_lending_amount: bcs.u64(),
-        latest_market_coin_amount: bcs.u64(),
-        latest_reserved_amount: bcs.u64(),
-        latest_liquidity_amount: bcs.u64(),
-        lending_interest: bcs.u64(),
-        protocol_share: bcs.u64(),
-        lending_reward: bcs.u64(),
-        reward_protocol_share: bcs.u64(),
-        u64_padding: bcs.vector(bcs.u64()),
-    },
-});
-export const ManagerRemoveLiquidityTokenEvent = new MoveStruct({
-    name: `${$moduleName}::ManagerRemoveLiquidityTokenEvent`,
-    fields: {
-        index: bcs.u64(),
-        liquidity_token: type_name_20.TypeName,
-        u64_padding: bcs.vector(bcs.u64()),
-    },
-});
-export const RebalanceProcess = new MoveStruct({
-    name: `${$moduleName}::RebalanceProcess`,
-    fields: {
-        index: bcs.u64(),
-        token_type_a: type_name_21.TypeName,
+        token_type_a: type_name.TypeName,
         token_decimal_a: bcs.u64(),
         token_amount_a: bcs.u64(),
         oracle_price_a: bcs.u64(),
         reduced_usd: bcs.u64(),
-        token_type_b: type_name_22.TypeName,
+        token_type_b: type_name.TypeName,
         token_decimal_b: bcs.u64(),
-        oracle_price_b: bcs.u64(),
-    },
-});
-export const RebalanceEvent = new MoveStruct({
-    name: `${$moduleName}::RebalanceEvent`,
-    fields: {
+        oracle_price_b: bcs.u64()
+    } });
+export const RebalanceEvent = new MoveStruct({ name: `${$moduleName}::RebalanceEvent`, fields: {
         index: bcs.u64(),
-        from_token: type_name_23.TypeName,
-        to_token: type_name_24.TypeName,
+        from_token: type_name.TypeName,
+        to_token: type_name.TypeName,
         rebalance_amount: bcs.u64(),
         from_token_oracle_price: bcs.u64(),
         to_token_oracle_price: bcs.u64(),
@@ -465,62 +317,57 @@ export const RebalanceEvent = new MoveStruct({
         tvl_usd: bcs.u64(),
         from_token_liquidity_amount: bcs.u64(),
         to_token_liquidity_amount: bcs.u64(),
-        u64_padding: bcs.vector(bcs.u64()),
-    },
-});
-export const CompleteRebalancingEvent = new MoveStruct({
-    name: `${$moduleName}::CompleteRebalancingEvent`,
-    fields: {
+        u64_padding: bcs.vector(bcs.u64())
+    } });
+export const CompleteRebalancingEvent = new MoveStruct({ name: `${$moduleName}::CompleteRebalancingEvent`, fields: {
         index: bcs.u64(),
-        from_token: type_name_25.TypeName,
-        to_token: type_name_26.TypeName,
+        from_token: type_name.TypeName,
+        to_token: type_name.TypeName,
         from_token_oracle_price: bcs.u64(),
         to_token_oracle_price: bcs.u64(),
         swapped_back_usd: bcs.u64(),
         tvl_usd: bcs.u64(),
         from_token_liquidity_amount: bcs.u64(),
         to_token_liquidity_amount: bcs.u64(),
-        u64_padding: bcs.vector(bcs.u64()),
-    },
-});
-export const UpdateLiquidityValueEvent = new MoveStruct({
-    name: `${$moduleName}::UpdateLiquidityValueEvent`,
-    fields: {
+        u64_padding: bcs.vector(bcs.u64())
+    } });
+export const UpdateLiquidityValueEvent = new MoveStruct({ name: `${$moduleName}::UpdateLiquidityValueEvent`, fields: {
         sender: bcs.Address,
         index: bcs.u64(),
-        liquidity_token: type_name_27.TypeName,
+        liquidity_token: type_name.TypeName,
         price: bcs.u64(),
         value_in_usd: bcs.u64(),
         lp_pool_tvl_usd: bcs.u64(),
-        u64_padding: bcs.vector(bcs.u64()),
-    },
-});
-export const BurnLpEvent = new MoveStruct({
-    name: `${$moduleName}::BurnLpEvent`,
-    fields: {
+        u64_padding: bcs.vector(bcs.u64())
+    } });
+export const BurnLpEvent = new MoveStruct({ name: `${$moduleName}::BurnLpEvent`, fields: {
         sender: bcs.Address,
         index: bcs.u64(),
-        lp_token_type: type_name_28.TypeName,
+        lp_token_type: type_name.TypeName,
         burn_lp_amount: bcs.u64(),
         burn_amount_usd: bcs.u64(),
         burn_fee_usd: bcs.u64(),
-        liquidity_token_type: type_name_29.TypeName,
+        liquidity_token_type: type_name.TypeName,
         withdraw_token_amount: bcs.u64(),
-        u64_padding: bcs.vector(bcs.u64()),
-    },
-});
+        u64_padding: bcs.vector(bcs.u64())
+    } });
+export const MigrateLpOracleIdEvent = new MoveStruct({ name: `${$moduleName}::MigrateLpOracleIdEvent`, fields: {
+        sender: bcs.Address,
+        new_oracle_id: bcs.Address,
+        u64_padding: bcs.vector(bcs.u64())
+    } });
 export interface InitOptions {
     package?: string;
-    arguments?: [];
+    arguments?: [
+    ];
 }
 export function init(options: InitOptions = {}) {
-    const packageAddress = options.package ?? "@typus/perp";
-    return (tx: Transaction) =>
-        tx.moveCall({
-            package: packageAddress,
-            module: "lp_pool",
-            function: "init",
-        });
+    const packageAddress = options.package ?? '@typus/perp';
+    return (tx: Transaction) => tx.moveCall({
+        package: packageAddress,
+        module: 'lp_pool',
+        function: 'init',
+    });
 }
 export interface NewLiquidityPoolArguments {
     version: RawTransactionArgument<string>;
@@ -530,29 +377,33 @@ export interface NewLiquidityPoolArguments {
 }
 export interface NewLiquidityPoolOptions {
     package?: string;
-    arguments:
-        | NewLiquidityPoolArguments
-        | [
-              version: RawTransactionArgument<string>,
-              registry: RawTransactionArgument<string>,
-              lpTokenDecimal: RawTransactionArgument<number | bigint>,
-              unlockCountdownTsMs: RawTransactionArgument<number | bigint>,
-          ];
-    typeArguments: [string];
+    arguments: NewLiquidityPoolArguments | [
+        version: RawTransactionArgument<string>,
+        registry: RawTransactionArgument<string>,
+        lpTokenDecimal: RawTransactionArgument<number | bigint>,
+        unlockCountdownTsMs: RawTransactionArgument<number | bigint>
+    ];
+    typeArguments: [
+        string
+    ];
 }
 /** [Authorized Function] Creates a new liquidity pool. */
 export function newLiquidityPool(options: NewLiquidityPoolOptions) {
-    const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [null, null, "u64", "u64"] satisfies (string | null)[];
+    const packageAddress = options.package ?? '@typus/perp';
+    const argumentsTypes = [
+        `${packageAddress}::admin::Version`,
+        `${packageAddress}::lp_pool::Registry`,
+        'u64',
+        'u64'
+    ] satisfies string[];
     const parameterNames = ["version", "registry", "lpTokenDecimal", "unlockCountdownTsMs"];
-    return (tx: Transaction) =>
-        tx.moveCall({
-            package: packageAddress,
-            module: "lp_pool",
-            function: "new_liquidity_pool",
-            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
-            typeArguments: options.typeArguments,
-        });
+    return (tx: Transaction) => tx.moveCall({
+        package: packageAddress,
+        module: 'lp_pool',
+        function: 'new_liquidity_pool',
+        arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
+        typeArguments: options.typeArguments
+    });
 }
 export interface UpdateUnlockCountdownTsMsArguments {
     version: RawTransactionArgument<string>;
@@ -562,27 +413,29 @@ export interface UpdateUnlockCountdownTsMsArguments {
 }
 export interface UpdateUnlockCountdownTsMsOptions {
     package?: string;
-    arguments:
-        | UpdateUnlockCountdownTsMsArguments
-        | [
-              version: RawTransactionArgument<string>,
-              registry: RawTransactionArgument<string>,
-              index: RawTransactionArgument<number | bigint>,
-              unlockCountdownTsMs: RawTransactionArgument<number | bigint>,
-          ];
+    arguments: UpdateUnlockCountdownTsMsArguments | [
+        version: RawTransactionArgument<string>,
+        registry: RawTransactionArgument<string>,
+        index: RawTransactionArgument<number | bigint>,
+        unlockCountdownTsMs: RawTransactionArgument<number | bigint>
+    ];
 }
 /** [Authorized Function] Updates the unlock countdown. */
 export function updateUnlockCountdownTsMs(options: UpdateUnlockCountdownTsMsOptions) {
-    const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [null, null, "u64", "u64"] satisfies (string | null)[];
+    const packageAddress = options.package ?? '@typus/perp';
+    const argumentsTypes = [
+        `${packageAddress}::admin::Version`,
+        `${packageAddress}::lp_pool::Registry`,
+        'u64',
+        'u64'
+    ] satisfies string[];
     const parameterNames = ["version", "registry", "index", "unlockCountdownTsMs"];
-    return (tx: Transaction) =>
-        tx.moveCall({
-            package: packageAddress,
-            module: "lp_pool",
-            function: "update_unlock_countdown_ts_ms",
-            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
-        });
+    return (tx: Transaction) => tx.moveCall({
+        package: packageAddress,
+        module: 'lp_pool',
+        function: 'update_unlock_countdown_ts_ms',
+        arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
+    });
 }
 export interface UpdateRebalanceCostThresholdBpArguments {
     version: RawTransactionArgument<string>;
@@ -592,27 +445,29 @@ export interface UpdateRebalanceCostThresholdBpArguments {
 }
 export interface UpdateRebalanceCostThresholdBpOptions {
     package?: string;
-    arguments:
-        | UpdateRebalanceCostThresholdBpArguments
-        | [
-              version: RawTransactionArgument<string>,
-              registry: RawTransactionArgument<string>,
-              index: RawTransactionArgument<number | bigint>,
-              rebalanceCostThresholdBp: RawTransactionArgument<number | bigint>,
-          ];
+    arguments: UpdateRebalanceCostThresholdBpArguments | [
+        version: RawTransactionArgument<string>,
+        registry: RawTransactionArgument<string>,
+        index: RawTransactionArgument<number | bigint>,
+        rebalanceCostThresholdBp: RawTransactionArgument<number | bigint>
+    ];
 }
 /** [Authorized Function] Updates the rebalance cost threshold. */
 export function updateRebalanceCostThresholdBp(options: UpdateRebalanceCostThresholdBpOptions) {
-    const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [null, null, "u64", "u64"] satisfies (string | null)[];
+    const packageAddress = options.package ?? '@typus/perp';
+    const argumentsTypes = [
+        `${packageAddress}::admin::Version`,
+        `${packageAddress}::lp_pool::Registry`,
+        'u64',
+        'u64'
+    ] satisfies string[];
     const parameterNames = ["version", "registry", "index", "rebalanceCostThresholdBp"];
-    return (tx: Transaction) =>
-        tx.moveCall({
-            package: packageAddress,
-            module: "lp_pool",
-            function: "update_rebalance_cost_threshold_bp",
-            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
-        });
+    return (tx: Transaction) => tx.moveCall({
+        package: packageAddress,
+        module: 'lp_pool',
+        function: 'update_rebalance_cost_threshold_bp',
+        arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
+    });
 }
 export interface AddLiquidityTokenArguments {
     version: RawTransactionArgument<string>;
@@ -640,94 +495,161 @@ export interface AddLiquidityTokenArguments {
 }
 export interface AddLiquidityTokenOptions {
     package?: string;
-    arguments:
-        | AddLiquidityTokenArguments
-        | [
-              version: RawTransactionArgument<string>,
-              registry: RawTransactionArgument<string>,
-              index: RawTransactionArgument<number | bigint>,
-              oracle: RawTransactionArgument<string>,
-              tokenDecimal: RawTransactionArgument<number | bigint>,
-              targetWeightBp: RawTransactionArgument<number | bigint>,
-              minDeposit: RawTransactionArgument<number | bigint>,
-              maxCapacity: RawTransactionArgument<number | bigint>,
-              basicMintFeeBp: RawTransactionArgument<number | bigint>,
-              additionalMintFeeBp: RawTransactionArgument<number | bigint>,
-              basicBurnFeeBp: RawTransactionArgument<number | bigint>,
-              additionalBurnFeeBp: RawTransactionArgument<number | bigint>,
-              swapFeeBp: RawTransactionArgument<number | bigint>,
-              swapFeeProtocolShareBp: RawTransactionArgument<number | bigint>,
-              lendingProtocolShareBp: RawTransactionArgument<number | bigint>,
-              basicBorrowRate_0: RawTransactionArgument<number | bigint>,
-              basicBorrowRate_1: RawTransactionArgument<number | bigint>,
-              basicBorrowRate_2: RawTransactionArgument<number | bigint>,
-              utilizationThresholdBp_0: RawTransactionArgument<number | bigint>,
-              utilizationThresholdBp_1: RawTransactionArgument<number | bigint>,
-              borrowIntervalTsMs: RawTransactionArgument<number | bigint>,
-              maxOrderReserveRatioBp: RawTransactionArgument<number | bigint>,
-          ];
-    typeArguments: [string];
+    arguments: AddLiquidityTokenArguments | [
+        version: RawTransactionArgument<string>,
+        registry: RawTransactionArgument<string>,
+        index: RawTransactionArgument<number | bigint>,
+        oracle: RawTransactionArgument<string>,
+        tokenDecimal: RawTransactionArgument<number | bigint>,
+        targetWeightBp: RawTransactionArgument<number | bigint>,
+        minDeposit: RawTransactionArgument<number | bigint>,
+        maxCapacity: RawTransactionArgument<number | bigint>,
+        basicMintFeeBp: RawTransactionArgument<number | bigint>,
+        additionalMintFeeBp: RawTransactionArgument<number | bigint>,
+        basicBurnFeeBp: RawTransactionArgument<number | bigint>,
+        additionalBurnFeeBp: RawTransactionArgument<number | bigint>,
+        swapFeeBp: RawTransactionArgument<number | bigint>,
+        swapFeeProtocolShareBp: RawTransactionArgument<number | bigint>,
+        lendingProtocolShareBp: RawTransactionArgument<number | bigint>,
+        basicBorrowRate_0: RawTransactionArgument<number | bigint>,
+        basicBorrowRate_1: RawTransactionArgument<number | bigint>,
+        basicBorrowRate_2: RawTransactionArgument<number | bigint>,
+        utilizationThresholdBp_0: RawTransactionArgument<number | bigint>,
+        utilizationThresholdBp_1: RawTransactionArgument<number | bigint>,
+        borrowIntervalTsMs: RawTransactionArgument<number | bigint>,
+        maxOrderReserveRatioBp: RawTransactionArgument<number | bigint>
+    ];
+    typeArguments: [
+        string
+    ];
+}
+/** [DEPRECATED] Use `add_liquidity_token_v2` with `&OracleV2` instead. */
+export function addLiquidityToken(options: AddLiquidityTokenOptions) {
+    const packageAddress = options.package ?? '@typus/perp';
+    const argumentsTypes = [
+        `${packageAddress}::admin::Version`,
+        `${packageAddress}::lp_pool::Registry`,
+        'u64',
+        '0xd2e030ab7f0fc956c7e683cf3c6faf3d22868dee81a4aae9f4a10a6d998a8a02::oracle::Oracle',
+        'u64',
+        'u64',
+        'u64',
+        'u64',
+        'u64',
+        'u64',
+        'u64',
+        'u64',
+        'u64',
+        'u64',
+        'u64',
+        'u64',
+        'u64',
+        'u64',
+        'u64',
+        'u64',
+        'u64',
+        'u64',
+        '0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock'
+    ] satisfies string[];
+    const parameterNames = ["version", "registry", "index", "oracle", "tokenDecimal", "targetWeightBp", "minDeposit", "maxCapacity", "basicMintFeeBp", "additionalMintFeeBp", "basicBurnFeeBp", "additionalBurnFeeBp", "swapFeeBp", "swapFeeProtocolShareBp", "lendingProtocolShareBp", "basicBorrowRate_0", "basicBorrowRate_1", "basicBorrowRate_2", "utilizationThresholdBp_0", "utilizationThresholdBp_1", "borrowIntervalTsMs", "maxOrderReserveRatioBp"];
+    return (tx: Transaction) => tx.moveCall({
+        package: packageAddress,
+        module: 'lp_pool',
+        function: 'add_liquidity_token',
+        arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
+        typeArguments: options.typeArguments
+    });
+}
+export interface AddLiquidityTokenV2Arguments {
+    version: RawTransactionArgument<string>;
+    registry: RawTransactionArgument<string>;
+    index: RawTransactionArgument<number | bigint>;
+    oracleV2: RawTransactionArgument<string>;
+    tokenDecimal: RawTransactionArgument<number | bigint>;
+    targetWeightBp: RawTransactionArgument<number | bigint>;
+    minDeposit: RawTransactionArgument<number | bigint>;
+    maxCapacity: RawTransactionArgument<number | bigint>;
+    basicMintFeeBp: RawTransactionArgument<number | bigint>;
+    additionalMintFeeBp: RawTransactionArgument<number | bigint>;
+    basicBurnFeeBp: RawTransactionArgument<number | bigint>;
+    additionalBurnFeeBp: RawTransactionArgument<number | bigint>;
+    swapFeeBp: RawTransactionArgument<number | bigint>;
+    swapFeeProtocolShareBp: RawTransactionArgument<number | bigint>;
+    lendingProtocolShareBp: RawTransactionArgument<number | bigint>;
+    basicBorrowRate_0: RawTransactionArgument<number | bigint>;
+    basicBorrowRate_1: RawTransactionArgument<number | bigint>;
+    basicBorrowRate_2: RawTransactionArgument<number | bigint>;
+    utilizationThresholdBp_0: RawTransactionArgument<number | bigint>;
+    utilizationThresholdBp_1: RawTransactionArgument<number | bigint>;
+    borrowIntervalTsMs: RawTransactionArgument<number | bigint>;
+    maxOrderReserveRatioBp: RawTransactionArgument<number | bigint>;
+}
+export interface AddLiquidityTokenV2Options {
+    package?: string;
+    arguments: AddLiquidityTokenV2Arguments | [
+        version: RawTransactionArgument<string>,
+        registry: RawTransactionArgument<string>,
+        index: RawTransactionArgument<number | bigint>,
+        oracleV2: RawTransactionArgument<string>,
+        tokenDecimal: RawTransactionArgument<number | bigint>,
+        targetWeightBp: RawTransactionArgument<number | bigint>,
+        minDeposit: RawTransactionArgument<number | bigint>,
+        maxCapacity: RawTransactionArgument<number | bigint>,
+        basicMintFeeBp: RawTransactionArgument<number | bigint>,
+        additionalMintFeeBp: RawTransactionArgument<number | bigint>,
+        basicBurnFeeBp: RawTransactionArgument<number | bigint>,
+        additionalBurnFeeBp: RawTransactionArgument<number | bigint>,
+        swapFeeBp: RawTransactionArgument<number | bigint>,
+        swapFeeProtocolShareBp: RawTransactionArgument<number | bigint>,
+        lendingProtocolShareBp: RawTransactionArgument<number | bigint>,
+        basicBorrowRate_0: RawTransactionArgument<number | bigint>,
+        basicBorrowRate_1: RawTransactionArgument<number | bigint>,
+        basicBorrowRate_2: RawTransactionArgument<number | bigint>,
+        utilizationThresholdBp_0: RawTransactionArgument<number | bigint>,
+        utilizationThresholdBp_1: RawTransactionArgument<number | bigint>,
+        borrowIntervalTsMs: RawTransactionArgument<number | bigint>,
+        maxOrderReserveRatioBp: RawTransactionArgument<number | bigint>
+    ];
+    typeArguments: [
+        string
+    ];
 }
 /** [Authorized Function] Adds a new liquidity token to a pool. */
-export function addLiquidityToken(options: AddLiquidityTokenOptions) {
-    const packageAddress = options.package ?? "@typus/perp";
+export function addLiquidityTokenV2(options: AddLiquidityTokenV2Options) {
+    const packageAddress = options.package ?? '@typus/perp';
     const argumentsTypes = [
-        null,
-        null,
-        "u64",
-        null,
-        "u64",
-        "u64",
-        "u64",
-        "u64",
-        "u64",
-        "u64",
-        "u64",
-        "u64",
-        "u64",
-        "u64",
-        "u64",
-        "u64",
-        "u64",
-        "u64",
-        "u64",
-        "u64",
-        "u64",
-        "u64",
-        "0x2::clock::Clock",
-    ] satisfies (string | null)[];
-    const parameterNames = [
-        "version",
-        "registry",
-        "index",
-        "oracle",
-        "tokenDecimal",
-        "targetWeightBp",
-        "minDeposit",
-        "maxCapacity",
-        "basicMintFeeBp",
-        "additionalMintFeeBp",
-        "basicBurnFeeBp",
-        "additionalBurnFeeBp",
-        "swapFeeBp",
-        "swapFeeProtocolShareBp",
-        "lendingProtocolShareBp",
-        "basicBorrowRate_0",
-        "basicBorrowRate_1",
-        "basicBorrowRate_2",
-        "utilizationThresholdBp_0",
-        "utilizationThresholdBp_1",
-        "borrowIntervalTsMs",
-        "maxOrderReserveRatioBp",
-    ];
-    return (tx: Transaction) =>
-        tx.moveCall({
-            package: packageAddress,
-            module: "lp_pool",
-            function: "add_liquidity_token",
-            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
-            typeArguments: options.typeArguments,
-        });
+        `${packageAddress}::admin::Version`,
+        `${packageAddress}::lp_pool::Registry`,
+        'u64',
+        '0xd2e030ab7f0fc956c7e683cf3c6faf3d22868dee81a4aae9f4a10a6d998a8a02::oracle_v2::OracleV2',
+        'u64',
+        'u64',
+        'u64',
+        'u64',
+        'u64',
+        'u64',
+        'u64',
+        'u64',
+        'u64',
+        'u64',
+        'u64',
+        'u64',
+        'u64',
+        'u64',
+        'u64',
+        'u64',
+        'u64',
+        'u64',
+        '0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock'
+    ] satisfies string[];
+    const parameterNames = ["version", "registry", "index", "oracleV2", "tokenDecimal", "targetWeightBp", "minDeposit", "maxCapacity", "basicMintFeeBp", "additionalMintFeeBp", "basicBurnFeeBp", "additionalBurnFeeBp", "swapFeeBp", "swapFeeProtocolShareBp", "lendingProtocolShareBp", "basicBorrowRate_0", "basicBorrowRate_1", "basicBorrowRate_2", "utilizationThresholdBp_0", "utilizationThresholdBp_1", "borrowIntervalTsMs", "maxOrderReserveRatioBp"];
+    return (tx: Transaction) => tx.moveCall({
+        package: packageAddress,
+        module: 'lp_pool',
+        function: 'add_liquidity_token_v2',
+        arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
+        typeArguments: options.typeArguments
+    });
 }
 export interface UpdateSpotConfigArguments {
     version: RawTransactionArgument<string>;
@@ -746,66 +668,51 @@ export interface UpdateSpotConfigArguments {
 }
 export interface UpdateSpotConfigOptions {
     package?: string;
-    arguments:
-        | UpdateSpotConfigArguments
-        | [
-              version: RawTransactionArgument<string>,
-              registry: RawTransactionArgument<string>,
-              index: RawTransactionArgument<number | bigint>,
-              targetWeightBp: RawTransactionArgument<number | bigint | null>,
-              minDeposit: RawTransactionArgument<number | bigint | null>,
-              maxCapacity: RawTransactionArgument<number | bigint | null>,
-              basicMintFeeBp: RawTransactionArgument<number | bigint | null>,
-              additionalMintFeeBp: RawTransactionArgument<number | bigint | null>,
-              basicBurnFeeBp: RawTransactionArgument<number | bigint | null>,
-              additionalBurnFeeBp: RawTransactionArgument<number | bigint | null>,
-              swapFeeBp: RawTransactionArgument<number | bigint | null>,
-              swapFeeProtocolShareBp: RawTransactionArgument<number | bigint | null>,
-              lendingProtocolShareBp: RawTransactionArgument<number | bigint | null>,
-          ];
-    typeArguments: [string];
+    arguments: UpdateSpotConfigArguments | [
+        version: RawTransactionArgument<string>,
+        registry: RawTransactionArgument<string>,
+        index: RawTransactionArgument<number | bigint>,
+        targetWeightBp: RawTransactionArgument<number | bigint | null>,
+        minDeposit: RawTransactionArgument<number | bigint | null>,
+        maxCapacity: RawTransactionArgument<number | bigint | null>,
+        basicMintFeeBp: RawTransactionArgument<number | bigint | null>,
+        additionalMintFeeBp: RawTransactionArgument<number | bigint | null>,
+        basicBurnFeeBp: RawTransactionArgument<number | bigint | null>,
+        additionalBurnFeeBp: RawTransactionArgument<number | bigint | null>,
+        swapFeeBp: RawTransactionArgument<number | bigint | null>,
+        swapFeeProtocolShareBp: RawTransactionArgument<number | bigint | null>,
+        lendingProtocolShareBp: RawTransactionArgument<number | bigint | null>
+    ];
+    typeArguments: [
+        string
+    ];
 }
 /** [Authorized Function] Updates the spot configuration for a token. */
 export function updateSpotConfig(options: UpdateSpotConfigOptions) {
-    const packageAddress = options.package ?? "@typus/perp";
+    const packageAddress = options.package ?? '@typus/perp';
     const argumentsTypes = [
-        null,
-        null,
-        "u64",
-        "0x1::option::Option<u64>",
-        "0x1::option::Option<u64>",
-        "0x1::option::Option<u64>",
-        "0x1::option::Option<u64>",
-        "0x1::option::Option<u64>",
-        "0x1::option::Option<u64>",
-        "0x1::option::Option<u64>",
-        "0x1::option::Option<u64>",
-        "0x1::option::Option<u64>",
-        "0x1::option::Option<u64>",
-    ] satisfies (string | null)[];
-    const parameterNames = [
-        "version",
-        "registry",
-        "index",
-        "targetWeightBp",
-        "minDeposit",
-        "maxCapacity",
-        "basicMintFeeBp",
-        "additionalMintFeeBp",
-        "basicBurnFeeBp",
-        "additionalBurnFeeBp",
-        "swapFeeBp",
-        "swapFeeProtocolShareBp",
-        "lendingProtocolShareBp",
-    ];
-    return (tx: Transaction) =>
-        tx.moveCall({
-            package: packageAddress,
-            module: "lp_pool",
-            function: "update_spot_config",
-            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
-            typeArguments: options.typeArguments,
-        });
+        `${packageAddress}::admin::Version`,
+        `${packageAddress}::lp_pool::Registry`,
+        'u64',
+        '0x0000000000000000000000000000000000000000000000000000000000000001::option::Option<u64>',
+        '0x0000000000000000000000000000000000000000000000000000000000000001::option::Option<u64>',
+        '0x0000000000000000000000000000000000000000000000000000000000000001::option::Option<u64>',
+        '0x0000000000000000000000000000000000000000000000000000000000000001::option::Option<u64>',
+        '0x0000000000000000000000000000000000000000000000000000000000000001::option::Option<u64>',
+        '0x0000000000000000000000000000000000000000000000000000000000000001::option::Option<u64>',
+        '0x0000000000000000000000000000000000000000000000000000000000000001::option::Option<u64>',
+        '0x0000000000000000000000000000000000000000000000000000000000000001::option::Option<u64>',
+        '0x0000000000000000000000000000000000000000000000000000000000000001::option::Option<u64>',
+        '0x0000000000000000000000000000000000000000000000000000000000000001::option::Option<u64>'
+    ] satisfies string[];
+    const parameterNames = ["version", "registry", "index", "targetWeightBp", "minDeposit", "maxCapacity", "basicMintFeeBp", "additionalMintFeeBp", "basicBurnFeeBp", "additionalBurnFeeBp", "swapFeeBp", "swapFeeProtocolShareBp", "lendingProtocolShareBp"];
+    return (tx: Transaction) => tx.moveCall({
+        package: packageAddress,
+        module: 'lp_pool',
+        function: 'update_spot_config',
+        arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
+        typeArguments: options.typeArguments
+    });
 }
 export interface ManagerEmergencyDepositArguments {
     version: RawTransactionArgument<string>;
@@ -815,29 +722,34 @@ export interface ManagerEmergencyDepositArguments {
 }
 export interface ManagerEmergencyDepositOptions {
     package?: string;
-    arguments:
-        | ManagerEmergencyDepositArguments
-        | [
-              version: RawTransactionArgument<string>,
-              registry: RawTransactionArgument<string>,
-              index: RawTransactionArgument<number | bigint>,
-              coin: RawTransactionArgument<string>,
-          ];
-    typeArguments: [string, string];
+    arguments: ManagerEmergencyDepositArguments | [
+        version: RawTransactionArgument<string>,
+        registry: RawTransactionArgument<string>,
+        index: RawTransactionArgument<number | bigint>,
+        coin: RawTransactionArgument<string>
+    ];
+    typeArguments: [
+        string,
+        string
+    ];
 }
 /** [Authorized Function] Allows a manager to deposit tokens in an emergency. */
 export function managerEmergencyDeposit(options: ManagerEmergencyDepositOptions) {
-    const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [null, null, "u64", null] satisfies (string | null)[];
+    const packageAddress = options.package ?? '@typus/perp';
+    const argumentsTypes = [
+        `${packageAddress}::admin::Version`,
+        `${packageAddress}::lp_pool::Registry`,
+        'u64',
+        `0x0000000000000000000000000000000000000000000000000000000000000002::coin::Coin<${options.typeArguments[0]}>`
+    ] satisfies string[];
     const parameterNames = ["version", "registry", "index", "coin"];
-    return (tx: Transaction) =>
-        tx.moveCall({
-            package: packageAddress,
-            module: "lp_pool",
-            function: "manager_emergency_deposit",
-            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
-            typeArguments: options.typeArguments,
-        });
+    return (tx: Transaction) => tx.moveCall({
+        package: packageAddress,
+        module: 'lp_pool',
+        function: 'manager_emergency_deposit',
+        arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
+        typeArguments: options.typeArguments
+    });
 }
 export interface ManagerEmergencyWithdrawArguments {
     version: RawTransactionArgument<string>;
@@ -847,29 +759,34 @@ export interface ManagerEmergencyWithdrawArguments {
 }
 export interface ManagerEmergencyWithdrawOptions {
     package?: string;
-    arguments:
-        | ManagerEmergencyWithdrawArguments
-        | [
-              version: RawTransactionArgument<string>,
-              registry: RawTransactionArgument<string>,
-              index: RawTransactionArgument<number | bigint>,
-              receipt: RawTransactionArgument<string>,
-          ];
-    typeArguments: [string];
+    arguments: ManagerEmergencyWithdrawArguments | [
+        version: RawTransactionArgument<string>,
+        registry: RawTransactionArgument<string>,
+        index: RawTransactionArgument<number | bigint>,
+        receipt: RawTransactionArgument<string>
+    ];
+    typeArguments: [
+        string,
+        string
+    ];
 }
 /** [Authorized Function] Allows a manager to withdraw tokens in an emergency. */
 export function managerEmergencyWithdraw(options: ManagerEmergencyWithdrawOptions) {
-    const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [null, null, "u64", null] satisfies (string | null)[];
+    const packageAddress = options.package ?? '@typus/perp';
+    const argumentsTypes = [
+        `${packageAddress}::admin::Version`,
+        `${packageAddress}::lp_pool::Registry`,
+        'u64',
+        `${packageAddress}::lp_pool::ManagerDepositReceipt`
+    ] satisfies string[];
     const parameterNames = ["version", "registry", "index", "receipt"];
-    return (tx: Transaction) =>
-        tx.moveCall({
-            package: packageAddress,
-            module: "lp_pool",
-            function: "manager_emergency_withdraw",
-            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
-            typeArguments: options.typeArguments,
-        });
+    return (tx: Transaction) => tx.moveCall({
+        package: packageAddress,
+        module: 'lp_pool',
+        function: 'manager_emergency_withdraw',
+        arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
+        typeArguments: options.typeArguments
+    });
 }
 export interface UpdateMarginConfigArguments {
     version: RawTransactionArgument<string>;
@@ -885,57 +802,45 @@ export interface UpdateMarginConfigArguments {
 }
 export interface UpdateMarginConfigOptions {
     package?: string;
-    arguments:
-        | UpdateMarginConfigArguments
-        | [
-              version: RawTransactionArgument<string>,
-              registry: RawTransactionArgument<string>,
-              index: RawTransactionArgument<number | bigint>,
-              basicBorrowRate_0: RawTransactionArgument<number | bigint | null>,
-              basicBorrowRate_1: RawTransactionArgument<number | bigint | null>,
-              basicBorrowRate_2: RawTransactionArgument<number | bigint | null>,
-              utilizationThresholdBp_0: RawTransactionArgument<number | bigint | null>,
-              utilizationThresholdBp_1: RawTransactionArgument<number | bigint | null>,
-              borrowIntervalTsMs: RawTransactionArgument<number | bigint | null>,
-              maxOrderReserveRatioBp: RawTransactionArgument<number | bigint | null>,
-          ];
-    typeArguments: [string];
+    arguments: UpdateMarginConfigArguments | [
+        version: RawTransactionArgument<string>,
+        registry: RawTransactionArgument<string>,
+        index: RawTransactionArgument<number | bigint>,
+        basicBorrowRate_0: RawTransactionArgument<number | bigint | null>,
+        basicBorrowRate_1: RawTransactionArgument<number | bigint | null>,
+        basicBorrowRate_2: RawTransactionArgument<number | bigint | null>,
+        utilizationThresholdBp_0: RawTransactionArgument<number | bigint | null>,
+        utilizationThresholdBp_1: RawTransactionArgument<number | bigint | null>,
+        borrowIntervalTsMs: RawTransactionArgument<number | bigint | null>,
+        maxOrderReserveRatioBp: RawTransactionArgument<number | bigint | null>
+    ];
+    typeArguments: [
+        string
+    ];
 }
 /** [Authorized Function] Updates the margin configuration for a token. */
 export function updateMarginConfig(options: UpdateMarginConfigOptions) {
-    const packageAddress = options.package ?? "@typus/perp";
+    const packageAddress = options.package ?? '@typus/perp';
     const argumentsTypes = [
-        null,
-        null,
-        "u64",
-        "0x1::option::Option<u64>",
-        "0x1::option::Option<u64>",
-        "0x1::option::Option<u64>",
-        "0x1::option::Option<u64>",
-        "0x1::option::Option<u64>",
-        "0x1::option::Option<u64>",
-        "0x1::option::Option<u64>",
-    ] satisfies (string | null)[];
-    const parameterNames = [
-        "version",
-        "registry",
-        "index",
-        "basicBorrowRate_0",
-        "basicBorrowRate_1",
-        "basicBorrowRate_2",
-        "utilizationThresholdBp_0",
-        "utilizationThresholdBp_1",
-        "borrowIntervalTsMs",
-        "maxOrderReserveRatioBp",
-    ];
-    return (tx: Transaction) =>
-        tx.moveCall({
-            package: packageAddress,
-            module: "lp_pool",
-            function: "update_margin_config",
-            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
-            typeArguments: options.typeArguments,
-        });
+        `${packageAddress}::admin::Version`,
+        `${packageAddress}::lp_pool::Registry`,
+        'u64',
+        '0x0000000000000000000000000000000000000000000000000000000000000001::option::Option<u64>',
+        '0x0000000000000000000000000000000000000000000000000000000000000001::option::Option<u64>',
+        '0x0000000000000000000000000000000000000000000000000000000000000001::option::Option<u64>',
+        '0x0000000000000000000000000000000000000000000000000000000000000001::option::Option<u64>',
+        '0x0000000000000000000000000000000000000000000000000000000000000001::option::Option<u64>',
+        '0x0000000000000000000000000000000000000000000000000000000000000001::option::Option<u64>',
+        '0x0000000000000000000000000000000000000000000000000000000000000001::option::Option<u64>'
+    ] satisfies string[];
+    const parameterNames = ["version", "registry", "index", "basicBorrowRate_0", "basicBorrowRate_1", "basicBorrowRate_2", "utilizationThresholdBp_0", "utilizationThresholdBp_1", "borrowIntervalTsMs", "maxOrderReserveRatioBp"];
+    return (tx: Transaction) => tx.moveCall({
+        package: packageAddress,
+        module: 'lp_pool',
+        function: 'update_margin_config',
+        arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
+        typeArguments: options.typeArguments
+    });
 }
 export interface MintLpArguments {
     version: RawTransactionArgument<string>;
@@ -947,31 +852,83 @@ export interface MintLpArguments {
 }
 export interface MintLpOptions {
     package?: string;
-    arguments:
-        | MintLpArguments
-        | [
-              version: RawTransactionArgument<string>,
-              registry: RawTransactionArgument<string>,
-              treasuryCaps: RawTransactionArgument<string>,
-              oracle: RawTransactionArgument<string>,
-              index: RawTransactionArgument<number | bigint>,
-              coin: RawTransactionArgument<string>,
-          ];
-    typeArguments: [string, string];
+    arguments: MintLpArguments | [
+        version: RawTransactionArgument<string>,
+        registry: RawTransactionArgument<string>,
+        treasuryCaps: RawTransactionArgument<string>,
+        oracle: RawTransactionArgument<string>,
+        index: RawTransactionArgument<number | bigint>,
+        coin: RawTransactionArgument<string>
+    ];
+    typeArguments: [
+        string,
+        string
+    ];
+}
+/** [DEPRECATED] Use `mint_lp_v2` with `&OracleV2` instead. */
+export function mintLp(options: MintLpOptions) {
+    const packageAddress = options.package ?? '@typus/perp';
+    const argumentsTypes = [
+        `${packageAddress}::admin::Version`,
+        `${packageAddress}::lp_pool::Registry`,
+        `${packageAddress}::treasury_caps::TreasuryCaps`,
+        '0xd2e030ab7f0fc956c7e683cf3c6faf3d22868dee81a4aae9f4a10a6d998a8a02::oracle::Oracle',
+        'u64',
+        `0x0000000000000000000000000000000000000000000000000000000000000002::coin::Coin<${options.typeArguments[0]}>`,
+        '0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock'
+    ] satisfies string[];
+    const parameterNames = ["version", "registry", "treasuryCaps", "oracle", "index", "coin"];
+    return (tx: Transaction) => tx.moveCall({
+        package: packageAddress,
+        module: 'lp_pool',
+        function: 'mint_lp',
+        arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
+        typeArguments: options.typeArguments
+    });
+}
+export interface MintLpV2Arguments {
+    version: RawTransactionArgument<string>;
+    registry: RawTransactionArgument<string>;
+    treasuryCaps: RawTransactionArgument<string>;
+    oracleV2: RawTransactionArgument<string>;
+    index: RawTransactionArgument<number | bigint>;
+    coin: RawTransactionArgument<string>;
+}
+export interface MintLpV2Options {
+    package?: string;
+    arguments: MintLpV2Arguments | [
+        version: RawTransactionArgument<string>,
+        registry: RawTransactionArgument<string>,
+        treasuryCaps: RawTransactionArgument<string>,
+        oracleV2: RawTransactionArgument<string>,
+        index: RawTransactionArgument<number | bigint>,
+        coin: RawTransactionArgument<string>
+    ];
+    typeArguments: [
+        string,
+        string
+    ];
 }
 /** [User Function] Mints LP tokens. */
-export function mintLp(options: MintLpOptions) {
-    const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [null, null, null, null, "u64", null, "0x2::clock::Clock"] satisfies (string | null)[];
-    const parameterNames = ["version", "registry", "treasuryCaps", "oracle", "index", "coin"];
-    return (tx: Transaction) =>
-        tx.moveCall({
-            package: packageAddress,
-            module: "lp_pool",
-            function: "mint_lp",
-            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
-            typeArguments: options.typeArguments,
-        });
+export function mintLpV2(options: MintLpV2Options) {
+    const packageAddress = options.package ?? '@typus/perp';
+    const argumentsTypes = [
+        `${packageAddress}::admin::Version`,
+        `${packageAddress}::lp_pool::Registry`,
+        `${packageAddress}::treasury_caps::TreasuryCaps`,
+        '0xd2e030ab7f0fc956c7e683cf3c6faf3d22868dee81a4aae9f4a10a6d998a8a02::oracle_v2::OracleV2',
+        'u64',
+        `0x0000000000000000000000000000000000000000000000000000000000000002::coin::Coin<${options.typeArguments[0]}>`,
+        '0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock'
+    ] satisfies string[];
+    const parameterNames = ["version", "registry", "treasuryCaps", "oracleV2", "index", "coin"];
+    return (tx: Transaction) => tx.moveCall({
+        package: packageAddress,
+        module: 'lp_pool',
+        function: 'mint_lp_v2',
+        arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
+        typeArguments: options.typeArguments
+    });
 }
 export interface UpdateBorrowInfoArguments {
     version: RawTransactionArgument<string>;
@@ -980,26 +937,28 @@ export interface UpdateBorrowInfoArguments {
 }
 export interface UpdateBorrowInfoOptions {
     package?: string;
-    arguments:
-        | UpdateBorrowInfoArguments
-        | [
-              version: RawTransactionArgument<string>,
-              registry: RawTransactionArgument<string>,
-              index: RawTransactionArgument<number | bigint>,
-          ];
+    arguments: UpdateBorrowInfoArguments | [
+        version: RawTransactionArgument<string>,
+        registry: RawTransactionArgument<string>,
+        index: RawTransactionArgument<number | bigint>
+    ];
 }
 /** [User Function] Updates the borrow information for all tokens in a pool. */
 export function updateBorrowInfo(options: UpdateBorrowInfoOptions) {
-    const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [null, null, "u64", "0x2::clock::Clock"] satisfies (string | null)[];
+    const packageAddress = options.package ?? '@typus/perp';
+    const argumentsTypes = [
+        `${packageAddress}::admin::Version`,
+        `${packageAddress}::lp_pool::Registry`,
+        'u64',
+        '0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock'
+    ] satisfies string[];
     const parameterNames = ["version", "registry", "index"];
-    return (tx: Transaction) =>
-        tx.moveCall({
-            package: packageAddress,
-            module: "lp_pool",
-            function: "update_borrow_info",
-            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
-        });
+    return (tx: Transaction) => tx.moveCall({
+        package: packageAddress,
+        module: 'lp_pool',
+        function: 'update_borrow_info',
+        arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
+    });
 }
 export interface SwapArguments {
     version: RawTransactionArgument<string>;
@@ -1012,32 +971,85 @@ export interface SwapArguments {
 }
 export interface SwapOptions {
     package?: string;
-    arguments:
-        | SwapArguments
-        | [
-              version: RawTransactionArgument<string>,
-              registry: RawTransactionArgument<string>,
-              index: RawTransactionArgument<number | bigint>,
-              oracleFromToken: RawTransactionArgument<string>,
-              oracleToToken: RawTransactionArgument<string>,
-              fromCoin: RawTransactionArgument<string>,
-              minToAmount: RawTransactionArgument<number | bigint>,
-          ];
-    typeArguments: [string, string];
+    arguments: SwapArguments | [
+        version: RawTransactionArgument<string>,
+        registry: RawTransactionArgument<string>,
+        index: RawTransactionArgument<number | bigint>,
+        oracleFromToken: RawTransactionArgument<string>,
+        oracleToToken: RawTransactionArgument<string>,
+        fromCoin: RawTransactionArgument<string>,
+        minToAmount: RawTransactionArgument<number | bigint>
+    ];
+    typeArguments: [
+        string,
+        string
+    ];
+}
+/** [DEPRECATED] Use `swap_v2` with `&OracleV2` instead. */
+export function swap(options: SwapOptions) {
+    const packageAddress = options.package ?? '@typus/perp';
+    const argumentsTypes = [
+        `${packageAddress}::admin::Version`,
+        `${packageAddress}::lp_pool::Registry`,
+        'u64',
+        '0xd2e030ab7f0fc956c7e683cf3c6faf3d22868dee81a4aae9f4a10a6d998a8a02::oracle::Oracle',
+        '0xd2e030ab7f0fc956c7e683cf3c6faf3d22868dee81a4aae9f4a10a6d998a8a02::oracle::Oracle',
+        `0x0000000000000000000000000000000000000000000000000000000000000002::coin::Coin<${options.typeArguments[0]}>`,
+        'u64',
+        '0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock'
+    ] satisfies string[];
+    const parameterNames = ["version", "registry", "index", "oracleFromToken", "oracleToToken", "fromCoin", "minToAmount"];
+    return (tx: Transaction) => tx.moveCall({
+        package: packageAddress,
+        module: 'lp_pool',
+        function: 'swap',
+        arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
+        typeArguments: options.typeArguments
+    });
+}
+export interface SwapV2Arguments {
+    version: RawTransactionArgument<string>;
+    registry: RawTransactionArgument<string>;
+    index: RawTransactionArgument<number | bigint>;
+    oracleV2: RawTransactionArgument<string>;
+    fromCoin: RawTransactionArgument<string>;
+    minToAmount: RawTransactionArgument<number | bigint>;
+}
+export interface SwapV2Options {
+    package?: string;
+    arguments: SwapV2Arguments | [
+        version: RawTransactionArgument<string>,
+        registry: RawTransactionArgument<string>,
+        index: RawTransactionArgument<number | bigint>,
+        oracleV2: RawTransactionArgument<string>,
+        fromCoin: RawTransactionArgument<string>,
+        minToAmount: RawTransactionArgument<number | bigint>
+    ];
+    typeArguments: [
+        string,
+        string
+    ];
 }
 /** [User Function] Swaps one token for another. */
-export function swap(options: SwapOptions) {
-    const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [null, null, "u64", null, null, null, "u64", "0x2::clock::Clock"] satisfies (string | null)[];
-    const parameterNames = ["version", "registry", "index", "oracleFromToken", "oracleToToken", "fromCoin", "minToAmount"];
-    return (tx: Transaction) =>
-        tx.moveCall({
-            package: packageAddress,
-            module: "lp_pool",
-            function: "swap",
-            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
-            typeArguments: options.typeArguments,
-        });
+export function swapV2(options: SwapV2Options) {
+    const packageAddress = options.package ?? '@typus/perp';
+    const argumentsTypes = [
+        `${packageAddress}::admin::Version`,
+        `${packageAddress}::lp_pool::Registry`,
+        'u64',
+        '0xd2e030ab7f0fc956c7e683cf3c6faf3d22868dee81a4aae9f4a10a6d998a8a02::oracle_v2::OracleV2',
+        `0x0000000000000000000000000000000000000000000000000000000000000002::coin::Coin<${options.typeArguments[0]}>`,
+        'u64',
+        '0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock'
+    ] satisfies string[];
+    const parameterNames = ["version", "registry", "index", "oracleV2", "fromCoin", "minToAmount"];
+    return (tx: Transaction) => tx.moveCall({
+        package: packageAddress,
+        module: 'lp_pool',
+        function: 'swap_v2',
+        arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
+        typeArguments: options.typeArguments
+    });
 }
 export interface RedeemArguments {
     version: RawTransactionArgument<string>;
@@ -1047,29 +1059,34 @@ export interface RedeemArguments {
 }
 export interface RedeemOptions {
     package?: string;
-    arguments:
-        | RedeemArguments
-        | [
-              version: RawTransactionArgument<string>,
-              registry: RawTransactionArgument<string>,
-              index: RawTransactionArgument<number | bigint>,
-              balance: RawTransactionArgument<string>,
-          ];
-    typeArguments: [string];
+    arguments: RedeemArguments | [
+        version: RawTransactionArgument<string>,
+        registry: RawTransactionArgument<string>,
+        index: RawTransactionArgument<number | bigint>,
+        balance: RawTransactionArgument<string>
+    ];
+    typeArguments: [
+        string
+    ];
 }
 /** [User Function] Redeems LP tokens for underlying assets. */
 export function redeem(options: RedeemOptions) {
-    const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [null, null, "u64", null, "0x2::clock::Clock"] satisfies (string | null)[];
+    const packageAddress = options.package ?? '@typus/perp';
+    const argumentsTypes = [
+        `${packageAddress}::admin::Version`,
+        `${packageAddress}::lp_pool::Registry`,
+        'u64',
+        `0x0000000000000000000000000000000000000000000000000000000000000002::balance::Balance<${options.typeArguments[0]}>`,
+        '0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock'
+    ] satisfies string[];
     const parameterNames = ["version", "registry", "index", "balance"];
-    return (tx: Transaction) =>
-        tx.moveCall({
-            package: packageAddress,
-            module: "lp_pool",
-            function: "redeem",
-            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
-            typeArguments: options.typeArguments,
-        });
+    return (tx: Transaction) => tx.moveCall({
+        package: packageAddress,
+        module: 'lp_pool',
+        function: 'redeem',
+        arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
+        typeArguments: options.typeArguments
+    });
 }
 export interface ClaimArguments {
     version: RawTransactionArgument<string>;
@@ -1080,30 +1097,78 @@ export interface ClaimArguments {
 }
 export interface ClaimOptions {
     package?: string;
-    arguments:
-        | ClaimArguments
-        | [
-              version: RawTransactionArgument<string>,
-              registry: RawTransactionArgument<string>,
-              index: RawTransactionArgument<number | bigint>,
-              treasuryCaps: RawTransactionArgument<string>,
-              oracle: RawTransactionArgument<string>,
-          ];
-    typeArguments: [string, string];
+    arguments: ClaimArguments | [
+        version: RawTransactionArgument<string>,
+        registry: RawTransactionArgument<string>,
+        index: RawTransactionArgument<number | bigint>,
+        treasuryCaps: RawTransactionArgument<string>,
+        oracle: RawTransactionArgument<string>
+    ];
+    typeArguments: [
+        string,
+        string
+    ];
+}
+/** [DEPRECATED] Use `claim_v2` with `&OracleV2` instead. */
+export function claim(options: ClaimOptions) {
+    const packageAddress = options.package ?? '@typus/perp';
+    const argumentsTypes = [
+        `${packageAddress}::admin::Version`,
+        `${packageAddress}::lp_pool::Registry`,
+        'u64',
+        `${packageAddress}::treasury_caps::TreasuryCaps`,
+        '0xd2e030ab7f0fc956c7e683cf3c6faf3d22868dee81a4aae9f4a10a6d998a8a02::oracle::Oracle',
+        '0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock'
+    ] satisfies string[];
+    const parameterNames = ["version", "registry", "index", "treasuryCaps", "oracle"];
+    return (tx: Transaction) => tx.moveCall({
+        package: packageAddress,
+        module: 'lp_pool',
+        function: 'claim',
+        arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
+        typeArguments: options.typeArguments
+    });
+}
+export interface ClaimV2Arguments {
+    version: RawTransactionArgument<string>;
+    registry: RawTransactionArgument<string>;
+    index: RawTransactionArgument<number | bigint>;
+    treasuryCaps: RawTransactionArgument<string>;
+    oracleV2: RawTransactionArgument<string>;
+}
+export interface ClaimV2Options {
+    package?: string;
+    arguments: ClaimV2Arguments | [
+        version: RawTransactionArgument<string>,
+        registry: RawTransactionArgument<string>,
+        index: RawTransactionArgument<number | bigint>,
+        treasuryCaps: RawTransactionArgument<string>,
+        oracleV2: RawTransactionArgument<string>
+    ];
+    typeArguments: [
+        string,
+        string
+    ];
 }
 /** [User Function] Claims underlying assets from redeemed LP tokens. */
-export function claim(options: ClaimOptions) {
-    const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [null, null, "u64", null, null, "0x2::clock::Clock"] satisfies (string | null)[];
-    const parameterNames = ["version", "registry", "index", "treasuryCaps", "oracle"];
-    return (tx: Transaction) =>
-        tx.moveCall({
-            package: packageAddress,
-            module: "lp_pool",
-            function: "claim",
-            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
-            typeArguments: options.typeArguments,
-        });
+export function claimV2(options: ClaimV2Options) {
+    const packageAddress = options.package ?? '@typus/perp';
+    const argumentsTypes = [
+        `${packageAddress}::admin::Version`,
+        `${packageAddress}::lp_pool::Registry`,
+        'u64',
+        `${packageAddress}::treasury_caps::TreasuryCaps`,
+        '0xd2e030ab7f0fc956c7e683cf3c6faf3d22868dee81a4aae9f4a10a6d998a8a02::oracle_v2::OracleV2',
+        '0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock'
+    ] satisfies string[];
+    const parameterNames = ["version", "registry", "index", "treasuryCaps", "oracleV2"];
+    return (tx: Transaction) => tx.moveCall({
+        package: packageAddress,
+        module: 'lp_pool',
+        function: 'claim_v2',
+        arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
+        typeArguments: options.typeArguments
+    });
 }
 export interface SuspendPoolArguments {
     version: RawTransactionArgument<string>;
@@ -1112,26 +1177,27 @@ export interface SuspendPoolArguments {
 }
 export interface SuspendPoolOptions {
     package?: string;
-    arguments:
-        | SuspendPoolArguments
-        | [
-              version: RawTransactionArgument<string>,
-              registry: RawTransactionArgument<string>,
-              index: RawTransactionArgument<number | bigint>,
-          ];
+    arguments: SuspendPoolArguments | [
+        version: RawTransactionArgument<string>,
+        registry: RawTransactionArgument<string>,
+        index: RawTransactionArgument<number | bigint>
+    ];
 }
 /** [Authorized Function] Suspends a liquidity pool. */
 export function suspendPool(options: SuspendPoolOptions) {
-    const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [null, null, "u64"] satisfies (string | null)[];
+    const packageAddress = options.package ?? '@typus/perp';
+    const argumentsTypes = [
+        `${packageAddress}::admin::Version`,
+        `${packageAddress}::lp_pool::Registry`,
+        'u64'
+    ] satisfies string[];
     const parameterNames = ["version", "registry", "index"];
-    return (tx: Transaction) =>
-        tx.moveCall({
-            package: packageAddress,
-            module: "lp_pool",
-            function: "suspend_pool",
-            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
-        });
+    return (tx: Transaction) => tx.moveCall({
+        package: packageAddress,
+        module: 'lp_pool',
+        function: 'suspend_pool',
+        arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
+    });
 }
 export interface ResumePoolArguments {
     version: RawTransactionArgument<string>;
@@ -1140,26 +1206,27 @@ export interface ResumePoolArguments {
 }
 export interface ResumePoolOptions {
     package?: string;
-    arguments:
-        | ResumePoolArguments
-        | [
-              version: RawTransactionArgument<string>,
-              registry: RawTransactionArgument<string>,
-              index: RawTransactionArgument<number | bigint>,
-          ];
+    arguments: ResumePoolArguments | [
+        version: RawTransactionArgument<string>,
+        registry: RawTransactionArgument<string>,
+        index: RawTransactionArgument<number | bigint>
+    ];
 }
 /** [Authorized Function] Resumes a liquidity pool. */
 export function resumePool(options: ResumePoolOptions) {
-    const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [null, null, "u64"] satisfies (string | null)[];
+    const packageAddress = options.package ?? '@typus/perp';
+    const argumentsTypes = [
+        `${packageAddress}::admin::Version`,
+        `${packageAddress}::lp_pool::Registry`,
+        'u64'
+    ] satisfies string[];
     const parameterNames = ["version", "registry", "index"];
-    return (tx: Transaction) =>
-        tx.moveCall({
-            package: packageAddress,
-            module: "lp_pool",
-            function: "resume_pool",
-            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
-        });
+    return (tx: Transaction) => tx.moveCall({
+        package: packageAddress,
+        module: 'lp_pool',
+        function: 'resume_pool',
+        arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
+    });
 }
 export interface SuspendTokenPoolArguments {
     version: RawTransactionArgument<string>;
@@ -1168,28 +1235,31 @@ export interface SuspendTokenPoolArguments {
 }
 export interface SuspendTokenPoolOptions {
     package?: string;
-    arguments:
-        | SuspendTokenPoolArguments
-        | [
-              version: RawTransactionArgument<string>,
-              registry: RawTransactionArgument<string>,
-              index: RawTransactionArgument<number | bigint>,
-          ];
-    typeArguments: [string];
+    arguments: SuspendTokenPoolArguments | [
+        version: RawTransactionArgument<string>,
+        registry: RawTransactionArgument<string>,
+        index: RawTransactionArgument<number | bigint>
+    ];
+    typeArguments: [
+        string
+    ];
 }
 /** [Authorized Function] Suspends a token pool. */
 export function suspendTokenPool(options: SuspendTokenPoolOptions) {
-    const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [null, null, "u64"] satisfies (string | null)[];
+    const packageAddress = options.package ?? '@typus/perp';
+    const argumentsTypes = [
+        `${packageAddress}::admin::Version`,
+        `${packageAddress}::lp_pool::Registry`,
+        'u64'
+    ] satisfies string[];
     const parameterNames = ["version", "registry", "index"];
-    return (tx: Transaction) =>
-        tx.moveCall({
-            package: packageAddress,
-            module: "lp_pool",
-            function: "suspend_token_pool",
-            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
-            typeArguments: options.typeArguments,
-        });
+    return (tx: Transaction) => tx.moveCall({
+        package: packageAddress,
+        module: 'lp_pool',
+        function: 'suspend_token_pool',
+        arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
+        typeArguments: options.typeArguments
+    });
 }
 export interface ResumeTokenPoolArguments {
     version: RawTransactionArgument<string>;
@@ -1198,271 +1268,31 @@ export interface ResumeTokenPoolArguments {
 }
 export interface ResumeTokenPoolOptions {
     package?: string;
-    arguments:
-        | ResumeTokenPoolArguments
-        | [
-              version: RawTransactionArgument<string>,
-              registry: RawTransactionArgument<string>,
-              index: RawTransactionArgument<number | bigint>,
-          ];
-    typeArguments: [string];
+    arguments: ResumeTokenPoolArguments | [
+        version: RawTransactionArgument<string>,
+        registry: RawTransactionArgument<string>,
+        index: RawTransactionArgument<number | bigint>
+    ];
+    typeArguments: [
+        string
+    ];
 }
 /** [Authorized Function] Resumes a token pool. */
 export function resumeTokenPool(options: ResumeTokenPoolOptions) {
-    const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [null, null, "u64"] satisfies (string | null)[];
+    const packageAddress = options.package ?? '@typus/perp';
+    const argumentsTypes = [
+        `${packageAddress}::admin::Version`,
+        `${packageAddress}::lp_pool::Registry`,
+        'u64'
+    ] satisfies string[];
     const parameterNames = ["version", "registry", "index"];
-    return (tx: Transaction) =>
-        tx.moveCall({
-            package: packageAddress,
-            module: "lp_pool",
-            function: "resume_token_pool",
-            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
-            typeArguments: options.typeArguments,
-        });
-}
-export interface ManagerDepositScallopArguments {
-    version: RawTransactionArgument<string>;
-    registry: RawTransactionArgument<string>;
-    index: RawTransactionArgument<number | bigint>;
-    scallopVersion: RawTransactionArgument<string>;
-    scallopMarket: RawTransactionArgument<string>;
-    lendingAmount: RawTransactionArgument<number | bigint | null>;
-}
-export interface ManagerDepositScallopOptions {
-    package?: string;
-    arguments:
-        | ManagerDepositScallopArguments
-        | [
-              version: RawTransactionArgument<string>,
-              registry: RawTransactionArgument<string>,
-              index: RawTransactionArgument<number | bigint>,
-              scallopVersion: RawTransactionArgument<string>,
-              scallopMarket: RawTransactionArgument<string>,
-              lendingAmount: RawTransactionArgument<number | bigint | null>,
-          ];
-    typeArguments: [string];
-}
-/** [Authorized Function] Manager deposits to Scallop. */
-export function managerDepositScallop(options: ManagerDepositScallopOptions) {
-    const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [null, null, "u64", null, null, "0x2::clock::Clock", "0x1::option::Option<u64>"] satisfies (string | null)[];
-    const parameterNames = ["version", "registry", "index", "scallopVersion", "scallopMarket", "lendingAmount"];
-    return (tx: Transaction) =>
-        tx.moveCall({
-            package: packageAddress,
-            module: "lp_pool",
-            function: "manager_deposit_scallop",
-            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
-            typeArguments: options.typeArguments,
-        });
-}
-export interface ManagerDepositNaviArguments {
-    version: RawTransactionArgument<string>;
-    registry: RawTransactionArgument<string>;
-    index: RawTransactionArgument<number | bigint>;
-    storage: RawTransactionArgument<string>;
-    pool: RawTransactionArgument<string>;
-    asset: RawTransactionArgument<number>;
-    incentiveV2: RawTransactionArgument<string>;
-    incentiveV3: RawTransactionArgument<string>;
-    lendingAmount: RawTransactionArgument<number | bigint | null>;
-}
-export interface ManagerDepositNaviOptions {
-    package?: string;
-    arguments:
-        | ManagerDepositNaviArguments
-        | [
-              version: RawTransactionArgument<string>,
-              registry: RawTransactionArgument<string>,
-              index: RawTransactionArgument<number | bigint>,
-              storage: RawTransactionArgument<string>,
-              pool: RawTransactionArgument<string>,
-              asset: RawTransactionArgument<number>,
-              incentiveV2: RawTransactionArgument<string>,
-              incentiveV3: RawTransactionArgument<string>,
-              lendingAmount: RawTransactionArgument<number | bigint | null>,
-          ];
-    typeArguments: [string];
-}
-export function managerDepositNavi(options: ManagerDepositNaviOptions) {
-    const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [null, null, "u64", null, null, "u8", null, null, "0x2::clock::Clock", "0x1::option::Option<u64>"] satisfies (
-        | string
-        | null
-    )[];
-    const parameterNames = ["version", "registry", "index", "storage", "pool", "asset", "incentiveV2", "incentiveV3", "lendingAmount"];
-    return (tx: Transaction) =>
-        tx.moveCall({
-            package: packageAddress,
-            module: "lp_pool",
-            function: "manager_deposit_navi",
-            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
-            typeArguments: options.typeArguments,
-        });
-}
-export interface ManagerWithdrawScallopArguments {
-    version: RawTransactionArgument<string>;
-    registry: RawTransactionArgument<string>;
-    index: RawTransactionArgument<number | bigint>;
-    scallopVersion: RawTransactionArgument<string>;
-    scallopMarket: RawTransactionArgument<string>;
-    withdrawAmount: RawTransactionArgument<number | bigint | null>;
-}
-export interface ManagerWithdrawScallopOptions {
-    package?: string;
-    arguments:
-        | ManagerWithdrawScallopArguments
-        | [
-              version: RawTransactionArgument<string>,
-              registry: RawTransactionArgument<string>,
-              index: RawTransactionArgument<number | bigint>,
-              scallopVersion: RawTransactionArgument<string>,
-              scallopMarket: RawTransactionArgument<string>,
-              withdrawAmount: RawTransactionArgument<number | bigint | null>,
-          ];
-    typeArguments: [string];
-}
-/** [Authorized Function] Manager withdraws from Scallop. */
-export function managerWithdrawScallop(options: ManagerWithdrawScallopOptions) {
-    const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [null, null, "u64", null, null, "0x2::clock::Clock", "0x1::option::Option<u64>"] satisfies (string | null)[];
-    const parameterNames = ["version", "registry", "index", "scallopVersion", "scallopMarket", "withdrawAmount"];
-    return (tx: Transaction) =>
-        tx.moveCall({
-            package: packageAddress,
-            module: "lp_pool",
-            function: "manager_withdraw_scallop",
-            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
-            typeArguments: options.typeArguments,
-        });
-}
-export interface ManagerWithdrawNaviArguments {
-    version: RawTransactionArgument<string>;
-    registry: RawTransactionArgument<string>;
-    index: RawTransactionArgument<number | bigint>;
-    oracleConfig: RawTransactionArgument<string>;
-    priceOracle: RawTransactionArgument<string>;
-    supraOracleHolder: RawTransactionArgument<string>;
-    pythPriceInfo: RawTransactionArgument<string>;
-    feedAddress: RawTransactionArgument<string>;
-    storage: RawTransactionArgument<string>;
-    pool: RawTransactionArgument<string>;
-    asset: RawTransactionArgument<number>;
-    incentiveV2: RawTransactionArgument<string>;
-    incentiveV3: RawTransactionArgument<string>;
-}
-export interface ManagerWithdrawNaviOptions {
-    package?: string;
-    arguments:
-        | ManagerWithdrawNaviArguments
-        | [
-              version: RawTransactionArgument<string>,
-              registry: RawTransactionArgument<string>,
-              index: RawTransactionArgument<number | bigint>,
-              oracleConfig: RawTransactionArgument<string>,
-              priceOracle: RawTransactionArgument<string>,
-              supraOracleHolder: RawTransactionArgument<string>,
-              pythPriceInfo: RawTransactionArgument<string>,
-              feedAddress: RawTransactionArgument<string>,
-              storage: RawTransactionArgument<string>,
-              pool: RawTransactionArgument<string>,
-              asset: RawTransactionArgument<number>,
-              incentiveV2: RawTransactionArgument<string>,
-              incentiveV3: RawTransactionArgument<string>,
-          ];
-    typeArguments: [string];
-}
-export function managerWithdrawNavi(options: ManagerWithdrawNaviOptions) {
-    const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [
-        null,
-        null,
-        "u64",
-        null,
-        null,
-        null,
-        null,
-        "address",
-        null,
-        null,
-        "u8",
-        null,
-        null,
-        "0x2::clock::Clock",
-    ] satisfies (string | null)[];
-    const parameterNames = [
-        "version",
-        "registry",
-        "index",
-        "oracleConfig",
-        "priceOracle",
-        "supraOracleHolder",
-        "pythPriceInfo",
-        "feedAddress",
-        "storage",
-        "pool",
-        "asset",
-        "incentiveV2",
-        "incentiveV3",
-    ];
-    return (tx: Transaction) =>
-        tx.moveCall({
-            package: packageAddress,
-            module: "lp_pool",
-            function: "manager_withdraw_navi",
-            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
-            typeArguments: options.typeArguments,
-        });
-}
-export interface ManagerRewardNaviArguments {
-    version: RawTransactionArgument<string>;
-    registry: RawTransactionArgument<string>;
-    index: RawTransactionArgument<number | bigint>;
-    storage: RawTransactionArgument<string>;
-    rewardFund: RawTransactionArgument<string>;
-    coinTypes: RawTransactionArgument<string[]>;
-    ruleIds: RawTransactionArgument<string[]>;
-    incentiveV3: RawTransactionArgument<string>;
-}
-export interface ManagerRewardNaviOptions {
-    package?: string;
-    arguments:
-        | ManagerRewardNaviArguments
-        | [
-              version: RawTransactionArgument<string>,
-              registry: RawTransactionArgument<string>,
-              index: RawTransactionArgument<number | bigint>,
-              storage: RawTransactionArgument<string>,
-              rewardFund: RawTransactionArgument<string>,
-              coinTypes: RawTransactionArgument<string[]>,
-              ruleIds: RawTransactionArgument<string[]>,
-              incentiveV3: RawTransactionArgument<string>,
-          ];
-    typeArguments: [string];
-}
-export function managerRewardNavi(options: ManagerRewardNaviOptions) {
-    const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [
-        null,
-        null,
-        "u64",
-        null,
-        null,
-        "vector<0x1::string::String>",
-        "vector<address>",
-        null,
-        "0x2::clock::Clock",
-    ] satisfies (string | null)[];
-    const parameterNames = ["version", "registry", "index", "storage", "rewardFund", "coinTypes", "ruleIds", "incentiveV3"];
-    return (tx: Transaction) =>
-        tx.moveCall({
-            package: packageAddress,
-            module: "lp_pool",
-            function: "manager_reward_navi",
-            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
-            typeArguments: options.typeArguments,
-        });
+    return (tx: Transaction) => tx.moveCall({
+        package: packageAddress,
+        module: 'lp_pool',
+        function: 'resume_token_pool',
+        arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
+        typeArguments: options.typeArguments
+    });
 }
 export interface ManagerRemoveLiquidityTokenArguments {
     version: RawTransactionArgument<string>;
@@ -1471,28 +1301,31 @@ export interface ManagerRemoveLiquidityTokenArguments {
 }
 export interface ManagerRemoveLiquidityTokenOptions {
     package?: string;
-    arguments:
-        | ManagerRemoveLiquidityTokenArguments
-        | [
-              version: RawTransactionArgument<string>,
-              registry: RawTransactionArgument<string>,
-              index: RawTransactionArgument<number | bigint>,
-          ];
-    typeArguments: [string];
+    arguments: ManagerRemoveLiquidityTokenArguments | [
+        version: RawTransactionArgument<string>,
+        registry: RawTransactionArgument<string>,
+        index: RawTransactionArgument<number | bigint>
+    ];
+    typeArguments: [
+        string
+    ];
 }
 /** [Authorized Function] Manager removes a liquidity token. */
 export function managerRemoveLiquidityToken(options: ManagerRemoveLiquidityTokenOptions) {
-    const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [null, null, "u64"] satisfies (string | null)[];
+    const packageAddress = options.package ?? '@typus/perp';
+    const argumentsTypes = [
+        `${packageAddress}::admin::Version`,
+        `${packageAddress}::lp_pool::Registry`,
+        'u64'
+    ] satisfies string[];
     const parameterNames = ["version", "registry", "index"];
-    return (tx: Transaction) =>
-        tx.moveCall({
-            package: packageAddress,
-            module: "lp_pool",
-            function: "manager_remove_liquidity_token",
-            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
-            typeArguments: options.typeArguments,
-        });
+    return (tx: Transaction) => tx.moveCall({
+        package: packageAddress,
+        module: 'lp_pool',
+        function: 'manager_remove_liquidity_token',
+        arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
+        typeArguments: options.typeArguments
+    });
 }
 export interface CheckTokenPoolStatusArguments {
     registry: RawTransactionArgument<string>;
@@ -1501,46 +1334,52 @@ export interface CheckTokenPoolStatusArguments {
 }
 export interface CheckTokenPoolStatusOptions {
     package?: string;
-    arguments:
-        | CheckTokenPoolStatusArguments
-        | [
-              registry: RawTransactionArgument<string>,
-              index: RawTransactionArgument<number | bigint>,
-              assertActive: RawTransactionArgument<boolean>,
-          ];
-    typeArguments: [string];
+    arguments: CheckTokenPoolStatusArguments | [
+        registry: RawTransactionArgument<string>,
+        index: RawTransactionArgument<number | bigint>,
+        assertActive: RawTransactionArgument<boolean>
+    ];
+    typeArguments: [
+        string
+    ];
 }
 export function checkTokenPoolStatus(options: CheckTokenPoolStatusOptions) {
-    const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [null, "u64", "bool"] satisfies (string | null)[];
+    const packageAddress = options.package ?? '@typus/perp';
+    const argumentsTypes = [
+        `${packageAddress}::lp_pool::Registry`,
+        'u64',
+        'bool'
+    ] satisfies string[];
     const parameterNames = ["registry", "index", "assertActive"];
-    return (tx: Transaction) =>
-        tx.moveCall({
-            package: packageAddress,
-            module: "lp_pool",
-            function: "check_token_pool_status",
-            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
-            typeArguments: options.typeArguments,
-        });
+    return (tx: Transaction) => tx.moveCall({
+        package: packageAddress,
+        module: 'lp_pool',
+        function: 'check_token_pool_status',
+        arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
+        typeArguments: options.typeArguments
+    });
 }
 export interface TokenPoolIsActiveArguments {
     tokenPool: RawTransactionArgument<string>;
 }
 export interface TokenPoolIsActiveOptions {
     package?: string;
-    arguments: TokenPoolIsActiveArguments | [tokenPool: RawTransactionArgument<string>];
+    arguments: TokenPoolIsActiveArguments | [
+        tokenPool: RawTransactionArgument<string>
+    ];
 }
 export function tokenPoolIsActive(options: TokenPoolIsActiveOptions) {
-    const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [null] satisfies (string | null)[];
+    const packageAddress = options.package ?? '@typus/perp';
+    const argumentsTypes = [
+        `${packageAddress}::lp_pool::TokenPool`
+    ] satisfies string[];
     const parameterNames = ["tokenPool"];
-    return (tx: Transaction) =>
-        tx.moveCall({
-            package: packageAddress,
-            module: "lp_pool",
-            function: "token_pool_is_active",
-            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
-        });
+    return (tx: Transaction) => tx.moveCall({
+        package: packageAddress,
+        module: 'lp_pool',
+        function: 'token_pool_is_active',
+        arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
+    });
 }
 export interface RebalanceArguments {
     version: RawTransactionArgument<string>;
@@ -1552,31 +1391,80 @@ export interface RebalanceArguments {
 }
 export interface RebalanceOptions {
     package?: string;
-    arguments:
-        | RebalanceArguments
-        | [
-              version: RawTransactionArgument<string>,
-              registry: RawTransactionArgument<string>,
-              index: RawTransactionArgument<number | bigint>,
-              oracleTokenA: RawTransactionArgument<string>,
-              oracleTokenB: RawTransactionArgument<string>,
-              rebalanceAmount: RawTransactionArgument<number | bigint>,
-          ];
-    typeArguments: [string, string];
+    arguments: RebalanceArguments | [
+        version: RawTransactionArgument<string>,
+        registry: RawTransactionArgument<string>,
+        index: RawTransactionArgument<number | bigint>,
+        oracleTokenA: RawTransactionArgument<string>,
+        oracleTokenB: RawTransactionArgument<string>,
+        rebalanceAmount: RawTransactionArgument<number | bigint>
+    ];
+    typeArguments: [
+        string,
+        string
+    ];
+}
+/** [DEPRECATED] Use `rebalance_v2` with `&OracleV2` instead. */
+export function rebalance(options: RebalanceOptions) {
+    const packageAddress = options.package ?? '@typus/perp';
+    const argumentsTypes = [
+        `${packageAddress}::admin::Version`,
+        `${packageAddress}::lp_pool::Registry`,
+        'u64',
+        '0xd2e030ab7f0fc956c7e683cf3c6faf3d22868dee81a4aae9f4a10a6d998a8a02::oracle::Oracle',
+        '0xd2e030ab7f0fc956c7e683cf3c6faf3d22868dee81a4aae9f4a10a6d998a8a02::oracle::Oracle',
+        'u64',
+        '0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock'
+    ] satisfies string[];
+    const parameterNames = ["version", "registry", "index", "oracleTokenA", "oracleTokenB", "rebalanceAmount"];
+    return (tx: Transaction) => tx.moveCall({
+        package: packageAddress,
+        module: 'lp_pool',
+        function: 'rebalance',
+        arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
+        typeArguments: options.typeArguments
+    });
+}
+export interface RebalanceV2Arguments {
+    version: RawTransactionArgument<string>;
+    registry: RawTransactionArgument<string>;
+    index: RawTransactionArgument<number | bigint>;
+    oracleV2: RawTransactionArgument<string>;
+    rebalanceAmount: RawTransactionArgument<number | bigint>;
+}
+export interface RebalanceV2Options {
+    package?: string;
+    arguments: RebalanceV2Arguments | [
+        version: RawTransactionArgument<string>,
+        registry: RawTransactionArgument<string>,
+        index: RawTransactionArgument<number | bigint>,
+        oracleV2: RawTransactionArgument<string>,
+        rebalanceAmount: RawTransactionArgument<number | bigint>
+    ];
+    typeArguments: [
+        string,
+        string
+    ];
 }
 /** [Authorized Function] Manager take the liquidity token A to swap. */
-export function rebalance(options: RebalanceOptions) {
-    const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [null, null, "u64", null, null, "u64", "0x2::clock::Clock"] satisfies (string | null)[];
-    const parameterNames = ["version", "registry", "index", "oracleTokenA", "oracleTokenB", "rebalanceAmount"];
-    return (tx: Transaction) =>
-        tx.moveCall({
-            package: packageAddress,
-            module: "lp_pool",
-            function: "rebalance",
-            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
-            typeArguments: options.typeArguments,
-        });
+export function rebalanceV2(options: RebalanceV2Options) {
+    const packageAddress = options.package ?? '@typus/perp';
+    const argumentsTypes = [
+        `${packageAddress}::admin::Version`,
+        `${packageAddress}::lp_pool::Registry`,
+        'u64',
+        '0xd2e030ab7f0fc956c7e683cf3c6faf3d22868dee81a4aae9f4a10a6d998a8a02::oracle_v2::OracleV2',
+        'u64',
+        '0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock'
+    ] satisfies string[];
+    const parameterNames = ["version", "registry", "index", "oracleV2", "rebalanceAmount"];
+    return (tx: Transaction) => tx.moveCall({
+        package: packageAddress,
+        module: 'lp_pool',
+        function: 'rebalance_v2',
+        arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
+        typeArguments: options.typeArguments
+    });
 }
 export interface CompleteRebalancingArguments {
     version: RawTransactionArgument<string>;
@@ -1589,32 +1477,85 @@ export interface CompleteRebalancingArguments {
 }
 export interface CompleteRebalancingOptions {
     package?: string;
-    arguments:
-        | CompleteRebalancingArguments
-        | [
-              version: RawTransactionArgument<string>,
-              registry: RawTransactionArgument<string>,
-              index: RawTransactionArgument<number | bigint>,
-              oracleTokenA: RawTransactionArgument<string>,
-              oracleTokenB: RawTransactionArgument<string>,
-              swappedBackBalance: RawTransactionArgument<string>,
-              rebalanceProcess: RawTransactionArgument<string>,
-          ];
-    typeArguments: [string, string];
+    arguments: CompleteRebalancingArguments | [
+        version: RawTransactionArgument<string>,
+        registry: RawTransactionArgument<string>,
+        index: RawTransactionArgument<number | bigint>,
+        oracleTokenA: RawTransactionArgument<string>,
+        oracleTokenB: RawTransactionArgument<string>,
+        swappedBackBalance: RawTransactionArgument<string>,
+        rebalanceProcess: RawTransactionArgument<string>
+    ];
+    typeArguments: [
+        string,
+        string
+    ];
+}
+/** [DEPRECATED] Use `complete_rebalancing_v2` with `&OracleV2` instead. */
+export function completeRebalancing(options: CompleteRebalancingOptions) {
+    const packageAddress = options.package ?? '@typus/perp';
+    const argumentsTypes = [
+        `${packageAddress}::admin::Version`,
+        `${packageAddress}::lp_pool::Registry`,
+        'u64',
+        '0xd2e030ab7f0fc956c7e683cf3c6faf3d22868dee81a4aae9f4a10a6d998a8a02::oracle::Oracle',
+        '0xd2e030ab7f0fc956c7e683cf3c6faf3d22868dee81a4aae9f4a10a6d998a8a02::oracle::Oracle',
+        `0x0000000000000000000000000000000000000000000000000000000000000002::balance::Balance<${options.typeArguments[1]}>`,
+        `${packageAddress}::lp_pool::RebalanceProcess`,
+        '0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock'
+    ] satisfies string[];
+    const parameterNames = ["version", "registry", "index", "oracleTokenA", "oracleTokenB", "swappedBackBalance", "rebalanceProcess"];
+    return (tx: Transaction) => tx.moveCall({
+        package: packageAddress,
+        module: 'lp_pool',
+        function: 'complete_rebalancing',
+        arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
+        typeArguments: options.typeArguments
+    });
+}
+export interface CompleteRebalancingV2Arguments {
+    version: RawTransactionArgument<string>;
+    registry: RawTransactionArgument<string>;
+    index: RawTransactionArgument<number | bigint>;
+    oracleV2: RawTransactionArgument<string>;
+    swappedBackBalance: RawTransactionArgument<string>;
+    rebalanceProcess: RawTransactionArgument<string>;
+}
+export interface CompleteRebalancingV2Options {
+    package?: string;
+    arguments: CompleteRebalancingV2Arguments | [
+        version: RawTransactionArgument<string>,
+        registry: RawTransactionArgument<string>,
+        index: RawTransactionArgument<number | bigint>,
+        oracleV2: RawTransactionArgument<string>,
+        swappedBackBalance: RawTransactionArgument<string>,
+        rebalanceProcess: RawTransactionArgument<string>
+    ];
+    typeArguments: [
+        string,
+        string
+    ];
 }
 /** [Authorized Function] Manager swap back the liquidity token from A to B. */
-export function completeRebalancing(options: CompleteRebalancingOptions) {
-    const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [null, null, "u64", null, null, null, null, "0x2::clock::Clock"] satisfies (string | null)[];
-    const parameterNames = ["version", "registry", "index", "oracleTokenA", "oracleTokenB", "swappedBackBalance", "rebalanceProcess"];
-    return (tx: Transaction) =>
-        tx.moveCall({
-            package: packageAddress,
-            module: "lp_pool",
-            function: "complete_rebalancing",
-            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
-            typeArguments: options.typeArguments,
-        });
+export function completeRebalancingV2(options: CompleteRebalancingV2Options) {
+    const packageAddress = options.package ?? '@typus/perp';
+    const argumentsTypes = [
+        `${packageAddress}::admin::Version`,
+        `${packageAddress}::lp_pool::Registry`,
+        'u64',
+        '0xd2e030ab7f0fc956c7e683cf3c6faf3d22868dee81a4aae9f4a10a6d998a8a02::oracle_v2::OracleV2',
+        `0x0000000000000000000000000000000000000000000000000000000000000002::balance::Balance<${options.typeArguments[1]}>`,
+        `${packageAddress}::lp_pool::RebalanceProcess`,
+        '0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock'
+    ] satisfies string[];
+    const parameterNames = ["version", "registry", "index", "oracleV2", "swappedBackBalance", "rebalanceProcess"];
+    return (tx: Transaction) => tx.moveCall({
+        package: packageAddress,
+        module: 'lp_pool',
+        function: 'complete_rebalancing_v2',
+        arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
+        typeArguments: options.typeArguments
+    });
 }
 export interface ManagerRemoveAllLiquidityArguments {
     version: RawTransactionArgument<string>;
@@ -1623,31 +1564,34 @@ export interface ManagerRemoveAllLiquidityArguments {
 }
 export interface ManagerRemoveAllLiquidityOptions {
     package?: string;
-    arguments:
-        | ManagerRemoveAllLiquidityArguments
-        | [
-              version: RawTransactionArgument<string>,
-              registry: RawTransactionArgument<string>,
-              index: RawTransactionArgument<number | bigint>,
-          ];
-    typeArguments: [string];
+    arguments: ManagerRemoveAllLiquidityArguments | [
+        version: RawTransactionArgument<string>,
+        registry: RawTransactionArgument<string>,
+        index: RawTransactionArgument<number | bigint>
+    ];
+    typeArguments: [
+        string
+    ];
 }
 /**
  * Only for current contract sunset purpose. Will be removed in new contract
  * [Authorized Function] Manager remove all liquidity of a token.
  */
 export function managerRemoveAllLiquidity(options: ManagerRemoveAllLiquidityOptions) {
-    const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [null, null, "u64"] satisfies (string | null)[];
+    const packageAddress = options.package ?? '@typus/perp';
+    const argumentsTypes = [
+        `${packageAddress}::admin::Version`,
+        `${packageAddress}::lp_pool::Registry`,
+        'u64'
+    ] satisfies string[];
     const parameterNames = ["version", "registry", "index"];
-    return (tx: Transaction) =>
-        tx.moveCall({
-            package: packageAddress,
-            module: "lp_pool",
-            function: "manager_remove_all_liquidity",
-            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
-            typeArguments: options.typeArguments,
-        });
+    return (tx: Transaction) => tx.moveCall({
+        package: packageAddress,
+        module: 'lp_pool',
+        function: 'manager_remove_all_liquidity',
+        arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
+        typeArguments: options.typeArguments
+    });
 }
 export interface UpdateLiquidityValueArguments {
     version: RawTransactionArgument<string>;
@@ -1657,29 +1601,71 @@ export interface UpdateLiquidityValueArguments {
 }
 export interface UpdateLiquidityValueOptions {
     package?: string;
-    arguments:
-        | UpdateLiquidityValueArguments
-        | [
-              version: RawTransactionArgument<string>,
-              registry: RawTransactionArgument<string>,
-              index: RawTransactionArgument<number | bigint>,
-              oracle: RawTransactionArgument<string>,
-          ];
-    typeArguments: [string];
+    arguments: UpdateLiquidityValueArguments | [
+        version: RawTransactionArgument<string>,
+        registry: RawTransactionArgument<string>,
+        index: RawTransactionArgument<number | bigint>,
+        oracle: RawTransactionArgument<string>
+    ];
+    typeArguments: [
+        string
+    ];
+}
+/** [DEPRECATED] Use `update_liquidity_value_v2` with `&OracleV2` instead. */
+export function updateLiquidityValue(options: UpdateLiquidityValueOptions) {
+    const packageAddress = options.package ?? '@typus/perp';
+    const argumentsTypes = [
+        `${packageAddress}::admin::Version`,
+        `${packageAddress}::lp_pool::Registry`,
+        'u64',
+        '0xd2e030ab7f0fc956c7e683cf3c6faf3d22868dee81a4aae9f4a10a6d998a8a02::oracle::Oracle',
+        '0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock'
+    ] satisfies string[];
+    const parameterNames = ["version", "registry", "index", "oracle"];
+    return (tx: Transaction) => tx.moveCall({
+        package: packageAddress,
+        module: 'lp_pool',
+        function: 'update_liquidity_value',
+        arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
+        typeArguments: options.typeArguments
+    });
+}
+export interface UpdateLiquidityValueV2Arguments {
+    version: RawTransactionArgument<string>;
+    registry: RawTransactionArgument<string>;
+    index: RawTransactionArgument<number | bigint>;
+    oracleV2: RawTransactionArgument<string>;
+}
+export interface UpdateLiquidityValueV2Options {
+    package?: string;
+    arguments: UpdateLiquidityValueV2Arguments | [
+        version: RawTransactionArgument<string>,
+        registry: RawTransactionArgument<string>,
+        index: RawTransactionArgument<number | bigint>,
+        oracleV2: RawTransactionArgument<string>
+    ];
+    typeArguments: [
+        string
+    ];
 }
 /** [User Function] Update the liquidity value with oracle. */
-export function updateLiquidityValue(options: UpdateLiquidityValueOptions) {
-    const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [null, null, "u64", null, "0x2::clock::Clock"] satisfies (string | null)[];
-    const parameterNames = ["version", "registry", "index", "oracle"];
-    return (tx: Transaction) =>
-        tx.moveCall({
-            package: packageAddress,
-            module: "lp_pool",
-            function: "update_liquidity_value",
-            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
-            typeArguments: options.typeArguments,
-        });
+export function updateLiquidityValueV2(options: UpdateLiquidityValueV2Options) {
+    const packageAddress = options.package ?? '@typus/perp';
+    const argumentsTypes = [
+        `${packageAddress}::admin::Version`,
+        `${packageAddress}::lp_pool::Registry`,
+        'u64',
+        '0xd2e030ab7f0fc956c7e683cf3c6faf3d22868dee81a4aae9f4a10a6d998a8a02::oracle_v2::OracleV2',
+        '0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock'
+    ] satisfies string[];
+    const parameterNames = ["version", "registry", "index", "oracleV2"];
+    return (tx: Transaction) => tx.moveCall({
+        package: packageAddress,
+        module: 'lp_pool',
+        function: 'update_liquidity_value_v2',
+        arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
+        typeArguments: options.typeArguments
+    });
 }
 export interface GetPoolLiquidityArguments {
     version: RawTransactionArgument<string>;
@@ -1688,58 +1674,88 @@ export interface GetPoolLiquidityArguments {
 }
 export interface GetPoolLiquidityOptions {
     package?: string;
-    arguments:
-        | GetPoolLiquidityArguments
-        | [
-              version: RawTransactionArgument<string>,
-              registry: RawTransactionArgument<string>,
-              index: RawTransactionArgument<number | bigint>,
-          ];
+    arguments: GetPoolLiquidityArguments | [
+        version: RawTransactionArgument<string>,
+        registry: RawTransactionArgument<string>,
+        index: RawTransactionArgument<number | bigint>
+    ];
 }
 /**
  * [View Function] Get the liquidity pool token amounts. Return
  * [total_share_supply, tvl_usd, token_types, amounts, usds]
  */
 export function getPoolLiquidity(options: GetPoolLiquidityOptions) {
-    const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [null, null, "u64"] satisfies (string | null)[];
+    const packageAddress = options.package ?? '@typus/perp';
+    const argumentsTypes = [
+        `${packageAddress}::admin::Version`,
+        `${packageAddress}::lp_pool::Registry`,
+        'u64'
+    ] satisfies string[];
     const parameterNames = ["version", "registry", "index"];
-    return (tx: Transaction) =>
-        tx.moveCall({
-            package: packageAddress,
-            module: "lp_pool",
-            function: "get_pool_liquidity",
-            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
-        });
+    return (tx: Transaction) => tx.moveCall({
+        package: packageAddress,
+        module: 'lp_pool',
+        function: 'get_pool_liquidity',
+        arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
+    });
+}
+export interface GetV2PriceArguments {
+    oracleV2: RawTransactionArgument<string>;
+    tokenType: RawTransactionArgument<string>;
+}
+export interface GetV2PriceOptions {
+    package?: string;
+    arguments: GetV2PriceArguments | [
+        oracleV2: RawTransactionArgument<string>,
+        tokenType: RawTransactionArgument<string>
+    ];
+}
+export function getV2Price(options: GetV2PriceOptions) {
+    const packageAddress = options.package ?? '@typus/perp';
+    const argumentsTypes = [
+        '0xd2e030ab7f0fc956c7e683cf3c6faf3d22868dee81a4aae9f4a10a6d998a8a02::oracle_v2::OracleV2',
+        '0x0000000000000000000000000000000000000000000000000000000000000001::type_name::TypeName',
+        '0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock'
+    ] satisfies string[];
+    const parameterNames = ["oracleV2", "tokenType"];
+    return (tx: Transaction) => tx.moveCall({
+        package: packageAddress,
+        module: 'lp_pool',
+        function: 'get_v2_price',
+        arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
+    });
 }
 export interface UpdateTvlArguments {
     version: RawTransactionArgument<string>;
     liquidityPool: RawTransactionArgument<string>;
     tokenType: RawTransactionArgument<string>;
-    oracle: RawTransactionArgument<string>;
+    oracleV2: RawTransactionArgument<string>;
 }
 export interface UpdateTvlOptions {
     package?: string;
-    arguments:
-        | UpdateTvlArguments
-        | [
-              version: RawTransactionArgument<string>,
-              liquidityPool: RawTransactionArgument<string>,
-              tokenType: RawTransactionArgument<string>,
-              oracle: RawTransactionArgument<string>,
-          ];
+    arguments: UpdateTvlArguments | [
+        version: RawTransactionArgument<string>,
+        liquidityPool: RawTransactionArgument<string>,
+        tokenType: RawTransactionArgument<string>,
+        oracleV2: RawTransactionArgument<string>
+    ];
 }
 export function updateTvl(options: UpdateTvlOptions) {
-    const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [null, null, null, null, "0x2::clock::Clock"] satisfies (string | null)[];
-    const parameterNames = ["version", "liquidityPool", "tokenType", "oracle"];
-    return (tx: Transaction) =>
-        tx.moveCall({
-            package: packageAddress,
-            module: "lp_pool",
-            function: "update_tvl",
-            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
-        });
+    const packageAddress = options.package ?? '@typus/perp';
+    const argumentsTypes = [
+        `${packageAddress}::admin::Version`,
+        `${packageAddress}::lp_pool::LiquidityPool`,
+        '0x0000000000000000000000000000000000000000000000000000000000000001::type_name::TypeName',
+        '0xd2e030ab7f0fc956c7e683cf3c6faf3d22868dee81a4aae9f4a10a6d998a8a02::oracle_v2::OracleV2',
+        '0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock'
+    ] satisfies string[];
+    const parameterNames = ["version", "liquidityPool", "tokenType", "oracleV2"];
+    return (tx: Transaction) => tx.moveCall({
+        package: packageAddress,
+        module: 'lp_pool',
+        function: 'update_tvl',
+        arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
+    });
 }
 export interface OrderFilledArguments {
     liquidityPool: RawTransactionArgument<string>;
@@ -1749,28 +1765,32 @@ export interface OrderFilledArguments {
 }
 export interface OrderFilledOptions {
     package?: string;
-    arguments:
-        | OrderFilledArguments
-        | [
-              liquidityPool: RawTransactionArgument<string>,
-              addReserve: RawTransactionArgument<boolean>,
-              dReserve: RawTransactionArgument<number | bigint>,
-              feeBalance: RawTransactionArgument<string>,
-          ];
-    typeArguments: [string];
+    arguments: OrderFilledArguments | [
+        liquidityPool: RawTransactionArgument<string>,
+        addReserve: RawTransactionArgument<boolean>,
+        dReserve: RawTransactionArgument<number | bigint>,
+        feeBalance: RawTransactionArgument<string>
+    ];
+    typeArguments: [
+        string
+    ];
 }
 export function orderFilled(options: OrderFilledOptions) {
-    const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [null, "bool", "u64", null] satisfies (string | null)[];
+    const packageAddress = options.package ?? '@typus/perp';
+    const argumentsTypes = [
+        `${packageAddress}::lp_pool::LiquidityPool`,
+        'bool',
+        'u64',
+        `0x0000000000000000000000000000000000000000000000000000000000000002::balance::Balance<${options.typeArguments[0]}>`
+    ] satisfies string[];
     const parameterNames = ["liquidityPool", "addReserve", "dReserve", "feeBalance"];
-    return (tx: Transaction) =>
-        tx.moveCall({
-            package: packageAddress,
-            module: "lp_pool",
-            function: "order_filled",
-            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
-            typeArguments: options.typeArguments,
-        });
+    return (tx: Transaction) => tx.moveCall({
+        package: packageAddress,
+        module: 'lp_pool',
+        function: 'order_filled',
+        arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
+        typeArguments: options.typeArguments
+    });
 }
 export interface UpdateReserveAmountArguments {
     liquidityPool: RawTransactionArgument<string>;
@@ -1779,27 +1799,30 @@ export interface UpdateReserveAmountArguments {
 }
 export interface UpdateReserveAmountOptions {
     package?: string;
-    arguments:
-        | UpdateReserveAmountArguments
-        | [
-              liquidityPool: RawTransactionArgument<string>,
-              addReserve: RawTransactionArgument<boolean>,
-              dReserve: RawTransactionArgument<number | bigint>,
-          ];
-    typeArguments: [string];
+    arguments: UpdateReserveAmountArguments | [
+        liquidityPool: RawTransactionArgument<string>,
+        addReserve: RawTransactionArgument<boolean>,
+        dReserve: RawTransactionArgument<number | bigint>
+    ];
+    typeArguments: [
+        string
+    ];
 }
 export function updateReserveAmount(options: UpdateReserveAmountOptions) {
-    const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [null, "bool", "u64"] satisfies (string | null)[];
+    const packageAddress = options.package ?? '@typus/perp';
+    const argumentsTypes = [
+        `${packageAddress}::lp_pool::LiquidityPool`,
+        'bool',
+        'u64'
+    ] satisfies string[];
     const parameterNames = ["liquidityPool", "addReserve", "dReserve"];
-    return (tx: Transaction) =>
-        tx.moveCall({
-            package: packageAddress,
-            module: "lp_pool",
-            function: "update_reserve_amount",
-            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
-            typeArguments: options.typeArguments,
-        });
+    return (tx: Transaction) => tx.moveCall({
+        package: packageAddress,
+        module: 'lp_pool',
+        function: 'update_reserve_amount',
+        arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
+        typeArguments: options.typeArguments
+    });
 }
 export interface PutCollateralArguments {
     liquidityPool: RawTransactionArgument<string>;
@@ -1809,28 +1832,32 @@ export interface PutCollateralArguments {
 }
 export interface PutCollateralOptions {
     package?: string;
-    arguments:
-        | PutCollateralArguments
-        | [
-              liquidityPool: RawTransactionArgument<string>,
-              collateral: RawTransactionArgument<string>,
-              collateralOraclePrice: RawTransactionArgument<number | bigint>,
-              collateralOraclePriceDecimal: RawTransactionArgument<number | bigint>,
-          ];
-    typeArguments: [string];
+    arguments: PutCollateralArguments | [
+        liquidityPool: RawTransactionArgument<string>,
+        collateral: RawTransactionArgument<string>,
+        collateralOraclePrice: RawTransactionArgument<number | bigint>,
+        collateralOraclePriceDecimal: RawTransactionArgument<number | bigint>
+    ];
+    typeArguments: [
+        string
+    ];
 }
 export function putCollateral(options: PutCollateralOptions) {
-    const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [null, null, "u64", "u64"] satisfies (string | null)[];
+    const packageAddress = options.package ?? '@typus/perp';
+    const argumentsTypes = [
+        `${packageAddress}::lp_pool::LiquidityPool`,
+        `0x0000000000000000000000000000000000000000000000000000000000000002::balance::Balance<${options.typeArguments[0]}>`,
+        'u64',
+        'u64'
+    ] satisfies string[];
     const parameterNames = ["liquidityPool", "collateral", "collateralOraclePrice", "collateralOraclePriceDecimal"];
-    return (tx: Transaction) =>
-        tx.moveCall({
-            package: packageAddress,
-            module: "lp_pool",
-            function: "put_collateral",
-            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
-            typeArguments: options.typeArguments,
-        });
+    return (tx: Transaction) => tx.moveCall({
+        package: packageAddress,
+        module: 'lp_pool',
+        function: 'put_collateral',
+        arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
+        typeArguments: options.typeArguments
+    });
 }
 export interface RequestCollateralArguments {
     liquidityPool: RawTransactionArgument<string>;
@@ -1840,28 +1867,32 @@ export interface RequestCollateralArguments {
 }
 export interface RequestCollateralOptions {
     package?: string;
-    arguments:
-        | RequestCollateralArguments
-        | [
-              liquidityPool: RawTransactionArgument<string>,
-              collateralAmount: RawTransactionArgument<number | bigint>,
-              collateralOraclePrice: RawTransactionArgument<number | bigint>,
-              collateralOraclePriceDecimal: RawTransactionArgument<number | bigint>,
-          ];
-    typeArguments: [string];
+    arguments: RequestCollateralArguments | [
+        liquidityPool: RawTransactionArgument<string>,
+        collateralAmount: RawTransactionArgument<number | bigint>,
+        collateralOraclePrice: RawTransactionArgument<number | bigint>,
+        collateralOraclePriceDecimal: RawTransactionArgument<number | bigint>
+    ];
+    typeArguments: [
+        string
+    ];
 }
 export function requestCollateral(options: RequestCollateralOptions) {
-    const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [null, "u64", "u64", "u64"] satisfies (string | null)[];
+    const packageAddress = options.package ?? '@typus/perp';
+    const argumentsTypes = [
+        `${packageAddress}::lp_pool::LiquidityPool`,
+        'u64',
+        'u64',
+        'u64'
+    ] satisfies string[];
     const parameterNames = ["liquidityPool", "collateralAmount", "collateralOraclePrice", "collateralOraclePriceDecimal"];
-    return (tx: Transaction) =>
-        tx.moveCall({
-            package: packageAddress,
-            module: "lp_pool",
-            function: "request_collateral",
-            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
-            typeArguments: options.typeArguments,
-        });
+    return (tx: Transaction) => tx.moveCall({
+        package: packageAddress,
+        module: 'lp_pool',
+        function: 'request_collateral',
+        arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
+        typeArguments: options.typeArguments
+    });
 }
 export interface PutReceiptCollateralsArguments {
     liquidityPool: RawTransactionArgument<string>;
@@ -1869,40 +1900,46 @@ export interface PutReceiptCollateralsArguments {
 }
 export interface PutReceiptCollateralsOptions {
     package?: string;
-    arguments:
-        | PutReceiptCollateralsArguments
-        | [liquidityPool: RawTransactionArgument<string>, unsettledBidReceipts: RawTransactionArgument<string[]>];
+    arguments: PutReceiptCollateralsArguments | [
+        liquidityPool: RawTransactionArgument<string>,
+        unsettledBidReceipts: RawTransactionArgument<string[]>
+    ];
 }
 export function putReceiptCollaterals(options: PutReceiptCollateralsOptions) {
-    const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [null, "vector<null>"] satisfies (string | null)[];
+    const packageAddress = options.package ?? '@typus/perp';
+    const argumentsTypes = [
+        `${packageAddress}::lp_pool::LiquidityPool`,
+        `vector<${packageAddress}::escrow::UnsettledBidReceipt>`
+    ] satisfies string[];
     const parameterNames = ["liquidityPool", "unsettledBidReceipts"];
-    return (tx: Transaction) =>
-        tx.moveCall({
-            package: packageAddress,
-            module: "lp_pool",
-            function: "put_receipt_collaterals",
-            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
-        });
+    return (tx: Transaction) => tx.moveCall({
+        package: packageAddress,
+        module: 'lp_pool',
+        function: 'put_receipt_collaterals',
+        arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
+    });
 }
 export interface GetReceiptCollateralArguments {
     liquidityPool: RawTransactionArgument<string>;
 }
 export interface GetReceiptCollateralOptions {
     package?: string;
-    arguments: GetReceiptCollateralArguments | [liquidityPool: RawTransactionArgument<string>];
+    arguments: GetReceiptCollateralArguments | [
+        liquidityPool: RawTransactionArgument<string>
+    ];
 }
 export function getReceiptCollateral(options: GetReceiptCollateralOptions) {
-    const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [null] satisfies (string | null)[];
+    const packageAddress = options.package ?? '@typus/perp';
+    const argumentsTypes = [
+        `${packageAddress}::lp_pool::LiquidityPool`
+    ] satisfies string[];
     const parameterNames = ["liquidityPool"];
-    return (tx: Transaction) =>
-        tx.moveCall({
-            package: packageAddress,
-            module: "lp_pool",
-            function: "get_receipt_collateral",
-            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
-        });
+    return (tx: Transaction) => tx.moveCall({
+        package: packageAddress,
+        module: 'lp_pool',
+        function: 'get_receipt_collateral',
+        arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
+    });
 }
 export interface CalculateMintLpArguments {
     registry: RawTransactionArgument<string>;
@@ -1914,28 +1951,32 @@ export interface CalculateMintLpArguments {
 }
 export interface CalculateMintLpOptions {
     package?: string;
-    arguments:
-        | CalculateMintLpArguments
-        | [
-              registry: RawTransactionArgument<string>,
-              index: RawTransactionArgument<number | bigint>,
-              tokenType: RawTransactionArgument<string>,
-              price: RawTransactionArgument<number | bigint>,
-              priceDecimal: RawTransactionArgument<number | bigint>,
-              depositAmount: RawTransactionArgument<number | bigint>,
-          ];
+    arguments: CalculateMintLpArguments | [
+        registry: RawTransactionArgument<string>,
+        index: RawTransactionArgument<number | bigint>,
+        tokenType: RawTransactionArgument<string>,
+        price: RawTransactionArgument<number | bigint>,
+        priceDecimal: RawTransactionArgument<number | bigint>,
+        depositAmount: RawTransactionArgument<number | bigint>
+    ];
 }
 export function calculateMintLp(options: CalculateMintLpOptions) {
-    const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [null, "u64", null, "u64", "u64", "u64"] satisfies (string | null)[];
+    const packageAddress = options.package ?? '@typus/perp';
+    const argumentsTypes = [
+        `${packageAddress}::lp_pool::Registry`,
+        'u64',
+        '0x0000000000000000000000000000000000000000000000000000000000000001::type_name::TypeName',
+        'u64',
+        'u64',
+        'u64'
+    ] satisfies string[];
     const parameterNames = ["registry", "index", "tokenType", "price", "priceDecimal", "depositAmount"];
-    return (tx: Transaction) =>
-        tx.moveCall({
-            package: packageAddress,
-            module: "lp_pool",
-            function: "calculate_mint_lp",
-            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
-        });
+    return (tx: Transaction) => tx.moveCall({
+        package: packageAddress,
+        module: 'lp_pool',
+        function: 'calculate_mint_lp',
+        arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
+    });
 }
 export interface CalculateBurnLpArguments {
     registry: RawTransactionArgument<string>;
@@ -1947,28 +1988,32 @@ export interface CalculateBurnLpArguments {
 }
 export interface CalculateBurnLpOptions {
     package?: string;
-    arguments:
-        | CalculateBurnLpArguments
-        | [
-              registry: RawTransactionArgument<string>,
-              index: RawTransactionArgument<number | bigint>,
-              tokenType: RawTransactionArgument<string>,
-              price: RawTransactionArgument<number | bigint>,
-              priceDecimal: RawTransactionArgument<number | bigint>,
-              burnAmount: RawTransactionArgument<number | bigint>,
-          ];
+    arguments: CalculateBurnLpArguments | [
+        registry: RawTransactionArgument<string>,
+        index: RawTransactionArgument<number | bigint>,
+        tokenType: RawTransactionArgument<string>,
+        price: RawTransactionArgument<number | bigint>,
+        priceDecimal: RawTransactionArgument<number | bigint>,
+        burnAmount: RawTransactionArgument<number | bigint>
+    ];
 }
 export function calculateBurnLp(options: CalculateBurnLpOptions) {
-    const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [null, "u64", null, "u64", "u64", "u64"] satisfies (string | null)[];
+    const packageAddress = options.package ?? '@typus/perp';
+    const argumentsTypes = [
+        `${packageAddress}::lp_pool::Registry`,
+        'u64',
+        '0x0000000000000000000000000000000000000000000000000000000000000001::type_name::TypeName',
+        'u64',
+        'u64',
+        'u64'
+    ] satisfies string[];
     const parameterNames = ["registry", "index", "tokenType", "price", "priceDecimal", "burnAmount"];
-    return (tx: Transaction) =>
-        tx.moveCall({
-            package: packageAddress,
-            module: "lp_pool",
-            function: "calculate_burn_lp",
-            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
-        });
+    return (tx: Transaction) => tx.moveCall({
+        package: packageAddress,
+        module: 'lp_pool',
+        function: 'calculate_burn_lp',
+        arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
+    });
 }
 export interface CalculateLpFeeArguments {
     liquidityPool: RawTransactionArgument<string>;
@@ -1979,93 +2024,67 @@ export interface CalculateLpFeeArguments {
 }
 export interface CalculateLpFeeOptions {
     package?: string;
-    arguments:
-        | CalculateLpFeeArguments
-        | [
-              liquidityPool: RawTransactionArgument<string>,
-              tokenType: RawTransactionArgument<string>,
-              depositAmount: RawTransactionArgument<number | bigint>,
-              depositAmountUsd: RawTransactionArgument<number | bigint>,
-              isMint: RawTransactionArgument<boolean>,
-          ];
+    arguments: CalculateLpFeeArguments | [
+        liquidityPool: RawTransactionArgument<string>,
+        tokenType: RawTransactionArgument<string>,
+        depositAmount: RawTransactionArgument<number | bigint>,
+        depositAmountUsd: RawTransactionArgument<number | bigint>,
+        isMint: RawTransactionArgument<boolean>
+    ];
 }
 export function calculateLpFee(options: CalculateLpFeeOptions) {
-    const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [null, null, "u64", "u64", "bool"] satisfies (string | null)[];
+    const packageAddress = options.package ?? '@typus/perp';
+    const argumentsTypes = [
+        `${packageAddress}::lp_pool::LiquidityPool`,
+        '0x0000000000000000000000000000000000000000000000000000000000000001::type_name::TypeName',
+        'u64',
+        'u64',
+        'bool'
+    ] satisfies string[];
     const parameterNames = ["liquidityPool", "tokenType", "depositAmount", "depositAmountUsd", "isMint"];
-    return (tx: Transaction) =>
-        tx.moveCall({
-            package: packageAddress,
-            module: "lp_pool",
-            function: "calculate_lp_fee",
-            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
-        });
-}
-export interface CalculateFee_Arguments {
-    liquidityPool: RawTransactionArgument<string>;
-    tokenType: RawTransactionArgument<string>;
-    depositAmount: RawTransactionArgument<number | bigint>;
-    depositAmountUsd: RawTransactionArgument<number | bigint>;
-    flowIn: RawTransactionArgument<boolean>;
-    basicFeeBp: RawTransactionArgument<number | bigint>;
-    additionalFeeBp: RawTransactionArgument<number | bigint>;
-}
-export interface CalculateFee_Options {
-    package?: string;
-    arguments:
-        | CalculateFee_Arguments
-        | [
-              liquidityPool: RawTransactionArgument<string>,
-              tokenType: RawTransactionArgument<string>,
-              depositAmount: RawTransactionArgument<number | bigint>,
-              depositAmountUsd: RawTransactionArgument<number | bigint>,
-              flowIn: RawTransactionArgument<boolean>,
-              basicFeeBp: RawTransactionArgument<number | bigint>,
-              additionalFeeBp: RawTransactionArgument<number | bigint>,
-          ];
-}
-export function calculateFee_(options: CalculateFee_Options) {
-    const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [null, null, "u64", "u64", "bool", "u64", "u64"] satisfies (string | null)[];
-    const parameterNames = ["liquidityPool", "tokenType", "depositAmount", "depositAmountUsd", "flowIn", "basicFeeBp", "additionalFeeBp"];
-    return (tx: Transaction) =>
-        tx.moveCall({
-            package: packageAddress,
-            module: "lp_pool",
-            function: "calculate_fee_",
-            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
-        });
+    return (tx: Transaction) => tx.moveCall({
+        package: packageAddress,
+        module: 'lp_pool',
+        function: 'calculate_lp_fee',
+        arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
+    });
 }
 export interface NormalSafetyCheckArguments {
     version: RawTransactionArgument<string>;
     registry: RawTransactionArgument<string>;
     index: RawTransactionArgument<number | bigint>;
-    oracle: RawTransactionArgument<string>;
+    oracleV2: RawTransactionArgument<string>;
 }
 export interface NormalSafetyCheckOptions {
     package?: string;
-    arguments:
-        | NormalSafetyCheckArguments
-        | [
-              version: RawTransactionArgument<string>,
-              registry: RawTransactionArgument<string>,
-              index: RawTransactionArgument<number | bigint>,
-              oracle: RawTransactionArgument<string>,
-          ];
-    typeArguments: [string, string];
+    arguments: NormalSafetyCheckArguments | [
+        version: RawTransactionArgument<string>,
+        registry: RawTransactionArgument<string>,
+        index: RawTransactionArgument<number | bigint>,
+        oracleV2: RawTransactionArgument<string>
+    ];
+    typeArguments: [
+        string,
+        string
+    ];
 }
 export function normalSafetyCheck(options: NormalSafetyCheckOptions) {
-    const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [null, null, "u64", null, "0x2::clock::Clock"] satisfies (string | null)[];
-    const parameterNames = ["version", "registry", "index", "oracle"];
-    return (tx: Transaction) =>
-        tx.moveCall({
-            package: packageAddress,
-            module: "lp_pool",
-            function: "normal_safety_check",
-            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
-            typeArguments: options.typeArguments,
-        });
+    const packageAddress = options.package ?? '@typus/perp';
+    const argumentsTypes = [
+        `${packageAddress}::admin::Version`,
+        `${packageAddress}::lp_pool::Registry`,
+        'u64',
+        '0xd2e030ab7f0fc956c7e683cf3c6faf3d22868dee81a4aae9f4a10a6d998a8a02::oracle_v2::OracleV2',
+        '0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock'
+    ] satisfies string[];
+    const parameterNames = ["version", "registry", "index", "oracleV2"];
+    return (tx: Transaction) => tx.moveCall({
+        package: packageAddress,
+        module: 'lp_pool',
+        function: 'normal_safety_check',
+        arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
+        typeArguments: options.typeArguments
+    });
 }
 export interface CalculateSwapFeeArguments {
     liquidityPool: RawTransactionArgument<string>;
@@ -2076,342 +2095,136 @@ export interface CalculateSwapFeeArguments {
 }
 export interface CalculateSwapFeeOptions {
     package?: string;
-    arguments:
-        | CalculateSwapFeeArguments
-        | [
-              liquidityPool: RawTransactionArgument<string>,
-              tokenType: RawTransactionArgument<string>,
-              amount: RawTransactionArgument<number | bigint>,
-              amountUsd: RawTransactionArgument<number | bigint>,
-              swapIn: RawTransactionArgument<boolean>,
-          ];
+    arguments: CalculateSwapFeeArguments | [
+        liquidityPool: RawTransactionArgument<string>,
+        tokenType: RawTransactionArgument<string>,
+        amount: RawTransactionArgument<number | bigint>,
+        amountUsd: RawTransactionArgument<number | bigint>,
+        swapIn: RawTransactionArgument<boolean>
+    ];
 }
 export function calculateSwapFee(options: CalculateSwapFeeOptions) {
-    const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [null, null, "u64", "u64", "bool"] satisfies (string | null)[];
+    const packageAddress = options.package ?? '@typus/perp';
+    const argumentsTypes = [
+        `${packageAddress}::lp_pool::LiquidityPool`,
+        '0x0000000000000000000000000000000000000000000000000000000000000001::type_name::TypeName',
+        'u64',
+        'u64',
+        'bool'
+    ] satisfies string[];
     const parameterNames = ["liquidityPool", "tokenType", "amount", "amountUsd", "swapIn"];
-    return (tx: Transaction) =>
-        tx.moveCall({
-            package: packageAddress,
-            module: "lp_pool",
-            function: "calculate_swap_fee",
-            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
-        });
+    return (tx: Transaction) => tx.moveCall({
+        package: packageAddress,
+        module: 'lp_pool',
+        function: 'calculate_swap_fee',
+        arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
+    });
 }
 export interface CheckTvlUpdatedArguments {
     liquidityPool: RawTransactionArgument<string>;
 }
 export interface CheckTvlUpdatedOptions {
     package?: string;
-    arguments: CheckTvlUpdatedArguments | [liquidityPool: RawTransactionArgument<string>];
+    arguments: CheckTvlUpdatedArguments | [
+        liquidityPool: RawTransactionArgument<string>
+    ];
 }
 export function checkTvlUpdated(options: CheckTvlUpdatedOptions) {
-    const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [null, "0x2::clock::Clock"] satisfies (string | null)[];
+    const packageAddress = options.package ?? '@typus/perp';
+    const argumentsTypes = [
+        `${packageAddress}::lp_pool::LiquidityPool`,
+        '0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock'
+    ] satisfies string[];
     const parameterNames = ["liquidityPool"];
-    return (tx: Transaction) =>
-        tx.moveCall({
-            package: packageAddress,
-            module: "lp_pool",
-            function: "check_tvl_updated",
-            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
-        });
-}
-export interface CalculateLendingAmountCappedArguments {
-    tokenPool: RawTransactionArgument<string>;
-    lendingAmount: RawTransactionArgument<number | bigint | null>;
-}
-export interface CalculateLendingAmountCappedOptions {
-    package?: string;
-    arguments:
-        | CalculateLendingAmountCappedArguments
-        | [tokenPool: RawTransactionArgument<string>, lendingAmount: RawTransactionArgument<number | bigint | null>];
-}
-export function calculateLendingAmountCapped(options: CalculateLendingAmountCappedOptions) {
-    const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [null, "0x1::option::Option<u64>"] satisfies (string | null)[];
-    const parameterNames = ["tokenPool", "lendingAmount"];
-    return (tx: Transaction) =>
-        tx.moveCall({
-            package: packageAddress,
-            module: "lp_pool",
-            function: "calculate_lending_amount_capped",
-            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
-        });
-}
-export interface DepositScallopBasicArguments {
-    liquidityPool: RawTransactionArgument<string>;
-    scallopVersion: RawTransactionArgument<string>;
-    scallopMarket: RawTransactionArgument<string>;
-    depositAmount: RawTransactionArgument<number | bigint>;
-}
-export interface DepositScallopBasicOptions {
-    package?: string;
-    arguments:
-        | DepositScallopBasicArguments
-        | [
-              liquidityPool: RawTransactionArgument<string>,
-              scallopVersion: RawTransactionArgument<string>,
-              scallopMarket: RawTransactionArgument<string>,
-              depositAmount: RawTransactionArgument<number | bigint>,
-          ];
-    typeArguments: [string];
-}
-export function depositScallopBasic(options: DepositScallopBasicOptions) {
-    const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [null, null, null, "0x2::clock::Clock", "u64"] satisfies (string | null)[];
-    const parameterNames = ["liquidityPool", "scallopVersion", "scallopMarket", "depositAmount"];
-    return (tx: Transaction) =>
-        tx.moveCall({
-            package: packageAddress,
-            module: "lp_pool",
-            function: "deposit_scallop_basic",
-            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
-            typeArguments: options.typeArguments,
-        });
-}
-export interface WithdrawScallopBasicArguments {
-    version: RawTransactionArgument<string>;
-    liquidityPool: RawTransactionArgument<string>;
-    scallopVersion: RawTransactionArgument<string>;
-    scallopMarket: RawTransactionArgument<string>;
-    withdrawAmount: RawTransactionArgument<number | bigint>;
-}
-export interface WithdrawScallopBasicOptions {
-    package?: string;
-    arguments:
-        | WithdrawScallopBasicArguments
-        | [
-              version: RawTransactionArgument<string>,
-              liquidityPool: RawTransactionArgument<string>,
-              scallopVersion: RawTransactionArgument<string>,
-              scallopMarket: RawTransactionArgument<string>,
-              withdrawAmount: RawTransactionArgument<number | bigint>,
-          ];
-    typeArguments: [string];
-}
-export function withdrawScallopBasic(options: WithdrawScallopBasicOptions) {
-    const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [null, null, null, null, "0x2::clock::Clock", "u64"] satisfies (string | null)[];
-    const parameterNames = ["version", "liquidityPool", "scallopVersion", "scallopMarket", "withdrawAmount"];
-    return (tx: Transaction) =>
-        tx.moveCall({
-            package: packageAddress,
-            module: "lp_pool",
-            function: "withdraw_scallop_basic",
-            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
-            typeArguments: options.typeArguments,
-        });
-}
-export interface DepositNaviArguments {
-    liquidityPool: RawTransactionArgument<string>;
-    storage: RawTransactionArgument<string>;
-    pool: RawTransactionArgument<string>;
-    asset: RawTransactionArgument<number>;
-    incentiveV2: RawTransactionArgument<string>;
-    incentiveV3: RawTransactionArgument<string>;
-    depositAmount: RawTransactionArgument<number | bigint>;
-}
-export interface DepositNaviOptions {
-    package?: string;
-    arguments:
-        | DepositNaviArguments
-        | [
-              liquidityPool: RawTransactionArgument<string>,
-              storage: RawTransactionArgument<string>,
-              pool: RawTransactionArgument<string>,
-              asset: RawTransactionArgument<number>,
-              incentiveV2: RawTransactionArgument<string>,
-              incentiveV3: RawTransactionArgument<string>,
-              depositAmount: RawTransactionArgument<number | bigint>,
-          ];
-    typeArguments: [string];
-}
-export function depositNavi(options: DepositNaviOptions) {
-    const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [null, null, null, "u8", null, null, "0x2::clock::Clock", "u64"] satisfies (string | null)[];
-    const parameterNames = ["liquidityPool", "storage", "pool", "asset", "incentiveV2", "incentiveV3", "depositAmount"];
-    return (tx: Transaction) =>
-        tx.moveCall({
-            package: packageAddress,
-            module: "lp_pool",
-            function: "deposit_navi",
-            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
-            typeArguments: options.typeArguments,
-        });
-}
-export interface WithdrawNaviArguments {
-    version: RawTransactionArgument<string>;
-    liquidityPool: RawTransactionArgument<string>;
-    oracleConfig: RawTransactionArgument<string>;
-    priceOracle: RawTransactionArgument<string>;
-    supraOracleHolder: RawTransactionArgument<string>;
-    pythPriceInfo: RawTransactionArgument<string>;
-    feedAddress: RawTransactionArgument<string>;
-    storage: RawTransactionArgument<string>;
-    pool: RawTransactionArgument<string>;
-    asset: RawTransactionArgument<number>;
-    incentiveV2: RawTransactionArgument<string>;
-    incentiveV3: RawTransactionArgument<string>;
-}
-export interface WithdrawNaviOptions {
-    package?: string;
-    arguments:
-        | WithdrawNaviArguments
-        | [
-              version: RawTransactionArgument<string>,
-              liquidityPool: RawTransactionArgument<string>,
-              oracleConfig: RawTransactionArgument<string>,
-              priceOracle: RawTransactionArgument<string>,
-              supraOracleHolder: RawTransactionArgument<string>,
-              pythPriceInfo: RawTransactionArgument<string>,
-              feedAddress: RawTransactionArgument<string>,
-              storage: RawTransactionArgument<string>,
-              pool: RawTransactionArgument<string>,
-              asset: RawTransactionArgument<number>,
-              incentiveV2: RawTransactionArgument<string>,
-              incentiveV3: RawTransactionArgument<string>,
-          ];
-    typeArguments: [string];
-}
-export function withdrawNavi(options: WithdrawNaviOptions) {
-    const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [null, null, null, null, null, null, "address", null, null, "u8", null, null, "0x2::clock::Clock"] satisfies (
-        | string
-        | null
-    )[];
-    const parameterNames = [
-        "version",
-        "liquidityPool",
-        "oracleConfig",
-        "priceOracle",
-        "supraOracleHolder",
-        "pythPriceInfo",
-        "feedAddress",
-        "storage",
-        "pool",
-        "asset",
-        "incentiveV2",
-        "incentiveV3",
-    ];
-    return (tx: Transaction) =>
-        tx.moveCall({
-            package: packageAddress,
-            module: "lp_pool",
-            function: "withdraw_navi",
-            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
-            typeArguments: options.typeArguments,
-        });
-}
-export interface RewardNaviArguments {
-    version: RawTransactionArgument<string>;
-    liquidityPool: RawTransactionArgument<string>;
-    storage: RawTransactionArgument<string>;
-    rewardFund: RawTransactionArgument<string>;
-    coinTypes: RawTransactionArgument<string[]>;
-    ruleIds: RawTransactionArgument<string[]>;
-    incentiveV3: RawTransactionArgument<string>;
-}
-export interface RewardNaviOptions {
-    package?: string;
-    arguments:
-        | RewardNaviArguments
-        | [
-              version: RawTransactionArgument<string>,
-              liquidityPool: RawTransactionArgument<string>,
-              storage: RawTransactionArgument<string>,
-              rewardFund: RawTransactionArgument<string>,
-              coinTypes: RawTransactionArgument<string[]>,
-              ruleIds: RawTransactionArgument<string[]>,
-              incentiveV3: RawTransactionArgument<string>,
-          ];
-    typeArguments: [string];
-}
-export function rewardNavi(options: RewardNaviOptions) {
-    const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [null, null, null, null, "vector<0x1::string::String>", "vector<address>", null, "0x2::clock::Clock"] satisfies (
-        | string
-        | null
-    )[];
-    const parameterNames = ["version", "liquidityPool", "storage", "rewardFund", "coinTypes", "ruleIds", "incentiveV3"];
-    return (tx: Transaction) =>
-        tx.moveCall({
-            package: packageAddress,
-            module: "lp_pool",
-            function: "reward_navi",
-            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
-            typeArguments: options.typeArguments,
-        });
+    return (tx: Transaction) => tx.moveCall({
+        package: packageAddress,
+        module: 'lp_pool',
+        function: 'check_tvl_updated',
+        arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
+    });
 }
 export interface BurnLp_Arguments {
     version: RawTransactionArgument<string>;
     registry: RawTransactionArgument<string>;
     index: RawTransactionArgument<number | bigint>;
     treasuryCaps: RawTransactionArgument<string>;
-    oracle: RawTransactionArgument<string>;
+    oracleV2: RawTransactionArgument<string>;
     burnLpBalance: RawTransactionArgument<string>;
 }
 export interface BurnLp_Options {
     package?: string;
-    arguments:
-        | BurnLp_Arguments
-        | [
-              version: RawTransactionArgument<string>,
-              registry: RawTransactionArgument<string>,
-              index: RawTransactionArgument<number | bigint>,
-              treasuryCaps: RawTransactionArgument<string>,
-              oracle: RawTransactionArgument<string>,
-              burnLpBalance: RawTransactionArgument<string>,
-          ];
-    typeArguments: [string, string];
+    arguments: BurnLp_Arguments | [
+        version: RawTransactionArgument<string>,
+        registry: RawTransactionArgument<string>,
+        index: RawTransactionArgument<number | bigint>,
+        treasuryCaps: RawTransactionArgument<string>,
+        oracleV2: RawTransactionArgument<string>,
+        burnLpBalance: RawTransactionArgument<string>
+    ];
+    typeArguments: [
+        string,
+        string
+    ];
 }
 export function burnLp_(options: BurnLp_Options) {
-    const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [null, null, "u64", null, null, null, "0x2::clock::Clock"] satisfies (string | null)[];
-    const parameterNames = ["version", "registry", "index", "treasuryCaps", "oracle", "burnLpBalance"];
-    return (tx: Transaction) =>
-        tx.moveCall({
-            package: packageAddress,
-            module: "lp_pool",
-            function: "burn_lp_",
-            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
-            typeArguments: options.typeArguments,
-        });
+    const packageAddress = options.package ?? '@typus/perp';
+    const argumentsTypes = [
+        `${packageAddress}::admin::Version`,
+        `${packageAddress}::lp_pool::Registry`,
+        'u64',
+        `${packageAddress}::treasury_caps::TreasuryCaps`,
+        '0xd2e030ab7f0fc956c7e683cf3c6faf3d22868dee81a4aae9f4a10a6d998a8a02::oracle_v2::OracleV2',
+        `0x0000000000000000000000000000000000000000000000000000000000000002::balance::Balance<${options.typeArguments[0]}>`,
+        '0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock'
+    ] satisfies string[];
+    const parameterNames = ["version", "registry", "index", "treasuryCaps", "oracleV2", "burnLpBalance"];
+    return (tx: Transaction) => tx.moveCall({
+        package: packageAddress,
+        module: 'lp_pool',
+        function: 'burn_lp_',
+        arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
+        typeArguments: options.typeArguments
+    });
 }
 export interface ViewSwapResultArguments {
     version: RawTransactionArgument<string>;
     registry: RawTransactionArgument<string>;
     index: RawTransactionArgument<number | bigint>;
-    oracleFromToken: RawTransactionArgument<string>;
-    oracleToToken: RawTransactionArgument<string>;
+    oracleV2: RawTransactionArgument<string>;
     fromAmount: RawTransactionArgument<number | bigint>;
 }
 export interface ViewSwapResultOptions {
     package?: string;
-    arguments:
-        | ViewSwapResultArguments
-        | [
-              version: RawTransactionArgument<string>,
-              registry: RawTransactionArgument<string>,
-              index: RawTransactionArgument<number | bigint>,
-              oracleFromToken: RawTransactionArgument<string>,
-              oracleToToken: RawTransactionArgument<string>,
-              fromAmount: RawTransactionArgument<number | bigint>,
-          ];
-    typeArguments: [string, string];
+    arguments: ViewSwapResultArguments | [
+        version: RawTransactionArgument<string>,
+        registry: RawTransactionArgument<string>,
+        index: RawTransactionArgument<number | bigint>,
+        oracleV2: RawTransactionArgument<string>,
+        fromAmount: RawTransactionArgument<number | bigint>
+    ];
+    typeArguments: [
+        string,
+        string
+    ];
 }
 export function viewSwapResult(options: ViewSwapResultOptions) {
-    const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [null, null, "u64", null, null, "u64", "0x2::clock::Clock"] satisfies (string | null)[];
-    const parameterNames = ["version", "registry", "index", "oracleFromToken", "oracleToToken", "fromAmount"];
-    return (tx: Transaction) =>
-        tx.moveCall({
-            package: packageAddress,
-            module: "lp_pool",
-            function: "view_swap_result",
-            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
-            typeArguments: options.typeArguments,
-        });
+    const packageAddress = options.package ?? '@typus/perp';
+    const argumentsTypes = [
+        `${packageAddress}::admin::Version`,
+        `${packageAddress}::lp_pool::Registry`,
+        'u64',
+        '0xd2e030ab7f0fc956c7e683cf3c6faf3d22868dee81a4aae9f4a10a6d998a8a02::oracle_v2::OracleV2',
+        'u64',
+        '0x0000000000000000000000000000000000000000000000000000000000000002::clock::Clock'
+    ] satisfies string[];
+    const parameterNames = ["version", "registry", "index", "oracleV2", "fromAmount"];
+    return (tx: Transaction) => tx.moveCall({
+        package: packageAddress,
+        module: 'lp_pool',
+        function: 'view_swap_result',
+        arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
+        typeArguments: options.typeArguments
+    });
 }
 export interface GetReceiptCollateralBcsArguments {
     registry: RawTransactionArgument<string>;
@@ -2419,21 +2232,24 @@ export interface GetReceiptCollateralBcsArguments {
 }
 export interface GetReceiptCollateralBcsOptions {
     package?: string;
-    arguments:
-        | GetReceiptCollateralBcsArguments
-        | [registry: RawTransactionArgument<string>, index: RawTransactionArgument<number | bigint>];
+    arguments: GetReceiptCollateralBcsArguments | [
+        registry: RawTransactionArgument<string>,
+        index: RawTransactionArgument<number | bigint>
+    ];
 }
 export function getReceiptCollateralBcs(options: GetReceiptCollateralBcsOptions) {
-    const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [null, "u64"] satisfies (string | null)[];
+    const packageAddress = options.package ?? '@typus/perp';
+    const argumentsTypes = [
+        `${packageAddress}::lp_pool::Registry`,
+        'u64'
+    ] satisfies string[];
     const parameterNames = ["registry", "index"];
-    return (tx: Transaction) =>
-        tx.moveCall({
-            package: packageAddress,
-            module: "lp_pool",
-            function: "get_receipt_collateral_bcs",
-            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
-        });
+    return (tx: Transaction) => tx.moveCall({
+        package: packageAddress,
+        module: 'lp_pool',
+        function: 'get_receipt_collateral_bcs',
+        arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
+    });
 }
 export interface GetExpiredReceiptCollateralBcsArguments {
     registry: RawTransactionArgument<string>;
@@ -2442,25 +2258,26 @@ export interface GetExpiredReceiptCollateralBcsArguments {
 }
 export interface GetExpiredReceiptCollateralBcsOptions {
     package?: string;
-    arguments:
-        | GetExpiredReceiptCollateralBcsArguments
-        | [
-              registry: RawTransactionArgument<string>,
-              dovRegistry: RawTransactionArgument<string>,
-              index: RawTransactionArgument<number | bigint>,
-          ];
+    arguments: GetExpiredReceiptCollateralBcsArguments | [
+        registry: RawTransactionArgument<string>,
+        dovRegistry: RawTransactionArgument<string>,
+        index: RawTransactionArgument<number | bigint>
+    ];
 }
 export function getExpiredReceiptCollateralBcs(options: GetExpiredReceiptCollateralBcsOptions) {
-    const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [null, null, "u64"] satisfies (string | null)[];
+    const packageAddress = options.package ?? '@typus/perp';
+    const argumentsTypes = [
+        `${packageAddress}::lp_pool::Registry`,
+        '0x02821e55ac15f878ebc46f5bbd611de4d683c70e6308abb78880fd7f9d1d98ed::typus_dov_single::Registry',
+        'u64'
+    ] satisfies string[];
     const parameterNames = ["registry", "dovRegistry", "index"];
-    return (tx: Transaction) =>
-        tx.moveCall({
-            package: packageAddress,
-            module: "lp_pool",
-            function: "get_expired_receipt_collateral_bcs",
-            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
-        });
+    return (tx: Transaction) => tx.moveCall({
+        package: packageAddress,
+        module: 'lp_pool',
+        function: 'get_expired_receipt_collateral_bcs',
+        arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
+    });
 }
 export interface GetLiquidityPoolArguments {
     registry: RawTransactionArgument<string>;
@@ -2468,19 +2285,24 @@ export interface GetLiquidityPoolArguments {
 }
 export interface GetLiquidityPoolOptions {
     package?: string;
-    arguments: GetLiquidityPoolArguments | [registry: RawTransactionArgument<string>, index: RawTransactionArgument<number | bigint>];
+    arguments: GetLiquidityPoolArguments | [
+        registry: RawTransactionArgument<string>,
+        index: RawTransactionArgument<number | bigint>
+    ];
 }
 export function getLiquidityPool(options: GetLiquidityPoolOptions) {
-    const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [null, "u64"] satisfies (string | null)[];
+    const packageAddress = options.package ?? '@typus/perp';
+    const argumentsTypes = [
+        `${packageAddress}::lp_pool::Registry`,
+        'u64'
+    ] satisfies string[];
     const parameterNames = ["registry", "index"];
-    return (tx: Transaction) =>
-        tx.moveCall({
-            package: packageAddress,
-            module: "lp_pool",
-            function: "get_liquidity_pool",
-            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
-        });
+    return (tx: Transaction) => tx.moveCall({
+        package: packageAddress,
+        module: 'lp_pool',
+        function: 'get_liquidity_pool',
+        arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
+    });
 }
 export interface GetMutLiquidityPoolArguments {
     registry: RawTransactionArgument<string>;
@@ -2488,19 +2310,24 @@ export interface GetMutLiquidityPoolArguments {
 }
 export interface GetMutLiquidityPoolOptions {
     package?: string;
-    arguments: GetMutLiquidityPoolArguments | [registry: RawTransactionArgument<string>, index: RawTransactionArgument<number | bigint>];
+    arguments: GetMutLiquidityPoolArguments | [
+        registry: RawTransactionArgument<string>,
+        index: RawTransactionArgument<number | bigint>
+    ];
 }
 export function getMutLiquidityPool(options: GetMutLiquidityPoolOptions) {
-    const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [null, "u64"] satisfies (string | null)[];
+    const packageAddress = options.package ?? '@typus/perp';
+    const argumentsTypes = [
+        `${packageAddress}::lp_pool::Registry`,
+        'u64'
+    ] satisfies string[];
     const parameterNames = ["registry", "index"];
-    return (tx: Transaction) =>
-        tx.moveCall({
-            package: packageAddress,
-            module: "lp_pool",
-            function: "get_mut_liquidity_pool",
-            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
-        });
+    return (tx: Transaction) => tx.moveCall({
+        package: packageAddress,
+        module: 'lp_pool',
+        function: 'get_mut_liquidity_pool',
+        arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
+    });
 }
 export interface SafetyCheckArguments {
     liquidityPool: RawTransactionArgument<string>;
@@ -2509,44 +2336,48 @@ export interface SafetyCheckArguments {
 }
 export interface SafetyCheckOptions {
     package?: string;
-    arguments:
-        | SafetyCheckArguments
-        | [
-              liquidityPool: RawTransactionArgument<string>,
-              tokenType: RawTransactionArgument<string>,
-              oracleId: RawTransactionArgument<string>,
-          ];
+    arguments: SafetyCheckArguments | [
+        liquidityPool: RawTransactionArgument<string>,
+        tokenType: RawTransactionArgument<string>,
+        oracleId: RawTransactionArgument<string>
+    ];
 }
 export function safetyCheck(options: SafetyCheckOptions) {
-    const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [null, null, "address"] satisfies (string | null)[];
+    const packageAddress = options.package ?? '@typus/perp';
+    const argumentsTypes = [
+        `${packageAddress}::lp_pool::LiquidityPool`,
+        '0x0000000000000000000000000000000000000000000000000000000000000001::type_name::TypeName',
+        'address'
+    ] satisfies string[];
     const parameterNames = ["liquidityPool", "tokenType", "oracleId"];
-    return (tx: Transaction) =>
-        tx.moveCall({
-            package: packageAddress,
-            module: "lp_pool",
-            function: "safety_check",
-            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
-        });
+    return (tx: Transaction) => tx.moveCall({
+        package: packageAddress,
+        module: 'lp_pool',
+        function: 'safety_check',
+        arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
+    });
 }
 export interface CheckActiveArguments {
     liquidityPool: RawTransactionArgument<string>;
 }
 export interface CheckActiveOptions {
     package?: string;
-    arguments: CheckActiveArguments | [liquidityPool: RawTransactionArgument<string>];
+    arguments: CheckActiveArguments | [
+        liquidityPool: RawTransactionArgument<string>
+    ];
 }
 export function checkActive(options: CheckActiveOptions) {
-    const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [null] satisfies (string | null)[];
+    const packageAddress = options.package ?? '@typus/perp';
+    const argumentsTypes = [
+        `${packageAddress}::lp_pool::LiquidityPool`
+    ] satisfies string[];
     const parameterNames = ["liquidityPool"];
-    return (tx: Transaction) =>
-        tx.moveCall({
-            package: packageAddress,
-            module: "lp_pool",
-            function: "check_active",
-            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
-        });
+    return (tx: Transaction) => tx.moveCall({
+        package: packageAddress,
+        module: 'lp_pool',
+        function: 'check_active',
+        arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
+    });
 }
 export interface OracleMatchedArguments {
     liquidityPool: RawTransactionArgument<string>;
@@ -2555,25 +2386,26 @@ export interface OracleMatchedArguments {
 }
 export interface OracleMatchedOptions {
     package?: string;
-    arguments:
-        | OracleMatchedArguments
-        | [
-              liquidityPool: RawTransactionArgument<string>,
-              tokenType: RawTransactionArgument<string>,
-              oracleId: RawTransactionArgument<string>,
-          ];
+    arguments: OracleMatchedArguments | [
+        liquidityPool: RawTransactionArgument<string>,
+        tokenType: RawTransactionArgument<string>,
+        oracleId: RawTransactionArgument<string>
+    ];
 }
 export function oracleMatched(options: OracleMatchedOptions) {
-    const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [null, null, "address"] satisfies (string | null)[];
+    const packageAddress = options.package ?? '@typus/perp';
+    const argumentsTypes = [
+        `${packageAddress}::lp_pool::LiquidityPool`,
+        '0x0000000000000000000000000000000000000000000000000000000000000001::type_name::TypeName',
+        'address'
+    ] satisfies string[];
     const parameterNames = ["liquidityPool", "tokenType", "oracleId"];
-    return (tx: Transaction) =>
-        tx.moveCall({
-            package: packageAddress,
-            module: "lp_pool",
-            function: "oracle_matched",
-            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
-        });
+    return (tx: Transaction) => tx.moveCall({
+        package: packageAddress,
+        module: 'lp_pool',
+        function: 'oracle_matched',
+        arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
+    });
 }
 export interface GetTokenPoolArguments {
     liquidityPool: RawTransactionArgument<string>;
@@ -2581,19 +2413,24 @@ export interface GetTokenPoolArguments {
 }
 export interface GetTokenPoolOptions {
     package?: string;
-    arguments: GetTokenPoolArguments | [liquidityPool: RawTransactionArgument<string>, tokenType: RawTransactionArgument<string>];
+    arguments: GetTokenPoolArguments | [
+        liquidityPool: RawTransactionArgument<string>,
+        tokenType: RawTransactionArgument<string>
+    ];
 }
 export function getTokenPool(options: GetTokenPoolOptions) {
-    const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [null, null] satisfies (string | null)[];
+    const packageAddress = options.package ?? '@typus/perp';
+    const argumentsTypes = [
+        `${packageAddress}::lp_pool::LiquidityPool`,
+        '0x0000000000000000000000000000000000000000000000000000000000000001::type_name::TypeName'
+    ] satisfies string[];
     const parameterNames = ["liquidityPool", "tokenType"];
-    return (tx: Transaction) =>
-        tx.moveCall({
-            package: packageAddress,
-            module: "lp_pool",
-            function: "get_token_pool",
-            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
-        });
+    return (tx: Transaction) => tx.moveCall({
+        package: packageAddress,
+        module: 'lp_pool',
+        function: 'get_token_pool',
+        arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
+    });
 }
 export interface GetMutTokenPoolArguments {
     liquidityPool: RawTransactionArgument<string>;
@@ -2601,19 +2438,24 @@ export interface GetMutTokenPoolArguments {
 }
 export interface GetMutTokenPoolOptions {
     package?: string;
-    arguments: GetMutTokenPoolArguments | [liquidityPool: RawTransactionArgument<string>, tokenType: RawTransactionArgument<string>];
+    arguments: GetMutTokenPoolArguments | [
+        liquidityPool: RawTransactionArgument<string>,
+        tokenType: RawTransactionArgument<string>
+    ];
 }
 export function getMutTokenPool(options: GetMutTokenPoolOptions) {
-    const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [null, null] satisfies (string | null)[];
+    const packageAddress = options.package ?? '@typus/perp';
+    const argumentsTypes = [
+        `${packageAddress}::lp_pool::LiquidityPool`,
+        '0x0000000000000000000000000000000000000000000000000000000000000001::type_name::TypeName'
+    ] satisfies string[];
     const parameterNames = ["liquidityPool", "tokenType"];
-    return (tx: Transaction) =>
-        tx.moveCall({
-            package: packageAddress,
-            module: "lp_pool",
-            function: "get_mut_token_pool",
-            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
-        });
+    return (tx: Transaction) => tx.moveCall({
+        package: packageAddress,
+        module: 'lp_pool',
+        function: 'get_mut_token_pool',
+        arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
+    });
 }
 export interface GetLpTokenTypeArguments {
     registry: RawTransactionArgument<string>;
@@ -2621,19 +2463,24 @@ export interface GetLpTokenTypeArguments {
 }
 export interface GetLpTokenTypeOptions {
     package?: string;
-    arguments: GetLpTokenTypeArguments | [registry: RawTransactionArgument<string>, index: RawTransactionArgument<number | bigint>];
+    arguments: GetLpTokenTypeArguments | [
+        registry: RawTransactionArgument<string>,
+        index: RawTransactionArgument<number | bigint>
+    ];
 }
 export function getLpTokenType(options: GetLpTokenTypeOptions) {
-    const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [null, "u64"] satisfies (string | null)[];
+    const packageAddress = options.package ?? '@typus/perp';
+    const argumentsTypes = [
+        `${packageAddress}::lp_pool::Registry`,
+        'u64'
+    ] satisfies string[];
     const parameterNames = ["registry", "index"];
-    return (tx: Transaction) =>
-        tx.moveCall({
-            package: packageAddress,
-            module: "lp_pool",
-            function: "get_lp_token_type",
-            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
-        });
+    return (tx: Transaction) => tx.moveCall({
+        package: packageAddress,
+        module: 'lp_pool',
+        function: 'get_lp_token_type',
+        arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
+    });
 }
 export interface GetLiquidityTokenDecimalArguments {
     registry: RawTransactionArgument<string>;
@@ -2642,25 +2489,26 @@ export interface GetLiquidityTokenDecimalArguments {
 }
 export interface GetLiquidityTokenDecimalOptions {
     package?: string;
-    arguments:
-        | GetLiquidityTokenDecimalArguments
-        | [
-              registry: RawTransactionArgument<string>,
-              index: RawTransactionArgument<number | bigint>,
-              liquidityToken: RawTransactionArgument<string>,
-          ];
+    arguments: GetLiquidityTokenDecimalArguments | [
+        registry: RawTransactionArgument<string>,
+        index: RawTransactionArgument<number | bigint>,
+        liquidityToken: RawTransactionArgument<string>
+    ];
 }
 export function getLiquidityTokenDecimal(options: GetLiquidityTokenDecimalOptions) {
-    const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [null, "u64", null] satisfies (string | null)[];
+    const packageAddress = options.package ?? '@typus/perp';
+    const argumentsTypes = [
+        `${packageAddress}::lp_pool::Registry`,
+        'u64',
+        '0x0000000000000000000000000000000000000000000000000000000000000001::type_name::TypeName'
+    ] satisfies string[];
     const parameterNames = ["registry", "index", "liquidityToken"];
-    return (tx: Transaction) =>
-        tx.moveCall({
-            package: packageAddress,
-            module: "lp_pool",
-            function: "get_liquidity_token_decimal",
-            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
-        });
+    return (tx: Transaction) => tx.moveCall({
+        package: packageAddress,
+        module: 'lp_pool',
+        function: 'get_liquidity_token_decimal',
+        arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
+    });
 }
 export interface GetTokenPoolStateArguments {
     liquidityPool: RawTransactionArgument<string>;
@@ -2668,19 +2516,24 @@ export interface GetTokenPoolStateArguments {
 }
 export interface GetTokenPoolStateOptions {
     package?: string;
-    arguments: GetTokenPoolStateArguments | [liquidityPool: RawTransactionArgument<string>, liquidityToken: RawTransactionArgument<string>];
+    arguments: GetTokenPoolStateArguments | [
+        liquidityPool: RawTransactionArgument<string>,
+        liquidityToken: RawTransactionArgument<string>
+    ];
 }
 export function getTokenPoolState(options: GetTokenPoolStateOptions) {
-    const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [null, null] satisfies (string | null)[];
+    const packageAddress = options.package ?? '@typus/perp';
+    const argumentsTypes = [
+        `${packageAddress}::lp_pool::LiquidityPool`,
+        '0x0000000000000000000000000000000000000000000000000000000000000001::type_name::TypeName'
+    ] satisfies string[];
     const parameterNames = ["liquidityPool", "liquidityToken"];
-    return (tx: Transaction) =>
-        tx.moveCall({
-            package: packageAddress,
-            module: "lp_pool",
-            function: "get_token_pool_state",
-            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
-        });
+    return (tx: Transaction) => tx.moveCall({
+        package: packageAddress,
+        module: 'lp_pool',
+        function: 'get_token_pool_state',
+        arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
+    });
 }
 export interface CheckTradingOrderSizeValidArguments {
     liquidityPool: RawTransactionArgument<string>;
@@ -2689,25 +2542,26 @@ export interface CheckTradingOrderSizeValidArguments {
 }
 export interface CheckTradingOrderSizeValidOptions {
     package?: string;
-    arguments:
-        | CheckTradingOrderSizeValidArguments
-        | [
-              liquidityPool: RawTransactionArgument<string>,
-              liquidityToken: RawTransactionArgument<string>,
-              reserveAmount: RawTransactionArgument<number | bigint>,
-          ];
+    arguments: CheckTradingOrderSizeValidArguments | [
+        liquidityPool: RawTransactionArgument<string>,
+        liquidityToken: RawTransactionArgument<string>,
+        reserveAmount: RawTransactionArgument<number | bigint>
+    ];
 }
 export function checkTradingOrderSizeValid(options: CheckTradingOrderSizeValidOptions) {
-    const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [null, null, "u64"] satisfies (string | null)[];
+    const packageAddress = options.package ?? '@typus/perp';
+    const argumentsTypes = [
+        `${packageAddress}::lp_pool::LiquidityPool`,
+        '0x0000000000000000000000000000000000000000000000000000000000000001::type_name::TypeName',
+        'u64'
+    ] satisfies string[];
     const parameterNames = ["liquidityPool", "liquidityToken", "reserveAmount"];
-    return (tx: Transaction) =>
-        tx.moveCall({
-            package: packageAddress,
-            module: "lp_pool",
-            function: "check_trading_order_size_valid",
-            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
-        });
+    return (tx: Transaction) => tx.moveCall({
+        package: packageAddress,
+        module: 'lp_pool',
+        function: 'check_trading_order_size_valid',
+        arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
+    });
 }
 export interface GetCumulativeBorrowRateArguments {
     liquidityPool: RawTransactionArgument<string>;
@@ -2715,66 +2569,122 @@ export interface GetCumulativeBorrowRateArguments {
 }
 export interface GetCumulativeBorrowRateOptions {
     package?: string;
-    arguments:
-        | GetCumulativeBorrowRateArguments
-        | [liquidityPool: RawTransactionArgument<string>, liquidityToken: RawTransactionArgument<string>];
+    arguments: GetCumulativeBorrowRateArguments | [
+        liquidityPool: RawTransactionArgument<string>,
+        liquidityToken: RawTransactionArgument<string>
+    ];
 }
 export function getCumulativeBorrowRate(options: GetCumulativeBorrowRateOptions) {
-    const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [null, null] satisfies (string | null)[];
+    const packageAddress = options.package ?? '@typus/perp';
+    const argumentsTypes = [
+        `${packageAddress}::lp_pool::LiquidityPool`,
+        '0x0000000000000000000000000000000000000000000000000000000000000001::type_name::TypeName'
+    ] satisfies string[];
     const parameterNames = ["liquidityPool", "liquidityToken"];
-    return (tx: Transaction) =>
-        tx.moveCall({
-            package: packageAddress,
-            module: "lp_pool",
-            function: "get_cumulative_borrow_rate",
-            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
-        });
+    return (tx: Transaction) => tx.moveCall({
+        package: packageAddress,
+        module: 'lp_pool',
+        function: 'get_cumulative_borrow_rate',
+        arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
+    });
 }
 export interface GetTvlUsdArguments {
     liquidityPool: RawTransactionArgument<string>;
 }
 export interface GetTvlUsdOptions {
     package?: string;
-    arguments: GetTvlUsdArguments | [liquidityPool: RawTransactionArgument<string>];
+    arguments: GetTvlUsdArguments | [
+        liquidityPool: RawTransactionArgument<string>
+    ];
 }
 export function getTvlUsd(options: GetTvlUsdOptions) {
-    const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [null] satisfies (string | null)[];
+    const packageAddress = options.package ?? '@typus/perp';
+    const argumentsTypes = [
+        `${packageAddress}::lp_pool::LiquidityPool`
+    ] satisfies string[];
     const parameterNames = ["liquidityPool"];
-    return (tx: Transaction) =>
-        tx.moveCall({
-            package: packageAddress,
-            module: "lp_pool",
-            function: "get_tvl_usd",
-            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
-        });
+    return (tx: Transaction) => tx.moveCall({
+        package: packageAddress,
+        module: 'lp_pool',
+        function: 'get_tvl_usd',
+        arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
+    });
 }
 export interface GetBorrowRateDecimalOptions {
     package?: string;
-    arguments?: [];
+    arguments?: [
+    ];
 }
 export function getBorrowRateDecimal(options: GetBorrowRateDecimalOptions = {}) {
-    const packageAddress = options.package ?? "@typus/perp";
-    return (tx: Transaction) =>
-        tx.moveCall({
-            package: packageAddress,
-            module: "lp_pool",
-            function: "get_borrow_rate_decimal",
-        });
+    const packageAddress = options.package ?? '@typus/perp';
+    return (tx: Transaction) => tx.moveCall({
+        package: packageAddress,
+        module: 'lp_pool',
+        function: 'get_borrow_rate_decimal',
+    });
 }
-export interface DeprecatedOptions {
+export interface SetAllOracleIdArguments {
+    registry: RawTransactionArgument<string>;
+    newOracleId: RawTransactionArgument<string>;
+}
+export interface SetAllOracleIdOptions {
     package?: string;
-    arguments?: [];
+    arguments: SetAllOracleIdArguments | [
+        registry: RawTransactionArgument<string>,
+        newOracleId: RawTransactionArgument<string>
+    ];
 }
-export function deprecated(options: DeprecatedOptions = {}) {
-    const packageAddress = options.package ?? "@typus/perp";
-    return (tx: Transaction) =>
-        tx.moveCall({
-            package: packageAddress,
-            module: "lp_pool",
-            function: "deprecated",
-        });
+/**
+ * [Migration helper] Overwrite every TokenPool's `oracle_id` with the new OracleV2
+ * object id. Iterates all liquidity pools in the registry and all TokenPools
+ * within each.
+ */
+export function setAllOracleId(options: SetAllOracleIdOptions) {
+    const packageAddress = options.package ?? '@typus/perp';
+    const argumentsTypes = [
+        `${packageAddress}::lp_pool::Registry`,
+        'address'
+    ] satisfies string[];
+    const parameterNames = ["registry", "newOracleId"];
+    return (tx: Transaction) => tx.moveCall({
+        package: packageAddress,
+        module: 'lp_pool',
+        function: 'set_all_oracle_id',
+        arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
+    });
+}
+export interface MigrateOracleIdToV2Arguments {
+    version: RawTransactionArgument<string>;
+    registry: RawTransactionArgument<string>;
+    oracleV2: RawTransactionArgument<string>;
+}
+export interface MigrateOracleIdToV2Options {
+    package?: string;
+    arguments: MigrateOracleIdToV2Arguments | [
+        version: RawTransactionArgument<string>,
+        registry: RawTransactionArgument<string>,
+        oracleV2: RawTransactionArgument<string>
+    ];
+}
+/**
+ * [Authorized Function] Overwrite every TokenPool's `oracle_id` with the live
+ * `OracleV2` id. Run once after upgrading typus_perp to point all LP token configs
+ * at the redeployed OracleV2.
+ */
+export function migrateOracleIdToV2(options: MigrateOracleIdToV2Options) {
+    const packageAddress = options.package ?? '@typus/perp';
+    const argumentsTypes = [
+        `${packageAddress}::admin::Version`,
+        `${packageAddress}::lp_pool::Registry`,
+        '0xd2e030ab7f0fc956c7e683cf3c6faf3d22868dee81a4aae9f4a10a6d998a8a02::oracle_v2::OracleV2'
+    ] satisfies string[];
+    const parameterNames = ["version", "registry", "oracleV2"];
+    return (tx: Transaction) => tx.moveCall({
+        package: packageAddress,
+        module: 'lp_pool',
+        function: 'migrate_oracle_id_to_v2',
+        arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
+    });
 }
 export interface GetUserDeactivatingSharesArguments {
     registry: RawTransactionArgument<string>;
@@ -2783,21 +2693,28 @@ export interface GetUserDeactivatingSharesArguments {
 }
 export interface GetUserDeactivatingSharesOptions {
     package?: string;
-    arguments:
-        | GetUserDeactivatingSharesArguments
-        | [registry: RawTransactionArgument<string>, index: RawTransactionArgument<number | bigint>, user: RawTransactionArgument<string>];
-    typeArguments: [string];
+    arguments: GetUserDeactivatingSharesArguments | [
+        registry: RawTransactionArgument<string>,
+        index: RawTransactionArgument<number | bigint>,
+        user: RawTransactionArgument<string>
+    ];
+    typeArguments: [
+        string
+    ];
 }
 export function getUserDeactivatingShares(options: GetUserDeactivatingSharesOptions) {
-    const packageAddress = options.package ?? "@typus/perp";
-    const argumentsTypes = [null, "u64", "address"] satisfies (string | null)[];
+    const packageAddress = options.package ?? '@typus/perp';
+    const argumentsTypes = [
+        `${packageAddress}::lp_pool::Registry`,
+        'u64',
+        'address'
+    ] satisfies string[];
     const parameterNames = ["registry", "index", "user"];
-    return (tx: Transaction) =>
-        tx.moveCall({
-            package: packageAddress,
-            module: "lp_pool",
-            function: "get_user_deactivating_shares",
-            arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
-            typeArguments: options.typeArguments,
-        });
+    return (tx: Transaction) => tx.moveCall({
+        package: packageAddress,
+        module: 'lp_pool',
+        function: 'get_user_deactivating_shares',
+        arguments: normalizeMoveArguments(options.arguments, argumentsTypes, parameterNames),
+        typeArguments: options.typeArguments
+    });
 }

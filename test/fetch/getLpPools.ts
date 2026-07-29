@@ -4,7 +4,7 @@ import { getLpPool, getLpPools, NETWORK } from "src";
 
 (async () => {
     let config = await TypusConfig.default(NETWORK, null);
-    let client = new TypusClient(config);
+    let client = await TypusClient.create(config);
 
     let lpPools = await getLpPools(client);
     console.dir(lpPools, { depth: null }); // 1 lpPool inclueded

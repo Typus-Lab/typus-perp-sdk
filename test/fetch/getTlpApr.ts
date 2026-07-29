@@ -5,7 +5,7 @@ import { getTlpFeeFromSentio } from "src/api/sentio";
 
 (async () => {
     let config = await TypusConfig.default(NETWORK, null);
-    let client = new TypusClient(config);
+    let client = await TypusClient.create(config);
 
     // let stakePools = await getStakePools(config);
     // console.log(stakePools); // 1 lpPool inclueded

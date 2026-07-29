@@ -1,21 +1,97 @@
 import { graphql } from "@mysten/sui/graphql/schema";
 import { SuiGraphQLClient } from "@mysten/sui/graphql";
 import { SuiGrpcClient } from "@mysten/sui/grpc";
-import { createPythClient, PythClient, TypusConfig } from "@typus/typus-sdk/dist/src/utils";
+import { PythLazerSuiClient, TypusConfig } from "@typus/typus-sdk/dist/src/utils";
+// Type-only + dynamic import below: this WS client is node-only, so a static
+// import would force the whole Lazer SDK into browser bundles that only ever
+// take the JWT/REST path.
+import type { PythLazerClient } from "@pythnetwork/pyth-lazer-sdk";
 import { JsonRpcHTTPTransport, SuiJsonRpcClient } from "@mysten/sui/jsonRpc";
 import { SuiClientTypes } from "@mysten/sui/client";
+import {
+    DOV_SINGLE_REGISTRY,
+    ORACLE_PACKAGE_ID,
+    ORACLE_V2_ID,
+    PERP_PACKAGE_ID,
+    PYTH_LAZER_PACKAGE_ID,
+    PYTH_LAZER_STATE_ID,
+    STAKE_PACKAGE_ID,
+} from ".";
 
 export type Network = "MAINNET" | "TESTNET";
 
 export class TypusClient {
     gRpcClient: SuiGrpcClient;
     graphQLClient: SuiGraphQLClient;
-    pythClient: PythClient;
+    pythClient: PythLazerSuiClient;
     config: TypusConfig;
-    // user: string;
 
-    // mvr?: Experimental_SuiClientTypes.MvrOptions
-    constructor(config: TypusConfig) {
+    /**
+     * `opts.getAccessToken` is the browser path: it returns a short-lived Pyth
+     * JWT per call, so no long-lived key is needed (and none can leak into a
+     * bundle). Omit it and we fall back to the WS client off `LAZER_TOKEN`,
+     * which is what node crankers and scripts use.
+     */
+    static async create(
+        config: TypusConfig,
+        opts?: { getAccessToken?: () => string | Promise<string> }
+    ): Promise<TypusClient> {
+        if (opts?.getAccessToken) {
+            return new TypusClient(config, { getAccessToken: opts.getAccessToken });
+        }
+
+        const token = process.env.LAZER_TOKEN ?? process.env.PYTH_LAZER_TOKEN;
+        if (!token) {
+            throw new Error("LAZER_TOKEN (or PYTH_LAZER_TOKEN) env var is required for Pyth Lazer client");
+        }
+        // Cast at the boundary: the dynamic import resolves the ESM decls while the
+        // type-only import above resolves the CJS ones, and TS treats the two
+        // PythLazerClient declarations as distinct (separate private members).
+        const { PythLazerClient } = (await import(
+            // webpackIgnore: bundlers must not follow this. It is the node-only
+            // branch, and @pythnetwork/pyth-lazer-sdk@6.2.2 ships an exports map
+            // with "default" ahead of "types", which webpack 5 rejects outright
+            // ("Default condition should be last one") — so merely resolving it
+            // fails a browser build even though the branch is never taken there.
+            /* webpackIgnore: true */ "@pythnetwork/pyth-lazer-sdk"
+        )) as any;
+        const lazer = await PythLazerClient.create({
+            token,
+            webSocketPoolConfig: { numConnections: 1 },
+        });
+        return new TypusClient(config, { lazer });
+    }
+
+    /**
+     * Stays public: most call sites build a client only for read-only views and
+     * never touch the oracle, so requiring the async `create` (and a price
+     * source) everywhere would be noise. Fetching a price without a source
+     * throws at fetch time.
+     */
+    constructor(
+        config: TypusConfig,
+        priceSource: { lazer?: PythLazerClient; getAccessToken?: () => string | Promise<string> } = {}
+    ) {
+        // typus-config@main is stale (advertises old oracle + old perp pkgs).
+        // Applied here rather than in `create` because most call sites use the
+        // constructor directly — overriding only in `create` left them on the
+        // pre-OracleV2 packages.
+        if (ORACLE_PACKAGE_ID) {
+            config.package.oracle = ORACLE_PACKAGE_ID;
+        }
+        if (PERP_PACKAGE_ID) {
+            config.package.perp.perp = PERP_PACKAGE_ID;
+        }
+        if (STAKE_PACKAGE_ID) {
+            config.package.perp.stakePool = STAKE_PACKAGE_ID;
+        }
+        // typus-config@main points at the old DOV registry; the new typus_perp links
+        // against the 0x02821e55 DOV family — override so bid-receipt / liquidation
+        // views pass the right &DovRegistry type.
+        if (DOV_SINGLE_REGISTRY && config.registry?.dov) {
+            config.registry.dov.dovSingle = DOV_SINGLE_REGISTRY;
+        }
+
         this.config = config;
         const network = config.network.toLowerCase();
 
@@ -25,10 +101,6 @@ export class TypusClient {
                     "@typus/perp": config.package.perp.perp,
                     "@typus/stake-pool": config.package.perp.stakePool,
                 },
-                // types: {
-                //     "@typus/perp": PERP_PACKAGE_ID,
-                //     "@typus/stake-pool": STAKE_PACKAGE_ID,
-                // },
             },
         };
 
@@ -49,7 +121,15 @@ export class TypusClient {
             transport: new JsonRpcHTTPTransport({ url: config.rpcEndpoint }),
         });
 
-        this.pythClient = createPythClient(jsonRpcClient, this.config.network);
+        this.pythClient = new PythLazerSuiClient({
+            ...priceSource,
+            sui: jsonRpcClient,
+            network: config.network,
+            lazerPackage: PYTH_LAZER_PACKAGE_ID,
+            oraclePackage: ORACLE_PACKAGE_ID,
+            oracleV2Id: ORACLE_V2_ID,
+            stateObjectId: PYTH_LAZER_STATE_ID,
+        });
     }
 
     getCoins(params: SuiClientTypes.ListCoinsOptions) {

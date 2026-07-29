@@ -8,9 +8,9 @@ import { TOKEN, tokenType } from "@typus/typus-sdk/dist/src/constants";
 
 (async () => {
     let config = await TypusConfig.default(NETWORK, null);
-    let client = new TypusClient(config);
+    let client = await TypusClient.create(config);
 
-    let keypair = Ed25519Keypair.deriveKeypair(String(process.env.W_MNEMONIC));
+    let keypair = Ed25519Keypair.deriveKeypair(String(process.env.MNEMONIC ?? process.env.W_MNEMONIC));
 
     let user = keypair.toSuiAddress();
     console.log(user);
@@ -18,7 +18,7 @@ import { TOKEN, tokenType } from "@typus/typus-sdk/dist/src/constants";
     var tx = new Transaction();
 
     // INPUTS
-    let cToken: TOKEN = "SUI";
+    let cToken: TOKEN = "wUSDC";
     let tradingToken: TOKEN = "SUI";
 
     let coins = (
@@ -28,7 +28,7 @@ import { TOKEN, tokenType } from "@typus/typus-sdk/dist/src/constants";
         })
     ).objects.map((coin) => coin.objectId);
 
-    let markets = await getMarkets(client, { indexes: ["0", "1"] });
+    let markets = await getMarkets(client, { indexes: ["0"] });
     let marketsOnly = markets.map((x) => x[0]);
     let perpIndex = findMarketIndex(client, { markets: marketsOnly, tradingToken });
     console.log("perpIndex: ", perpIndex);
@@ -38,10 +38,10 @@ import { TOKEN, tokenType } from "@typus/typus-sdk/dist/src/constants";
         poolIndex: perpIndex!.toString(),
         coins,
         cToken,
-        amount: "10000000000",
+        amount: "100000000",
         tradingToken,
-        size: "10000000000",
-        triggerPrice: "50000000",
+        size: "1000000000",
+        triggerPrice: "200000000",
         isLong: true,
         isStopOrder: false,
         reduceOnly: false,

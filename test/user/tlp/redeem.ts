@@ -8,9 +8,9 @@ import { NETWORK, getLpPools, getStakePool, getUserStake, redeemTlp } from "src"
 import { normalizeStructTag } from "@mysten/sui/utils";
 
 (async () => {
-    let keypair = Ed25519Keypair.deriveKeypair(String(process.env.MNEMONIC));
+    let keypair = Ed25519Keypair.deriveKeypair(String(process.env.MNEMONIC ?? process.env.W_MNEMONIC));
     let config = await TypusConfig.default(NETWORK, null);
-    let client = new TypusClient(config);
+    let client = await TypusClient.create(config);
 
     let user = keypair.toSuiAddress();
     console.log(user);
@@ -38,12 +38,17 @@ import { normalizeStructTag } from "@mysten/sui/utils";
         lpCoins: coins,
     });
 
-    let dryrunRes = await client.devInspectTransactionBlock({
-        transaction: tx,
-    });
-    console.log(dryrunRes.Transaction.events.filter((e) => e.type.endsWith("RedeemEvent")));
+    tx.setSender(user);
+    let dryrunRes = await client.devInspectTransactionBlock({ transaction: tx });
+    if (dryrunRes.FailedTransaction) {
+        console.error("DRY-RUN FAILED:", JSON.stringify(dryrunRes.FailedTransaction.status.error, null, 2));
+        process.exit(1);
+    }
+    // @ts-ignore
+    let evts = dryrunRes.Transaction.events.filter((e: any) => (e.eventType ?? e.type ?? "").endsWith("RedeemEvent"));
+    console.log("DRY-RUN OK — RedeemEvent:", JSON.stringify(evts[0]?.json ?? evts[0]?.parsedJson ?? evts[0], null, 2));
 
     let res = await client.signAndExecuteTransaction({ signer: keypair, transaction: tx });
-    console.log(res);
-    // https://testnet.suivision.xyz/txblock/EvBgQwKFay8YMYDG9WtStsfvR7MzhPa4nu5aKMgeptzX?tab=Events
+    console.log("digest:", res.Transaction?.digest, "status:", res.Transaction?.status);
+    process.exit(0);
 })();

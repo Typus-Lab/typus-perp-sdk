@@ -7,18 +7,19 @@ import { increaseCollateral, getUserPositions, NETWORK } from "src";
 import { normalizeStructTag } from "@mysten/sui/utils";
 
 (async () => {
-    let keypair = Ed25519Keypair.deriveKeypair(String(process.env.MNEMONIC));
+    let keypair = Ed25519Keypair.deriveKeypair(String(process.env.MNEMONIC ?? process.env.W_MNEMONIC));
     let config = await TypusConfig.default(NETWORK, null);
-    let client = new TypusClient(config);
+    let client = await TypusClient.create(config);
 
     let user = keypair.toSuiAddress();
     console.log(user);
 
     var tx = new Transaction();
 
-    let positions = await getUserPositions(client, { user, indexes: ["0", "1"] });
+    let positions = await getUserPositions(client, { user, indexes: ["0"] });
     let position = positions[0];
-    console.log(position);
+    if (!position) { console.error("no position — match an order first"); process.exit(1); }
+    console.log("position_id:", position.position_id);
 
     let coins = (
         await client.getCoins({
@@ -33,13 +34,17 @@ import { normalizeStructTag } from "@mysten/sui/utils";
         position,
     });
 
-    let dryrunRes = await client.devInspectTransactionBlock({
-        transaction: tx,
-    });
-    console.log(dryrunRes);
+    tx.setSender(user);
+    let dryrunRes = await client.devInspectTransactionBlock({ transaction: tx });
+    if (dryrunRes.FailedTransaction) {
+        console.error("DRY-RUN FAILED:", JSON.stringify(dryrunRes.FailedTransaction.status.error, null, 2));
+        process.exit(1);
+    }
     // @ts-ignore
-    console.log(dryrunRes.Transaction.events.filter((e) => e.eventType.endsWith("IncreaseCollateralEvent"))[0].json);
+    let evts = dryrunRes.Transaction.events.filter((e: any) => (e.eventType ?? e.type ?? "").endsWith("IncreaseCollateralEvent"));
+    console.log("DRY-RUN OK — IncreaseCollateralEvent:", JSON.stringify(evts[0]?.json ?? evts[0]?.parsedJson ?? evts[0], null, 2));
 
     let res = await client.signAndExecuteTransaction({ signer: keypair, transaction: tx });
-    console.log(res);
+    console.log("digest:", res.Transaction?.digest, "status:", res.Transaction?.status);
+    process.exit(0);
 })();

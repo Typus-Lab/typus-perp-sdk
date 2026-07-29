@@ -8,13 +8,24 @@ dotenv.config();
 // default MAINNET
 export const NETWORK = process.env.NEXT_PUBLIC_CLUSTER == "testnet" ? "TESTNET" : "MAINNET";
 
-// Mainnet is the CVersion-7 package: the only one carrying `create_trading_order_v2`
-// / `match_trading_order_v2` (the OracleV2 readers). Verified on-chain — the
-// previously pinned 0xf60e3542 exposes no `_v2` order entries at all, and
-// typus-config@main still advertises the older 0x8e4743f2.
+// Mainnet is perp v7, re-linked onto typus_oracle v17 + pyth_lazer v2.
+//
+// v6 0xb78db3bf is NOT interchangeable here, even though it carries the same `_v2`
+// order entries. Every perp VIEW function is `public(package)`, which pins its whole
+// transitive dep closure tx-wide, and v6 linked pyth_lazer v1 — so any devInspect that
+// bundles `updateOracleV2WithPythLazer` with a view (getLiquidationPriceAndPnl,
+// getMaxReleasingCollateralAmount, …) fails `InvalidLinkage` and returns [] SILENTLY.
+// The user-facing WRITE path is unaffected: create_trading_order_v2 /
+// match_trading_order_v2 / release_collateral_v2 / increase_collateral_v2 are all
+// `public`, which is exempt. See typus-rust mainnet_lazer_migration.md §1c.
+//
+// Note typus-config@main is staler still — its PACKAGE.PERP.PERP is v5 0x8e4743f2,
+// PACKAGE.DOV_SINGLE is dov v107 and PACKAGE.ORACLE is oracle v14. Do not take the
+// perp package id from there. `client.config.package.oracle` (v14) is itself a hazard:
+// pinned below the v17 that the Lazer command loads, it is the probe-G InvalidLinkage.
 export const PERP_PACKAGE_ID =
     NETWORK == "MAINNET"
-        ? "0xb78db3bf6aff87ae8aa6b1b5d4718d475d46b74734727889f2b4c300d79e8970"
+        ? "0x6a0284b7a1ee2e677e2b12e3aa44530ebd26af017894504adf2915cce422bb10"
         : "0x228f1823a2daf15cf2d5031e47bd7c26ae1d19ea89160df29d351c6e56134c61";
 
 export const STAKE_PACKAGE_ID =
@@ -76,11 +87,19 @@ export const LOCK_VAULT =
         : "0x8d3c497b2b0e7b8a7633422e8da780ba83ea6709d81ba7b0ca6935d58692cc96";
 
 // Pyth Lazer + OracleV2. Mainnet values mirror typus-rust
-// src/config/mainnet/pyth.json (oracle v16 / Lazer state), which the crankers
+// src/config/mainnet/pyth.json (oracle v17 / Lazer state), which the crankers
 // already run against — the OracleV2 object below holds 24 registered tokens.
+//
+// This MUST move together with PERP_PACKAGE_ID above. client.ts overrides
+// config.package.oracle with it, so it is the package every `updateOracleV2WithPythLazer`
+// command targets — and perp v7 links oracle v17. Leaving it at v16 while perp goes to v7
+// does not fix the read path, it just relocates the InvalidLinkage: measured read-only on
+// mainnet, `[lazer-v2 parse, oracle-v16 update_latest_price_v2, perp-v7 view]` still fails
+// (typus-rust examples/linkage_probe_liquidation, probe V5). The same PTB with v17
+// succeeds (V2). One version per package tx-wide — never pin this below what perp links.
 export const ORACLE_PACKAGE_ID =
     NETWORK == "MAINNET"
-        ? "0xb52c1b617cf5c9a6f911907be7d4b7bc12c618050b6421ee9801a4011617dcbe"
+        ? "0x7f490c95fcd6a707aebef4441a8fb82693a45a01872e50c3f797a553f35d33e9"
         : "0xd2e030ab7f0fc956c7e683cf3c6faf3d22868dee81a4aae9f4a10a6d998a8a02";
 export const ORACLE_V2_ID =
     NETWORK == "MAINNET"
